@@ -6,7 +6,11 @@ import { GlobalStyles } from './styles/global';
 import { AuthContextProvider } from './contexts/AuthContext';
 
 // import LoginPage from './pages/LoginPage/indes';
-import HomePage from './pages/Home';
+// import HomePage from './pages/Home';
+// import DigitalNotebook from './pages/DigitalNotebook';
+// import TeamPage from './pages/TeamPage';
+// import DailyReport from './pages/DailyReport/';
+import TeamManagement from './pages/TeamManagement';
 
 
 const root = ReactDOM.createRoot(
@@ -17,7 +21,7 @@ root.render(
     <ThemeProvider>
       <AuthContextProvider>
         <GlobalStyles />
-        <HomePage />
+        <TeamManagement />
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>
