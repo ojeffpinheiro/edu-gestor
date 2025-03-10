@@ -3,7 +3,7 @@ import { Student } from '../utils/types';
 /**
  * Realiza o sorteio de grupos com base no tamanho especificado.
  */
-export const realizarSorteioGrupos = (alunos: Student[], tamanhoGrupo: number): Student[][] => {
+export const distributeStudentsIntoGroups = (alunos: Student[], tamanhoGrupo: number): Student[][] => {
     const alunosEmbaralhados = [...alunos].sort(() => Math.random() - 0.5);
     const grupos: Student[][] = [];
 

@@ -1,47 +1,83 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import { Student } from "../../utils/types";
-import { TableContainer, Table, Th, Tr, Td, IconButton, EmptyState } from "./styles";
+import {
+    TableContainer,
+    Table,
+    TableHead,
+    TableRow,
+    TableCell,
+    IconButton,
+    EmptyState
+} from "./styles";
 
+/**
+ * Propriedades do componente StudentTable
+ */
 interface StudentTableProps {
-    alunos: Student[];
-    onEdit: (aluno: Student) => void;
+    students: Student[];
+    onEdit: (studentData: Student) => void;
     onDelete: (id: number) => void;
 }
 
-const StudentTable: React.FC<StudentTableProps> = ({ alunos, onEdit, onDelete }) => {
+/**
+ * Componente de linha da tabela para modularização
+ */
+const StudentRow: React.FC<{ studentData: Student; onEdit: (s: Student) => void; onDelete: (id: number) => void }> = ({
+    studentData,
+    onEdit,
+    onDelete
+}) => {
+    const handleDelete = useCallback(() => {
+        if (window.confirm(`Tem certeza que deseja excluir ${studentData.name}?`)) {
+            onDelete(studentData.id);
+        }
+    }, [studentData, onDelete]);
+
+    return (
+        <TableRow>
+            <TableCell>{studentData.name}</TableCell>
+            <TableCell>{studentData.email}</TableCell>
+            <TableCell>
+                <IconButton onClick={() => onEdit(studentData)} title="Editar aluno">
+                    <FaEdit />
+                </IconButton>
+                <IconButton onClick={handleDelete} title="Excluir aluno" variant="error">
+                    <FaTrashAlt />
+                </IconButton>
+            </TableCell>
+        </TableRow>
+    );
+};
+
+/**
+ * Componente de tabela para exibir alunos cadastrados
+ */
+const StudentTable: React.FC<StudentTableProps> = ({ students, onEdit, onDelete }) => {
     return (
         <TableContainer>
             <Table>
                 <thead>
-                    <tr>
-                        <Th>Nome</Th>
-                        <Th>Email</Th>
-                        <Th>Ações</Th>
-                    </tr>
+                    <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Ações</TableHead>
+                    </TableRow>
                 </thead>
                 <tbody>
-                    {alunos.length > 0 ? (
-                        alunos.map((aluno) => (
-                            <Tr key={aluno.id}>
-                                <Td>{aluno.name}</Td>
-                                <Td>{aluno.email}</Td>
-                                <Td>
-                                    <IconButton onClick={() => onEdit(aluno)} variant="info">
-                                        <FaEdit />
-                                    </IconButton>
-                                    <IconButton onClick={() => onDelete(aluno.id)} variant="error">
-                                        <FaTrashAlt />
-                                    </IconButton>
-                                </Td>
-                            </Tr>
+                    {students.length > 0 ? (
+                        students.map((studentData) => (
+                            <StudentRow
+                                key={studentData.id}
+                                studentData={studentData}
+                                onEdit={onEdit}
+                                onDelete={onDelete}
+                            />
                         ))
                     ) : (
                         <tr>
                             <td colSpan={3}>
-                                <EmptyState>
-                                    Nenhum aluno cadastrado. Clique em "Adicionar Aluno" para começar.
-                                </EmptyState>
+                                <EmptyState>Nenhum aluno cadastrado. Clique em "Adicionar Aluno" para começar.</EmptyState>
                             </td>
                         </tr>
                     )}

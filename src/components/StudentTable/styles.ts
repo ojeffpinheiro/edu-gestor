@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 export const TableContainer = styled.div`
     width: 100%;
-    margin-top: 16px;
     overflow-x: auto;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 `;
 
 export const Table = styled.table`
@@ -12,6 +14,24 @@ export const Table = styled.table`
     background: var(--color-background-secondary);
     border-radius: var(--border-radius-md);
     overflow: hidden;
+`;
+
+export const TableHead = styled.th`
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid var(--color-border);
+    font-weight: bold;
+`;
+
+export const TableRow = styled.tr`
+    &:nth-child(even) {
+        background: var(--color-background-third);
+    }
+`;
+
+export const TableCell = styled.td`
+    padding: 12px;
+    border-bottom: 1px solid var(--color-border);
 `;
 
 export const Th = styled.th`
@@ -32,9 +52,8 @@ export const Td = styled.td`
     border-bottom: 1px solid var(--color-border);
 `;
 
-export const IconButton = styled.button<{ variant: string }> `
-    background: ${({ variant }) => 
-        variant === "info" ? "var(--color-info)" : "var(--color-error)"};
+export const IconButton = styled.button<{ variant?: "error" | "primary" | 'info' }>`
+    background: ${(props) => (props.variant === 'error' ? 'var(--color-info)' : 'var(--color-error)')};
     color: var(--color-text-on-primary);
     border: none;
     padding: 8px;
@@ -49,6 +68,6 @@ export const IconButton = styled.button<{ variant: string }> `
 
 export const EmptyState = styled.div`
     text-align: center;
-    padding: 16px;
+    padding: 1rem;
     color: var(--color-text-secondary);
 `;

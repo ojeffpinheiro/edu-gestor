@@ -1,5 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { format, addMonths, subMonths, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameMonth, isSameDay, isToday } from 'date-fns';
+import {
+  format,
+  addMonths,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  startOfWeek,
+  endOfWeek,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  isToday
+} from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   CalendarContainer,
@@ -17,135 +29,107 @@ import {
   TodayButton
 } from './styles';
 
-interface CalendarEvent {
+interface Event {
   date: Date;
   title: string;
 }
-
-interface CalendarProps {
-  onDateSelect?: (date: Date) => void;
-  selectedDate?: Date;
-  events?: CalendarEvent[];
-  minDate?: Date;
-  maxDate?: Date;
+interface Props {
+  onSelectDate?: (date: Date) => void;
+  initialSelectedDate?: Date;
+  events?: Event[];
+  minSelectableDate?: Date;
+  maxSelectableDate?: Date;
   className?: string;
 }
 
-const Calendar: React.FC<CalendarProps> = ({
-  onDateSelect,
-  selectedDate,
+const Calendar: React.FC<Props> = ({
+  onSelectDate,
+  initialSelectedDate,
   events = [],
-  minDate,
-  maxDate,
+  minSelectableDate,
+  maxSelectableDate,
   className
 }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [currentDate, setCurrentDate] = useState(selectedDate || new Date());
+  const [selectedDate, setSelectedDate] = useState(initialSelectedDate || new Date());
 
   useEffect(() => {
-    if (selectedDate) {
-      setCurrentDate(selectedDate);
-      setCurrentMonth(selectedDate);
+    if (initialSelectedDate) {
+      setSelectedDate(initialSelectedDate);
+      setCurrentMonth(initialSelectedDate);
     }
-  }, [selectedDate]);
+  }, [initialSelectedDate]);
 
-  const onDateClick = (day: Date) => {
-    setCurrentDate(day);
-    if (onDateSelect) {
-      onDateSelect(day);
+  const handleDateClick = (day: Date) => {
+    if (!isDateDisabled(day) && isSameMonth(day, currentMonth)) {
+      setSelectedDate(day);
+      onSelectDate?.(day);
     }
   };
 
-  const nextMonth = () => {
-    setCurrentMonth(addMonths(currentMonth, 1));
-  };
-
-  const prevMonth = () => {
-    setCurrentMonth(subMonths(currentMonth, 1));
-  };
+  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
+  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
 
   const goToToday = () => {
     const today = new Date();
     setCurrentMonth(today);
-    setCurrentDate(today);
-    if (onDateSelect) {
-      onDateSelect(today);
-    }
+    setSelectedDate(today);
+    onSelectDate?.(today);
   };
 
-  const hasEvent = (day: Date) => {
-    return events.some(event => isSameDay(event.date, day));
-  };
+  const hasEvent = (day: Date) => events.some(event => isSameDay(event.date, day));
 
-  const isDisabled = (day: Date) => {
-    if (minDate && day < minDate) return true;
-    if (maxDate && day > maxDate) return true;
-    return false;
-  };
+  const isDateDisabled = (day: Date) =>
+    (minSelectableDate && day < minSelectableDate) ||
+    (maxSelectableDate && day > maxSelectableDate);
 
-  const renderHeader = () => {
-    return (
-      <CalendarHeader>
-        <MonthDisplay>
-          {format(currentMonth, 'MMMM yyyy', { locale: ptBR })}
-        </MonthDisplay>
-        <NavigationButtons>
-          <NavButton onClick={prevMonth} type="button" aria-label="Mês anterior">
-            &lt;
-          </NavButton>
-          <NavButton onClick={nextMonth} type="button" aria-label="Próximo mês">
-            &gt;
-          </NavButton>
-        </NavigationButtons>
-      </CalendarHeader>
-    );
-  };
+  const renderHeader = () => (
+    <CalendarHeader>
+      <MonthDisplay>{format(currentMonth, 'MMMM yyyy', { locale: ptBR })}</MonthDisplay>
+      <NavigationButtons>
+        <NavButton onClick={prevMonth} aria-label="Mês anterior">&lt;</NavButton>
+        <NavButton onClick={nextMonth} aria-label="Próximo mês">&gt;</NavButton>
+      </NavigationButtons>
+    </CalendarHeader>
+  );
+
+  const renderWeekDays = () => (
+    <WeekdaysRow>
+      {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(day => (
+        <WeekdayLabel key={day}>{day}</WeekdayLabel>
+      ))}
+    </WeekdaysRow>
+  );
 
   const renderDays = () => {
-    const weekDays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-    
-    return (
-      <WeekdaysRow>
-        {weekDays.map(day => (
-          <WeekdayLabel key={day}>{day}</WeekdayLabel>
-        ))}
-      </WeekdaysRow>
-    );
-  };
-
-  const renderCells = () => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
     const startDate = startOfWeek(monthStart);
     const endDate = endOfWeek(monthEnd);
 
-    const dateRange = eachDayOfInterval({
-      start: startDate,
-      end: endDate
-    });
+    const days = eachDayOfInterval({ start: startDate, end: endDate });
 
     return (
       <DaysGrid>
-        {dateRange.map(day => {
-          const formattedDate = format(day, 'd');
-          const isCurrentMonth = isSameMonth(day, monthStart);
-          const isSelectedDay = isSameDay(day, currentDate);
+        {days.map(day => {
+          const isCurrentMonth = isSameMonth(day, currentMonth);
+          const isSelected = isSameDay(day, selectedDate);
           const dayHasEvent = hasEvent(day);
-          const disabled = isDisabled(day);
+          const disabled = isDateDisabled(day);
 
           return (
             <DayCell
               key={day.toString()}
               isToday={isToday(day)}
-              isSelected={isSelectedDay}
+              isSelected={isSelected}
               isOutsideMonth={!isCurrentMonth}
-              onClick={() => !disabled && isCurrentMonth && onDateClick(day)}
               disabled={disabled || !isCurrentMonth}
+              onClick={() => handleDateClick(day)}
               aria-label={format(day, 'PPP', { locale: ptBR })}
-              aria-selected={isSelectedDay}
+              aria-selected={isSelected}
             >
               <DayCellContent>
-                {formattedDate}
+                {format(day, 'd')}
                 {dayHasEvent && <EventIndicator />}
               </DayCellContent>
             </DayCell>
@@ -155,21 +139,17 @@ const Calendar: React.FC<CalendarProps> = ({
     );
   };
 
-  const renderFooter = () => {
-    return (
-      <CalendarFooter>
-        <TodayButton onClick={goToToday} type="button">
-          Hoje
-        </TodayButton>
-      </CalendarFooter>
-    );
-  };
+  const renderFooter = () => (
+    <CalendarFooter>
+      <TodayButton onClick={goToToday}>Hoje</TodayButton>
+    </CalendarFooter>
+  );
 
   return (
     <CalendarContainer className={className}>
       {renderHeader()}
+      {renderWeekDays()}
       {renderDays()}
-      {renderCells()}
       {renderFooter()}
     </CalendarContainer>
   );
