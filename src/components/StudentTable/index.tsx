@@ -1,15 +1,14 @@
-import React, { useCallback } from "react";
-import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { Student, StudentAttendance } from "../../utils/types";
+import React from "react";
+
+import { Student } from "../../utils/types";
+
+import { Table, TableHeader, TableRow } from '../../styles/table'
+
 import {
     TableContainer,
-    Table,
-    TableHead,
-    TableRow,
-    TableCell,
-    IconButton,
     EmptyState
 } from "./styles";
+import StudentRow from "../ui/StudentRow";
 
 /**
  * Propriedades do componente StudentTable
@@ -20,38 +19,6 @@ interface StudentTableProps {
     onDelete: (id: number) => void;
 }
 
-interface StudentRowProps {
-    studentData: Student,
-    onEdit: (s: Student) => void;
-    onDelete: (id: number) => void
-}
-
-/**
- * Componente de linha da tabela para modularização
- */
-const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }) => {
-    const handleDelete = useCallback(() => {
-        if (window.confirm(`Tem certeza que deseja excluir ${studentData.name}?`)) {
-            onDelete(studentData.id);
-        }
-    }, [studentData, onDelete]);
-
-    return (
-        <TableRow>
-            <TableCell>{studentData.name}</TableCell>
-            <TableCell>{studentData.email}</TableCell>
-            <TableCell>
-                <IconButton onClick={() => onEdit(studentData)} title="Editar aluno">
-                    <FaEdit />
-                </IconButton>
-                <IconButton onClick={handleDelete} title="Excluir aluno" variant="error">
-                    <FaTrashAlt />
-                </IconButton>
-            </TableCell>
-        </TableRow>
-    );
-};
-
 /**
  * Componente de tabela para exibir alunos cadastrados
  */
@@ -61,9 +28,9 @@ const StudentTable: React.FC<StudentTableProps> = ({ students, onEdit, onDelete 
             <Table>
                 <thead>
                     <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Ações</TableHead>
+                        <TableHeader>Nome</TableHeader>
+                        <TableHeader>Email</TableHeader>
+                        <TableHeader>Ações</TableHeader>
                     </TableRow>
                 </thead>
                 <tbody>
@@ -71,7 +38,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students, onEdit, onDelete 
                         students.map((studentData) => (
                             <StudentRow
                                 key={studentData.id}
-                                studentData={studentData} onEdit={onEdit} onDelete={onDelete}/>
+                                studentData={studentData} onEdit={onEdit} onDelete={onDelete} />
                         ))
                     ) : (
                         <tr>

@@ -1,11 +1,9 @@
 import React from 'react'
 import { FaCheckSquare, FaSquare } from "react-icons/fa";
-import { Report } from "../../utils/types";
-import { CheckboxContainer, CheckboxLabel } from "../modals/ModalStudent/styles";
+import styled from 'styled-components';
 
-/**
- * Checkbox personalizado para selecionar opções de exportação
- */
+import { Report } from "../../utils/types";
+
 const ReportCheckbox: React.FC<Report> = ({ checked, onChange, label, disabled = false }) => {
     return (
         <CheckboxContainer
@@ -17,5 +15,27 @@ const ReportCheckbox: React.FC<Report> = ({ checked, onChange, label, disabled =
         </CheckboxContainer>
     );
 };
+
+const CheckboxContainer = styled.div`
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: var(--space-md);
+    color: var(--color-text-secondary);
+    
+    svg {
+        color: var(--color-primary);
+        font-size: var(--font-size-lg);
+        margin-right: var(--space-xs);
+    }
+    
+    &:hover {
+        color: var(--color-text-primary);
+    }
+`;
+
+const CheckboxLabel = styled.span`
+    font-size: var(--font-size-sm);
+`;
 
 export default ReportCheckbox

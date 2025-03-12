@@ -1,25 +1,25 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { FaDownload, FaAngleDown, FaAngleUp, FaTimes } from 'react-icons/fa';
+import { FaDownload, FaTimes } from 'react-icons/fa';
 
 import { useExportData } from '../../../hooks/useExportData';
-import { formatDate } from '../../../utils/dateFormatter';
 import { useToast } from '../../../hooks/useToast';
-
-import AttendanceStatusBadge from '../../ui/AttendanceStatusBadge';
-import ErrorBoundary from '../../ui/ErrorBoundary';
-import Spinner from '../../ui/Spinner';
-import ConfirmationDialog from '../../ui/ConfirmationDialog';
 
 import {
     Assessment,
-    AttendanceRecord,
     ExportOptions,
     StudentData,
     StudentModalProps
 } from '../../../utils/types';
 
-import { Table } from '../../../styles/table'
-import { Button } from '../../../styles/buttons'
+import ErrorBoundary from '../../ui/ErrorBoundary';
+import Spinner from '../../ui/Spinner';
+import ConfirmationDialog from '../../ui/ConfirmationDialog';
+import CollapsibleSection from '../../ui/CollapsibleSection';
+
+import { Table, TableHeader, TableRow,TableCell, EmptyStateMessage } from '../../../styles/table'
+import { Button, CloseButton } from '../../../styles/buttons'
+
+import { DEFAULT_STUDENT_DATA, SECTION_CONFIG } from '../../../utils/setting'
 
 import {
     ModalContainer,
@@ -27,56 +27,12 @@ import {
     ModalHeader,
     ModalBody,
     ModalFooter,
-    CloseButton,
-    TableHeader,
-    TableCell,
-    TableRow,
-    EmptyStateMessage,
-    AttendanceStatsContainer,
 } from './styles';
-import CollapsibleSection from '../../ui/CollapsibleSection';
 
-// Configuration for different sections of the modal
-const SECTION_CONFIG = {
-    GRADES: {
-        color: 'var(--color-background-third)',
-        title: 'Notas',
-        key: 'includeGrades',
-        initiallyExpanded: true,
-        emptyMessage: 'Nenhuma avaliação registrada para este aluno.'
-    },
-    ATTENDANCE: {
-        color: 'var(--color-background-secondary)',
-        title: 'Frequência',
-        key: 'includeAttendance',
-        initiallyExpanded: false,
-        emptyMessage: 'Nenhum registro de frequência disponível para este aluno.'
-    },
-    COMMENTS: {
-        color: 'var(--color-background-third)',
-        title: 'Observações',
-        key: 'includeComments',
-        initiallyExpanded: false,
-        emptyMessage: 'Nenhuma observação registrada para este aluno.'
-    }
-};
+import AttendanceTable from '../../ui/AttendanceTable';
 
 // Default student data for testing when no real data is available
-const DEFAULT_STUDENT_DATA: StudentData = {
-    id: 'default-123',
-    name: 'Ana Souza',
-    email: 'ana@exemplo.com',
-    assessments: [
-        { instrument: 'Prova Final', grade: 8.5 },
-        { instrument: 'Trabalho', grade: 9 },
-    ],
-    attendance: [
-        { date: '2025-03-01', status: 'Presente' },
-        { date: '2025-03-02', status: 'Ausente' },
-        { date: '2025-03-03', status: 'Justificada' },
-    ],
-    comments: 'Aluno muito participativo e dedicado. Demonstra bom domínio do conteúdo e colabora nas atividades em grupo. Precisa melhorar pontualidade na entrega de trabalhos.',
-};
+
 
 /**
  * Calculates the average grade from a list of assessments
@@ -145,82 +101,6 @@ const GradesTable: React.FC<{ assessments: Assessment[] }> = ({ assessments }) =
             <p className={`average-grade ${averageGradeClass}`} data-testid="average-grade">
                 Média: {averageGrade.toFixed(1)}
             </p>
-        </>
-    );
-};
-
-/**
- * Calculates attendance statistics for visual feedback
- * @param attendance List of attendance records
- * @returns Object with attendance statistics
- */
-const calculateAttendanceStats = (attendance: AttendanceRecord[] = []) => {
-    const total = attendance.length;
-
-    if (total === 0) {
-        return {
-            presentPercentage: '0.0',
-            absentPercentage: '0.0',
-            justifiedPercentage: '0.0',
-            totalClasses: 0,
-            present: 0,
-            absent: 0,
-            justified: 0
-        };
-    }
-
-    const present = attendance.filter(record => record.status === 'Presente').length;
-    const absent = attendance.filter(record => record.status === 'Ausente').length;
-    const justified = attendance.filter(record => record.status === 'Justificada').length;
-
-    return {
-        presentPercentage: (present / total * 100).toFixed(1),
-        absentPercentage: (absent / total * 100).toFixed(1),
-        justifiedPercentage: (justified / total * 100).toFixed(1),
-        totalClasses: total,
-        present,
-        absent,
-        justified
-    };
-};
-
-/**
- * Component to display student attendance records
- */
-const AttendanceTable: React.FC<{ attendance: AttendanceRecord[] }> = ({ attendance }) => {
-    if (!attendance || attendance.length === 0) {
-        return <EmptyStateMessage>{SECTION_CONFIG.ATTENDANCE.emptyMessage}</EmptyStateMessage>;
-    }
-
-    const stats = calculateAttendanceStats(attendance);
-
-    return (
-        <>
-            <Table aria-label="Tabela de frequência">
-                <thead>
-                    <tr>
-                        <TableHeader scope="col">Data</TableHeader>
-                        <TableHeader scope="col">Status</TableHeader>
-                    </tr>
-                </thead>
-                <tbody>
-                    {attendance.map((record, index) => (
-                        <TableRow key={`attendance-${index}`}>
-                            <TableCell>{formatDate(record.date)}</TableCell>
-                            <TableCell>
-                                <AttendanceStatusBadge status={record.status} />
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </tbody>
-            </Table>
-
-            <AttendanceStatsContainer aria-label="Estatísticas de frequência">
-                <p>Total de aulas: <strong>{stats.totalClasses}</strong></p>
-                <p>Presença: <strong>{stats.presentPercentage}%</strong></p>
-                <p>Ausência: <strong>{stats.absentPercentage}%</strong></p>
-                <p>Justificadas: <strong>{stats.justifiedPercentage}%</strong></p>
-            </AttendanceStatsContainer>
         </>
     );
 };

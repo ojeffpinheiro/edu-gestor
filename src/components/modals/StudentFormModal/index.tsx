@@ -1,14 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaUser, FaSave, FaTimes } from "react-icons/fa";
 import { Student } from "../../../utils/types";
+
+import { Button, CloseButton } from '../../../styles/buttons'
+
 import {
     ModalContainer,
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
-    CloseButton,
-    Button,
     ErrorMessage,
     SuccessMessage,
     InputGroup,
@@ -31,8 +32,6 @@ interface StudentFormModalProps {
 
 /**
  * Modal de cadastro/edição de estudante
- * 
- * Segue a estrutura e padrões do GroupFormationModal
  */
 const StudentFormModal: React.FC<StudentFormModalProps> = ({
     studentData,

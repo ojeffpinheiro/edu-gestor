@@ -38,7 +38,6 @@ export const ModalContent = styled.div`
   }
 `;
 
-/* Mantendo o padrão do GroupFormationModal */
 export const ModalHeader = styled.div`
     display: flex;
   justify-content: space-between;
@@ -77,34 +76,6 @@ export const ModalFooter = styled.div`
   border-radius: 0 0 8px 8px;
 `;
 
-/**
- * Close button for the modal with hover effects
- */
-export const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--color-text-third, #64748b);
-  transition: all 0.2s;
-
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-    color: var(--color-text, #1e293b);
-  }
-  
-  &:focus {
-    outline: none;
-    box-shadow: var(--shadow-focus, 0 0 0 2px rgba(66, 153, 225, 0.5));
-  }
-`;
-
 export const DrawnStudentContainer = styled.div`
     font-size: var(--font-size-xl);
     font-weight: bold;
@@ -114,44 +85,6 @@ export const DrawnStudentContainer = styled.div`
     border-radius: var(--border-radius-md);
     margin: var(--space-xs) 0;
     text-align: center;
-`;
-
-export const Button = styled.button<{ variant?: "primary" | "secondary" }>`
-    padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 1.15rem;
-  background: ${({ variant }) =>
-        variant === "primary" ? "var(--color-primary, #4299e1)" : "var(--color-secondary, #e2e8f0)"};
-  color: ${({ variant }) =>
-        variant === "primary" ? "var(--color-text-on-primary, #ffffff)" : "var(--color-text, #1e293b)"};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-  
-  &:hover {
-    background: ${({ variant }) =>
-        variant === "primary" ? "var(--color-primary-hover, #3182ce)" : "var(--color-secondary-hover, #cbd5e0)"};
-  }
-  
-  &:active {
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px ${({ variant }) =>
-        variant === "primary" ? "rgba(66, 153, 225, 0.3)" : "rgba(160, 174, 192, 0.3)"};
-  }
 `;
 
 export const Icon = styled.span`

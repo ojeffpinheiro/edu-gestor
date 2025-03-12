@@ -204,19 +204,6 @@ export const EmptyState = styled.div`
     font-style: italic;
 `;
 
-// Novos componentes de estilo para as novas funcionalidades
-export const ButtonGroup = styled.div`
-    display: flex;
-    gap: var(--space-sm);
-    flex-wrap: wrap;
-    
-    @media (max-width: var(--breakpoint-md)) {
-        margin-top: var(--space-md);
-        width: 100%;
-        justify-content: space-between;
-    }
-`;
-
 export const ActionsContainer = styled.div`
     display: flex;
     justify-content: space-between;
@@ -267,18 +254,6 @@ export const ModalFooter = styled.div`
     justify-content: flex-end;
     padding: var(--space-md) var(--space-lg);
     border-top: 1px solid var(--color-border-light);
-`;
-
-export const CloseButton = styled.button`
-    background: none;
-    border: none;
-    font-size: var(--font-size-xl);
-    cursor: pointer;
-    color: var(--color-text-secondary);
-    
-    &:hover {
-        color: var(--color-text);
-    }
 `;
 
 // Componentes para o calendário

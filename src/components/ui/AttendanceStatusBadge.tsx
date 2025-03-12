@@ -1,8 +1,8 @@
 import React from "react";
 
 import { AttendanceStatus } from "../../utils/types";
-import { StatusBadge } from "../modals/ModalStudent/styles";
 import { colorPalette } from "../../styles/colors";
+import styled from "styled-components";
 
 const AttendanceStatusBadge: React.FC<{ status: AttendanceStatus }> = ({ status }) => {
     const getStatusColor = () => {
@@ -20,5 +20,15 @@ const AttendanceStatusBadge: React.FC<{ status: AttendanceStatus }> = ({ status 
 
     return <StatusBadge color={getStatusColor()}>{status}</StatusBadge>;
 };
+
+const StatusBadge = styled.span<{ color: string }>`
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    background-color: ${props => props.color}20;
+    color: ${props => props.color};
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+`;
 
 export default AttendanceStatusBadge

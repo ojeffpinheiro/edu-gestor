@@ -5,14 +5,13 @@ import { Event } from "../../../utils/types";
 
 import Calendar from "../../../components/Calendar";
 
-import { Button } from '../../../styles/buttons'
+import { Button, CloseButton } from '../../../styles/buttons'
 import {
     ModalContainer,
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
-    CloseButton,
     TabContainer,
     TabButton,
     EventIndicator

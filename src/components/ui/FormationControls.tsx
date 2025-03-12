@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from '../modals/GroupDrawModal/styles'
+import { Input } from '../../styles/inputs'
 import { Student, GroupFormationState, GroupFormationType, FORMATION_CONFIG } from '../../utils/types'
 
 interface FormationControlsProps {

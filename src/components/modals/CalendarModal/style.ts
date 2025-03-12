@@ -1,64 +1,6 @@
 import styled from "styled-components";
 
-type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
-
-const getButtonColor = (variant: ButtonVariant) => {
-    switch (variant) {
-        case 'primary':
-            return `
-                background-color: var(--color-primary);
-                &:hover {
-                    background-color: var(--color-primary-hover);
-                }
-            `;
-        case 'secondary':
-            return `
-                background-color: var(--color-secondary);
-                color: var(--color-text);
-                &:hover {
-                    background-color: var(--color-secondary-hover);
-                }
-            `;
-        case 'success':
-            return `
-                background-color: var(--color-success);
-                &:hover {
-                    background-color: var(--color-success-hover);
-                }
-            `;
-        case 'error':
-            return `
-                background-color: var(--color-error);
-                &:hover {
-                    background-color: var(--color-error-hover);
-                }
-            `;
-        case 'warning':
-            return `
-                background-color: var(--color-warning);
-                &:hover {
-                    background-color: var(--color-warning-hover);
-                }
-            `;
-        case 'info':
-            return `
-                background-color: var(--color-info);
-                &:hover {
-                    background-color: var(--color-info-hover);
-                }
-            `;
-        default:
-            return `
-                background-color: var(--color-primary);
-                &:hover {
-                    background-color: var(--color-primary-hover);
-                }
-            `;
-    }
-};
-
-interface ButtonProps {
-    variant?: ButtonVariant;
+interface TabButtonProps {
     active?: boolean;
 }
 
@@ -99,19 +41,6 @@ export const ModalHeader = styled.div`
 
     h3 {
         margin: 0;
-        color: var(--color-text);
-    }
-`;
-
-/* Botão de Fechar */
-export const CloseButton = styled.button`
-    background: none;
-    border: none;
-    font-size: var(--font-size-xl);
-    cursor: pointer;
-    color: var(--color-text-secondary);
-    
-    &:hover {
         color: var(--color-text);
     }
 `;
@@ -166,10 +95,6 @@ export const TabContainer = styled.div`
         border-radius: var(--border-radius-full);
     }
 `;
-
-interface TabButtonProps {
-    active?: boolean;
-}
 
 export const TabButton = styled.button<TabButtonProps>`
     padding: var(--space-sm) var(--space-md);

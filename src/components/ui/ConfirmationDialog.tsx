@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ActionButton, ButtonsContainer } from '../modals/ModalStudent/styles';
 
 // Definição das props do componente
 interface ConfirmationDialogProps {
@@ -44,6 +43,47 @@ const DialogTitle = styled.h3`
 const DialogMessage = styled.p`
     margin-bottom: var(--space-lg);
     color: var(--color-text);
+`;
+
+export const ActionButton = styled.button`
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: background-color 0.2s;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        filter: brightness(1.1);
+    }
+
+    &:disabled {
+        background-color: var(--color-button-disabled);
+        cursor: not-allowed;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+    }
+`;
+
+export const ButtonsContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+    
+    @media (max-width: var(--breakpoint-md)) {
+        flex-direction: column;
+    }
 `;
 
 const CancelButton = styled(ActionButton)`

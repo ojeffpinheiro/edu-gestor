@@ -1,14 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import { FaRandom, FaTimes } from "react-icons/fa";
 import { Student } from "../../../utils/types";
+
+import { Button, CloseButton } from '../../../styles/buttons'
+
 import {
     ModalContainer,
     ModalContent,
     ModalHeader,
     ModalBody,
     ModalFooter,
-    CloseButton,
-    Button,
     Icon,
     EmptyState,
     DrawnStudentContainer

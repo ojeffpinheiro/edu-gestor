@@ -8,10 +8,6 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
-const spin = keyframes`
-  to { transform: rotate(360deg); }
-`;
-
 export const ModalContainer = styled.div`
     position: fixed;
   top: 0;
@@ -60,30 +56,6 @@ export const ModalHeader = styled.div`
   }
 `;
 
-export const CloseButton = styled.button`
-    background: none;
-    border: none;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    cursor: pointer;
-    color: var(--color-text-third, #64748b);
-    transition: all 0.2s;
-    
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.05);
-      color: var(--color-text, #1e293b);
-    }
-    &:focus {
-      outline: none;
-      box-shadow: var(--shadow-focus, 0 0 0 2px rgba(66, 153, 225, 0.5));
-    }
-`;
-
 export const ModalBody = styled.div`
   padding: 20px;
   overflow-y: auto;
@@ -121,53 +93,6 @@ export const ModalFooter = styled.div`
   .export-hint {
     font-size: 14px;
     color: var(--color-warning, #dd6b20);
-  }
-`;
-
-export const Button = styled.button<{ variant?: string }>`
-    padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
-  background: ${({ variant }) =>
-    variant === "primary" ? "var(--color-primary, #4299e1)" : "var(--color-secondary, #e2e8f0)"};
-  color: ${({ variant }) =>
-    variant === "primary" ? "var(--color-text-on-primary, #ffffff)" : "var(--color-text, #1e293b)"};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  transition: all 0.2s;
-  
-  &:hover:not(:disabled) {
-   opacity: 0.85;
-  }
-  
-  &:active:not(:disabled) {
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px ${({ variant }) =>
-    variant === "primary" ? "rgba(66, 153, 225, 0.3)" : "#F44336"};
-  }
-  
-  .loading-indicator {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: ${spin} 1s ease-in-out infinite;
   }
 `;
 
