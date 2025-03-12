@@ -9,6 +9,8 @@ import { useFormationState } from '../../../hooks/useFormationState'
 import FormationControls from "../../ui/FormationControls";
 import GroupsResultList from "../../ui/GroupsResultList";
 
+import { Button } from '../../../styles/buttons'
+
 import {
     ModalContainer,
     ModalContent,
@@ -16,7 +18,6 @@ import {
     ModalBody,
     ModalFooter,
     CloseButton,
-    Button,
     ErrorMessage,
     SuccessMessage,
     ControlsContainer,

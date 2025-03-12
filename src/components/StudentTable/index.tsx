@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { Student } from "../../utils/types";
+import { Student, StudentAttendance } from "../../utils/types";
 import {
     TableContainer,
     Table,
@@ -20,14 +20,16 @@ interface StudentTableProps {
     onDelete: (id: number) => void;
 }
 
+interface StudentRowProps {
+    studentData: Student,
+    onEdit: (s: Student) => void;
+    onDelete: (id: number) => void
+}
+
 /**
  * Componente de linha da tabela para modularização
  */
-const StudentRow: React.FC<{ studentData: Student; onEdit: (s: Student) => void; onDelete: (id: number) => void }> = ({
-    studentData,
-    onEdit,
-    onDelete
-}) => {
+const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }) => {
     const handleDelete = useCallback(() => {
         if (window.confirm(`Tem certeza que deseja excluir ${studentData.name}?`)) {
             onDelete(studentData.id);
@@ -69,10 +71,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students, onEdit, onDelete 
                         students.map((studentData) => (
                             <StudentRow
                                 key={studentData.id}
-                                studentData={studentData}
-                                onEdit={onEdit}
-                                onDelete={onDelete}
-                            />
+                                studentData={studentData} onEdit={onEdit} onDelete={onDelete}/>
                         ))
                     ) : (
                         <tr>

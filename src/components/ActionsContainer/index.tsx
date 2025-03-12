@@ -1,6 +1,8 @@
 import React from "react";
 import { FaUserPlus, FaRandom, FaUser, FaCalendarAlt } from "react-icons/fa";
-import { Container, ButtonGroup, Button, Icon } from "./styles";
+
+import { Button } from '../../styles/buttons'
+import { Container, ButtonGroup, Icon } from "./styles";
 
 interface ActionsContainerProps {
     onAddStudent: () => void;

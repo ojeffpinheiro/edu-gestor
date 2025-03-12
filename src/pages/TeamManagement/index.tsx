@@ -1,39 +1,30 @@
 import React, { useState } from 'react';
 
+import { Event, Student, StudentAttendance } from '../../utils/types';
+
 import ActionsContainer from '../../components/ActionsContainer';
-import Calendar from '../../components/Calendar';
 import StudentTable from '../../components/StudentTable';
+
 import StudentModal from '../../components/modals/ModalStudent';
-
-import { Event, Student } from '../../utils/types';
-
-import {
-    PageContainer,
-    Button,
-    Title,
-    ModalContainer,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    CloseButton,
-    EventIndicator,
-    TabContainer,
-    TabButton
-} from './styles';
 import GroupDrawModal from '../../components/modals/GroupDrawModal';
 import StudentFormModal from '../../components/modals/StudentFormModal';
 import StudentDrawModal from '../../components/modals/StudentDrawModal';
+import CalendarModal from '../../components/modals/CalendarModal';
+
+import {
+    PageContainer,
+    Title
+} from './styles';
 
 const TeamManagement: React.FC = () => {
-    const [alunos, setAlunos] = useState<Student[]>([
-        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com' },
-        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com' },
-        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com' },
+    const [students, setStudents] = useState<StudentAttendance[]>([
+        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90 },
+        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85 },
+        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95 },
     ]);
     const [showModalStudent, setShowModalStudent] = useState<boolean>(true);
     const [showForm, setShowForm] = useState<boolean>(false);
-    const [alunoEditando, setAlunoEditando] = useState<Student | null>(null);
+    const [editedStudent, setEditedStudent] = useState<Student | null>(null);
     const [formData, setFormData] = useState<Omit<Student, 'id'>>({ name: '', email: '' });
 
     const [showSorteioGrupoModal, setShowSorteioGrupoModal] = useState<boolean>(false);
@@ -41,12 +32,12 @@ const TeamManagement: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [activeTab, setActiveTab] = useState<string>('todos');
     const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
-    
+
     // Estado para aluno sorteado
     const [drawnStudent, setDrawnStudent] = useState<Student | null>(null);
 
     // Eventos de exemplo para o calendário
-    const [eventos, setEventos] = useState<Event[]>([
+    const [events, setEvents] = useState<Event[]>([
         {
             id: 1,
             title: 'Prova Bimestral',
@@ -81,38 +72,38 @@ const TeamManagement: React.FC = () => {
         setShowStudentDrawModal(false);
         setDrawnStudent(null);
     };
-    
+
     // Função de sorteio de aluno
     const realizarSorteioAluno = () => {
-        if (alunos.length > 0) {
-            const indiceAleatorio = Math.floor(Math.random() * alunos.length);
-            setDrawnStudent(alunos[indiceAleatorio]);
+        if (students.length > 0) {
+            const indiceAleatorio = Math.floor(Math.random() * students.length);
+            setDrawnStudent(students[indiceAleatorio]);
         }
     };
 
     const handleAdicionarAluno = () => {
-        setAlunoEditando(null);
+        setEditedStudent(null);
         setFormData({ name: '', email: '' });
         setShowForm(true);
     };
 
     const handleEditarAluno = (aluno: Student) => {
-        setAlunoEditando(aluno);
+        setEditedStudent(aluno);
         setFormData({ name: aluno.name, email: aluno.email });
         setShowForm(true);
     };
 
     const handleExcluirAluno = (id: number) => {
-        setAlunos(alunos.filter((aluno) => aluno.id !== id));
+        setStudents(students.filter((aluno) => aluno.id !== id));
     };
 
     const handleSalvarAluno = () => {
-        if (alunoEditando) {
-            setAlunos(
-                alunos.map((a) => (a.id === alunoEditando.id ? { ...a, ...formData } : a))
+        if (editedStudent) {
+            setStudents(
+                students.map((a) => (a.id === editedStudent.id ? { ...a, ...formData, attendance: a.attendance } : a))
             );
         } else {
-            setAlunos([...alunos, { ...formData, id: Date.now() }]);
+            setStudents([...students, { ...formData, id: Date.now(), attendance: 0 }]);
         }
         setShowForm(false);
     };
@@ -157,16 +148,6 @@ const TeamManagement: React.FC = () => {
         setActiveTab(tab);
     };
 
-    // Converter eventos para o formato esperado pelo componente Calendar
-    const mapEventsToCalendarFormat = () => {
-        return eventos.filter(evento =>
-            activeTab === 'todos' || evento.type === activeTab
-        ).map(evento => ({
-            date: evento.date,
-            title: evento.title
-        }));
-    };
-
     return (
         <>
             <PageContainer>
@@ -177,8 +158,8 @@ const TeamManagement: React.FC = () => {
                     onSortGroups={handleSorteioGrupos}
                     onSortStudent={handleShowStudentDraw}
                     onShowCalendar={handleShowCalendario} />
+                <StudentTable students={students} onEdit={handleEditarAluno} onDelete={handleExcluirAluno}  />
 
-                <StudentTable students={alunos} onEdit={handleEditarAluno} onDelete={handleExcluirAluno} />
             </PageContainer>
 
             {showForm && (
@@ -187,17 +168,17 @@ const TeamManagement: React.FC = () => {
                     onInputChange={handleInputChange}
                     onSave={handleSalvarAluno}
                     onClose={handleCancelar} />)}
-            
+
             {showModalStudent && <StudentModal onClose={handleCloseModalStudent} />}
-            
+
             {/* Modal de Sorteio de Grupos */}
             {showSorteioGrupoModal && (
-                <GroupDrawModal students={alunos} onClose={handleCloseSorteioGrupoModal} />
+                <GroupDrawModal students={students} onClose={handleCloseSorteioGrupoModal} />
             )}
 
             {showStudentDrawModal && (
                 <StudentDrawModal
-                    students={alunos}
+                    students={students}
                     onClose={handleCloseStudentDraw}
                     onDraw={realizarSorteioAluno}
                     drawnStudent={drawnStudent}
@@ -206,67 +187,7 @@ const TeamManagement: React.FC = () => {
 
             {/* Modal de Calendário */}
             {showCalendarioModal && (
-                <ModalContainer>
-                    <ModalContent className="large">
-                        <ModalHeader>
-                            <h3>Calendário da Turma</h3>
-                            <CloseButton onClick={handleCloseCalendarioModal}>×</CloseButton>
-                        </ModalHeader>
-                        <ModalBody>
-                            <TabContainer>
-                                <TabButton
-                                    active={activeTab === 'todos'}
-                                    onClick={() => handleTabChange('todos')}
-                                >
-                                    Todos
-                                </TabButton>
-                                <TabButton
-                                    active={activeTab === 'atividade'}
-                                    onClick={() => handleTabChange('atividade')}
-                                    className="atividade"
-                                >
-                                    Atividades
-                                </TabButton>
-                                <TabButton
-                                    active={activeTab === 'avaliacao'}
-                                    onClick={() => handleTabChange('avaliacao')}
-                                    className="avaliacao"
-                                >
-                                    Avaliações
-                                </TabButton>
-                                <TabButton
-                                    active={activeTab === 'evento'}
-                                    onClick={() => handleTabChange('evento')}
-                                    className="evento"
-                                >
-                                    Eventos
-                                </TabButton>
-                            </TabContainer>
-
-                            <Calendar
-                                initialSelectedDate={selectedDate}
-                                onSelectDate={handleDateSelect}
-                                events={mapEventsToCalendarFormat()}
-                                className="calendar-wrapper"
-                            />
-
-                            <div className="legend" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                                <div style={{ marginRight: '1rem' }}>
-                                    <EventIndicator className="atividade" /> Atividades
-                                </div>
-                                <div style={{ marginRight: '1rem' }}>
-                                    <EventIndicator className="avaliacao" /> Avaliações
-                                </div>
-                                <div>
-                                    <EventIndicator className="evento" /> Eventos
-                                </div>
-                            </div>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button variant="secondary" onClick={handleCloseCalendarioModal}>Fechar</Button>
-                        </ModalFooter>
-                    </ModalContent>
-                </ModalContainer>
+                <CalendarModal events={events} onClose={handleCloseCalendarioModal} selectedDate={selectedDate} onSelectDate={handleDateSelect} activeTab={activeTab} onTabChange={handleTabChange} />
             )}
         </>
     );

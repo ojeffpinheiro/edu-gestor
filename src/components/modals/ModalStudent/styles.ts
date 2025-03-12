@@ -227,32 +227,7 @@ export const TableRow = styled.tr`
     }
 `;
 
-export const SectionContainer = styled.div<{ backgroundColor: string }>`
-    margin-bottom: var(--space-xl);
-    padding: var(--space-md);
-    border-radius: var(--border-radius-md);
-    background-color: ${props => props.backgroundColor || 'var(--color-background-third, #f7f9fc)'};
-    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.05));
-    border: 1px solid var(--color-border-light, #eaeaea);
-    transition: all 0.3s ease;
-`;
 
-export const SectionHeader = styled.h3`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--space-md);
-    font-size: var(--font-size-lg);
-    color: var(--color-title-card);
-    cursor: pointer;
-    padding: var(--space-sm);
-    border-radius: var(--border-radius-sm);
-    transition: background-color 0.2s;
-
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-`;
 
 /**
  * Empty state message styling

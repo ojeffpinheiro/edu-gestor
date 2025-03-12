@@ -1,52 +1,47 @@
+// Student Interface
 export interface Student {
-  id: number;
-  name: string;
-  email: string;
+    id: number;
+    name: string;
+    email: string;
 }
 
+// Event Interface
 export interface Event {
-  id: number;
-  title: string;
-  date: Date;
-  type: 'activity' | 'assessment' | 'event';
-  description: string;
+    id: number;
+    title: string;
+    date: Date;
+    type: 'activity' | 'assessment' | 'event';
+    description: string;
 }
 
+// Event Filter Interface
 export interface EventFilter {
-  type?: 'activity' | 'assessment' | 'event' | 'all';
-  startDate?: Date;
-  endDate?: Date;
+    type?: 'activity' | 'assessment' | 'event' | 'all';
+    startDate?: Date;
+    endDate?: Date;
 }
 
-
+// Button Variants
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
 
-/**
- * Tipos de status de frequência disponíveis
- */
+// Attendance Status Types
 export type AttendanceStatus = 'Presente' | 'Ausente' | 'Justificada';
 
-/**
- * Interface para representar um registro de frequência
- */
+// Attendance Record Interface
 export interface AttendanceRecord {
     date: string;
     status: AttendanceStatus;
 }
 
-/**
- * Interface para representar uma avaliação
- */
+// Assessment Interface
 export interface Assessment {
     instrument: string;
     grade: number;
 }
 
-/**
- * Interface para representar um estudante
- */
+// Student Data Interface
 export interface StudentData {
-    id: string;           // Adicionado ID do aluno para identificação única
+    id: string; // Unique identifier for the student
     name: string;
     email: string;
     assessments: Assessment[];
@@ -54,23 +49,23 @@ export interface StudentData {
     comments: string;
 }
 
+// Export Options Interface
 export interface ExportOptions {
     includeGrades: boolean;
     includeAttendance: boolean;
     includeComments: boolean;
 }
 
-/**
- * Propriedades do componente ModalAluno
- */
+// Student Modal Props Interface
 export interface StudentModalProps {
-    studentData?: StudentData;     // Dados do aluno (opcional)
-    isLoading?: boolean;           // Indicador de carregamento
-    onClose: () => void;           // Callback para fechar o modal
-    onExport?: (studentId: string, exportOptions: ExportOptions) => void; // Callback opcional para exportação
-    onError?: (error: Error) => void; // Callback para tratamento de erros
+    studentData?: StudentData; // Optional student data
+    isLoading?: boolean; // Loading indicator
+    onClose: () => void; // Callback to close the modal
+    onExport?: (studentId: string, exportOptions: ExportOptions) => void; // Optional export callback
+    onError?: (error: Error) => void; // Error handling callback
 }
 
+// Report Interface
 export interface Report {
     checked: boolean;
     onChange: () => void;
@@ -78,6 +73,7 @@ export interface Report {
     disabled?: boolean;
 }
 
+// Collapsible Props Interface
 export interface CollapsibleProps {
     title: string;
     initiallyExpanded?: boolean;
@@ -88,53 +84,88 @@ export interface CollapsibleProps {
     children: React.ReactNode;
 }
 
-/**
- * Tipos de formação de grupos disponíveis
- */
+// Group Formation Types Enum
 export enum GroupFormationType {
     BY_SIZE = 'bySize',
     BY_NUMBER = 'byNumber'
 }
 
-/**
- * Constantes para configuração do componente
- */
+// Formation Configuration Constants
 export const FORMATION_CONFIG = {
     MIN_GROUP_SIZE: 2,
     MIN_GROUPS: 1,
     DEFAULT_PROCESSING_DELAY: 600
 };
 
-/**
- * Props interface para o componente GroupFormationModal
- */
+// Group Formation Modal Props Interface
 export interface GroupFormationModalProps {
-    /** Lista de estudantes disponíveis para formar grupos */
-    students: Student[];
-    /** Função chamada quando o modal é fechado */
-    onClose: () => void;
-    /** Função opcional para salvar os grupos formados */
-    onSave?: (groups: Student[][]) => void;
-    /** Tempo de simulação do processamento em ms (para fins de teste) */
-    processingDelay?: number;
+    students: Student[]; // List of available students
+    onClose: () => void; // Callback when the modal is closed
+    onSave?: (groups: Student[][]) => void; // Optional save function for formed groups
+    processingDelay?: number; // Simulation processing time in ms
 }
 
-/**
- * Interface para o estado do formulário de formação de grupos
- */
+// Group Formation State Interface
 export interface GroupFormationState {
     groupSize: number;
     numberOfGroups: number;
     formationType: GroupFormationType;
 }
 
-/**
- * Interface para o estado de feedback do modal
- */
+// Feedback State Interface
 export interface FeedbackState {
     errorMessage: string;
     successMessage: string;
     isProcessing: boolean;
     showResults: boolean;
     hasUnsavedChanges: boolean;
+}
+
+// Evaluation Part Interface
+export interface EvaluationPart {
+    id: string;
+    name: string;
+    weight: number;
+    maxScore: number;
+}
+
+// Evaluation Tool Interface
+export interface EvaluationTool {
+    id: string;
+    name: string;
+    partId: string;
+    weight: number;
+    maxScore: number;
+}
+
+// Student Score Interface
+export interface StudentScore {
+    studentId: string;
+    toolId: string;
+    score: number;
+}
+
+// Student Attendance Interface
+export interface StudentAttendance {
+    id: number;
+    name: string;
+    email: string;
+    attendance: number; // Attendance percentage (0-100)
+}
+
+// Evaluation Interface
+export interface Evaluation {
+    id: string;
+    name: string;
+    trimester: number;
+    parts: EvaluationPart[];
+    tools: EvaluationTool[];
+    passingGrade: number;
+    formula: string;
+    recoveryEvaluation?: {
+        id: string;
+        name: string;
+        tools: EvaluationTool[];
+        scores: StudentScore[];
+    };
 }

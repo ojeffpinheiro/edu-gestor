@@ -1,6 +1,11 @@
 import React, { useEffect, useRef } from "react";
+import { FaTimes } from "react-icons/fa";
+
 import { Event } from "../../../utils/types";
+
 import Calendar from "../../../components/Calendar";
+
+import { Button } from '../../../styles/buttons'
 import {
     ModalContainer,
     ModalContent,
@@ -8,12 +13,11 @@ import {
     ModalBody,
     ModalFooter,
     CloseButton,
-    Button,
     TabContainer,
     TabButton,
     EventIndicator
 } from "./style";
-import { FaTimes } from "react-icons/fa";
+
 
 interface CalendarModalProps {
     events: Event[];

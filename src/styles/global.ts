@@ -4,10 +4,10 @@ import { getTheme } from "./colors";
 export const GlobalStyles = createGlobalStyle`
   :root {
     ${({ theme }) => {
-      // Se `theme.mode` existe e é 'light' ou 'dark', use ele. Caso contrário, use 'light' como fallback.
-      const currentTheme = getTheme(theme.mode || "light");
+    // Se `theme.mode` existe e é 'light' ou 'dark', use ele. Caso contrário, use 'light' como fallback.
+    const currentTheme = getTheme(theme.mode || "light");
 
-      return `
+    return `
         --color-background: ${currentTheme.background.primary};
         --color-background-secondary: ${currentTheme.background.secondary};
         --color-background-third: ${currentTheme.background.third};
@@ -83,7 +83,7 @@ export const GlobalStyles = createGlobalStyle`
         --breakpoint-lg: 992px;
         --breakpoint-xl: 1200px;
       `;
-    }}
+  }}
   }
 
   * {
@@ -111,9 +111,27 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   button, input, select, textarea {
+  padding: var(--space-sm);
+    border: 1px solid var(--color-secondary);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-md);
     font-family: inherit;
     font-size: inherit;
   }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: var(--shadow-sm);
+}
+
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: var(--border-radius-md);
+    padding: var(--space-sm);
+    transition: background-color 0.3s;
+}
 
   /* For better mobile responsiveness */
   @media (max-width: 768px) {

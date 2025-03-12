@@ -6,7 +6,6 @@ import { formatDate } from '../../../utils/dateFormatter';
 import { useToast } from '../../../hooks/useToast';
 
 import AttendanceStatusBadge from '../../ui/AttendanceStatusBadge';
-import ReportCheckbox from '../../ui/ReportCheckbox';
 import ErrorBoundary from '../../ui/ErrorBoundary';
 import Spinner from '../../ui/Spinner';
 import ConfirmationDialog from '../../ui/ConfirmationDialog';
@@ -14,11 +13,13 @@ import ConfirmationDialog from '../../ui/ConfirmationDialog';
 import {
     Assessment,
     AttendanceRecord,
-    CollapsibleProps,
     ExportOptions,
     StudentData,
     StudentModalProps
 } from '../../../utils/types';
+
+import { Table } from '../../../styles/table'
+import { Button } from '../../../styles/buttons'
 
 import {
     ModalContainer,
@@ -27,16 +28,13 @@ import {
     ModalBody,
     ModalFooter,
     CloseButton,
-    Button,
-    Table,
     TableHeader,
     TableCell,
     TableRow,
-    SectionContainer,
-    SectionHeader,
     EmptyStateMessage,
     AttendanceStatsContainer,
 } from './styles';
+import CollapsibleSection from '../../ui/CollapsibleSection';
 
 // Configuration for different sections of the modal
 const SECTION_CONFIG = {
@@ -78,62 +76,6 @@ const DEFAULT_STUDENT_DATA: StudentData = {
         { date: '2025-03-03', status: 'Justificada' },
     ],
     comments: 'Aluno muito participativo e dedicado. Demonstra bom domínio do conteúdo e colabora nas atividades em grupo. Precisa melhorar pontualidade na entrega de trabalhos.',
-};
-
-/**
- * Collapsible section component to display different types of student data
- */
-const CollapsibleSection: React.FC<CollapsibleProps> = ({
-    title,
-    initiallyExpanded = false,
-    sectionColor,
-    includeInReport,
-    onToggleInclude,
-    children
-}) => {
-    const [isExpanded, setIsExpanded] = useState(initiallyExpanded);
-    const sectionId = `content-${title.toLowerCase().replace(/\s+/g, '-')}`;
-
-    const toggleExpanded = useCallback(() => {
-        setIsExpanded(prevExpanded => !prevExpanded);
-    }, []);
-
-    const handleKeyboardToggle = useCallback((e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            toggleExpanded();
-            e.preventDefault();
-        }
-    }, [toggleExpanded]);
-
-    return (
-        <SectionContainer
-            backgroundColor={sectionColor}
-            data-testid={`section-${title.toLowerCase().replace(/\s+/g, '-')}`}
-        >
-            <SectionHeader
-                onClick={toggleExpanded}
-                aria-expanded={isExpanded}
-                tabIndex={0}
-                role="button"
-                aria-controls={sectionId}
-                onKeyDown={handleKeyboardToggle}
-            >
-                {title} {isExpanded ? <FaAngleUp aria-hidden="true" /> : <FaAngleDown aria-hidden="true" />}
-            </SectionHeader>
-
-            <ReportCheckbox
-                checked={includeInReport}
-                onChange={onToggleInclude}
-                label={`Incluir ${title.toLowerCase()} no relatório`}
-            />
-
-            {isExpanded && (
-                <div id={sectionId}>
-                    {children}
-                </div>
-            )}
-        </SectionContainer>
-    );
 };
 
 /**
