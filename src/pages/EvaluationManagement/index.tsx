@@ -1,45 +1,43 @@
-import React, { useEffect, useState } from "react";
-
-import { Evaluation, EvaluationPart, EvaluationTool, Student, StudentAttendance, StudentScore } from "../../utils/types";
-
-// import  from '../../components/EvaluationsList'
-
-import { ActionButton, Container, MainContent, NavButton, Section, SectionHeader, SectionTitle, SideBar } from './styles'
+import React, { useEffect, useState, useCallback } from "react";
+import { Evaluation, StudentScore } from "../../utils/types";
 import EvaluationsList from "../../components/EvaluationsList";
-
-
-interface StudentData extends Student {
-    attendance: number;
-}
+import EvaluationForm from "../../components/modals/EvaluationForm";
+import RegisterScoresModal from "../../components/modals/RegisterScoresModal";
+import {
+    ActionButton,
+    NavButton,
+    Container,
+    MainContent,
+    Section,
+    SectionHeader,
+    SectionTitle,
+    SideBar,
+    FilterSelect,
+    FilterLabel,
+    FilterContainer
+} from './styles';
 
 const EvaluationManagement: React.FC = () => {
-    const [students, setStudents] = useState<StudentData[]>([]);
+    const [isEvaluationModalOpen, setIsEvaluationModalOpen] = useState<boolean>(false);
     const [evaluations, setEvaluations] = useState<Evaluation[]>([]);
-    const [scores, setScores] = useState<StudentScore[]>([]);
     const [activeView, setActiveView] = useState<string>('evaluations');
     const [selectedEvaluation, setSelectedEvaluation] = useState<Evaluation | null>(null);
-    const [showResults, setShowResults] = useState<boolean>(false);
-    const [filterOptions, setFilterOptions] = useState({
-        trimester: 0,
-        partId: '',
-        evaluationId: ''
-    });
+    const [showScoresModal, setShowScoresModal] = useState<boolean>(false);
+    const [filterText, setFilterText] = useState<string>('');
+    const [schoolFilter, setSchoolFilter] = useState<string>('');
+    const [trimesterFilter, setTrimesterFilter] = useState<string>('');
+    const [seriesFilter, setSeriesFilter] = useState<string>('');
+    const [typeFilter, setTypeFilter] = useState<string>('');
+    const [statusFilter, setStatusFilter] = useState<string>('');
 
     useEffect(() => {
-        // Dados de exemplo
-        const mockStudents: StudentAttendance[] = [
-            { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90 },
-            { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85 },
-            { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95 },
-        ];
-
         const mockEvaluations: Evaluation[] = [
             {
-                id: '1',
+                id: 1,
                 name: 'Avaliação do 1º Trimestre',
                 trimester: 1,
                 passingGrade: 6,
-                formula: 'standard', // standard, weighted, custom
+                formula: 'standard',
                 parts: [
                     { id: 'p1', name: 'Teórico', weight: 60, maxScore: 10 },
                     { id: 'p2', name: 'Prático', weight: 40, maxScore: 10 }
@@ -49,246 +47,191 @@ const EvaluationManagement: React.FC = () => {
                     { id: 't2', name: 'Trabalho em grupo', partId: 'p1', weight: 20, maxScore: 10 },
                     { id: 't3', name: 'Projeto prático', partId: 'p2', weight: 25, maxScore: 10 },
                     { id: 't4', name: 'Apresentação', partId: 'p2', weight: 15, maxScore: 10 }
-                ]
-            }
+                ],
+                school: '9 de Out',
+                series: 'Ensino Médio 1 ano',
+                class: 'A',
+                objective: 'Avaliar conhecimentos do primeiro trimestre',
+                contents: '',
+                evaluationCriteria: '',
+                subject: 'Matemática',
+                record: '',
+                applicationDate: new Date('2025-03-30'),
+                type: 'Avaliação trimestral',
+                status: 'PLANEJADA',
+                resources: []
+            },
         ];
-
-        const mockScores: StudentScore[] = [
-            { studentId: '1', toolId: 't1', score: 8.5 },
-            { studentId: '1', toolId: 't2', score: 9.0 },
-            { studentId: '1', toolId: 't3', score: 7.5 },
-            { studentId: '1', toolId: 't4', score: 8.0 },
-
-            { studentId: '2', toolId: 't1', score: 7.0 },
-            { studentId: '2', toolId: 't2', score: 8.5 },
-            { studentId: '2', toolId: 't3', score: 6.5 },
-            { studentId: '2', toolId: 't4', score: 7.0 },
-
-            { studentId: '3', toolId: 't1', score: 5.5 },
-            { studentId: '3', toolId: 't2', score: 6.0 },
-            { studentId: '3', toolId: 't3', score: 6.0 },
-            { studentId: '3', toolId: 't4', score: 5.5 },
-
-            { studentId: '4', toolId: 't1', score: 9.0 },
-            { studentId: '4', toolId: 't2', score: 9.5 },
-            { studentId: '4', toolId: 't3', score: 9.0 },
-            { studentId: '4', toolId: 't4', score: 8.5 },
-
-            { studentId: '5', toolId: 't1', score: 4.5 },
-            { studentId: '5', toolId: 't2', score: 5.0 },
-            { studentId: '5', toolId: 't3', score: 5.5 },
-            { studentId: '5', toolId: 't4', score: 4.0 }
-        ];
-
-        setStudents(mockStudents);
         setEvaluations(mockEvaluations);
-        setScores(mockScores);
         setSelectedEvaluation(mockEvaluations[0]);
+    }, []);
 
-    })
+    const openEvaluationModal = useCallback((evaluation: Evaluation | null) => {
+        setIsEvaluationModalOpen(true);
+        setSelectedEvaluation(evaluation);
+    }, []);
 
-    // Funções para gerenciar avaliações
-    const addEvaluation = (evaluation: Evaluation) => {
-        setEvaluations([...evaluations, evaluation]);
-    };
+    const closeEvaluationModal = useCallback(() => {
+        setIsEvaluationModalOpen(false);
+        setSelectedEvaluation(null);
+    }, []);
 
-    const updateEvaluation = (updatedEvaluation: Evaluation) => {
-        setEvaluations(evaluations.map(ev =>
-            ev.id === updatedEvaluation.id ? updatedEvaluation : ev
-        ));
-        if (selectedEvaluation?.id === updatedEvaluation.id) {
-            setSelectedEvaluation(updatedEvaluation);
-        }
-    };
+    const openScoresModal = useCallback((evaluation: Evaluation) => {
+        setSelectedEvaluation(evaluation);
+        setShowScoresModal(true);
+    }, []);
 
-    const deleteEvaluation = (id: string) => {
-        setEvaluations(evaluations.filter(ev => ev.id !== id));
-        if (selectedEvaluation?.id === id) {
-            setSelectedEvaluation(null);
-        }
-    };
+    const closeScoresModal = useCallback(() => {
+        setShowScoresModal(false);
+        setSelectedEvaluation(null);
+    }, []);
 
-    // Função para salvar pontuações dos alunos
-    const saveScores = (newScores: StudentScore[]) => {
-        // Remove scores existentes dos mesmos alunos/ferramentas
-        const filteredScores = scores.filter(existingScore =>
-            !newScores.some(newScore =>
-                newScore.studentId === existingScore.studentId &&
-                newScore.toolId === existingScore.toolId
-            )
-        );
-
-        // Adiciona os novos scores
-        setScores([...filteredScores, ...newScores]);
-    };
-
-    // Função para gerenciar avaliações de recuperação
-    const updateRecoveryEvaluation = (evaluationId: string, recoveryEvaluation: Evaluation['recoveryEvaluation']) => {
-        const updatedEvaluations = evaluations.map(evaluation => {
-            if (evaluation.id === evaluationId) {
-                return { ...evaluation, recoveryEvaluation };
-            }
-            return evaluation;
-        });
-
-        setEvaluations(updatedEvaluations);
-        if (selectedEvaluation?.id === evaluationId) {
-            setSelectedEvaluation({ ...selectedEvaluation, recoveryEvaluation });
-        }
-    };
-
-    // Função para atualizar partes de avaliação
-    const updateEvaluationParts = (evaluationId: string, parts: EvaluationPart[]) => {
-        const updatedEvaluations = evaluations.map(evaluation => {
-            if (evaluation.id === evaluationId) {
-                return { ...evaluation, parts };
-            }
-            return evaluation;
-        });
-
-        setEvaluations(updatedEvaluations);
-        if (selectedEvaluation?.id === evaluationId) {
-            setSelectedEvaluation({ ...selectedEvaluation, parts });
-        }
-    };
-
-    // Função para atualizar ferramentas de avaliação
-    const updateEvaluationTools = (evaluationId: string, tools: EvaluationTool[]) => {
-        const updatedEvaluations = evaluations.map(evaluation => {
-            if (evaluation.id === evaluationId) {
-                return { ...evaluation, tools };
-            }
-            return evaluation;
-        });
-
-        setEvaluations(updatedEvaluations);
-        if (selectedEvaluation?.id === evaluationId) {
-            setSelectedEvaluation({ ...selectedEvaluation, tools });
-        }
-    };
-
-    // Função para atualizar a fórmula de cálculo
-    const updateEvaluationFormula = (evaluationId: string, formula: string) => {
-        const updatedEvaluations = evaluations.map(evaluation => {
-            if (evaluation.id === evaluationId) {
-                return { ...evaluation, formula };
-            }
-            return evaluation;
-        });
-
-        setEvaluations(updatedEvaluations);
-        if (selectedEvaluation?.id === evaluationId) {
-            setSelectedEvaluation({ ...selectedEvaluation, formula });
-        }
-    };
-
-    // Função para calcular a nota final do aluno em uma avaliação
-    const calculateFinalGrade = (studentId: string, evaluation: Evaluation): number => {
-        if (!evaluation) return 0;
-
-        const studentScores = scores.filter(score =>
-            score.studentId === studentId &&
-            evaluation.tools.some(tool => tool.id === score.toolId)
-        );
-
-        if (studentScores.length === 0) return 0;
-
-        if (evaluation.formula === 'standard') {
-            // Método padrão: média ponderada das notas pelos pesos das ferramentas
-            let totalWeight = 0;
-            let weightedSum = 0;
-
-            for (const tool of evaluation.tools) {
-                const score = studentScores.find(s => s.toolId === tool.id);
-                if (score) {
-                    weightedSum += (score.score * tool.weight);
-                    totalWeight += tool.weight;
-                }
-            }
-
-            return totalWeight ? (weightedSum / totalWeight) : 0;
-        } else if (evaluation.formula === 'weighted') {
-            // Método por partes: calcula a nota de cada parte e depois a média ponderada das partes
-            const partScores: { [key: string]: { sum: number, weight: number } } = {};
-
-            // Inicializa cada parte
-            evaluation.parts.forEach(part => {
-                partScores[part.id] = { sum: 0, weight: 0 };
-            });
-
-            // Calcula a nota para cada parte
-            for (const tool of evaluation.tools) {
-                const score = studentScores.find(s => s.toolId === tool.id);
-                if (score && partScores[tool.partId]) {
-                    partScores[tool.partId].sum += (score.score * tool.weight);
-                    partScores[tool.partId].weight += tool.weight;
-                }
-            }
-
-            // Calcula a média ponderada das partes
-            let finalGrade = 0;
-            let totalPartWeight = 0;
-
-            evaluation.parts.forEach(part => {
-                if (partScores[part.id].weight > 0) {
-                    const partGrade = partScores[part.id].sum / partScores[part.id].weight;
-                    finalGrade += (partGrade * part.weight);
-                    totalPartWeight += part.weight;
-                }
-            });
-
-            return totalPartWeight ? (finalGrade / totalPartWeight) : 0;
+    const addEvaluation = useCallback(async (newEvaluation: Evaluation) => {
+        if (selectedEvaluation) {
+            // Editar avaliação existente
+            setEvaluations(prevEvaluations =>
+                prevEvaluations.map(ev => ev.id === selectedEvaluation.id ? newEvaluation : ev)
+            );
         } else {
-            // Fórmula personalizada (simplificada para este exemplo)
-            // Na implementação real, seria utilizado um parser de expressões
-            return (studentScores.reduce((sum, s) => sum + s.score, 0) / studentScores.length);
+            // Adicionar nova avaliação
+            setEvaluations(prevEvaluations => [...prevEvaluations, newEvaluation]);
         }
+        closeEvaluationModal();
+    }, [closeEvaluationModal, selectedEvaluation]);
+
+    const duplicateEvaluation = useCallback((evaluation: Evaluation) => {
+        const duplicatedEvaluation = { ...evaluation, id: Date.now() }; // Gera um novo ID
+        setEvaluations(prevEvaluations => [...prevEvaluations, duplicatedEvaluation]);
+    }, []);
+
+    const filteredEvaluations = evaluations.filter(evaluation =>
+        evaluation.name.toLowerCase().includes(filterText.toLowerCase()) &&
+        (schoolFilter ? evaluation.school === schoolFilter : true) &&
+        (trimesterFilter ? evaluation.trimester === parseInt(trimesterFilter) : true) &&
+        (seriesFilter ? evaluation.series === seriesFilter : true) &&
+        (typeFilter ? evaluation.type === typeFilter : true) &&
+        (statusFilter ? evaluation.status === statusFilter : true)
+    );
+
+    const handleSaveScores = (scores: StudentScore[]) => {
+        // Lógica para salvar as notas
+        console.log("Notas registradas:", scores);
+        closeScoresModal();
     };
 
-    // Função para calcular se o aluno está abaixo da média
-    const isBelowPassingGrade = (studentId: string, evaluation: Evaluation): boolean => {
-        if (!evaluation) return false;
-        const grade = calculateFinalGrade(studentId, evaluation);
-        return grade < evaluation.passingGrade;
-    };
-    
+    const mockStudents = [
+        { id: 1, name: "Ana Souza", email: "ana.souza@example.com" },
+        { id: 2, name: "Carlos Oliveira", email: "carlos.oliveira@example.com" },
+        { id: 3, name: "Fernanda Lima", email: "fernanda.lima@example.com" },
+        { id: 4, name: "Rafael Mendes", email: "rafael.mendes@example.com" },
+        { id: 5, name: "Juliana Costa", email: "juliana.costa@example.com" },
+        { id: 6, name: "Lucas Pereira", email: "lucas.pereira@example.com" },
+        { id: 7, name: "Mariana Silva", email: "mariana.silva@example.com" },
+        { id: 8, name: "Gabriel Santos", email: "gabriel.santos@example.com" },
+        { id: 9, name: "Isabela Rocha", email: "isabela.rocha@example.com" },
+        { id: 10, name: "Felipe Almeida", email: "felipe.almeida@example.com" },
+    ];
+
     return (
         <Container>
             <SideBar>
                 <NavButton active={activeView === 'evaluations'} onClick={() => setActiveView('evaluations')}>AVALIAÇÕES</NavButton>
-                <NavButton active={activeView === 'students'} onClick={() => setActiveView('students')} >ALUNOS</NavButton>
-                {selectedEvaluation && (
-                    <>
-                        <NavButton active={activeView === 'parts'} onClick={() => setActiveView('parts')}>Partes da Avaliação</NavButton>
-                        <NavButton active={activeView === 'tools'} onClick={() => setActiveView('tools')}>Instrumentos Avaliativos</NavButton>
-                        <NavButton active={activeView === 'scores'} onClick={() => setActiveView('scores')}>Notas</NavButton>
-                        <NavButton active={activeView === 'results'} onClick={() => setActiveView('results')}>Resultados</NavButton>
-                        <NavButton active={activeView === 'rule'} onClick={() => setActiveView('rule')}>Fórmula de Cálculo da Média</NavButton>
-                        <NavButton active={activeView === 'recovery'} onClick={() => setActiveView('recovery')}>Recuperação</NavButton>
-                    </>
-                )}
+                <NavButton active={activeView === 'scores'} onClick={() => setActiveView('scores')}>NOTAS</NavButton>
+                <NavButton active={activeView === 'recovery'} onClick={() => setActiveView('recovery')}>RECUPERAÇÃO</NavButton>
+                <NavButton active={activeView === 'results'} onClick={() => setActiveView('results')}>RESULTADO FINAL</NavButton>
             </SideBar>
 
             <MainContent>
-                {activeView === 'evaluations' && (
-                    <Section>
-                        <SectionHeader>
-                            <SectionTitle>Gerenciamento de Avaliações</SectionTitle>
-                            <ActionButton onClick={() => setSelectedEvaluation(null)} >Nova Avaliação</ActionButton>
-                        </SectionHeader>
-                        <EvaluationsList evaluations={evaluations} onDelete={deleteEvaluation} onSelect={setSelectedEvaluation} />
-                    </Section>
-                )}
+                <Section>
+                    <SectionHeader>
+                        <SectionTitle>Gerenciamento de Avaliações</SectionTitle>
+                        <ActionButton onClick={() => openEvaluationModal(null)}>Nova Avaliação</ActionButton>
+                    </SectionHeader>
 
-                {activeView === 'students' && (
-                    <Section>
-                        <SectionTitle>Alunos e Frequência</SectionTitle>
-                    </Section>
-                )}        
+                    <FilterContainer>
+                        <FilterLabel>Filtrar por Escola:</FilterLabel>
+                        <FilterSelect value={schoolFilter} onChange={(e) => setSchoolFilter(e.target.value)}>
+                            <option value="">Todas</option>
+                            <option value="9 de Out">9 de Out</option>
+                            <option value="Rio Branco">Rio Branco</option>
+                        </FilterSelect>
 
+                        <FilterLabel>Filtrar por Trimestre:</FilterLabel>
+                        <FilterSelect value={trimesterFilter} onChange={(e) => setTrimesterFilter(e.target.value)}>
+                            <option value="">Todos</option>
+                            <option value="1">1 TRI</option>
+                            <option value="2">2 TRI</option>
+                            <option value="3">3 TRI</option>
+                        </FilterSelect>
+
+                        <FilterLabel>Filtrar por Série:</FilterLabel>
+                        <FilterSelect value={seriesFilter} onChange={(e) => setSeriesFilter(e.target.value)}>
+                            <option value="">Todas</option>
+                            <option value="Ensino Médio 1 ano">1º Ano do Médio</option>
+                            <option value="Ensino Médio 2 ano">2º Ano do Médio</option>
+                            <option value="Ensino Médio 3 ano">3º Ano do Médio</option>
+                        </FilterSelect>
+
+                        <FilterLabel>Filtrar por Tipo:</FilterLabel>
+                        <FilterSelect value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+                            <option value="">Todos</option>
+                            <option value="Lista de exercícios">Lista de exercícios</option>
+                            <option value="Quizz">Quizz</option>
+                            <option value="Resumo">Resumo</option>
+                            <option value="Apresentação">Apresentação</option>
+                            <option value="Projeto">Projeto</option>
+                            <option value="Atitudinal">Atitudinal</option>
+                            <option value="Caderno">Caderno</option>
+                            <option value="Avaliação trimestral">Avaliação trimestral</option>
+                            <option value="Relatório de atividade experimental">Relatório de atividade experimental</option>
+                            <option value="Situação de aprendizagem">Situação de aprendizagem</option>
+                        </FilterSelect>
+
+                        <FilterLabel>Filtrar por Status:</FilterLabel>
+                        <FilterSelect value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                            <option value="">Todos</option>
+                            <option value="não planejada">Não planejada</option>
+                            <option value="planejada">Planejada</option>
+                            <option value="impressa">Impressa</option>
+                            <option value="em aplicação">Em aplicação</option>
+                            <option value="aplicada">Aplicada</option>
+                            <option value="corrigida">Corrigida</option>
+                            <option value="lançada">Lançada</option>
+                        </FilterSelect>
+                    </FilterContainer>
+
+                    {filteredEvaluations.length > 0 ? (
+                        <EvaluationsList
+                            evaluations={evaluations}
+                            onDelete={(id) => setEvaluations(evaluations.filter(ev => ev.id !== id))}
+                            onSelect={openEvaluationModal}
+                            onDuplicate={duplicateEvaluation}
+                            onRegisterScores={openScoresModal}
+                        />
+                    ) : (
+                        <p>Nenhuma avaliação encontrada. Clique em "Nova Avaliação" para criar.</p>
+                    )}
+                </Section>
             </MainContent>
+
+            {isEvaluationModalOpen && (
+                <EvaluationForm
+                    evaluation={selectedEvaluation}
+                    onSave={addEvaluation}
+                    onClose={() => setIsEvaluationModalOpen(false)}
+                />
+            )}
+
+            {showScoresModal && selectedEvaluation && (
+                <RegisterScoresModal
+                    students={mockStudents}
+                    evaluationParts={selectedEvaluation.parts ?? []} // Usando coalescência nula
+                    onClose={closeScoresModal}
+                    onSave={handleSaveScores}
+                />
+            )}
         </Container>
-    )
+    );
 };
 
 export default EvaluationManagement;

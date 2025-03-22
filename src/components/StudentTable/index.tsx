@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Student } from "../../utils/types";
+import { Student, StudentAttendance } from "../../utils/types";
 
 import { Table, TableHeader, TableRow } from '../../styles/table'
 
@@ -10,11 +10,9 @@ import {
 } from "./styles";
 import StudentRow from "../ui/StudentRow";
 
-/**
- * Propriedades do componente StudentTable
- */
+
 interface StudentTableProps {
-    students: Student[];
+    students: StudentAttendance[];
     onEdit: (studentData: Student) => void;
     onDelete: (id: number) => void;
 }

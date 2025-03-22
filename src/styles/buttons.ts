@@ -51,3 +51,42 @@ export const CloseButton = styled.button`
         box-shadow: var(--shadow-focus);
     }
 `;
+
+export const ActionButton = styled.button`
+    padding: var(--space-md) var(--space-lg);
+    background-color: var(--color-primary);
+    color: var(--color-text-on-primary);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: var(--font-size-md);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    transition: background-color 0.2s;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        filter: brightness(1.1);
+    }
+
+    &:disabled {
+        background-color: var(--color-button-disabled);
+        cursor: not-allowed;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: var(--shadow-focus);
+    }
+`;
+
+export const CancelButton = styled(ActionButton)`
+    background-color: var(--color-secondary);
+    color: var(--color-text-button);
+    
+    &:hover:not(:disabled) {
+        background-color: var(--color-secondary-hover);
+    }
+`;

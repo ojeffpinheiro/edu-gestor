@@ -150,22 +150,61 @@ export interface StudentAttendance {
     id: number;
     name: string;
     email: string;
-    attendance: number; // Attendance percentage (0-100)
+    attendance: number;
+}
+
+/**
+ * Enumeração para os tipos de avaliação
+ */
+export enum EvaluationType {
+    PROVA = "PROVA",
+    TRABALHO = "TRABALHO",
+    SEMINARIO = "SEMINARIO",
+    PROJETO = "PROJETO",
+    OUTRO = "OUTRO"
+}
+
+/**
+ * Enumeração para os status de avaliação
+ */
+export enum EvaluationStatus {
+    RASCUNHO = "RASCUNHO",
+    PLANEJADA = "PLANEJADA",
+    AGENDADA = "AGENDADA",
+    APLICADA = "APLICADA",
+    CORRIGIDA = "CORRIGIDA",
+    FINALIZADA = "FINALIZADA",
+    CANCELADA = "CANCELADA"
+}
+
+/**
+ * Interface para representar um recurso
+ */
+export interface Resource {
+    id?: number;
+    name: string;
+    quantity?: number;
 }
 
 // Evaluation Interface
 export interface Evaluation {
-    id: string;
+    id: number;
     name: string;
     trimester: number;
-    parts: EvaluationPart[];
-    tools: EvaluationTool[];
     passingGrade: number;
     formula: string;
-    recoveryEvaluation?: {
-        id: string;
-        name: string;
-        tools: EvaluationTool[];
-        scores: StudentScore[];
-    };
+    parts: EvaluationPart[];
+    tools: EvaluationTool[];
+    school: string;
+    series: string;
+    class: string;
+    objective: string;
+    contents: string;
+    evaluationCriteria: string;
+    subject: string;
+    record: string;
+    applicationDate: string | number | Date ;
+    type: EvaluationType | string;
+    status: EvaluationStatus | string;
+    resources: Resource[] | string[];
 }

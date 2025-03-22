@@ -22,7 +22,7 @@ export const ModalContainer = styled.div`
 `;
 
 export const ModalContent = styled.div`
-    background: var(--color-card, #ffffff);
+  background: var(--color-card, #ffffff);
   border-radius: 8px;
   width: 100%;
   max-width: 520px;

@@ -1,22 +1,26 @@
 import styled from 'styled-components';
 
+interface NavButtonProps {
+  active?: boolean;
+}
+
 export const Container = styled.div`
   padding: var(--space-lg);
   background-color: var(--color-background-secondary);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-md);
   display: grid;
-    grid-template-areas:
-      "header header"
-      "sidebar main";
-    grid-template-columns: 250px 1fr;
-    grid-template-rows: auto 1fr;
-    min-height: 100vh;
+  grid-template-areas:
+    "header header"
+    "sidebar main";
+  grid-template-columns: 250px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
 `;
 
 export const SideBar = styled.nav`
   grid-area: sidebar;
-  background-color: var(--color-background-secondary);
+  background-color: var(--color-background);
   border-right: 1px solid var(--color-border);
   padding: var(--space-md);
   display: flex;
@@ -24,7 +28,7 @@ export const SideBar = styled.nav`
   gap: var(--space-sm);
 `;
 
-export const NavButton = styled.button<{ active: boolean }>`
+export const NavButton = styled.button<NavButtonProps>`
   background-color: ${props => props.active ? 'var(--color-primary)' : 'transparent'};
   color: ${props => props.active ? 'var(--color-text-on-primary)' : 'var(--color-text)'};
   border: 1px solid ${props => props.active ? 'var(--color-primary)' : 'var(--color-border)'};
@@ -104,4 +108,12 @@ export const FilterSelect = styled.select`
     outline: none;
     box-shadow: var(--shadow-focus);
   }
+`;
+
+export const FilterInput = styled.input`
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  width: 100%;
+  margin-bottom: var(--space-md);
 `;

@@ -22,6 +22,7 @@ export const TableHeader = styled.th`
 `;
 
 export const TableCell = styled.td`
+    text-align: center;
     padding: var(--space-md);
     border: 1px solid var(--color-border);
 `;

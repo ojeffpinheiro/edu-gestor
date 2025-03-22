@@ -1,13 +1,14 @@
 import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-import { Student } from "../../utils/types";
+import { Student, StudentAttendance } from "../../utils/types";
 
 import { TableCell, TableRow } from "../../styles/table";
 import { IconButton } from "../StudentTable/styles";
+import { AttendanceGrade } from "../StudentsTable/styles";
 
 interface StudentRowProps {
-    studentData: Student,
+    studentData: StudentAttendance,
     onEdit: (s: Student) => void;
     onDelete: (id: number) => void
 }
@@ -23,6 +24,9 @@ const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }
         <TableRow>
             <TableCell>{studentData.name}</TableCell>
             <TableCell>{studentData.email}</TableCell>
+            <TableCell>
+                <AttendanceGrade grade={studentData.attendance} />
+            </TableCell>
             <TableCell>
                 <IconButton onClick={() => onEdit(studentData)} title="Editar aluno">
                     <FaEdit />

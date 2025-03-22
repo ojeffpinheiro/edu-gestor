@@ -1,49 +1,55 @@
 import React from "react";
-import styled from "styled-components";
+import { FaEdit, FaCopy, FaClipboardList, FaTrash } from "react-icons/fa";
 
 import { Evaluation } from "../../utils/types";
 
-import { Table, TableHeader, TableRow, Td } from "../../styles/table";
+import { Card, CardHeader, CardBody, ActionButton } from "./styles";
 
-const EvaluationsList: React.FC<{
+interface EvaluationsListProps {
     evaluations: Evaluation[];
     onSelect: (evaluation: Evaluation) => void;
-    onDelete: (id: string) => void;
-}> = ({ evaluations, onSelect, onDelete }) => {
-    return (
-        <Table>
-            <thead>
-                <TableRow>
-                    <TableHeader>Nome</TableHeader>
-                    <TableHeader>Trimestre</TableHeader>
-                    <TableHeader>Ações</TableHeader>
-                </TableRow>
-            </thead>
-
-            <tbody>
-                {evaluations.map(evaluation => (
-                    <tr key={evaluation.id}>
-                        <Td>{evaluation.name}</Td>
-                        <Td>{evaluation.trimester}º</Td>
-                        <Td>
-                            <ActionButton onClick={() => onSelect(evaluation)}>Selecionar</ActionButton>
-                        </Td>
-                    </tr>
-                ))}
-            </tbody>
-        </Table>
-    )
+    onDelete: (id: number) => void;
+    onDuplicate: (evaluation: Evaluation) => void;
+    onRegisterScores: (evaluation: Evaluation) => void;
 }
 
-const ActionButton = styled.button`
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 5px 10px;
-    cursor: pointer;
-    &:hover {
-        background: #218838;
-    }
-`;
+const EvaluationsList: React.FC<EvaluationsListProps> = ({
+    evaluations,
+    onSelect,
+    onDelete,
+    onDuplicate,
+    onRegisterScores
+}) => {
+
+    return (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+            {evaluations.map(evaluation => (
+                <Card key={evaluation.id}>
+                    <CardHeader>
+                        <h3>{evaluation.name}</h3>
+                        <div>
+                            <ActionButton onClick={() => onSelect(evaluation)} title="Editar">
+                                <FaEdit />
+                            </ActionButton>
+                            <ActionButton onClick={() => onRegisterScores(evaluation)} title="Registrar Notas">
+                                <FaClipboardList />
+                            </ActionButton>
+                            <ActionButton title="Duplicar" onClick={() => onDuplicate(evaluation)}>
+                                <FaCopy />
+                            </ActionButton>
+                            <ActionButton onClick={() => onDelete(evaluation.id)} title="Excluir">
+                                <FaTrash />
+                            </ActionButton>
+                        </div>
+                    </CardHeader>
+                    <CardBody>
+                        <p>Trimestre: {evaluation.trimester}º</p>
+                        <p>Aprovação: {evaluation.passingGrade}</p>
+                    </CardBody>
+                </Card>
+            ))}
+        </div>
+    );
+};
 
 export default EvaluationsList;

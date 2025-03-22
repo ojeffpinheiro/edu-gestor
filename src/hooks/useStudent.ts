@@ -50,6 +50,15 @@ export const useStudents = () => {
         });
     };
 
+    const calculateAttendanceGrade = (attendance: number): number => {
+        if (attendance >= 90) return 10;
+        if (attendance >= 80) return 8;
+        if (attendance >= 70) return 7;
+        if (attendance >= 60) return 6;
+        if (attendance >= 50) return 5;
+        return Math.max(0, Math.floor(attendance / 10));
+    };
+
     return {
         alunos,
         alunoEditando,
@@ -61,5 +70,6 @@ export const useStudents = () => {
         handleSalvarAluno,
         handleCancelar,
         handleInputChange,
+        calculateAttendanceGrade
     };
 };
