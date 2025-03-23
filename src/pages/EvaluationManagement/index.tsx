@@ -412,9 +412,14 @@ const EvaluationManagement: React.FC = () => {
             {isEvaluationModalOpen && (
                 <EvaluationForm
                     evaluation={selectedEvaluation}
-                    onSave={addEvaluation}
+                    onSave={async (evaluation) => {
+                        if (evaluation) {
+                            await addEvaluation(evaluation); // Garante que um Promise<void> seja retornado
+                        }
+                    }}
                     onClose={() => setIsEvaluationModalOpen(false)}
                 />
+
             )}
 
             {showScoresModal && selectedEvaluation && (

@@ -7,6 +7,7 @@ const SectionContainer = styled.div`
     border: 1px solid var(--color-border, #e2e8f0);
     border-radius: var(--border-radius-sm, 0.25rem);
     overflow: hidden;
+    transition: all 0.3s ease-in-out;
 `;
 
 const SectionHeader = styled.div`
@@ -17,14 +18,19 @@ const SectionHeader = styled.div`
   padding: var(--space-xs) var(--space-sm);
   cursor: pointer;
   font-weight: bold;
+  transition: background 0.3s;
+
+  &:hover {
+    background: var(--color-background-hover, #e5e7eb);
+  }
 `;
 
 const SectionContent = styled.div<{ isOpen: boolean }>`
-  max-height: ${({ isOpen }) => (isOpen ? "1000px" : "0")};
+  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
   overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
+  transition: max-height 0.3s ease-in-out, padding 0.3s;
   padding: ${({ isOpen }) => (isOpen ? "16px" : "0")};
-   background-color: var(--color-card);
+  background-color: var(--color-card);
 `;
 
 interface CollapsibleSectionProps {

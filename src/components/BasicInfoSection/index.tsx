@@ -1,61 +1,118 @@
-import React from "react";
-import { Evaluation } from "../../utils/types";
+import React, { useState } from "react";
+import { Evaluation, EvaluationType } from "../../utils/types";
 
-import CollapsibleSection from "../CollapsibleSection";
 import styled from "styled-components";
-import { Input, Label, TextArea } from "../../styles/inputs";
+import { Input, Label, Select, TextArea, InputGroup } from "../../styles/inputs";
+import useEvaluationForm from "../../hooks/useEvaluationForm";
 
 
 interface BasicInfoSectionProps {
-    evaluationData: Evaluation;
+    evaluationData: Evaluation | null;
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
 }
 
 const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ evaluationData, handleInputChange }) => {
+    const { initializeEmptyEvaluation } = useEvaluationForm(evaluationData);
+    const formData = initializeEmptyEvaluation();
+
     return (
-        <CollapsibleSection title="Definições Básicas">
-            <FormGrid>
-                <FormSection>
-                    <InputGroup>
-                        <Label htmlFor="name">Nome da Avaliação *</Label>
-                        <Input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="Ex: Avaliação Bimestral de Matemática"
-                            value={evaluationData.name}
-                            onChange={handleInputChange}
-                        />
-                    </InputGroup>
+        <FormGrid>
+            {/* Coluna 1 - Informações básicas */}
+            <FormSection>
+                <InputGroup>
+                    <Label htmlFor="name">Nome da Avaliação *</Label>
+                    <Input type="text" id="name" name="name" placeholder="Ex: Avaliação Bimestral de Matemática"
+                        value={formData.name} onChange={handleInputChange} aria-required="true" />
+                </InputGroup>
 
-                    <InputGroup>
-                        <Label htmlFor="school">Escola *</Label>
-                        <Input
-                            type="text"
-                            id="school"
-                            name="school"
-                            placeholder="Ex: Escola Municipal João da Silva"
-                            value={evaluationData.school}
-                            onChange={handleInputChange}
-                        />
-                    </InputGroup>
-                </FormSection>
+                <InputGroup>
+                    <Label htmlFor="school">Escola *</Label>
+                    <Input type="text" id="school" name="school" placeholder="Ex: Escola Municipal João da Silva"
+                        value={formData.school} onChange={handleInputChange} aria-required="true" />
+                </InputGroup>
 
-                <FormSection>
-                    <InputGroup>
-                        <Label htmlFor="objective">Objetivo *</Label>
-                        <TextArea
-                            id="objective"
-                            name="objective"
-                            placeholder="Descreva o objetivo principal desta avaliação"
-                            value={evaluationData.objective}
-                            onChange={handleInputChange}
-                            rows={4}
-                        />
-                    </InputGroup>
-                </FormSection>
-            </FormGrid>
-        </CollapsibleSection>
+                <InputGroup>
+                    <Label htmlFor="trimester">Trimestre *</Label>
+                    <Select id="trimester" name="trimester" value={formData.trimester} onChange={handleInputChange}
+                        aria-required="true">
+                        <option value="1">1º Trimestre</option>
+                        <option value="2">2º Trimestre</option>
+                        <option value="3">3º Trimestre</option>
+                    </Select>
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="series">Série *</Label>
+                    <Input type="text" id="series" name="series" placeholder="Ex: 5º Ano" value={formData.series}
+                        onChange={handleInputChange} aria-required="true" />
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="class">Turma *</Label>
+                    <Input type="text" id="class" name="class" placeholder="Ex: Turma A" value={formData.class}
+                        onChange={handleInputChange} aria-required="true" />
+                </InputGroup>
+            </FormSection>
+
+            {/* Coluna 2 - Informações da disciplina */}
+            <FormSection>
+                <InputGroup>
+                    <Label htmlFor="subject">Disciplina *</Label>
+                    <Input type="text" id="subject" name="subject" placeholder="Ex: Matemática" value={formData.subject}
+                        onChange={handleInputChange} aria-required="true" />
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="record">Registro</Label>
+                    <Input type="text" id="record" name="record" placeholder="Ex: 2023/MT/001" value={formData.record}
+                        onChange={handleInputChange} />
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="applicationDate">Data de Aplicação</Label>
+                    <Input
+                        type="date"
+                        id="applicationDate"
+                        name="applicationDate"
+                        value={formData.applicationDate instanceof Date 
+                                ? formData.applicationDate.toISOString().split('T')[0] 
+                                : formData.applicationDate}
+                        onChange={handleInputChange} />
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="type">Tipo de Avaliação</Label>
+                    <Select id="type" name="type" value={formData.type} onChange={handleInputChange}>
+                        <option value={EvaluationType.PROVA}>Prova</option>
+                        <option value={EvaluationType.TRABALHO}>Trabalho</option>
+                        <option value={EvaluationType.APRESENTACAO}>Apresentação</option>
+                        <option value={EvaluationType.PROJETO}>Projeto</option>
+                        <option value={EvaluationType.OUTRO}>Outro</option>
+                    </Select>
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="passingGrade">Nota de Aprovação</Label>
+                    <Input type="number" id="passingGrade" name="passingGrade" min="0" max="10" step="0.1"
+                        value={formData.passingGrade} onChange={handleInputChange} />
+                </InputGroup>
+            </FormSection>
+
+            {/* Coluna 3 - Objetivo e conteúdo */}
+            <FormSection>
+                <InputGroup>
+                    <Label htmlFor="objective">Objetivo *</Label>
+                    <TextArea id="objective" name="objective" placeholder="Descreva o objetivo principal desta avaliação"
+                        value={formData.objective} onChange={handleInputChange} rows={4} aria-required="true" />
+                </InputGroup>
+
+                <InputGroup>
+                    <Label htmlFor="contents">Conteúdo *</Label>
+                    <TextArea id="contents" name="contents" placeholder="Liste os conteúdos que serão avaliados"
+                        value={formData.contents} onChange={handleInputChange} rows={4} aria-required="true" />
+                </InputGroup>
+            </FormSection>
+        </FormGrid>
     );
 };
 
@@ -73,34 +130,6 @@ const FormSection = styled.div`
     display: flex;
     flex-direction: column;
     gap: var(--space-md, 1rem);
-`;
-
-const InputGroup = styled.div`
-    margin-bottom: var(--space-md, 1rem);
-    
-    &:last-child {
-        margin-bottom: 0;
-    }
-    
-    &.mt-6 {
-        margin-top: var(--space-2xl, 3rem);
-    }
-    
-    .space-y-2 {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm, 0.5rem);
-    }
-    
-    .flex.items-center {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm, 0.5rem);
-    }
-    
-    .ml-2 {
-        margin-left: var(--space-sm, 0.5rem);
-    }
 `;
 
 export default BasicInfoSection;
