@@ -99,7 +99,7 @@ export const FORMATION_CONFIG = {
 
 // Group Formation Modal Props Interface
 export interface GroupFormationModalProps {
-    students: Student[]; // List of available students
+    students: StudentAttendance[]; // List of available students
     onClose: () => void; // Callback when the modal is closed
     onSave?: (groups: Student[][]) => void; // Optional save function for formed groups
     processingDelay?: number; // Simulation processing time in ms
@@ -153,21 +153,15 @@ export interface StudentAttendance {
     attendance: number;
 }
 
-/**
- * Enumeração para os tipos de avaliação
- */
 export enum EvaluationType {
     PROVA = "PROVA",
     TRABALHO = "TRABALHO",
-    SEMINARIO = "SEMINARIO",
     PROJETO = "PROJETO",
+    APRESENTACAO = "APRESENTACAO",
     OUTRO = "OUTRO"
-}
-
-/**
- * Enumeração para os status de avaliação
- */
-export enum EvaluationStatus {
+  }
+  
+  export enum EvaluationStatus {
     RASCUNHO = "RASCUNHO",
     PLANEJADA = "PLANEJADA",
     AGENDADA = "AGENDADA",
@@ -175,7 +169,8 @@ export enum EvaluationStatus {
     CORRIGIDA = "CORRIGIDA",
     FINALIZADA = "FINALIZADA",
     CANCELADA = "CANCELADA"
-}
+  }
+  
 
 /**
  * Interface para representar um recurso
@@ -208,3 +203,51 @@ export interface Evaluation {
     status: EvaluationStatus | string;
     resources: Resource[] | string[];
 }
+  
+  export interface EvaluationPart {
+    id: string;
+    name: string;
+    weight: number;
+    maxScore: number;
+  }
+
+  // Interfaces para o formulário
+  export interface EvaluationFormProps {
+    evaluation: Evaluation | null;
+    onSave: (evaluation: Evaluation) => Promise<void>;
+    onClose: () => void;
+  }
+  
+  export interface FormFeedback {
+    errorMessage?: string;
+    successMessage?: string;
+  }
+  
+  export enum FormSectionOptions {
+    BASIC_INFO = "Definições Básicas",
+    RESOURCES = "Recursos",
+    PARTS = "Partes",
+    EVALUATION_CRITERIA = "Critérios de Avaliação",
+    EVALUATION_METHOD = "Forma de Avaliação",
+    CALCULATION = "Cálculo"
+  }
+  
+  export interface RubricOrConcept {
+    id: string;
+    name: string;
+    description: string;
+  }
+  
+  export interface CriterionOption {
+    id: string;
+    description: string;
+  }
+  
+  export interface EvaluationCriterion {
+    id: string;
+    name: string;
+    weight: number;
+    options: CriterionOption[];
+    comment: string;
+    isExpanded: boolean;
+  }

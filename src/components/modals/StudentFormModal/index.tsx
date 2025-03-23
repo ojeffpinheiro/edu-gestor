@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaUser, FaSave, FaTimes } from "react-icons/fa";
-import { Student } from "../../../utils/types";
+import { StudentAttendance } from "../../../utils/types";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
@@ -22,9 +22,9 @@ import {
  * Interface para as propriedades do modal de estudante
  */
 interface StudentFormModalProps {
-    studentData: Omit<Student, "id">;
+    studentData: Omit<StudentAttendance, "id">;
     onInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    onSave: (data: Omit<Student, "id">) => void;
+    onSave: (data: Omit<StudentAttendance, "id">) => void;
     onClose: () => void;
     isSubmitting?: boolean;
     validationErrors?: Record<string, string>;

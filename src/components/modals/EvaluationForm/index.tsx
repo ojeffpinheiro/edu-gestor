@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Evaluation, EvaluationPart, EvaluationStatus, EvaluationType, Resource } from "../../../utils/types";
+import { FaTimes } from "react-icons/fa";
+import { Evaluation, EvaluationPart, Resource } from "../../../utils/types";
 
 import { Button, CloseButton } from '../../../styles/buttons';
 import {
@@ -19,23 +20,42 @@ import {
     FormSection,
     InputRow
 } from './styles';
-import { FaTimes } from "react-icons/fa";
 
-/**
- * Interface para as propriedades do componente EvaluationForm
- */
+/** * Interface para as propriedades do componente EvaluationForm */
 interface EvaluationFormProps {
     evaluation: Evaluation | null;
     onSave: (evaluation: Evaluation) => Promise<void>;
     onClose: () => void;
 }
 
-/**
- * Interface para os estados de feedback do formulário
- */
+/** * Interface para os estados de feedback do formulário */
 interface FormFeedback {
     errorMessage?: string;
     successMessage?: string;
+}
+
+/**
+ * Enumeração para os tipos de avaliação
+ */
+enum EvaluationType {
+    PROVA = "PROVA",
+    TRABALHO = "TRABALHO",
+    SEMINARIO = "SEMINARIO",
+    PROJETO = "PROJETO",
+    OUTRO = "OUTRO"
+}
+
+/**
+ * Enumeração para os status de avaliação
+ */
+enum EvaluationStatus {
+    RASCUNHO = "RASCUNHO",
+    PLANEJADA = "PLANEJADA",
+    AGENDADA = "AGENDADA",
+    APLICADA = "APLICADA",
+    CORRIGIDA = "CORRIGIDA",
+    FINALIZADA = "FINALIZADA",
+    CANCELADA = "CANCELADA"
 }
 
 

@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-import { Student, StudentAttendance } from "../../utils/types";
+import { StudentAttendance } from "../../utils/types";
 
 import { TableCell, TableRow } from "../../styles/table";
 import { IconButton } from "../StudentTable/styles";
@@ -9,7 +9,7 @@ import { AttendanceGrade } from "../StudentsTable/styles";
 
 interface StudentRowProps {
     studentData: StudentAttendance,
-    onEdit: (s: Student) => void;
+    onEdit: (s: StudentAttendance) => void;
     onDelete: (id: number) => void
 }
 

@@ -1,10 +1,10 @@
-import { Student, GroupFormationType, GroupFormationState, FORMATION_CONFIG } from '../utils/types'
+import { GroupFormationType, GroupFormationState, FORMATION_CONFIG, StudentAttendance } from '../utils/types'
 
 /**
  * Valida os parâmetros antes da formação dos grupos
  */
 export const validateFormationParams = (
-    students: Student[], 
+    students: StudentAttendance[], 
     formationParams: GroupFormationState
 ): { isValid: boolean; errorMessage: string } => {
     try {

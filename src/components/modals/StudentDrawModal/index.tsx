@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { FaRandom, FaTimes } from "react-icons/fa";
-import { Student } from "../../../utils/types";
+import { StudentAttendance } from "../../../utils/types";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
@@ -16,10 +16,10 @@ import {
 } from "./styles";
 
 interface StudentDrawModalProps {
-    students: Student[];
+    students: StudentAttendance[];
     onClose: () => void;
     onDraw: () => void;
-    drawnStudent: Student | null;
+    drawnStudent: StudentAttendance | null;
 }
 
 const StudentDrawModal: React.FC<StudentDrawModalProps> = ({ students, onClose, onDraw, drawnStudent }) => {

@@ -15,7 +15,7 @@ import {
     StudentName
 } from './styles';
 
-const alunos = ['Ana Souza', 'Carlos Oliveira', 'Fernanda Lima', 'Rafael Mendes'];
+const studentList = ['Ana Souza', 'Carlos Oliveira', 'Fernanda Lima', 'Rafael Mendes'];
 
 const categorias = [
     {
@@ -118,14 +118,14 @@ const DailyReport = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {alunos.map((aluno, index) => (
+                        {studentList.map((student, index) => (
                             <Tr key={index}>
                                 <Td fixed>
-                                    <StudentName>{aluno}</StudentName>
+                                    <StudentName>{student}</StudentName>
                                 </Td>
                                 {categoriaAtual?.subcategorias.map((sub) => (
                                     <Td key={sub.nome}>
-                                        <Select aria-label={`Selecionar ${sub.nome} para ${aluno}`}>
+                                        <Select aria-label={`Selecionar ${sub.nome} para ${student}`}>
                                             <option value="">Selecione</option>
                                             {sub.opcoes.map((opcao) => (
                                                 <option key={opcao} value={opcao}>

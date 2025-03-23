@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Student, StudentAttendance } from "../../utils/types";
+import { StudentAttendance } from "../../utils/types";
 
 import { Table, TableHeader, TableRow } from '../../styles/table'
 
@@ -13,7 +13,7 @@ import StudentRow from "../ui/StudentRow";
 
 interface StudentTableProps {
     students: StudentAttendance[];
-    onEdit: (studentData: Student) => void;
+    onEdit: (studentData: StudentAttendance) => void;
     onDelete: (id: number) => void;
 }
 

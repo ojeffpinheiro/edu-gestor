@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
-import { Event, Student, StudentAttendance } from '../../utils/types';
+import { Event, StudentAttendance } from '../../utils/types';
+
+import { useStudents } from '../../hooks/useStudent';
+import { drawStudent } from '../../hooks/useRandomSelection';
 
 import ActionsContainer from '../../components/ActionsContainer';
 import StudentTable from '../../components/StudentTable';
@@ -17,24 +20,19 @@ import {
 } from './styles';
 
 const TeamManagement: React.FC = () => {
-    const [students, setStudents] = useState<StudentAttendance[]>([
-        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90 },
-        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85 },
-        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95 },
-    ]);
+    const { studentList, formData, handleAddStudent, handleEditStudent, handleDelStudent, handleInputChange } = useStudents();
+
     const [showModalStudent, setShowModalStudent] = useState<boolean>(true);
     const [showForm, setShowForm] = useState<boolean>(false);
-    const [editedStudent, setEditedStudent] = useState<Student | null>(null);
-    const [formData, setFormData] = useState<Omit<Student, 'id'>>({ name: '', email: '' });
 
-    const [showSorteioGrupoModal, setShowSorteioGrupoModal] = useState<boolean>(false);
+    const [showSortGroupModal, setShowSortGroupModal] = useState<boolean>(false);
     const [showCalendarioModal, setShowCalendarioModal] = useState<boolean>(false);
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [activeTab, setActiveTab] = useState<string>('todos');
     const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
 
     // Estado para aluno sorteado
-    const [drawnStudent, setDrawnStudent] = useState<Student | null>(null);
+    const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
 
     // Eventos de exemplo para o calendário
     const [events, setEvents] = useState<Event[]>([
@@ -62,74 +60,38 @@ const TeamManagement: React.FC = () => {
     ]);
 
     // Funções para modais existentes
-    const handleCloseModalStudent = () => setShowModalStudent(false);
+    const handleCloseSortGroupModal = () => setShowModalStudent(false);
     // Abrir/Fechar modais
     const handleShowStudentDraw = () => {
         setShowStudentDrawModal(true);
-        realizarSorteioAluno();
+        drawStudent(studentList)
+        handleSortGroups();
     };
+
     const handleCloseStudentDraw = () => {
         setShowStudentDrawModal(false);
         setDrawnStudent(null);
     };
 
     // Função de sorteio de aluno
-    const realizarSorteioAluno = () => {
-        if (students.length > 0) {
-            const indiceAleatorio = Math.floor(Math.random() * students.length);
-            setDrawnStudent(students[indiceAleatorio]);
+    const handleSortGroups = () => {
+        if (studentList.length > 0) {
+            const randomIndex = Math.floor(Math.random() * studentList.length);
+            setDrawnStudent(studentList[randomIndex]);
         }
     };
 
-    const handleAdicionarAluno = () => {
-        setEditedStudent(null);
-        setFormData({ name: '', email: '' });
-        setShowForm(true);
-    };
-
-    const handleEditarAluno = (aluno: Student) => {
-        setEditedStudent(aluno);
-        setFormData({ name: aluno.name, email: aluno.email });
-        setShowForm(true);
-    };
-
-    const handleExcluirAluno = (id: number) => {
-        setStudents(students.filter((aluno) => aluno.id !== id));
-    };
-
-    const handleSalvarAluno = () => {
-        if (editedStudent) {
-            setStudents(
-                students.map((a) => (a.id === editedStudent.id ? { ...a, ...formData, attendance: a.attendance } : a))
-            );
-        } else {
-            setStudents([...students, { ...formData, id: Date.now(), attendance: 0 }]);
-        }
+    const handleCancel = () => {
         setShowForm(false);
-    };
-
-    const handleCancelar = () => {
-        setShowForm(false);
-    };
-
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        // Mapear o nome do campo se necessário
-        const fieldName = name === 'name' ? 'name' : name === 'email' ? 'email' : name;
-
-        setFormData({
-            ...formData,
-            [fieldName]: value
-        });
     };
 
     // Funções para os novos recursos
-    const handleSorteioGrupos = () => {
-        setShowSorteioGrupoModal(true);
+    const handleOpenSortGroupModal = () => {
+        setShowSortGroupModal(true);
     };
 
     const handleCloseSorteioGrupoModal = () => {
-        setShowSorteioGrupoModal(false);
+        setShowSortGroupModal(false);
     };
 
     const handleShowCalendario = () => {
@@ -154,11 +116,13 @@ const TeamManagement: React.FC = () => {
                 <Title>Gerenciamento de Alunos</Title>
 
                 <ActionsContainer
-                    onAddStudent={handleAdicionarAluno}
-                    onSortGroups={handleSorteioGrupos}
+                    onAddStudent={handleAddStudent}
+                    onSortGroups={handleOpenSortGroupModal}
                     onSortStudent={handleShowStudentDraw}
                     onShowCalendar={handleShowCalendario} />
-                <StudentTable students={students} onEdit={handleEditarAluno} onDelete={handleExcluirAluno}  />
+
+                <StudentTable students={studentList}
+                    onEdit={handleEditStudent} onDelete={handleDelStudent} />
 
             </PageContainer>
 
@@ -166,21 +130,21 @@ const TeamManagement: React.FC = () => {
                 <StudentFormModal
                     studentData={formData}
                     onInputChange={handleInputChange}
-                    onSave={handleSalvarAluno}
-                    onClose={handleCancelar} />)}
+                    onSave={handleAddStudent}
+                    onClose={handleCancel} />)}
 
-            {showModalStudent && <StudentModal onClose={handleCloseModalStudent} />}
+            {showModalStudent && <StudentModal onClose={handleCloseSortGroupModal} />}
 
             {/* Modal de Sorteio de Grupos */}
-            {showSorteioGrupoModal && (
-                <GroupDrawModal students={students} onClose={handleCloseSorteioGrupoModal} />
+            {showSortGroupModal && (
+                <GroupDrawModal students={studentList} onClose={handleCloseSorteioGrupoModal} />
             )}
 
             {showStudentDrawModal && (
                 <StudentDrawModal
-                    students={students}
+                    students={studentList}
                     onClose={handleCloseStudentDraw}
-                    onDraw={realizarSorteioAluno}
+                    onDraw={handleSortGroups}
                     drawnStudent={drawnStudent}
                 />
             )}

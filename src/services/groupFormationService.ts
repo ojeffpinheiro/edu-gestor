@@ -1,4 +1,4 @@
-import { Student, GroupFormationState, GroupFormationType  } from '../utils/types'
+import { GroupFormationState, GroupFormationType, StudentAttendance  } from '../utils/types'
 
 import { distributeStudentsIntoGroups } from '../hooks/useRandomSelection';
 
@@ -6,9 +6,9 @@ import { distributeStudentsIntoGroups } from '../hooks/useRandomSelection';
  * Distribui os estudantes em grupos baseado nos parâmetros selecionados
  */
 export const createStudentGroups = (
-    students: Student[], 
+    students: StudentAttendance[], 
     formationParams: GroupFormationState
-): Student[][] => {
+): StudentAttendance[][] => {
     try {
         const { formationType, groupSize, numberOfGroups } = formationParams;
 

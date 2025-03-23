@@ -1,39 +1,39 @@
 import { useState } from "react";
-import { Student } from '../utils/types'
+import { StudentAttendance } from '../utils/types'
 
 export const useStudents = () => {
-    const [alunos, setAlunos] = useState<Student[]>([        
-        { id: 1, name: "Ana Souza", email: "ana@exemplo.com" },
-        { id: 2, name: "Carlos Oliveira", email: "carlos@exemplo.com" },
-        { id: 3, name: "Fernanda Lima", email: "fernanda@exemplo.com" },
+    const [studentList, setStudentList] = useState<StudentAttendance[]>([        
+        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90 },
+        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85 },
+        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95 },
     ]);
-    const [alunoEditando, setAlunoEditando] = useState<Student | null>(null);
-    const [formData, setFormData] = useState<Omit<Student, "id">>({ name: "", email: "" });
+    const [studentEditing, setStudentEditing] = useState<StudentAttendance | null>(null);
+    const [formData, setFormData] = useState<Omit<StudentAttendance, "id">>({ name: "", email: "", attendance: 0 });
     const [showForm, setShowForm] = useState<boolean>(false);
 
-    const handleAdicionarAluno = () => {
-        setAlunoEditando(null);
-        setFormData({ name: "", email: "" });
+    const handleAddStudent = () => {
+        setStudentEditing(null);
+        setFormData({ name: "", email: "", attendance: 0 });
         setShowForm(true);
     };
 
-    const handleEditarAluno = (aluno: Student) => {
-        setAlunoEditando(aluno);
-        setFormData({ name: aluno.name, email: aluno.email });
+    const handleEditStudent = (student: StudentAttendance) => {
+        setStudentEditing(student);
+        setFormData({ name: student.name, email: student.email, attendance: student.attendance });
         setShowForm(true);
     };
 
-    const handleExcluirAluno = (id: number) => {
-        setAlunos(alunos.filter((aluno) => aluno.id !== id));
+    const handleDelStudent = (id: number) => {
+        setStudentList(studentList.filter((student) => student.id !== id));
     };
 
-    const handleSalvarAluno = () => {
-        if (alunoEditando) {
-            setAlunos(
-                alunos.map((a) => (a.id === alunoEditando.id ? { ...a, ...formData } : a))
+    const handleSaveStudent = () => {
+        if (studentEditing) {
+            setStudentList(
+                studentList.map((a) => (a.id === studentEditing.id ? { ...a, ...formData } : a))
             );
         } else {
-            setAlunos([...alunos, { ...formData, id: Date.now() }]);
+            setStudentList([...studentList, { ...formData, id: Date.now() }]);
         }
         setShowForm(false);
     };
@@ -60,14 +60,14 @@ export const useStudents = () => {
     };
 
     return {
-        alunos,
-        alunoEditando,
+        studentList,
+        studentEditing,
         formData,
         showForm,
-        handleAdicionarAluno,
-        handleEditarAluno,
-        handleExcluirAluno,
-        handleSalvarAluno,
+        handleAddStudent,
+        handleEditStudent,
+        handleDelStudent,
+        handleSaveStudent,
         handleCancelar,
         handleInputChange,
         calculateAttendanceGrade

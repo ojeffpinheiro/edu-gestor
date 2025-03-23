@@ -1,10 +1,10 @@
 import React from 'react';
 import { Input } from '../../styles/inputs'
-import { Student, GroupFormationState, GroupFormationType, FORMATION_CONFIG } from '../../utils/types'
+import { GroupFormationState, GroupFormationType, FORMATION_CONFIG, StudentAttendance } from '../../utils/types'
 
 interface FormationControlsProps {
     formationParams: GroupFormationState;
-    students: Student[];
+    students: StudentAttendance[];
     handleGroupSizeChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleNumberOfGroupsChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import { FaUsers } from "react-icons/fa";
 
-import { Student } from '../../utils/types'
+import { StudentAttendance } from '../../utils/types'
 import styled from 'styled-components';
 
 interface GroupsResultListProps {
-    studentGroups: Student[][];
+    studentGroups: StudentAttendance[][];
     showResults: boolean;
 }
 

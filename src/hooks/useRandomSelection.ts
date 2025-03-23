@@ -1,24 +1,24 @@
-import { Student } from '../utils/types';
+import { StudentAttendance } from '../utils/types';
 
 /**
  * Realiza o sorteio de grupos com base no tamanho especificado.
  */
-export const distributeStudentsIntoGroups = (alunos: Student[], tamanhoGrupo: number): Student[][] => {
-    const alunosEmbaralhados = [...alunos].sort(() => Math.random() - 0.5);
-    const grupos: Student[][] = [];
+export const distributeStudentsIntoGroups = (student: StudentAttendance[], tamanhoGrupo: number): StudentAttendance[][] => {
+    const studentShuffler = [...student].sort(() => Math.random() - 0.5);
+    const groups: StudentAttendance[][] = [];
 
-    for (let i = 0; i < alunosEmbaralhados.length; i += tamanhoGrupo) {
-        grupos.push(alunosEmbaralhados.slice(i, i + tamanhoGrupo));
+    for (let i = 0; i < studentShuffler.length; i += tamanhoGrupo) {
+        groups.push(studentShuffler.slice(i, i + tamanhoGrupo));
     }
 
-    return grupos;
+    return groups;
 };
 
 /**
  * Realiza o sorteio de um aluno aleatório.
  */
-export const realizarSorteioAluno = (alunos: Student[]): Student | null => {
-    if (alunos.length === 0) return null;
-    const indiceAleatorio = Math.floor(Math.random() * alunos.length);
-    return alunos[indiceAleatorio];
+export const drawStudent= (student: StudentAttendance[]): StudentAttendance | null => {
+    if (student.length === 0) return null;
+    const randomIndex    = Math.floor(Math.random() * student.length);
+    return student[randomIndex];
 };
