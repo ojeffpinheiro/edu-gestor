@@ -32,7 +32,9 @@ function initializeEmptyEvaluation(): Evaluation {
         applicationDate: new Date().toISOString().split("T")[0],
         type: EvaluationType.PROVA,
         status: EvaluationStatus.RASCUNHO,
-        resources: []
+        resources: [],
+        evaluationMethod: "numeric",
+        calculationMethod: "average"
     };
 }
 
@@ -46,13 +48,11 @@ const REQUIRED_FIELDS: Record<FormSectionOptions, string[]> = {
     [FormSectionOptions.CALCULATION]: ['calculationMethod']
 };
 
-interface UseEvaluationFormProps {
-    evaluation: Evaluation | null;
-    onSave: (evaluation: Evaluation) => Promise<void>;
-}
-
 // Hook principal para gerenciar o formulário de avaliação
-const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
+const useEvaluationForm = (
+    evaluation: Evaluation | null, 
+    onSave?: (evaluation: Evaluation) => Promise<void>
+) => {
     // Estado para gerenciar todos os dados da avaliação
     const [formData, setFormData] = useState<{
         evaluation: Evaluation;
@@ -117,20 +117,20 @@ const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
 
     // Efeito para atualizar dados quando o evaluation mudar
     useEffect(() => {
-            if (evaluation) {
-                setFormData(prevState => ({
-                    ...prevState,
-                    evaluation,
-                    resources: Array.isArray(evaluation.resources) && evaluation.resources.every(res => typeof res !== 'string') ? evaluation.resources as Resource[] : [],
-                    parts: evaluation.parts || [],
-                }));
-                
-                setFeedback(prev => ({
-                    ...prev,
-                    hasChanges: false
-                }));
-            }
-        }, [evaluation]);
+        if (evaluation) {
+            setFormData(prevState => ({
+                ...prevState,
+                evaluation,
+                resources: Array.isArray(evaluation.resources) && evaluation.resources.every(res => typeof res !== 'string') ? evaluation.resources as Resource[] : [],
+                parts: evaluation.parts || [],
+            }));
+            
+            setFeedback(prev => ({
+                ...prev,
+                hasChanges: false
+            }));
+        }
+    }, [evaluation]);
 
     // Handler para mudanças nos inputs
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -165,10 +165,10 @@ const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
     }, []);
 
     // Handler para remover recursos
-    const handleRemoveResource = useCallback((id: string) => {
+    const handleRemoveResource = useCallback((id: number) => {
         setFormData(prevState => ({
             ...prevState,
-            resources: prevState.resources.filter(r => r.id?.toString() !== id)
+            resources: prevState.resources.filter((_, i) => i !== id)
         }));
         
         setFeedback(prev => ({
@@ -371,7 +371,9 @@ const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
             };
             
             // Chamar a função de salvamento
-            await onSave(finalEvaluation);
+            if (onSave) {
+                await onSave(finalEvaluation);
+            }
             
             setFeedback({
                 errorMessage: "",
@@ -403,6 +405,7 @@ const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
         feedback,
         isSubmitting,
         currentSection,
+        initializeEmptyEvaluation,
         setCurrentSection,
         handleInputChange,
         handleAddResource,

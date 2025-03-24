@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaEdit, FaGripLines } from "react-icons/fa";
-import { Evaluation } from "../../utils/types";
+import React, { useCallback, useState } from "react";
+import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaGripLines } from "react-icons/fa";
+import { Evaluation, EvaluationPart } from "../../utils/types";
 import useEvaluationForm from "../../hooks/useEvaluationForm";
 import { Input, InputRow, Label } from "../../styles/inputs";
 import { Button } from "../../styles/buttons";
@@ -10,38 +10,68 @@ import CollapsibleSection from "../CollapsibleSection";
 import { EmptyMessage, IconButton, InputContainer, PartControls, PartHeader, PartItem, PartName, PartsList, SectionTitle, WeightBadge } from "./styles";
 
 interface PartsSectionProps {
+    parts: EvaluationPart[];
     evaluation: Evaluation | null;
+    addPart: (part: EvaluationPart) => void;
+    removePart: (id: string) => void;
+    updatePart: (updatedPart: EvaluationPart) => void;
 }
 
 const PartsSection: React.FC<PartsSectionProps> = ({ evaluation }) => {
-    const { parts, weights, newPart, removePart, addPart, setNewPart } = useEvaluationForm(evaluation);
+    const { parts } = useEvaluationForm(evaluation);
+    const [partsData, setPartsData] = useState(parts);
+    // Estado para pesos das partes
+    const [weights, setWeights] = useState<{ [key: string]: number }>({});
+    // Estado para nova parte sendo adicionada
+    const [newPart, setNewPart] = useState<string>('');
     const [partsExpanded, setPartsExpanded] = useState<boolean>(true);
-    const [editWeight, setEditWeight] = useState<{id: string, weight: number} | null>(null);
+    const [editWeight, setEditWeight] = useState<{ id: string, weight: number } | null>(null);
     const [hoveredPart, setHoveredPart] = useState<string | null>(null);
 
+    const removePart = useCallback((id: string) => {
+        setPartsData(prev => prev.filter(part => part.id !== id));
+    }, []);
+
+    const addPart = useCallback(() => {
+        if (!newPart.trim()) return;
+
+        const newPartItem: EvaluationPart = {
+            id: Date.now().toString(),
+            name: newPart.trim(),
+            weight: 1,
+            maxScore: 10
+        };
+
+        setPartsData(prev => [...prev, newPartItem]);
+        setNewPart('');
+
+        // Inicializa o peso da nova parte no estado de pesos
+        setWeights(prev => ({ ...prev, [newPartItem.id]: 1 }));
+    }, [newPart]);
+
     const handleWeightChange = (id: string, weight: number) => {
-        // Aqui precisaria implementar uma função para atualizar o peso no hook useEvaluationForm
-        // Como não temos acesso a esse hook, apenas simulamos o comportamento
+        /* Aqui precisaria implementar uma função para atualizar o peso no hook useEvaluationForm
+        * Como não temos acesso a esse hook, apenas simulamos o comportamento */
         console.log(`Peso da parte ${id} atualizado para ${weight}`);
         setEditWeight(null);
     };
 
     return (
         <CollapsibleSection title="Partes da avaliação">
-            <CollapsibleHeader 
+            <CollapsibleHeader
                 title="Partes da Avaliação"
                 icon={partsExpanded ? <FaChevronUp /> : <FaChevronDown />}
-                onClick={() => setPartsExpanded(!partsExpanded)} 
+                onClick={() => setPartsExpanded(!partsExpanded)}
             />
 
             <CollapsibleContent isOpen={partsExpanded}>
                 <div>
                     <SectionTitle>Componentes da Avaliação</SectionTitle>
-                    
-                    {parts.length > 0 ? (
+
+                    {partsData.length > 0 ? (
                         <PartsList>
-                            {parts.map((part) => (
-                                <PartItem 
+                            {partsData.map((part) => (
+                                <PartItem
                                     key={part.id}
                                     onMouseEnter={() => setHoveredPart(part.id)}
                                     onMouseLeave={() => setHoveredPart(null)}
@@ -59,13 +89,13 @@ const PartsSection: React.FC<PartsSectionProps> = ({ evaluation }) => {
                                                         min="1"
                                                         max="10"
                                                         value={editWeight.weight}
-                                                        onChange={(e) => setEditWeight({ 
-                                                            ...editWeight, 
-                                                            weight: parseInt(e.target.value) 
+                                                        onChange={(e) => setEditWeight({
+                                                            ...editWeight,
+                                                            weight: parseInt(e.target.value)
                                                         })}
                                                         style={{ width: '60px' }}
                                                     />
-                                                    <Button 
+                                                    <Button
                                                         type="button"
                                                         variant="success"
                                                         onClick={() => handleWeightChange(part.id, editWeight.weight)}
@@ -74,16 +104,16 @@ const PartsSection: React.FC<PartsSectionProps> = ({ evaluation }) => {
                                                     </Button>
                                                 </div>
                                             ) : (
-                                                <WeightBadge 
-                                                    onClick={() => setEditWeight({ 
-                                                        id: part.id, 
-                                                        weight: weights[part.id] || part.weight || 1 
+                                                <WeightBadge
+                                                    onClick={() => setEditWeight({
+                                                        id: part.id,
+                                                        weight: weights[part.id] || part.weight || 1
                                                     })}
                                                 >
                                                     Peso: {weights[part.id] || part.weight || 1}
                                                 </WeightBadge>
                                             )}
-                                            
+
                                             <IconButton
                                                 type="button"
                                                 onClick={() => removePart(part.id)}

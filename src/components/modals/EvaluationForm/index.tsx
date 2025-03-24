@@ -3,7 +3,7 @@ import { FaTimes, FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 import { Evaluation, FormSectionOptions } from "../../../utils/types";
 
-import useEvaluationForm from "../../../hooks/useEvaluationForm";
+import useEvaluationForm from '../../../hooks/useEvaluationForm'
 
 import { Button, CloseButton } from '../../../styles/buttons';
 
@@ -102,21 +102,22 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                 case FormSectionOptions.PARTS:
                     return <PartsSection 
                         parts={parts}
+                        evaluation={evaluation}
                         addPart={handleAddPart}
                         removePart={handleRemovePart}
                         updatePart={handleUpdatePart}
                     />;
                 case FormSectionOptions.EVALUATION_CRITERIA:
-                    return <EvaluationCriteriaSection 
+                    return <EvaluationCriteriaSection
                         criteria={evaluationCriteria}
+                        evaluation={evaluation}
                         addCriterion={handleAddCriterion}
                         removeCriterion={handleRemoveCriterion}
                         updateCriterion={handleUpdateCriterion}
                     />;
                 case FormSectionOptions.EVALUATION_METHOD:
                     return <EvaluationMethodSection 
-                        evaluation={evaluationData}
-                        updateMethod={updateEvaluationMethod}
+                        evaluation={evaluationData}updateMethod={updateEvaluationMethod}
                     />;
                 case FormSectionOptions.CALCULATION:
                     return <CalculationSection 

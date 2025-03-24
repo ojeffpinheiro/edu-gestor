@@ -202,6 +202,8 @@ export interface Evaluation {
     type: EvaluationType | string;
     status: EvaluationStatus | string;
     resources: Resource[] | string[];
+    evaluationMethod?: string;
+    calculationMethod?: string;
 }
 
 export interface EvaluationPart {

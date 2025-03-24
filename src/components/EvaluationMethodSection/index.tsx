@@ -14,6 +14,7 @@ import { CriteriaActions, CriteriaCard, CriteriaHeader, CriteriaTitle, DeleteBut
 
 interface EvaluationCriteriaSectionProps {
     evaluation: Evaluation | null;
+    updateMethod: (method: string) => void;
 }
 
 const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({ evaluation }) => {

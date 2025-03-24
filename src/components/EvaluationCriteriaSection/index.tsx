@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaExclamationTriangle, FaCheck, FaInfoCircle, FaSort } from "react-icons/fa";
 
-import { Evaluation } from "../../utils/types";
-
-import useEvaluationForm from "../../hooks/useEvaluationForm";
+import { Evaluation, EvaluationCriterion } from "../../utils/types";
 
 import { Input, InputRow, Label, TextArea, InputGroup } from "../../styles/inputs";
 import { Button, ActionButton } from "../../styles/buttons";
@@ -11,7 +9,14 @@ import CollapsibleSection from "../CollapsibleSection";
 import { AddCriterionContainer, Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, DragHandle, EmptyCriteriaState, ErrorMessage, FormActions, StatusBanner, Tooltip, WeightInput } from "./styles";
 
 interface EvaluationCriteriaSectionProps {
+}
+
+interface EvaluationCriteriaSectionProps {
+    criteria: EvaluationCriterion[];
     evaluation: Evaluation | null;
+    addCriterion: (criterion: EvaluationCriterion) => void;
+    removeCriterion: (id: string) => void;
+    updateCriterion: (updatedCriterion: EvaluationCriterion) => void;
     onCriteriaChange?: (hasChanges: boolean) => void;
 }
 
@@ -31,20 +36,77 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
     // Track success message
     const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
 
-    // Get evaluation form handlers from custom hook
-    const {
-        evaluationCriteria,
-        toggleCriterionExpansion,
-        updateCriterionWeight,
-        updateCriterionComment,
-        updateCriterionOption,
-        removeCriterionOption,
-        addCriterionOption,
-        removeCriterion,
-        newCriterion,
-        setNewCriterion,
-        addCriterion
-    } = useEvaluationForm(evaluation);
+    // Estado para critérios de avaliação
+    const [evaluationCriteria, setEvaluationCriteria] = useState<EvaluationCriterion[]>([
+        {
+            id: "1",
+            name: "Organização das Ideias",
+            weight: 2,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: "1-1", description: "Completo. O orador transmite claramente a ideia principal e fornece detalhes que são relevantes e interessantes." },
+                { id: "1-2", description: "Geralmente completo. O orador transmite a ideia principal, mas não fornece detalhes relevantes adequados para apoiá-la." },
+                { id: "1-3", description: "Um tanto incompleto. A ideia principal não é clara. Muitos detalhes são irrelevantes." },
+                { id: "1-4", description: "Incompleto. A ideia principal não é clara. Os detalhes são inexistentes ou aleatórios e irrelevantes." }
+            ]
+        },
+        {
+            id: "2",
+            name: "Compreensibilidade",
+            weight: 2,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: "2-1", description: "Compreensível. O orador usa linguagem apropriada para transmitir a ideia principal deste item claramente." },
+                { id: "2-2", description: "Geralmente compreensível. A mensagem não é clara em alguns lugares. A linguagem usada é inadequada para tornar a mensagem totalmente clara." },
+                { id: "2-3", description: "Um tanto incompreensível. A mensagem só poderia ser entendida por um falante nativo simpático. A linguagem usada é frequentemente inapropriada ou distorcida pela interferência do inglês." },
+                { id: "2-4", description: "Incompreensível. A mensagem não pode ser entendida." }
+            ]
+        },
+        {
+            id: "3",
+            name: "Fluência",
+            weight: 2,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: "3-1", description: "O aluno fala muito claramente, sem hesitação. A pronúncia e a entonação soam naturais." },
+                { id: "3-2", description: "O aluno fala com alguma hesitação. Problemas com pronúncia e entonação não impedem a comunicação." },
+                { id: "3-3", description: "O aluno hesita frequentemente. Problemas com pronúncia e entonação distorcem o significado e inibem a comunicação em alguns casos." },
+                { id: "3-4", description: "Hesitações frequentes e problemas extremos com a pronúncia causam interrupções na comunicação." }
+            ]
+        },
+        {
+            id: "4",
+            name: "Precisão",
+            weight: 2,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: "4-1", description: "Funções, gramática e vocabulário são usados corretamente." },
+                { id: "4-2", description: "Pequenos problemas de uso não distorcem o significado nem inibem a comunicação." },
+                { id: "4-3", description: "Problemas no uso distorcem significativamente o significado e inibem a comunicação em alguns casos." },
+                { id: "4-4", description: "Problemas no uso distorcem completamente o significado e inibem as comunicações." }
+            ]
+        },
+        {
+            id: "5",
+            name: "Esforço",
+            weight: 2,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: "5-1", description: "Excede os requisitos mínimos da tarefa e fornece evidências de contribuição ponderada." },
+                { id: "5-2", description: "Atende aos requisitos mínimos da tarefa e fornece evidências de contribuição ponderada." },
+                { id: "5-3", description: "Atende aos requisitos mínimos da tarefa, mas não demonstra evidências de contribuição ponderada." },
+                { id: "5-4", description: "Não cumpre os requisitos mínimos da tarefa nem fornece evidências de contribuição ponderada." }
+            ]
+        }
+    ]);
+
+    // Estado para novo critério
+    const [newCriterion, setNewCriterion] = useState<{ name: string }>({ name: "" });
 
     // Store the original criteria when the component mounts or when evaluation changes
     useEffect(() => {
@@ -52,6 +114,120 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
             setOriginalCriteria(JSON.parse(JSON.stringify(evaluation.evaluationCriteria)));
         }
     }, [evaluation]);
+
+    /**
+     * Alterna estado de expansão de um critério de avaliação
+     */
+    const toggleCriterionExpansion = useCallback((id: string) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion =>
+                criterion.id === id
+                    ? { ...criterion, isExpanded: !criterion.isExpanded }
+                    : criterion
+            )
+        );
+    }, []);
+
+    /**
+     * Atualiza o peso de um critério de avaliação
+     */
+    const updateCriterionWeight = useCallback((id: string, weight: number) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion =>
+                criterion.id === id ? { ...criterion, weight } : criterion
+            )
+        );
+    }, []);
+
+    const addCriterion = useCallback(() => {
+        if (!newCriterion.name.trim()) return;
+
+        const newCriterionItem: EvaluationCriterion = {
+            id: Date.now().toString(),
+            name: newCriterion.name.trim(),
+            weight: 1,
+            comment: "",
+            isExpanded: false,
+            options: [
+                { id: `${Date.now()}-1`, description: "Opção 1" },
+                { id: `${Date.now()}-2`, description: "Opção 2" },
+                { id: `${Date.now()}-3`, description: "Opção 3" },
+                { id: `${Date.now()}-4`, description: "Opção 4" }
+            ]
+        };
+
+        setEvaluationCriteria(prev => [...prev, newCriterionItem]);
+        setNewCriterion({ name: "" });
+    }, [newCriterion]);
+
+    /**
+         * Adiciona uma nova opção a um critério de avaliação
+         */
+    const addCriterionOption = useCallback((criterionId: string) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion => {
+                if (criterion.id === criterionId) {
+                    const newOptionId = `${criterionId}-${criterion.options.length + 1}`;
+                    return {
+                        ...criterion,
+                        options: [
+                            ...criterion.options,
+                            { id: newOptionId, description: "Nova opção" }
+                        ]
+                    };
+                }
+                return criterion;
+            })
+        );
+    }, []);
+
+    /**
+     * Atualiza o comentário de um critério de avaliação
+     */
+    const updateCriterionComment = useCallback((id: string, comment: string) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion =>
+                criterion.id === id ? { ...criterion, comment } : criterion
+            )
+        );
+    }, []);
+
+    const updateCriterionOption = useCallback((criterionId: string, optionId: string, description: string) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion => {
+                if (criterion.id === criterionId) {
+                    return {
+                        ...criterion,
+                        options: criterion.options.map(option =>
+                            option.id === optionId ? { ...option, description } : option
+                        )
+                    };
+                }
+                return criterion;
+            })
+        );
+    }, []);
+
+    const removeCriterionOption = useCallback((criterionId: string, optionId: string) => {
+        setEvaluationCriteria(prev =>
+            prev.map(criterion => {
+                if (criterion.id === criterionId) {
+                    return {
+                        ...criterion,
+                        options: criterion.options.filter(option => option.id !== optionId)
+                    };
+                }
+                return criterion;
+            })
+        );
+    }, []);
+
+    /**
+     * Remove um critério de avaliação
+     */
+    const removeCriterion = useCallback((id: string) => {
+        setEvaluationCriteria(prev => prev.filter(criterion => criterion.id !== id));
+    }, []);
 
     // Validate criterion name input
     const validateCriterionName = (name: string): boolean => {
@@ -166,7 +342,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
         setHasUnsavedChanges(false);
         setShowSuccessMessage(true);
         console.log("Critérios salvos com sucesso!");
-        
+
         // Hide success message after 3 seconds
         setTimeout(() => {
             setShowSuccessMessage(false);
@@ -181,8 +357,8 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                     <FaInfoCircle size={36} />
                     <p>Nenhum critério de avaliação definido ainda.</p>
                     <p>Adicione critérios para personalizar sua avaliação.</p>
-                    <Button 
-                        variant="primary" 
+                    <Button
+                        variant="primary"
                         onClick={() => {
                             // Scroll to add criterion section
                             setTimeout(() => {
@@ -222,7 +398,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                         <span>Há alterações não salvas. Lembre-se de salvar antes de sair.</span>
                     </StatusBanner>
                 )}
-                
+
                 {showSuccessMessage && (
                     <StatusBanner className="success" role="status">
                         <FaCheck aria-hidden="true" />
@@ -259,7 +435,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                     <Tooltip>
                                         <FaInfoCircle className="tooltip-icon" size={14} />
                                         <span className="tooltip-text">
-                                            Define a importância deste critério na avaliação final. 
+                                            Define a importância deste critério na avaliação final.
                                             Valores mais altos têm maior influência.
                                         </span>
                                     </Tooltip>
@@ -286,7 +462,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                     <Tooltip>
                                         <FaInfoCircle className="tooltip-icon" size={14} />
                                         <span className="tooltip-text">
-                                            Adicione informações adicionais para ajudar os avaliadores a 
+                                            Adicione informações adicionais para ajudar os avaliadores a
                                             entenderem melhor este critério.
                                         </span>
                                     </Tooltip>

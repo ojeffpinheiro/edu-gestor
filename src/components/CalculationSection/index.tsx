@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 
 import { Evaluation } from "../../utils/types";
@@ -15,18 +15,18 @@ import { InputGroup } from "../modals/EvaluationForm/styles";
 
 interface CalculationSectionProps {
     evaluationData: Evaluation | null;
+    updateCalculationMethod: (method: string) => void;
 }
 
-const CalculationSection: React.FC<CalculationSectionProps> = ({ evaluationData }) => {
-    const { 
-        calculationMethod, 
-        setCalculationMethod, 
-        parts, 
-        weights, 
-        updateWeight, 
-        customFormula, 
-        setCustomFormula 
-    } = useEvaluationForm(evaluationData);
+const CalculationSection: React.FC<CalculationSectionProps> = ({ evaluationData, updateCalculationMethod }) => {
+    // Estado para método de cálculo
+    const [calculationMethod, setCalculationMethod] = useState<string>("sum");
+    // Estado para pesos das partes
+    const [weights, setWeights] = useState<{ [key: string]: number }>({});
+
+    const [customFormula, setCustomFormula] = useState<string>("");
+
+    const { parts } = useEvaluationForm(evaluationData);
     
     const [calculationMethodExpanded, setCalculationMethodExpanded] = useState<boolean>(true);
     const [isWeightValid, setIsWeightValid] = useState<boolean>(true);
@@ -38,6 +38,10 @@ const CalculationSection: React.FC<CalculationSectionProps> = ({ evaluationData 
         setTotalWeight(total);
         setIsWeightValid(Math.abs(total - 10) < 0.1); // Allow small floating point discrepancies
     }, [weights]);
+
+    const updateWeight = useCallback((partId: string, weight: number) => {
+        setWeights(prev => ({ ...prev, [partId]: weight }));
+    }, []);
 
     // Calculation method descriptions for better user understanding
     const methodDescriptions = {

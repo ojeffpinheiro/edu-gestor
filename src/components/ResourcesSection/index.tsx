@@ -1,37 +1,37 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash } from "react-icons/fa";
 
+import { Resource } from "../../utils/types";
+
 import CollapsibleSection from "../CollapsibleSection";
 
 import { CollapsibleHeader } from "../ui/CollapsibleComponents";
 import { AddButton, DeleteButton, EmptyMessage, FeedbackMessage, HelpText, InputContainer, ResourceItem, ResourceName, ResourcesContainer, ResourcesContent, ResourcesList, StyledInput } from "./styles";
 
-interface Resource {
-    id?: number;
-    name: string;
-    quantity?: number;
-}
 
 interface ResourcesSectionProps {
     resources: Resource[];
-    addResource: (resource: string) => void;
+    addResource: (resource: Resource) => void;
     removeResource: (index: number) => void;
 }
 
 const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources, addResource, removeResource }) => {
-    const [newResource, setNewResource] = useState("");
+    const initialResource = { name: "", description: "" };
+    
+    const [newResource, setNewResource] = useState(initialResource);
     const [resourcesExpanded, setResourcesExpanded] = useState<boolean>(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [feedback, setFeedback] = useState({ type: "", message: "" });
 
     const handleAddResource = () => {
-        if (!newResource.trim()) return;
+        if (!newResource.name.trim()) return;
+        if(!newResource.description.trim()) return;
         
         setIsSubmitting(true);
         
         try {
             addResource(newResource);
-            setNewResource("");
+            setNewResource(initialResource);
             setFeedback({ 
                 type: "success", 
                 message: `Recurso "${newResource}" adicionado com sucesso!` 
@@ -52,7 +52,7 @@ const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources, addResou
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter' && newResource.trim()) {
+        if (e.key === 'Enter' && newResource.name.trim()) {
             handleAddResource();
         }
     };
@@ -105,8 +105,8 @@ const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources, addResou
                             <StyledInput
                                 type="text"
                                 aria-label="Novo recurso"
-                                value={newResource}
-                                onChange={(e) => setNewResource(e.target.value)}
+                                value={newResource.name}
+                                onChange={(e) => setNewResource({ ...newResource, name: e.target.value })}
                                 onKeyPress={handleKeyPress}
                                 placeholder="Digite um recurso necessário..."
                                 disabled={isSubmitting}
@@ -115,7 +115,7 @@ const ResourcesSection: React.FC<ResourcesSectionProps> = ({ resources, addResou
                                 type="button"
                                 aria-label="Adicionar recurso"
                                 onClick={handleAddResource}
-                                disabled={!newResource.trim() || isSubmitting}
+                                disabled={!newResource.name.trim() || isSubmitting}
                                 variant="success"
                             >
                                 <FaPlus /> Adicionar
