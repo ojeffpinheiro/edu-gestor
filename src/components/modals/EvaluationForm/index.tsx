@@ -29,30 +29,40 @@ import {
     FormProgressIndicator,
 } from './styles';
 
-/** * Interface para as propriedades do componente EvaluationForm */
 interface EvaluationFormProps {
     evaluation: Evaluation | null;
-    onSave: (evaluation: Evaluation | null) => Promise<void>;
+    onSave: (evaluation: Evaluation) => Promise<void>;
     onClose: () => void;
 }
 
 const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onClose }) => {
     const {
+        evaluation: evaluationData,
         resources,
+        parts,
+        evaluationCriteria,
         feedback,
         isSubmitting,
         currentSection,
         setCurrentSection,
         handleInputChange,
-        handleRemoveResource,
         handleAddResource,
+        handleRemoveResource,
+        handleAddPart,
+        handleRemovePart,
+        handleUpdatePart,
+        handleAddCriterion,
+        handleRemoveCriterion,
+        handleUpdateCriterion,
+        updateEvaluationMethod,
+        updateCalculationMethod,
         goToPreviousSection,
         goToNextSection,
         handleSubmit,
         isFormValid,
         getSectionValidationState,
         getFormProgress
-    } = useEvaluationForm(evaluation, onSave);
+    } = useEvaluationForm({ evaluation, onSave });
 
     // Ícones para cada seção do formulário
     const sectionIcons = useMemo(() => ({
@@ -79,19 +89,45 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         try {
             switch (currentSection) {
                 case FormSectionOptions.BASIC_INFO:
-                    return <BasicInfoSection evaluationData={evaluation} handleInputChange={handleInputChange} />
+                    return <BasicInfoSection 
+                        evaluationData={evaluationData} 
+                        handleInputChange={handleInputChange} 
+                    />;
                 case FormSectionOptions.RESOURCES:
-                    return <ResourcesSection addResource={handleAddResource} removeResource={handleRemoveResource} resources={resources} />
+                    return <ResourcesSection 
+                        addResource={handleAddResource} 
+                        removeResource={handleRemoveResource} 
+                        resources={resources} 
+                    />;
                 case FormSectionOptions.PARTS:
-                    return <PartsSection evaluation={evaluation} />
+                    return <PartsSection 
+                        parts={parts}
+                        addPart={handleAddPart}
+                        removePart={handleRemovePart}
+                        updatePart={handleUpdatePart}
+                    />;
                 case FormSectionOptions.EVALUATION_CRITERIA:
-                    return <EvaluationCriteriaSection evaluation={evaluation} />
+                    return <EvaluationCriteriaSection 
+                        criteria={evaluationCriteria}
+                        addCriterion={handleAddCriterion}
+                        removeCriterion={handleRemoveCriterion}
+                        updateCriterion={handleUpdateCriterion}
+                    />;
                 case FormSectionOptions.EVALUATION_METHOD:
-                    return <EvaluationMethodSection evaluation={evaluation} />
+                    return <EvaluationMethodSection 
+                        evaluation={evaluationData}
+                        updateMethod={updateEvaluationMethod}
+                    />;
                 case FormSectionOptions.CALCULATION:
-                    return <CalculationSection evaluationData={evaluation} />
+                    return <CalculationSection 
+                        evaluationData={evaluationData}
+                        updateCalculationMethod={updateCalculationMethod}
+                    />;
                 default:
-                    return <BasicInfoSection evaluationData={evaluation} handleInputChange={handleInputChange} />
+                    return <BasicInfoSection 
+                        evaluationData={evaluationData} 
+                        handleInputChange={handleInputChange} 
+                    />;
             }
         } catch (error) {
             console.error("Erro ao renderizar seção:", error);
@@ -102,21 +138,11 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                 </ErrorMessage>
             );
         }
-    }
+    };
 
     const handleSubmitForm = async (e: React.FormEvent) => {
-        e.preventDefault(); // Impedir o comportamento padrão do formulário
-        
-        if (!isFormValid()) {
-            // Mostrar mensagem de erro para formulário inválido
-            return;
-        }
-        
-        try {
-            await handleSubmit(e);
-        } catch (error) {
-            console.error("Erro ao salvar avaliação:", error);
-        }
+        e.preventDefault();
+        await handleSubmit(e);
     };
 
     // Calcula o progresso do formulário para a barra de progresso
@@ -190,7 +216,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                         </FormStepsNav>
 
                         {/* Conteúdo da seção atual */}
-                        { renderCurrentSection() }
+                        {renderCurrentSection()}
                     </ModalBody>
                     
                     <ModalFooter>

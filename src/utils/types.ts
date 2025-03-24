@@ -221,6 +221,7 @@ export interface EvaluationFormProps {
 export interface FormFeedback {
     errorMessage?: string;
     successMessage?: string;
+    hasChanges: boolean;
 }
 
 export enum FormSectionOptions {

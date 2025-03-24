@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { 
     Evaluation, 
     EvaluationCriterion, 
@@ -37,7 +37,7 @@ function initializeEmptyEvaluation(): Evaluation {
 }
 
 // Campos obrigatórios para cada seção
-const REQUIRED_FIELDS = {
+const REQUIRED_FIELDS: Record<FormSectionOptions, string[]> = {
     [FormSectionOptions.BASIC_INFO]: ['name', 'school', 'series', 'class', 'subject', 'objective', 'contents'],
     [FormSectionOptions.RESOURCES]: [],
     [FormSectionOptions.PARTS]: [], // Verificado dinamicamente
@@ -46,44 +46,48 @@ const REQUIRED_FIELDS = {
     [FormSectionOptions.CALCULATION]: ['calculationMethod']
 };
 
+interface UseEvaluationFormProps {
+    evaluation: Evaluation | null;
+    onSave: (evaluation: Evaluation) => Promise<void>;
+}
+
 // Hook principal para gerenciar o formulário de avaliação
-const useEvaluationForm = (
-    initialEvaluation: Evaluation | null, 
-    onSave?: (evaluation: Evaluation) => Promise<void>
-) => {
+const useEvaluationForm = ({ evaluation, onSave }: UseEvaluationFormProps) => {
     // Estado para gerenciar todos os dados da avaliação
-    const [formState, setFormState] = useState<{
-        evaluationData: Evaluation;
+    const [formData, setFormData] = useState<{
+        evaluation: Evaluation;
         resources: Resource[];
         parts: EvaluationPart[];
         evaluationCriteria: EvaluationCriterion[];
         evaluationMethod: string;
         calculationMethod: string;
-        weights: { [key: string]: number };
+        weights: Record<string, number>;
         numericRange: { min: number; max: number };
         concepts: RubricOrConcept[];
         rubrics: RubricOrConcept[];
         customFormula: string;
-        hasChanges: boolean;
-    }>({
-        evaluationData: initialEvaluation || initializeEmptyEvaluation(),
-        resources: initialEvaluation?.resources || [],
-        parts: initialEvaluation?.parts || [],
-        evaluationCriteria: [
-            {
-                id: "1",
-                name: "Organização das Ideias",
-                weight: 2,
-                comment: "",
-                isExpanded: false,
-                options: [
-                    { id: "1-1", description: "Muito boa", value: 10 },
-                    { id: "1-2", description: "Boa", value: 8 },
-                    { id: "1-3", description: "Regular", value: 6 },
-                    { id: "1-4", description: "Insuficiente", value: 4 }
-                ]
-            }
-        ],
+    }>(() => ({
+        evaluation: evaluation || initializeEmptyEvaluation(),
+        resources: Array.isArray(evaluation?.resources) && evaluation.resources.every(res => typeof res !== 'string') ? evaluation.resources as Resource[] : [],
+        parts: evaluation?.parts || [],
+        evaluationCriteria: evaluation?.evaluationCriteria ? 
+            typeof evaluation.evaluationCriteria === 'string' ? 
+                [] : JSON.parse(evaluation.evaluationCriteria as string) : 
+            [
+                {
+                    id: "1",
+                    name: "Organização das Ideias",
+                    weight: 2,
+                    comment: "",
+                    isExpanded: false,
+                    options: [
+                        { id: "1-1", description: "Muito boa", value: 10 },
+                        { id: "1-2", description: "Boa", value: 8 },
+                        { id: "1-3", description: "Regular", value: 6 },
+                        { id: "1-4", description: "Insuficiente", value: 4 }
+                    ]
+                }
+            ],
         evaluationMethod: "numeric",
         calculationMethod: "average",
         weights: {},
@@ -96,8 +100,7 @@ const useEvaluationForm = (
         ],
         rubrics: [],
         customFormula: "",
-        hasChanges: false
-    });
+    }));
 
     // Estado para navegar entre as seções do formulário
     const [currentSection, setCurrentSection] = useState<FormSectionOptions>(FormSectionOptions.BASIC_INFO);
@@ -112,30 +115,33 @@ const useEvaluationForm = (
     // Estado para controlar o envio do formulário
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    // Efeito para atualizar dados quando o initialEvaluation mudar
+    // Efeito para atualizar dados quando o evaluation mudar
     useEffect(() => {
-        if (initialEvaluation) {
-            setFormState(prevState => ({
-                ...prevState,
-                evaluationData: initialEvaluation,
-                resources: initialEvaluation.resources || [],
-                parts: initialEvaluation.parts || [],
-                hasChanges: false
-            }));
-        }
-    }, [initialEvaluation]);
+            if (evaluation) {
+                setFormData(prevState => ({
+                    ...prevState,
+                    evaluation,
+                    resources: Array.isArray(evaluation.resources) && evaluation.resources.every(res => typeof res !== 'string') ? evaluation.resources as Resource[] : [],
+                    parts: evaluation.parts || [],
+                }));
+                
+                setFeedback(prev => ({
+                    ...prev,
+                    hasChanges: false
+                }));
+            }
+        }, [evaluation]);
 
     // Handler para mudanças nos inputs
     const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         
-        setFormState(prevState => ({
+        setFormData(prevState => ({
             ...prevState,
-            evaluationData: {
-                ...prevState.evaluationData,
+            evaluation: {
+                ...prevState.evaluation,
                 [name]: value
-            },
-            hasChanges: true
+            }
         }));
         
         setFeedback(prev => ({
@@ -147,10 +153,9 @@ const useEvaluationForm = (
 
     // Handler para adicionar recursos
     const handleAddResource = useCallback((resource: Resource) => {
-        setFormState(prevState => ({
+        setFormData(prevState => ({
             ...prevState,
-            resources: [...prevState.resources, resource],
-            hasChanges: true
+            resources: [...prevState.resources, resource]
         }));
         
         setFeedback(prev => ({
@@ -161,10 +166,89 @@ const useEvaluationForm = (
 
     // Handler para remover recursos
     const handleRemoveResource = useCallback((id: string) => {
-        setFormState(prevState => ({
+        setFormData(prevState => ({
             ...prevState,
-            resources: prevState.resources.filter(r => r.id !== id),
+            resources: prevState.resources.filter(r => r.id?.toString() !== id)
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
             hasChanges: true
+        }));
+    }, []);
+
+    // Handler para adicionar partes da avaliação
+    const handleAddPart = useCallback((part: EvaluationPart) => {
+        setFormData(prevState => ({
+            ...prevState,
+            parts: [...prevState.parts, part]
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para remover partes da avaliação
+    const handleRemovePart = useCallback((id: string) => {
+        setFormData(prevState => ({
+            ...prevState,
+            parts: prevState.parts.filter(p => p.id !== id)
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para atualizar partes da avaliação
+    const handleUpdatePart = useCallback((updatedPart: EvaluationPart) => {
+        setFormData(prevState => ({
+            ...prevState,
+            parts: prevState.parts.map(p => p.id === updatedPart.id ? updatedPart : p)
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para adicionar critérios de avaliação
+    const handleAddCriterion = useCallback((criterion: EvaluationCriterion) => {
+        setFormData(prevState => ({
+            ...prevState,
+            evaluationCriteria: [...prevState.evaluationCriteria, criterion]
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para remover critérios de avaliação
+    const handleRemoveCriterion = useCallback((id: string) => {
+        setFormData(prevState => ({
+            ...prevState,
+            evaluationCriteria: prevState.evaluationCriteria.filter(c => c.id !== id)
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para atualizar critérios de avaliação
+    const handleUpdateCriterion = useCallback((updatedCriterion: EvaluationCriterion) => {
+        setFormData(prevState => ({
+            ...prevState,
+            evaluationCriteria: prevState.evaluationCriteria.map(c => 
+                c.id === updatedCriterion.id ? updatedCriterion : c
+            )
         }));
         
         setFeedback(prev => ({
@@ -194,37 +278,31 @@ const useEvaluationForm = (
 
     // Verificação de validade da seção atual
     const getSectionValidationState = useCallback((section: FormSectionOptions): boolean => {
-        const { evaluationData } = formState;
+        const { evaluation } = formData;
         
-        // Verificar campos obrigatórios específicos da seção
-        const requiredFields = REQUIRED_FIELDS[section];
-        
-        if (section === FormSectionOptions.BASIC_INFO) {
-            return requiredFields.every(field => 
-                evaluationData[field as keyof Evaluation] !== undefined && 
-                evaluationData[field as keyof Evaluation] !== ""
-            );
+        switch (section) {
+            case FormSectionOptions.BASIC_INFO:
+                return REQUIRED_FIELDS[section].every(field => 
+                    evaluation[field as keyof Evaluation] !== undefined && 
+                    evaluation[field as keyof Evaluation] !== ""
+                );
+                
+            case FormSectionOptions.PARTS:
+                return formData.parts.length > 0;
+                
+            case FormSectionOptions.EVALUATION_CRITERIA:
+                return formData.evaluationCriteria.length > 0;
+                
+            case FormSectionOptions.EVALUATION_METHOD:
+                return formData.evaluationMethod !== "";
+                
+            case FormSectionOptions.CALCULATION:
+                return formData.calculationMethod !== "";
+                
+            default:
+                return true;
         }
-        
-        if (section === FormSectionOptions.PARTS) {
-            return formState.parts.length > 0;
-        }
-        
-        if (section === FormSectionOptions.EVALUATION_CRITERIA) {
-            return formState.evaluationCriteria.length > 0;
-        }
-        
-        if (section === FormSectionOptions.EVALUATION_METHOD) {
-            return formState.evaluationMethod !== "";
-        }
-        
-        if (section === FormSectionOptions.CALCULATION) {
-            return formState.calculationMethod !== "";
-        }
-        
-        // Para seções sem verificações específicas
-        return true;
-    }, [formState]);
+    }, [formData]);
 
     // Verificação da validade geral do formulário
     const isFormValid = useCallback((): boolean => {
@@ -239,6 +317,32 @@ const useEvaluationForm = (
         const validSections = sections.filter(section => getSectionValidationState(section)).length;
         return (validSections / sections.length) * 100;
     }, [getSectionValidationState]);
+
+    // Handler para atualizar método de avaliação
+    const updateEvaluationMethod = useCallback((method: string) => {
+        setFormData(prevState => ({
+            ...prevState,
+            evaluationMethod: method
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
+
+    // Handler para atualizar método de cálculo
+    const updateCalculationMethod = useCallback((method: string) => {
+        setFormData(prevState => ({
+            ...prevState,
+            calculationMethod: method
+        }));
+        
+        setFeedback(prev => ({
+            ...prev,
+            hasChanges: true
+        }));
+    }, []);
 
     // Handler para submissão do formulário
     const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -258,52 +362,59 @@ const useEvaluationForm = (
             
             // Preparar dados finais da avaliação
             const finalEvaluation: Evaluation = {
-                ...formState.evaluationData,
-                resources: formState.resources,
-                parts: formState.parts
+                ...formData.evaluation,
+                resources: formData.resources,
+                parts: formData.parts,
+                evaluationCriteria: typeof formData.evaluation.evaluationCriteria === 'string' ? 
+                    formData.evaluation.evaluationCriteria : 
+                    JSON.stringify(formData.evaluationCriteria)
             };
             
             // Chamar a função de salvamento
-            if (onSave) {
-                await onSave(finalEvaluation);
-            }
+            await onSave(finalEvaluation);
             
             setFeedback({
                 errorMessage: "",
                 successMessage: "Avaliação salva com sucesso!",
                 hasChanges: false
             });
-            
-            // Resetar o estado de mudanças
-            setFormState(prev => ({
-                ...prev,
-                hasChanges: false
-            }));
         } catch (error) {
+            console.error("Erro ao salvar avaliação:", error);
             setFeedback({
                 errorMessage: "Erro ao salvar a avaliação. Por favor, tente novamente.",
                 successMessage: "",
                 hasChanges: true
             });
-            console.error("Erro ao salvar avaliação:", error);
         } finally {
             setIsSubmitting(false);
         }
-    }, [formState, isFormValid, onSave]);
+    }, [formData, isFormValid, onSave]);
 
-    // Retornar os valores e métodos necessários para o componente
     return {
-        evaluationData: formState.evaluationData,
-        resources: formState.resources,
-        parts: formState.parts,
-        evaluationCriteria: formState.evaluationCriteria,
+        evaluation: formData.evaluation,
+        resources: formData.resources,
+        parts: formData.parts,
+        evaluationCriteria: formData.evaluationCriteria,
+        evaluationMethod: formData.evaluationMethod,
+        calculationMethod: formData.calculationMethod,
+        concepts: formData.concepts,
+        rubrics: formData.rubrics,
+        numericRange: formData.numericRange,
         feedback,
         isSubmitting,
         currentSection,
         setCurrentSection,
         handleInputChange,
-        handleRemoveResource,
         handleAddResource,
+        handleRemoveResource,
+        handleAddPart,
+        handleRemovePart,
+        handleUpdatePart,
+        handleAddCriterion,
+        handleRemoveCriterion,
+        handleUpdateCriterion,
+        updateEvaluationMethod,
+        updateCalculationMethod,
         goToPreviousSection,
         goToNextSection,
         handleSubmit,
