@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaExclamationTriangle, FaCheck } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaExclamationTriangle, FaCheck, FaInfoCircle, FaSort } from "react-icons/fa";
 
 import { Evaluation } from "../../utils/types";
 
@@ -8,18 +8,13 @@ import useEvaluationForm from "../../hooks/useEvaluationForm";
 import { Input, InputRow, Label, TextArea, InputGroup } from "../../styles/inputs";
 import { Button, ActionButton } from "../../styles/buttons";
 import CollapsibleSection from "../CollapsibleSection";
-
-import { Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, WeightInput } from "../../utils/CriteriaCard";
+import { AddCriterionContainer, Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, DragHandle, EmptyCriteriaState, ErrorMessage, FormActions, StatusBanner, Tooltip, WeightInput } from "./styles";
 
 interface EvaluationCriteriaSectionProps {
     evaluation: Evaluation | null;
     onCriteriaChange?: (hasChanges: boolean) => void;
 }
 
-/**
- * Component for managing evaluation criteria in an assessment form
- * Allows users to create, edit, and manage weighted evaluation criteria and options
- */
 const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
     evaluation,
     onCriteriaChange
@@ -33,6 +28,8 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
         criterionName?: string;
         weightError?: string;
     }>({});
+    // Track success message
+    const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
 
     // Get evaluation form handlers from custom hook
     const {
@@ -89,13 +86,10 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
 
     // Check if the current criteria are different from the original
     const checkForChanges = useCallback(() => {
-        // Simple check - comparing lengths
         if (!originalCriteria || originalCriteria.length !== evaluationCriteria.length) {
             return true;
         }
 
-        // Deep comparison would need more sophisticated logic depending on your data structure
-        // For demonstration, this is a simplified check
         const currentJson = JSON.stringify(evaluationCriteria.map(c => ({
             id: c.id,
             name: c.name,
@@ -121,16 +115,11 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
     // Reset to original criteria
     const resetChanges = () => {
         if (evaluation && originalCriteria.length > 0) {
-            // This is a simplified approach. In a real scenario, 
-            // you would need to call the appropriate state management functions
-            // to reset all criteria to their original state.
-
-            // For demonstration purposes, we'll show a toast and set hasUnsavedChanges to false
-            console.log("Alterações descartadas");
-            setHasUnsavedChanges(false);
-
-            // Ideally, you would reset the state in your form hook
-            // For example: resetEvaluationCriteria(originalCriteria)
+            if (window.confirm("Tem certeza que deseja descartar todas as alterações?")) {
+                console.log("Alterações descartadas");
+                setHasUnsavedChanges(false);
+                // Reset implementation would normally go here
+            }
         }
     };
 
@@ -141,6 +130,13 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                 addCriterion();
                 console.log("Critério adicionado com sucesso!");
                 setHasUnsavedChanges(true);
+                // Show feedback
+                setTimeout(() => {
+                    const newCard = document.querySelector(`[data-testid^="criterion-card-"]:last-child`);
+                    if (newCard) {
+                        newCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
+                }, 100);
             }
         } catch (error) {
             console.error("Erro ao adicionar critério:", error);
@@ -166,45 +162,75 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
 
     // Save changes
     const saveChanges = () => {
-        // Here would be the save action to persist changes to your backend
-        // For demonstration purposes, we're just updating the original criteria
         setOriginalCriteria(JSON.parse(JSON.stringify(evaluationCriteria)));
         setHasUnsavedChanges(false);
+        setShowSuccessMessage(true);
         console.log("Critérios salvos com sucesso!");
+        
+        // Hide success message after 3 seconds
+        setTimeout(() => {
+            setShowSuccessMessage(false);
+        }, 3000);
     };
 
-    // Render no criteria message when empty
-    const renderNoCriteria = () => {
+    // Render empty state when no criteria exist
+    const renderEmptyState = () => {
         if (evaluationCriteria.length === 0) {
             return (
-                <div className="no-criteria-message">
-                    <FaExclamationTriangle color="var(--color-warning)" />
-                    <p>Nenhum critério de avaliação definido. Adicione pelo menos um critério.</p>
-                </div>
+                <EmptyCriteriaState>
+                    <FaInfoCircle size={36} />
+                    <p>Nenhum critério de avaliação definido ainda.</p>
+                    <p>Adicione critérios para personalizar sua avaliação.</p>
+                    <Button 
+                        variant="primary" 
+                        onClick={() => {
+                            // Scroll to add criterion section
+                            setTimeout(() => {
+                                const addSection = document.querySelector('.add-criterion-container');
+                                if (addSection) {
+                                    addSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                    // Focus on the input
+                                    const input = document.querySelector('.add-criterion-container input');
+                                    if (input) {
+                                        (input as HTMLElement).focus();
+                                    }
+                                }
+                            }, 100);
+                        }}
+                    >
+                        <FaPlus aria-hidden="true" /> Começar a adicionar
+                    </Button>
+                </EmptyCriteriaState>
             );
         }
         return null;
     };
 
     return (
-        <CollapsibleSection
-            title='Critérios de Avaliação'>
+        <CollapsibleSection title='Critérios de Avaliação'>
             <div className="section-title-with-badge">
                 <span />
                 {evaluationCriteria.length > 0 && (
-                    <Badge className="criteria-count">{evaluationCriteria.length}</Badge>
+                    <Badge>{evaluationCriteria.length}</Badge>
                 )}
             </div>
             <div className="evaluation-criteria-container">
-                {/* Status indicator for unsaved changes */}
+                {/* Status messages */}
                 {hasUnsavedChanges && (
-                    <div className="unsaved-changes-indicator">
-                        <FaExclamationTriangle color="var(--color-warning)" />
-                        <span>Alterações não salvas</span>
-                    </div>
+                    <StatusBanner className="warning" role="alert">
+                        <FaExclamationTriangle aria-hidden="true" />
+                        <span>Há alterações não salvas. Lembre-se de salvar antes de sair.</span>
+                    </StatusBanner>
+                )}
+                
+                {showSuccessMessage && (
+                    <StatusBanner className="success" role="status">
+                        <FaCheck aria-hidden="true" />
+                        <span>Critérios salvos com sucesso!</span>
+                    </StatusBanner>
                 )}
 
-                {renderNoCriteria()}
+                {renderEmptyState()}
 
                 {evaluationCriteria.map((criterion) => (
                     <CriteriaCard key={criterion.id} data-testid={`criterion-card-${criterion.id}`}>
@@ -214,9 +240,12 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                             aria-expanded={criterion.isExpanded}
                         >
                             <div className="criteria-title">
+                                <DragHandle title="Reordenar critério">
+                                    <FaSort aria-hidden="true" />
+                                </DragHandle>
                                 <span className="criterion-name">{criterion.name}</span>
                                 <Badge>{`Peso: ${criterion.weight}`}</Badge>
-                                <Badge className="options-count">{`Opções: ${criterion.options.length}`}</Badge>
+                                <Badge className="options-count">{`${criterion.options.length} opç${criterion.options.length === 1 ? 'ão' : 'ões'}`}</Badge>
                             </div>
                             <div className="criteria-controls">
                                 {criterion.isExpanded ? <FaChevronUp aria-hidden="true" /> : <FaChevronDown aria-hidden="true" />}
@@ -225,7 +254,16 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
 
                         <CriteriaBody isExpanded={criterion.isExpanded}>
                             <InputGroup>
-                                <Label htmlFor={`criterion-weight-${criterion.id}`}>Peso (1-10):</Label>
+                                <Label htmlFor={`criterion-weight-${criterion.id}`}>
+                                    Peso do critério (1-10):
+                                    <Tooltip>
+                                        <FaInfoCircle className="tooltip-icon" size={14} />
+                                        <span className="tooltip-text">
+                                            Define a importância deste critério na avaliação final. 
+                                            Valores mais altos têm maior influência.
+                                        </span>
+                                    </Tooltip>
+                                </Label>
                                 <WeightInput
                                     id={`criterion-weight-${criterion.id}`}
                                     type="number"
@@ -236,14 +274,23 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                     aria-describedby={formErrors.weightError ? `weight-error-${criterion.id}` : undefined}
                                 />
                                 {formErrors.weightError && (
-                                    <div className="error-message" id={`weight-error-${criterion.id}`}>
+                                    <ErrorMessage id={`weight-error-${criterion.id}`}>
                                         {formErrors.weightError}
-                                    </div>
+                                    </ErrorMessage>
                                 )}
                             </InputGroup>
 
                             <InputGroup>
-                                <Label htmlFor={`criterion-comment-${criterion.id}`}>Comentário:</Label>
+                                <Label htmlFor={`criterion-comment-${criterion.id}`}>
+                                    Comentário:
+                                    <Tooltip>
+                                        <FaInfoCircle className="tooltip-icon" size={14} />
+                                        <span className="tooltip-text">
+                                            Adicione informações adicionais para ajudar os avaliadores a 
+                                            entenderem melhor este critério.
+                                        </span>
+                                    </Tooltip>
+                                </Label>
                                 <TextArea
                                     id={`criterion-comment-${criterion.id}`}
                                     value={criterion.comment}
@@ -251,14 +298,23 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                         updateCriterionComment(criterion.id, e.target.value);
                                         setHasUnsavedChanges(true);
                                     }}
-                                    placeholder="Adicione comentários explicativos para este critério"
+                                    placeholder="Ex: Este critério avalia a capacidade do candidato em..."
                                     rows={2}
                                 />
                             </InputGroup>
 
                             <InputGroup>
                                 <div className="criterion-options-header">
-                                    <h4>Opções de Avaliação:</h4>
+                                    <Label>
+                                        Opções de Avaliação:
+                                        <Tooltip>
+                                            <FaInfoCircle className="tooltip-icon" size={14} />
+                                            <span className="tooltip-text">
+                                                Crie diferentes níveis de desempenho para este critério.
+                                                Cada opção representa um possível resultado da avaliação.
+                                            </span>
+                                        </Tooltip>
+                                    </Label>
                                     <Button
                                         type="button"
                                         onClick={() => {
@@ -287,7 +343,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                                         setHasUnsavedChanges(true);
                                                     }}
                                                     rows={2}
-                                                    placeholder="Descreva esta opção de avaliação"
+                                                    placeholder={`Ex: ${index === 0 ? 'Não atende' : index === criterion.options.length - 1 ? 'Excede expectativas' : 'Atende parcialmente'} o critério...`}
                                                     aria-label={`Opção ${index + 1} para critério ${criterion.name}`}
                                                 />
                                             </div>
@@ -329,8 +385,8 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                 ))}
 
                 {/* Adicionar novo critério */}
-                <div className="add-criterion-container">
-                    <h4>Adicionar Novo Critério</h4>
+                <AddCriterionContainer className="add-criterion-container">
+                    <h4><FaPlus aria-hidden="true" /> Adicionar Novo Critério</h4>
                     <InputRow>
                         <div className="input-with-error">
                             <Input
@@ -344,14 +400,14 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                                         setFormErrors(prev => ({ ...prev, criterionName: undefined }));
                                     }
                                 }}
-                                placeholder="Nome do novo critério"
+                                placeholder="Ex: Comunicação, Liderança, Conhecimento Técnico..."
                                 aria-label="Nome do novo critério"
                                 aria-describedby={formErrors.criterionName ? "criterion-name-error" : undefined}
                             />
                             {formErrors.criterionName && (
-                                <div className="error-message" id="criterion-name-error">
+                                <ErrorMessage id="criterion-name-error">
                                     {formErrors.criterionName}
-                                </div>
+                                </ErrorMessage>
                             )}
                         </div>
                         <Button
@@ -364,11 +420,11 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                             <FaPlus aria-hidden="true" /> Adicionar Critério
                         </Button>
                     </InputRow>
-                </div>
+                </AddCriterionContainer>
 
                 {/* Footer actions when changes exist */}
                 {hasUnsavedChanges && (
-                    <div className="form-actions">
+                    <FormActions className="form-actions">
                         <Button
                             type="button"
                             onClick={resetChanges}
@@ -382,7 +438,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
                         >
                             <FaCheck aria-hidden="true" /> Salvar Critérios
                         </ActionButton>
-                    </div>
+                    </FormActions>
                 )}
             </div>
         </CollapsibleSection>

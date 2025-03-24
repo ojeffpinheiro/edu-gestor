@@ -52,6 +52,7 @@ export const GlobalStyles = createGlobalStyle`
         --color-apple: ${currentTheme.icons.apple};
 
         --font-family: 'Poppins', sans-serif;
+        --font-family-secondary: 'Inter', sans-serif;
         --font-size-xs: 0.75rem;
         --font-size-sm: 0.875rem;
         --font-size-md: 1rem;
@@ -59,6 +60,7 @@ export const GlobalStyles = createGlobalStyle`
         --font-size-xl: 1.25rem;
         --font-size-2xl: 1.5rem;
         --font-size-3xl: 1.875rem;
+        --font-size-4xl: 2.25rem;
 
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
@@ -76,12 +78,20 @@ export const GlobalStyles = createGlobalStyle`
         --shadow-sm: ${currentTheme.shadow.sm};
         --shadow-md: ${currentTheme.shadow.md};
         --shadow-lg: ${currentTheme.shadow.lg};
-        --shadow-focus: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        --shadow-focus: 0 0 0 3px rgba(24, 144, 255, 0.3);
         
         --breakpoint-sm: 576px;
         --breakpoint-md: 768px;
         --breakpoint-lg: 992px;
         --breakpoint-xl: 1200px;
+        
+        --transition-fast: 0.2s ease;
+        --transition-normal: 0.3s ease;
+        --transition-slow: 0.5s ease;
+        
+        --z-index-dropdown: 1000;
+        --z-index-modal: 2000;
+        --z-index-tooltip: 3000;
       `;
   }}
   }
@@ -94,6 +104,7 @@ export const GlobalStyles = createGlobalStyle`
 
   html, body {
     height: 100%;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -101,42 +112,147 @@ export const GlobalStyles = createGlobalStyle`
     color: var(--color-text);
     font-family: var(--font-family);
     font-size: var(--font-size-md);
-    line-height: 1.5;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3, h4, h5, h6 {
     margin-bottom: 0.5em;
     font-weight: 600;
-    line-height: 1.2;
+    line-height: 1.3;
+    color: var(--color-title-card);
+  }
+  
+  h1 {
+    font-size: var(--font-size-3xl);
+    letter-spacing: -0.01em;
+  }
+  
+  h2 {
+    font-size: var(--font-size-2xl);
+    letter-spacing: -0.01em;
+  }
+  
+  h3 {
+    font-size: var(--font-size-xl);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    
+    &:hover {
+      color: var(--color-primary-hover);
+    }
   }
 
   button, input, select, textarea {
-  padding: var(--space-sm);
-    border: 1px solid var(--color-secondary);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-md);
+    padding: var(--space-md);
+    border: 1px solid var(--color-input-border);
+    border-radius: var(--border-radius-md);
     font-family: inherit;
-    font-size: inherit;
+    font-size: var(--font-size-md);
+    background-color: var(--color-input);
+    color: var(--color-text);
+    transition: all var(--transition-fast);
   }
 
   input:focus, select:focus, textarea:focus {
     border-color: var(--color-primary);
     outline: none;
-    box-shadow: var(--shadow-sm);
-}
+    box-shadow: var(--shadow-focus);
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: var(--color-text-third);
+    opacity: 0.7;
+  }
 
   button {
     cursor: pointer;
     border: none;
     border-radius: var(--border-radius-md);
-    padding: var(--space-sm);
-    transition: background-color 0.3s;
-}
+    padding: var(--space-sm) var(--space-md);
+    transition: all var(--transition-normal);
+    font-weight: 500;
+  }
+  
+  /* Componentes animados */
+  .fade-in {
+    animation: fadeIn var(--transition-normal);
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .slide-up {
+    animation: slideUp var(--transition-normal);
+  }
+  
+  @keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  /* Adiciona mudanças suaves para tema claro/escuro */
+  .theme-transition {
+    transition: background-color var(--transition-slow),
+                color var(--transition-slow),
+                border-color var(--transition-slow);
+  }
 
-  /* For better mobile responsiveness */
+  /* Tornar a interface acessível para leitores de tela */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Para melhor responsividade em dispositivos móveis */
   @media (max-width: 768px) {
     html {
       font-size: 14px;
     }
+    
+    h1 {
+      font-size: var(--font-size-2xl);
+    }
+    
+    h2 {
+      font-size: var(--font-size-xl);
+    }
+    
+    input, select, textarea, button {
+      font-size: 16px; /* Evita zoom automático em iOS */
+    }
+  }
+  
+  /* Scrollbar personalizada para melhorar a experiência do usuário */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--color-background-secondary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-text-third);
+    border-radius: var(--border-radius-full);
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary);
   }
 `;

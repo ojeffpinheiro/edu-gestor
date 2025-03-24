@@ -159,9 +159,9 @@ export enum EvaluationType {
     PROJETO = "PROJETO",
     APRESENTACAO = "APRESENTACAO",
     OUTRO = "OUTRO"
-  }
-  
-  export enum EvaluationStatus {
+}
+
+export enum EvaluationStatus {
     RASCUNHO = "RASCUNHO",
     PLANEJADA = "PLANEJADA",
     AGENDADA = "AGENDADA",
@@ -169,8 +169,8 @@ export enum EvaluationType {
     CORRIGIDA = "CORRIGIDA",
     FINALIZADA = "FINALIZADA",
     CANCELADA = "CANCELADA"
-  }
-  
+}
+
 
 /**
  * Interface para representar um recurso
@@ -198,56 +198,63 @@ export interface Evaluation {
     evaluationCriteria: string;
     subject: string;
     record: string;
-    applicationDate: string | number | Date ;
+    applicationDate: string | number | Date;
     type: EvaluationType | string;
     status: EvaluationStatus | string;
     resources: Resource[] | string[];
 }
-  
-  export interface EvaluationPart {
+
+export interface EvaluationPart {
     id: string;
     name: string;
     weight: number;
     maxScore: number;
-  }
+}
 
-  // Interfaces para o formulário
-  export interface EvaluationFormProps {
+// Interfaces para o formulário
+export interface EvaluationFormProps {
     evaluation: Evaluation | null;
     onSave: (evaluation: Evaluation) => Promise<void>;
     onClose: () => void;
-  }
-  
-  export interface FormFeedback {
+}
+
+export interface FormFeedback {
     errorMessage?: string;
     successMessage?: string;
-  }
-  
-  export enum FormSectionOptions {
+}
+
+export enum FormSectionOptions {
     BASIC_INFO = "Definições Básicas",
     RESOURCES = "Recursos",
     PARTS = "Partes",
     EVALUATION_CRITERIA = "Critérios de Avaliação",
     EVALUATION_METHOD = "Forma de Avaliação",
     CALCULATION = "Cálculo"
-  }
-  
-  export interface RubricOrConcept {
+}
+
+export interface RubricOrConcept {
     id: string;
     name: string;
     description: string;
-  }
-  
-  export interface CriterionOption {
+}
+
+export interface CriterionOption {
     id: string;
     description: string;
-  }
-  
-  export interface EvaluationCriterion {
+}
+
+export interface EvaluationCriterion {
     id: string;
     name: string;
     weight: number;
     options: CriterionOption[];
     comment: string;
     isExpanded: boolean;
-  }
+}
+
+export interface EvaluationCriteria {
+    id: string;
+    name: string;
+    description: string;
+    weight: number;
+}

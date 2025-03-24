@@ -1,275 +1,216 @@
 import React, { useState } from "react";
-import { FaChevronDown, FaChevronUp, FaPlus, FaTrash } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaInfoCircle } from "react-icons/fa";
 
-import { Evaluation, RubricOrConcept } from "../../utils/types";
+import { Evaluation, EvaluationCriteria } from "../../utils/types";
 
 import CollapsibleSection from "../CollapsibleSection";
+import { Tooltip } from "../ui/Tooltip";
 
-import { Button } from "../../styles/buttons";
-import { Input, InputRow, Label, Select } from "../../styles/inputs";
-import { InputGroup } from "../modals/EvaluationForm/styles";
-import useEvaluationForm from "../../hooks/useEvaluationForm";
+import {  ActionButton } from "../../styles/buttons";
+import { Input, InputRow, Label, TextArea } from "../../styles/inputs";
 import { CollapsibleContent, CollapsibleHeader } from "../ui/CollapsibleComponents";
+import { EmptyStateMessage } from "../../styles/table";
+import { CriteriaActions, CriteriaCard, CriteriaHeader, CriteriaTitle, DeleteButton, FormFeedback, TotalWeightDisplay, WeightBadge } from "./styles";
 
-interface EvaluationMethodSectionProps {
+interface EvaluationCriteriaSectionProps {
     evaluation: Evaluation | null;
 }
 
-const EvaluationMethodSection: React.FC<EvaluationMethodSectionProps> = ({ evaluation }) => {
-    const { 
-        evaluationMethod, setEvaluationMethod, 
-        numericRange, setNumericRange, 
-        removeConceptOrRubric, 
-        newConceptOrRubric, 
-        setNewConceptOrRubric, 
-        addConceptOrRubric,
-        rubrics,
-        setRubrics,
-     } = useEvaluationForm(evaluation);
-    // Estado para método de avaliação expandido
-    const [evaluationMethodExpanded, setEvaluationMethodExpanded] = useState<boolean>(true);
-
-    // Estado para conceitos expandidos
-    const [conceptsExpanded, setConceptsExpanded] = useState<boolean>(false);
-
-    // Estado para rubricas expandidas
-    const [rubricsExpanded, setRubricsExpanded] = useState<boolean>(false);
-
-    // Estado para conceitos
-    const [concepts, setConcepts] = useState<RubricOrConcept[]>([
-        { id: "1", name: "A", description: "Excelente" },
-        { id: "2", name: "B", description: "Bom" },
-        { id: "3", name: "C", description: "Regular" },
-        { id: "4", name: "D", description: "Insuficiente" }
+const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({ evaluation }) => {
+    const [criteriaExpanded, setCriteriaExpanded] = useState<boolean>(true);
+    const [expandedCriteria, setExpandedCriteria] = useState<string | null>(null);
+    
+    // Example state - replace with your actual hook or state management
+    const [criteria, setCriteria] = useState<EvaluationCriteria[]>([
+        { id: "1", name: "Participação", description: "Envolvimento ativo nas atividades", weight: 30 },
+        { id: "2", name: "Conhecimento Técnico", description: "Domínio do conteúdo apresentado", weight: 40 },
+        { id: "3", name: "Entrega de Atividades", description: "Conclusão das tarefas no prazo", weight: 30 }
     ]);
+    
+    const [newCriteria, setNewCriteria] = useState<Partial<EvaluationCriteria>>({
+        name: "",
+        description: "",
+        weight: 0
+    });
+
+    const totalWeight = criteria.reduce((sum, item) => sum + (item.weight || 0), 0);
+    const isWeightValid = totalWeight === 100;
+
+    const handleToggleCriteria = (id: string) => {
+        setExpandedCriteria(expandedCriteria === id ? null : id);
+    };
+
+    const handleUpdateCriteria = (id: string, field: keyof EvaluationCriteria, value: any) => {
+        setCriteria(criteria.map(c => 
+            c.id === id ? { ...c, [field]: field === 'weight' ? Number(value) : value } : c
+        ));
+    };
+
+    const handleAddCriteria = () => {
+        if (!newCriteria.name || !newCriteria.weight) return;
+        
+        const newItem: EvaluationCriteria = {
+            id: Date.now().toString(),
+            name: newCriteria.name || "",
+            description: newCriteria.description || "",
+            weight: Number(newCriteria.weight) || 0
+        };
+        
+        setCriteria([...criteria, newItem]);
+        setNewCriteria({ name: "", description: "", weight: 0 });
+        // Automatically expand the newly added criteria
+        setExpandedCriteria(newItem.id);
+    };
+
+    const handleRemoveCriteria = (id: string) => {
+        setCriteria(criteria.filter(c => c.id !== id));
+        if (expandedCriteria === id) {
+            setExpandedCriteria(null);
+        }
+    };
 
     return (
-        <CollapsibleSection title="Método de avaliação">
+        <CollapsibleSection title="Critérios de Avaliação">
             <CollapsibleHeader 
-                title="Forma de Avaliação"
-                icon={evaluationMethodExpanded ? <FaChevronUp /> : <FaChevronDown />}
-                onClick={() => setEvaluationMethodExpanded(!evaluationMethodExpanded)} />
+                title="Critérios de Avaliação"
+                icon={criteriaExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                onClick={() => setCriteriaExpanded(!criteriaExpanded)} />
 
-            <CollapsibleContent isOpen={evaluationMethodExpanded}>
-                <InputGroup>
-                    <Label htmlFor="evaluation-method">Método de Avaliação:</Label>
-                    <Select
-                        id="evaluation-method"
-                        value={evaluationMethod}
-                        onChange={(e) => setEvaluationMethod(e.target.value)}
-                    >
-                        <option value="numeric">Numérica (0-10)</option>
-                        <option value="concepts">Conceitos (A, B, C, D)</option>
-                        <option value="rubrics">Rubricas</option>
-                        <option value="posNeg">Positivo/Negativo</option>
-                    </Select>
-                </InputGroup>
+            <CollapsibleContent isOpen={criteriaExpanded}>
+                <TotalWeightDisplay isValid={isWeightValid}>
+                    Peso Total: {totalWeight}%
+                    {!isWeightValid && 
+                        <Tooltip content="Os pesos devem somar 100%">
+                            <FaInfoCircle style={{ marginLeft: 'var(--space-sm)' }} />
+                        </Tooltip>
+                    }
+                </TotalWeightDisplay>
 
-                {/* Configurações específicas para cada método de avaliação */}
-                {evaluationMethod === "numeric" && (
+                {criteria.length === 0 ? (
+                    <EmptyStateMessage>
+                        Nenhum critério adicionado. Crie critérios para avaliar seus alunos.
+                    </EmptyStateMessage>
+                ) : (
+                    criteria.map((criterion) => (
+                        <CriteriaCard key={criterion.id}>
+                            <CriteriaHeader onClick={() => handleToggleCriteria(criterion.id)}>
+                                <CriteriaTitle>
+                                    {criterion.name}
+                                    <WeightBadge>Peso: {criterion.weight}%</WeightBadge>
+                                </CriteriaTitle>
+                                <CriteriaActions>
+                                    <DeleteButton
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRemoveCriteria(criterion.id);
+                                        }}
+                                        aria-label={`Remover critério ${criterion.name}`}
+                                        disabled={criteria.length <= 1}
+                                    >
+                                        <FaTrash />
+                                    </DeleteButton>
+                                    {expandedCriteria === criterion.id ? <FaChevronUp /> : <FaChevronDown />}
+                                </CriteriaActions>
+                            </CriteriaHeader>
+                            
+                            {expandedCriteria === criterion.id && (
+                                <div className="criteria-details">
+                                    <InputRow>
+                                        <div>
+                                            <Label htmlFor={`name-${criterion.id}`}>Nome do Critério:</Label>
+                                            <Input
+                                                id={`name-${criterion.id}`}
+                                                type="text"
+                                                value={criterion.name}
+                                                onChange={(e) => handleUpdateCriteria(criterion.id, 'name', e.target.value)}
+                                                placeholder="Ex: Participação em Aula"
+                                            />
+                                        </div>
+                                        <div>
+                                            <Label htmlFor={`weight-${criterion.id}`}>
+                                                Peso (%):
+                                                <Tooltip content="O valor deve estar entre 1 e 100">
+                                                    <FaInfoCircle style={{ marginLeft: 'var(--space-xs)' }} />
+                                                </Tooltip>
+                                            </Label>
+                                            <Input
+                                                id={`weight-${criterion.id}`}
+                                                type="number"
+                                                min="1"
+                                                max="100"
+                                                value={criterion.weight}
+                                                onChange={(e) => handleUpdateCriteria(criterion.id, 'weight', e.target.value)}
+                                            />
+                                        </div>
+                                    </InputRow>
+                                    <div>
+                                        <Label htmlFor={`description-${criterion.id}`}>Descrição:</Label>
+                                        <TextArea
+                                            id={`description-${criterion.id}`}
+                                            value={criterion.description || ''}
+                                            onChange={(e) => handleUpdateCriteria(criterion.id, 'description', e.target.value)}
+                                            placeholder="Descreva como este critério será avaliado..."
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </CriteriaCard>
+                    ))
+                )}
+
+                <div className="add-criteria-form">
+                    <h3>Adicionar Novo Critério</h3>
                     <InputRow>
-                        <InputGroup>
-                            <Label htmlFor="min-grade">Nota Mínima:</Label>
+                        <div>
+                            <Label htmlFor="new-criteria-name">Nome do Critério:</Label>
                             <Input
-                                id="min-grade"
-                                type="number"
-                                value={numericRange.min}
-                                onChange={(e) => setNumericRange({ ...numericRange, min: Number(e.target.value) })}
-                                min="0"
-                                max={numericRange.max - 1}
-                                step="0.1"
+                                id="new-criteria-name"
+                                type="text"
+                                value={newCriteria.name || ''}
+                                onChange={(e) => setNewCriteria({...newCriteria, name: e.target.value})}
+                                placeholder="Ex: Trabalho em Equipe"
                             />
-                        </InputGroup>
-                        <InputGroup>
-                            <Label htmlFor="max-grade">Nota Máxima:</Label>
+                        </div>
+                        <div>
+                            <Label htmlFor="new-criteria-weight">Peso (%):</Label>
                             <Input
-                                id="max-grade"
+                                id="new-criteria-weight"
                                 type="number"
-                                value={numericRange.max}
-                                onChange={(e) => setNumericRange({ ...numericRange, max: Number(e.target.value) })}
-                                min={numericRange.min + 1}
-                                step="0.1"
+                                min="1"
+                                max="100"
+                                value={newCriteria.weight || ''}
+                                onChange={(e) => setNewCriteria({...newCriteria, weight: Number(e.target.value)})}
+                                placeholder="Ex: 25"
                             />
-                        </InputGroup>
+                            {!isWeightValid && (
+                                <FormFeedback type="info">
+                                    Peso disponível: {100 - totalWeight}%
+                                </FormFeedback>
+                            )}
+                        </div>
                     </InputRow>
-                )}
-
-                {evaluationMethod === "concepts" && (
-                    <CollapsibleSection title="Conceitos" >
-                        <CollapsibleHeader 
-                            title="Conceitos"
-                            onClick={() => setConceptsExpanded(!conceptsExpanded)}
-                            icon={conceptsExpanded ? <FaChevronUp /> : <FaChevronDown />} />
-
-                        <CollapsibleContent isOpen={conceptsExpanded}>
-                            {/* Lista de conceitos */}
-                            {concepts.map((concept) => (
-                                <div key={concept.id} className="concept-item">
-                                    <InputRow>
-                                        <InputGroup className="concept-name">
-                                            <Label>Conceito:</Label>
-                                            <Input
-                                                type="text"
-                                                value={concept.name}
-                                                onChange={(e) => {
-                                                    setConcepts(concepts.map(c =>
-                                                        c.id === concept.id ? { ...c, name: e.target.value } : c
-                                                    ));
-                                                }}
-                                            />
-                                        </InputGroup>
-                                        <InputGroup className="concept-description">
-                                            <Label>Descrição:</Label>
-                                            <Input
-                                                type="text"
-                                                value={concept.description}
-                                                onChange={(e) => {
-                                                    setConcepts(concepts.map(c =>
-                                                        c.id === concept.id ? { ...c, description: e.target.value } : c
-                                                    ));
-                                                }}
-                                            />
-                                        </InputGroup>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeConceptOrRubric(concept.id)}
-                                            className="delete-button"
-                                            aria-label={`Remover conceito ${concept.name}`}
-                                            disabled={concepts.length <= 1}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </InputRow>
-                                </div>
-                            ))}
-
-                            {/* Adicionar novo conceito */}
-                            <div className="add-concept-container">
-                                <InputRow>
-                                    <InputGroup>
-                                        <Input
-                                            type="text"
-                                            value={newConceptOrRubric.name}
-                                            onChange={(e) => setNewConceptOrRubric({
-                                                ...newConceptOrRubric,
-                                                name: e.target.value
-                                            })}
-                                            placeholder="Conceito (ex: A)"
-                                        />
-                                    </InputGroup>
-                                    <InputGroup>
-                                        <Input
-                                            type="text"
-                                            value={newConceptOrRubric.description}
-                                            onChange={(e) => setNewConceptOrRubric({
-                                                ...newConceptOrRubric,
-                                                description: e.target.value
-                                            })}
-                                            placeholder="Descrição (ex: Excelente)"
-                                        />
-                                    </InputGroup>
-                                    <Button
-                                        type="button"
-                                        onClick={addConceptOrRubric}
-                                        disabled={!newConceptOrRubric.name.trim()}
-                                    >
-                                        <FaPlus /> Adicionar
-                                    </Button>
-                                </InputRow>
-                            </div>
-                        </CollapsibleContent>
-                    </CollapsibleSection>
-                )}
-
-                {evaluationMethod === "rubrics" && (
-                    <CollapsibleSection title="Rúbricas" >
-                        <CollapsibleHeader
-                            title="Rúbricas"
-                            onClick={() => setRubricsExpanded(!rubricsExpanded)}
-                            icon={rubricsExpanded ? <FaChevronUp /> : <FaChevronDown />} />
-
-                        <CollapsibleContent isOpen={rubricsExpanded}>
-                            {/* Lista de rubricas */}
-                            {rubrics.map((rubric) => (
-                                <div key={rubric.id} className="rubric-item">
-                                    <InputRow>
-                                        <InputGroup className="rubric-name">
-                                            <Label>Rubrica:</Label>
-                                            <Input
-                                                type="text"
-                                                value={rubric.name}
-                                                onChange={(e) => {
-                                                    setRubrics(rubrics.map(r =>
-                                                        r.id === rubric.id ? { ...r, name: e.target.value } : r
-                                                    ));
-                                                }}
-                                            />
-                                        </InputGroup>
-                                        <InputGroup className="rubric-description">
-                                            <Label>Descrição:</Label>
-                                            <Input
-                                                type="text"
-                                                value={rubric.description}
-                                                onChange={(e) => {
-                                                    setRubrics(rubrics.map(r =>
-                                                        r.id === rubric.id ? { ...r, description: e.target.value } : r
-                                                    ));
-                                                }}
-                                            />
-                                        </InputGroup>
-                                        <button
-                                            type="button"
-                                            onClick={() => removeConceptOrRubric(rubric.id)}
-                                            className="delete-button"
-                                            aria-label={`Remover rubrica ${rubric.name}`}
-                                            disabled={rubrics.length <= 1}
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </InputRow>
-                                </div>
-                            ))}
-
-                            {/* Adicionar nova rubrica */}
-                            <div className="add-rubric-container">
-                                <InputRow>
-                                    <InputGroup>
-                                        <Input
-                                            type="text"
-                                            value={newConceptOrRubric.name}
-                                            onChange={(e) => setNewConceptOrRubric({
-                                                ...newConceptOrRubric,
-                                                name: e.target.value
-                                            })}
-                                            placeholder="Rubrica (ex: Domínio Completo)"
-                                        />
-                                    </InputGroup>
-                                    <InputGroup>
-                                        <Input
-                                            type="text"
-                                            value={newConceptOrRubric.description}
-                                            onChange={(e) => setNewConceptOrRubric({
-                                                ...newConceptOrRubric,
-                                                description: e.target.value
-                                            })}
-                                            placeholder="Descrição"
-                                        />
-                                    </InputGroup>
-                                    <Button
-                                        type="button"
-                                        onClick={addConceptOrRubric}
-                                        disabled={!newConceptOrRubric.name.trim()}
-                                    >
-                                        <FaPlus /> Adicionar
-                                    </Button>
-                                </InputRow>
-                            </div>
-                        </CollapsibleContent>
-                    </CollapsibleSection>
-                )}
+                    <div>
+                        <Label htmlFor="new-criteria-description">Descrição:</Label>
+                        <TextArea
+                            id="new-criteria-description"
+                            value={newCriteria.description || ''}
+                            onChange={(e) => setNewCriteria({...newCriteria, description: e.target.value})}
+                            placeholder="Descreva como este critério será avaliado..."
+                        />
+                    </div>
+                    
+                    <ActionButton
+                        type="button"
+                        onClick={handleAddCriteria}
+                        disabled={!newCriteria.name || !newCriteria.weight}
+                    >
+                        <FaPlus /> Adicionar Critério
+                    </ActionButton>
+                </div>
             </CollapsibleContent>
         </CollapsibleSection>
-    )
-}
+    );
+};
 
-export default EvaluationMethodSection;
+export default EvaluationCriteriaSection;

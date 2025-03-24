@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaTimes } from "react-icons/fa";
 
 import { Evaluation, FormSectionOptions } from "../../../utils/types";
@@ -43,7 +43,9 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         handleAddResource,
         goToPreviousSection,
         goToNextSection,
-        handleSubmit
+        handleSubmit,
+        isFormValid,
+        getSectionValidationState
     } = useEvaluationForm(evaluation, onSave);
 
     const renderCurrentSection = () => {
@@ -67,14 +69,18 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
 
     const handleSubmitForm = async (e: React.FormEvent) => {
         e.preventDefault(); // Impedir o comportamento padrão do formulário
-    
+        
+        if (!isFormValid()) {
+            // Show error message for invalid form
+            return;
+        }
+        
         try {
-            await onSave(evaluation);
+            await handleSubmit();
         } catch (error) {
             console.error("Erro ao salvar avaliação:", error);
         }
     };
-    
 
     return (
         <ModalContainer>
@@ -102,7 +108,9 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                                 <button
                                     key={section}
                                     type="button"
-                                    className={`section-button ${currentSection === section ? 'active' : ''}`}
+                                    className={`section-button ${currentSection === section ? 'active' : ''} ${
+                                        getSectionValidationState(section) ? 'valid' : 'invalid'
+                                    }`}
                                     onClick={() => setCurrentSection(section)} >
                                     {section}
                                 </button>
@@ -138,16 +146,14 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                                 <Button
                                     type="submit"
                                     className="primary save-button"
-                                    disabled={isSubmitting}
+                                    disabled={isSubmitting || !isFormValid()}
                                 >
                                     {isSubmitting ? 'Salvando...' : 'Salvar Avaliação'}
                                 </Button>
                             )}
                         </div>
                     </ModalFooter>
-
                 </form>
-
             </ModalContent>
         </ModalContainer>
     );
