@@ -3,7 +3,7 @@ import { FiInfo, FiCalendar, FiBook, FiClipboard } from "react-icons/fi";
 
 import { Evaluation, EvaluationType } from "../../utils/types";
 
-import useEvaluationForm from "../../hooks/useEvaluationForm";
+import { initializeEmptyEvaluation } from "../../hooks/useEvaluationForm";
 
 import { Label } from "../../styles/inputs";
 import { Container, ErrorMessage, FormGrid, FormSection, Grid2Columns, IconWrapper, InputWithIcon, RequiredFieldsNote, SectionHeader, SectionTitle, StyledInput, StyledInputGroup, StyledSelect, StyledTextArea } from './styles'
@@ -14,7 +14,6 @@ interface BasicInfoSectionProps {
 }
 
 const BasicInfoSection: React.FC<BasicInfoSectionProps> = ({ evaluationData, handleInputChange }) => {
-    const { initializeEmptyEvaluation } = useEvaluationForm(evaluationData);
     const formData = initializeEmptyEvaluation();
     const [touched, setTouched] = useState<Record<string, boolean>>({});
 

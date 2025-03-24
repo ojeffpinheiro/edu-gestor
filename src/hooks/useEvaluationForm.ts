@@ -12,7 +12,7 @@ import {
 } from '../utils/types';
 
 // Inicializa uma avaliação vazia com valores padrão
-function initializeEmptyEvaluation(): Evaluation {
+export function initializeEmptyEvaluation(): Evaluation {
     return {
         id: Date.now(),
         name: "",
@@ -257,25 +257,6 @@ const useEvaluationForm = (
         }));
     }, []);
 
-    // Funções para navegar entre seções
-    const goToPreviousSection = useCallback(() => {
-        const allSections = Object.values(FormSectionOptions);
-        const currentIndex = allSections.indexOf(currentSection);
-        
-        if (currentIndex > 0) {
-            setCurrentSection(allSections[currentIndex - 1]);
-        }
-    }, [currentSection]);
-
-    const goToNextSection = useCallback(() => {
-        const allSections = Object.values(FormSectionOptions);
-        const currentIndex = allSections.indexOf(currentSection);
-        
-        if (currentIndex < allSections.length - 1 && getSectionValidationState(currentSection)) {
-            setCurrentSection(allSections[currentIndex + 1]);
-        }
-    }, [currentSection]);
-
     // Verificação de validade da seção atual
     const getSectionValidationState = useCallback((section: FormSectionOptions): boolean => {
         const { evaluation } = formData;
@@ -304,6 +285,25 @@ const useEvaluationForm = (
         }
     }, [formData]);
 
+    // Funções para navegar entre seções
+    const goToPreviousSection = useCallback(() => {
+        const allSections = Object.values(FormSectionOptions);
+        const currentIndex = allSections.indexOf(currentSection);
+        
+        if (currentIndex > 0) {
+            setCurrentSection(allSections[currentIndex - 1]);
+        }
+    }, [currentSection]);
+
+    const goToNextSection = useCallback(() => {
+        const allSections = Object.values(FormSectionOptions);
+        const currentIndex = allSections.indexOf(currentSection);
+        
+        if (currentIndex < allSections.length - 1 && getSectionValidationState(currentSection)) {
+            setCurrentSection(allSections[currentIndex + 1]);
+        }
+    }, [currentSection, getSectionValidationState]);
+
     // Verificação da validade geral do formulário
     const isFormValid = useCallback((): boolean => {
         return Object.values(FormSectionOptions).every(section => 
@@ -322,7 +322,11 @@ const useEvaluationForm = (
     const updateEvaluationMethod = useCallback((method: string) => {
         setFormData(prevState => ({
             ...prevState,
-            evaluationMethod: method
+            evaluationMethod: method,
+            evaluation: {
+                ...prevState.evaluation,
+                evaluationMethod: method
+            }
         }));
         
         setFeedback(prev => ({
@@ -335,7 +339,11 @@ const useEvaluationForm = (
     const updateCalculationMethod = useCallback((method: string) => {
         setFormData(prevState => ({
             ...prevState,
-            calculationMethod: method
+            calculationMethod: method,
+            evaluation: {
+                ...prevState.evaluation,
+                calculationMethod: method
+            }
         }));
         
         setFeedback(prev => ({
@@ -405,7 +413,6 @@ const useEvaluationForm = (
         feedback,
         isSubmitting,
         currentSection,
-        initializeEmptyEvaluation,
         setCurrentSection,
         handleInputChange,
         handleAddResource,

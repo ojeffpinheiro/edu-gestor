@@ -14,7 +14,7 @@ export const Badge = styled.span`
   font-weight: 500;
   color: var(--color-text-on-primary);
   background-color: var(--color-primary);
-  border-radius: var(--border-radius-full);
+  border-radius: var(--border-radius-md);
   margin-left: var(--space-sm);
 `;
 
