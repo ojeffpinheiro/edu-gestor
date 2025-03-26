@@ -11,7 +11,8 @@ import { AuthContextProvider } from './contexts/AuthContext';
 // import TeamPage from './pages/TeamPage';
 // import DailyReport from './pages/DailyReport/';
 // import TeamManagement from './pages/TeamManagement';
-import EvaluationManagement from './pages/EvaluationManagement';
+// import EvaluationManagement from './pages/EvaluationManagement';
+import PlanningDashboard from './pages/PlanningDashboard';
 
 
 const root = ReactDOM.createRoot(
@@ -22,7 +23,7 @@ root.render(
     <ThemeProvider>
       <AuthContextProvider>
         <GlobalStyles />
-        <EvaluationManagement />
+        <PlanningDashboard />
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>
