@@ -1,86 +1,84 @@
 import styled from 'styled-components';
 
-export const Container = styled.div`
-  padding: 20px;
-  max-width: 1200px;
-  margin: auto;
-  font-family: Arial, sans-serif;
+export const PlanningCardWrapper = styled.div`
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  background-color: var(--color-background-secondary);
 `;
 
-export const Header = styled.header`
-  text-align: center;
-  margin-bottom: 20px;
+export const ProgressBar = styled.div<{ $progress: number }>`
+  position: relative;
+  width: 100%;
+  height: 8px;
+  background-color: var(--color-success);
+  border-radius: 4px;
+  overflow: hidden;
 
-  h1 {
-    color: #2C3E50;
-    font-size: 2rem;
-  }
-
-  p {
-    color: #7F8C8D;
-    font-size: 1rem;
-  }
-`;
-
-export const Section = styled.section`
-  background: #ECF0F1;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-
-  h2 {
-    display: flex;
-    align-items: center;
-    font-size: 1.2rem;
-    color: #34495E;
-    gap: 8px;
+  & > div {
+    width: ${({ $progress }) => $progress}%;
+    height: 100%;
+    background-color: var(--color-feedback-success);
   }
 `;
 
-export const Button = styled.button<{ active: boolean }>`
-  background: ${(props) => (props.active ? '#2980B9' : '#BDC3C7')};
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
+export const DashboardContainer = styled.div`
+  padding: 2rem;
+  background-color: var(--color-background);
+`;
+
+export const SectionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+`;
+
+export const TabButtons = styled.div`
+  display: flex;
+  gap: 0.5rem;
+`;
+
+export const TabButton = styled.button<{ $active: boolean }>`
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--color-border-light);
+  background-color: ${({ $active }) => ($active ? '#007bff' : '#fff')};
+  color: ${({ $active }) => ($active ? '#fff' : '#000')};
+  border-radius: 0.25rem;
   cursor: pointer;
-  font-size: 1rem;
-  transition: 0.3s;
-
-  &:hover {
-    background: #2980B9;
-  }
 `;
 
-export const Notification = styled.div<{ type: string }>`
-  background: white;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
-  span {
-    font-weight: bold;
-    color: ${(props) =>
-      props.type === 'prazo' ? '#E74C3C' : props.type === 'lembrete' ? '#F1C40F' : '#3498DB'};
-  }
-
-  p {
-    color: #2C3E50;
-    margin: 5px 0;
-  }
-
-  small {
-    color: #7F8C8D;
-  }
-`;
-
-export const Grid = styled.div`
+export const GridSection = styled.div`
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  gap: 1rem;
+  margin: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(25vw, 1fr));
+`;
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+export const SectionCard = styled.div`
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  background-color: var(--color-background-secondary);
+`;
+
+export const NotificationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const NotificationItem = styled.div`
+  padding: 0.5rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.25rem;
+  background-color: var(--color-card);
+`;
+
+export const QuickAccessCard = styled.div<{ $color: string }>`
+  padding: 1rem;
+  border: 1px solid var(--color-border-light);
+  border-radius: 0.5rem;
+  background-color: var(--color-card);
+  border-left: 4px solid ${({ $color }) => $color};
 `;
