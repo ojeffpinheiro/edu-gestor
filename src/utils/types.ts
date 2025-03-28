@@ -261,3 +261,44 @@ export interface EvaluationCriteria {
     description: string;
     weight: number;
 }
+
+// Types for Didactic Sequences
+
+export interface Discipline {
+    id: string;
+    name: string;
+}
+
+export interface DidacticSequence {
+    id: string;
+    disciplineId: string;
+    title: string;
+    description: string;
+    grade?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface DidacticSequenceStage {
+    id: string;
+    sequenceId: string;
+    title: string;
+    order: number;
+    learningObjectives: string[];
+}
+
+export interface ContentSection {
+    id: string;
+    stageId: string;
+    type: 'title' | 'subtitle' | 'text' | 'example' | 'solved-exercise' | 'exercise-list';
+    content: string;
+    order: number;
+}
+
+export interface Exercise {
+    id: string;
+    contentSectionId: string;
+    question: string;
+    answer?: string;
+    difficulty: 'easy' | 'medium' | 'hard';
+}

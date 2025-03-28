@@ -1,4 +1,4 @@
-import { StudentData } from "./types";
+import { StudentData, Discipline } from "./types";
 
 const SECTION_CONFIG = {
     GRADES: {
@@ -41,3 +41,55 @@ const DEFAULT_STUDENT_DATA: StudentData = {
 };
 
 export {SECTION_CONFIG, DEFAULT_STUDENT_DATA};
+
+export const mockDiscipline: Discipline = {
+  id: 'mat-fundamental-01',
+  name: 'Matemática - Ensino Fundamental'
+};
+
+// Optional: If you want some initial mock data
+export const mockInitialSequences = [
+  {
+    id: 'seq-mat-01',
+    disciplineId: 'mat-fundamental-01',
+    title: 'Introdução à Álgebra',
+    description: 'Sequência didática para introduzir conceitos básicos de álgebra para alunos do 7º ano',
+    grade: '7º ano',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  },
+  {
+    id: 'seq-mat-02',
+    disciplineId: 'mat-fundamental-01',
+    title: 'Geometria Plana',
+    description: 'Exploração de formas geométricas e seus principais conceitos',
+    grade: '8º ano',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  }
+];
+
+export const mockInitialStages = [
+  {
+    id: 'stage-mat-01',
+    sequenceId: 'seq-mat-01',
+    title: 'Variáveis e Expressões Algébricas',
+    order: 1,
+    learningObjectives: [
+      'Compreender o conceito de variável',
+      'Identificar expressões algébricas',
+      'Resolver expressões simples'
+    ]
+  },
+  {
+    id: 'stage-mat-02',
+    sequenceId: 'seq-mat-02',
+    title: 'Formas Geométricas Básicas',
+    order: 1,
+    learningObjectives: [
+      'Identificar formas geométricas planas',
+      'Calcular área de figuras simples',
+      'Diferenciar tipos de polígonos'
+    ]
+  }
+];

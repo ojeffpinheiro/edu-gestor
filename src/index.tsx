@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom/client';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/global';
 import { AuthContextProvider } from './contexts/AuthContext';
+import DidacticSequencesPage from './pages/DidacticSequencesPage';
+import { mockDiscipline } from './utils/setting';
 
 // import LoginPage from './pages/LoginPage/indes';
 // import HomePage from './pages/Home';
@@ -12,8 +14,7 @@ import { AuthContextProvider } from './contexts/AuthContext';
 // import DailyReport from './pages/DailyReport/';
 // import TeamManagement from './pages/TeamManagement';
 // import EvaluationManagement from './pages/EvaluationManagement';
-import PlanningDashboard from './pages/PlanningDashboard';
-import DidacticSequencesPage from './pages/DidacticSequencesPage';
+// import PlanningDashboard from './pages/PlanningDashboard';
 
 
 const root = ReactDOM.createRoot(
@@ -24,7 +25,7 @@ root.render(
     <ThemeProvider>
       <AuthContextProvider>
         <GlobalStyles />
-        <DidacticSequencesPage />
+        <DidacticSequencesPage discipline={mockDiscipline} />
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>
