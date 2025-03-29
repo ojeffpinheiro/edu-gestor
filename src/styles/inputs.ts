@@ -91,41 +91,6 @@ export const TextArea = styled.textarea`
     }
 `;
 
-export const Select = styled.select`
-    width: 100%;
-    padding: var(--space-sm) var(--space-md);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
-    background-color: var(--color-input);
-    color: var(--color-text);
-    font-size: var(--font-size-md);
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-    background-position: right 0.5rem center;
-    background-repeat: no-repeat;
-    background-size: 1.5em 1.5em;
-    padding-right: 2.5rem;
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-
-    &:hover:not(:disabled):not(:focus) {
-        border-color: var(--color-input-border-dark, var(--color-primary-hover));
-    }
-
-    &:focus {
-        outline: none;
-        border-color: var(--color-input-focus);
-        box-shadow: var(--shadow-focus);
-        transform: translateY(-1px);
-    }
-    
-    &:disabled {
-        background-color: var(--color-background-third);
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-`;
-
 export const InputRow = styled.div`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -158,4 +123,20 @@ export const InputGroup = styled.div`
     .ml-2 {
         margin-left: var(--space-sm);
     }
+`;
+
+export const Select = styled.select`
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+  }
 `;

@@ -62,7 +62,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         isFormValid,
         getSectionValidationState,
         getFormProgress
-    } = useEvaluationForm({ evaluation, onSave });
+    } = useEvaluationForm(evaluation, onSave);
 
     // Ícones para cada seção do formulário
     const sectionIcons = useMemo(() => ({

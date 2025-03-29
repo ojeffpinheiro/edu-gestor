@@ -264,41 +264,43 @@ export interface EvaluationCriteria {
 
 // Types for Didactic Sequences
 
+// src/utils/types.ts
 export interface Discipline {
     id: string;
     name: string;
-}
-
-export interface DidacticSequence {
+  }
+  
+  export interface DidacticSequence {
     id: string;
     disciplineId: string;
     title: string;
     description: string;
-    grade?: string;
+    grade: string;
     createdAt: Date;
     updatedAt: Date;
-}
-
-export interface DidacticSequenceStage {
+  }
+  
+  export interface DidacticSequenceStage {
     id: string;
     sequenceId: string;
     title: string;
-    order: number;
     learningObjectives: string[];
-}
-
-export interface ContentSection {
+    order: number;
+  }
+  
+  export interface ContentSection {
     id: string;
     stageId: string;
-    type: 'title' | 'subtitle' | 'text' | 'example' | 'solved-exercise' | 'exercise-list';
+    type: 'text' | 'example' | 'solved-exercise' | 'exercise-list';
     content: string;
+    explanation?: string;
     order: number;
-}
-
-export interface Exercise {
+  }
+  
+  export interface Exercise {
     id: string;
     contentSectionId: string;
     question: string;
-    answer?: string;
+    solution?: string;
     difficulty: 'easy' | 'medium' | 'hard';
-}
+  }

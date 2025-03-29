@@ -5,7 +5,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { GlobalStyles } from './styles/global';
 import { AuthContextProvider } from './contexts/AuthContext';
 import DidacticSequencesPage from './pages/DidacticSequencesPage';
-import { mockDiscipline } from './utils/setting';
 
 // import LoginPage from './pages/LoginPage/indes';
 // import HomePage from './pages/Home';
@@ -25,7 +24,7 @@ root.render(
     <ThemeProvider>
       <AuthContextProvider>
         <GlobalStyles />
-        <DidacticSequencesPage discipline={mockDiscipline} />
+        <DidacticSequencesPage />
       </AuthContextProvider>
     </ThemeProvider>
   </React.StrictMode>

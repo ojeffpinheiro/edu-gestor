@@ -1,158 +1,219 @@
-import React, { useState } from 'react';
-import {
-  DidacticSequenceContainer,
-  SequenceHeader,
-  SequenceActions,
-  StageCard,
-  ModalOverlay,
-  ModalContent,
-  ModalActions
-} from './styled';
+import React, { useState, Fragment } from 'react';
+import styled from 'styled-components';
+import SequenceCard from '../../components/DidacticSequences/SequenceCard';
+import SequenceForm from '../../components/DidacticSequences/SequenceForm';
+import { useDidacticSequences } from '../../hooks/useDidacticSequences';
+import { DidacticSequence, DisciplineType } from '../../utils/types/DidacticSequence';
 
-import {
-  Button,
-  ActionButton,
-  CancelButton
-} from '../../styles/buttons';
+const PageContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
 
-import {
-  Discipline,
-  DidacticSequence,
-  DidacticSequenceStage
-} from '../../utils/types';
+const PageHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
 
-interface DidacticSequencesPageProps {
-  discipline: Discipline;
-}
+const Title = styled.h1`
+  color: #333;
+  font-size: 1.75rem;
+  font-weight: 600;
+`;
 
-const DidacticSequencesPage: React.FC<DidacticSequencesPageProps> = ({ discipline }) => {
-  const [sequences, setSequences] = useState<DidacticSequence[]>([]);
-  const [currentSequence, setCurrentSequence] = useState<DidacticSequence | null>(null);
-  const [stages, setStages] = useState<DidacticSequenceStage[]>([]);
+const Button = styled.button`
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #1976d2;
+  }
+`;
 
-  const [isSequenceModalOpen, setIsSequenceModalOpen] = useState(false);
-  const [isStageModalOpen, setIsStageModalOpen] = useState(false);
+const FilterContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+`;
 
-  const handleCreateSequence = () => {
-    setCurrentSequence(null);
-    setIsSequenceModalOpen(true);
+const FilterButton = styled.button<{ active: boolean }>`
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: ${props => props.active ? '#2196f3' : '#f5f5f5'};
+  color: ${props => props.active ? 'white' : '#666'};
+  border: 1px solid ${props => props.active ? '#2196f3' : '#ddd'};
+  
+  &:hover {
+    background-color: ${props => props.active ? '#1976d2' : '#e0e0e0'};
+  }
+`;
+
+const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1rem;
+`;
+
+const ErrorMessage = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: #d32f2f;
+  font-size: 1rem;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+`;
+
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+  font-size: 1rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+`;
+
+const SequencesGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const DidacticSequencesPage: React.FC = () => {
+  const disciplines: DisciplineType[] = ['Português', 'Matemática', 'História', 'Geografia', 'Ciências', 'Artes', 'Educação Física'];
+  const [showForm, setShowForm] = useState(false);
+  const [editingSequence, setEditingSequence] = useState<DidacticSequence | null>(null);
+  
+  const {
+    sequences,
+    isLoading,
+    error,
+    selectedDiscipline,
+    filterByDiscipline,
+    createSequence,
+    updateSequence,
+    deleteSequence,
+  } = useDidacticSequences();
+  
+  const handleCreateClick = () => {
+    setEditingSequence(null);
+    setShowForm(true);
   };
-
-  const handleEditSequence = (sequence: DidacticSequence) => {
-    setCurrentSequence(sequence);
-    setIsSequenceModalOpen(true);
+  
+  const handleEdit = (sequence: DidacticSequence) => {
+    setEditingSequence(sequence);
+    setShowForm(true);
   };
-
-  const handleDeleteSequence = (sequenceId: string) => {
-    // Implement delete logic
-    setSequences(sequences.filter(seq => seq.id !== sequenceId));
+  
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingSequence(null);
   };
-
-  const handleCreateStage = () => {
-    if (!currentSequence) return;
-    setIsStageModalOpen(true);
+  
+  const handleSubmit = (data: any) => {
+    if (editingSequence) {
+      updateSequence({
+        id: editingSequence.id,
+        data
+      });
+    } else {
+      createSequence(data);
+    }
+    
+    setShowForm(false);
+    setEditingSequence(null);
   };
-
-  const handleEditStage = (stage: DidacticSequenceStage) => {
-    // Implement stage editing logic
+  
+  const handleDelete = (id: string) => {
+    deleteSequence(id);
   };
-
-  const handleDeleteStage = (stageId: string) => {
-    setStages(stages.filter(stage => stage.id !== stageId));
-  };
-
+  
   return (
-    <DidacticSequenceContainer>
-      <SequenceHeader>
-        <h1>Sequências Didáticas - {discipline.name}</h1>
-        <SequenceActions>
-          <ActionButton onClick={handleCreateSequence}>
-            Nova Sequência Didática
-          </ActionButton>
-        </SequenceActions>
-      </SequenceHeader>
-
-      {sequences.map(sequence => (
-        <div key={sequence.id}>
-          <StageCard>
-            <div>
-              <h2>{sequence.title}</h2>
-              <p>{sequence.description}</p>
-            </div>
-            <SequenceActions>
-              <Button onClick={() => handleEditSequence(sequence)}>
-                Editar
-              </Button>
-              <CancelButton onClick={() => handleDeleteSequence(sequence.id)}>
-                Excluir
-              </CancelButton>
-              <ActionButton onClick={() => setCurrentSequence(sequence)}>
-                Gerenciar Etapas
-              </ActionButton>
-            </SequenceActions>
-          </StageCard>
-
-          {currentSequence?.id === sequence.id && (
-            <div>
-              <SequenceHeader>
-                <h2>Etapas da Sequência</h2>
-                <Button onClick={handleCreateStage}>
-                  Nova Etapa
-                </Button>
-              </SequenceHeader>
-              {stages
-                .filter(stage => stage.sequenceId === sequence.id)
-                .map(stage => (
-                  <StageCard key={stage.id}>
-                    <div>
-                      <h3>{stage.title}</h3>
-                      <p>Objetivos de Aprendizagem: {stage.learningObjectives.join(', ')}</p>
-                    </div>
-                    <SequenceActions>
-                      <Button onClick={() => handleEditStage(stage)}>
-                        Editar
-                      </Button>
-                      <CancelButton onClick={() => handleDeleteStage(stage.id)}>
-                        Excluir
-                      </CancelButton>
-                    </SequenceActions>
-                  </StageCard>
-                ))}
-            </div>
+    <PageContainer>
+      <PageHeader>
+        <Title>Sequências Didáticas</Title>
+        {!showForm && (
+          <Button onClick={handleCreateClick}>Nova Sequência</Button>
+        )}
+      </PageHeader>
+      
+      {!showForm ? (
+        <Fragment>
+          <FilterContainer>
+            <FilterButton
+              active={selectedDiscipline === null}
+              onClick={() => filterByDiscipline(null)}
+            >
+              Todas
+            </FilterButton>
+            
+            {disciplines.map((discipline) => (
+              <FilterButton
+                key={discipline}
+                active={selectedDiscipline === discipline}
+                onClick={() => filterByDiscipline(discipline)}
+              >
+                {discipline}
+              </FilterButton>
+            ))}
+          </FilterContainer>
+          
+          {isLoading && <LoadingMessage>Carregando sequências didáticas...</LoadingMessage>}
+          
+          {error ? (
+            <ErrorMessage>
+              {error instanceof Error ? error.message : 'Ocorreu um erro ao carregar as sequências didáticas. Por favor, tente novamente.'}
+            </ErrorMessage>
+          ) : null}
+          
+          {!isLoading && !error && sequences && sequences.length === 0 && (
+            <EmptyState>
+              <h3>Nenhuma sequência didática encontrada</h3>
+              <p>Clique em "Nova Sequência" para criar sua primeira sequência didática.</p>
+            </EmptyState>
           )}
-        </div>
-      ))}
-
-      {isSequenceModalOpen && (
-        <ModalOverlay>
-          <ModalContent>
-            <h2>{currentSequence ? 'Editar' : 'Criar'} Sequência Didática</h2>
-            {/* Add sequence form here */}
-            <ModalActions>
-              <CancelButton onClick={() => setIsSequenceModalOpen(false)}>
-                Cancelar
-              </CancelButton>
-              <ActionButton>Salvar</ActionButton>
-            </ModalActions>
-          </ModalContent>
-        </ModalOverlay>
+          
+          {!isLoading && !error && sequences && sequences.length > 0 && (
+            <SequencesGrid>
+              {sequences.map((sequence) => (
+                <SequenceCard
+                  key={sequence.id}
+                  sequence={sequence}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </SequencesGrid>
+          )}
+        </Fragment>
+      ) : (
+        <SequenceForm
+          initialData={editingSequence || undefined}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
       )}
-
-      {isStageModalOpen && (
-        <ModalOverlay>
-          <ModalContent>
-            <h2>{currentSequence ? 'Editar' : 'Criar'} Etapa</h2>
-            {/* Add stage form here */}
-            <ModalActions>
-              <CancelButton onClick={() => setIsStageModalOpen(false)}>
-                Cancelar
-              </CancelButton>
-              <ActionButton>Salvar</ActionButton>
-            </ModalActions>
-          </ModalContent>
-        </ModalOverlay>
-      )}
-    </DidacticSequenceContainer>
+    </PageContainer>
   );
 };
 
