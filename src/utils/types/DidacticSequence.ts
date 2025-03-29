@@ -1,45 +1,71 @@
-// src/types/DidacticSequence.ts
-  export const DisciplineType = {
-    Português: 'Português',
-    Matemática: 'Matemática',
-    História: 'História',
-    Geografia: 'Geografia',
-    Ciências: 'Ciências',
-    Artes: 'Artes',
-    'Educação Física': 'Educação Física',
-    Inglês: 'Inglês',
-    Outro: 'Outro'
-  } as const;
-  
-export type DisciplineType = typeof DisciplineType[keyof typeof DisciplineType];
+// src/utils/types/DidacticSequence.ts
 
-export interface BNCCCode {
-  id: string;
-  description: string;
-}
+export type DisciplineType = 'Português' | 'Matemática' | 'História' | 'Geografia' | 'Ciências' | 'Artes' | 'Educação Física';
 
-export interface SequenceStage {
-  id: string;
-  title: string;
-  description: string;
-  duration: number; // em minutos
-  resources: string[];
-  activities: string[];
-  evaluationMethod?: string;
-}
+export type EducationLevel = 'Infantil' | 'Fundamental I' | 'Fundamental II' | 'Médio' | 'Superior';
+
+export type SequenceStatus = 'draft' | 'active' | 'completed';
 
 export interface DidacticSequence {
   id: string;
+  // Informações Básicas
   title: string;
   discipline: DisciplineType;
-  targetAudience: string; // Ex: "5º Ano", "Ensino Médio"
-  overview: string;
-  objectives: string[];
-  bnccCodes: BNCCCode[];
-  skills: string[];
-  stages: SequenceStage[];
-  totalDuration: number; // Calculado com base nas etapas
-  createdAt: Date;
-  updatedAt: Date;
   author: string;
+  thematicAxis: string;
+  sequence: string;
+  educationLevel: EducationLevel;
+  workload: number; // em horas
+  overview: string;
+  
+  // Habilidades
+  skills: string[];
+  bnccCodes: string[];
+  lessonsCount: number;
+  
+  // Objetivos
+  objectives: string[];
+  
+  // Metadados
+  createdAt: string;
+  updatedAt: string;
+  status: SequenceStatus;
+}
+
+export interface LessonPlan {
+  id: string;
+  sequenceId: string;
+  title: string;
+  description: string;
+  duration: number; // em minutos
+  discipline: DisciplineType;
+  applicationWeek: string;
+  status: 'Em planejamento' | 'Planejada' | 'Em aplicação' | 'Aplicada' | 'Lançada';
+  classGroup: string;
+  type: 'Avaliação' | 'Aula';
+  objectives: string[];
+  skills: string[];
+  bnccCodes: string[];
+  developedSkills: string[];
+  learningObjectives: string[];
+  methodologies: string[];
+  knowledgeObjects: {
+    title: string;
+    subtitles?: string[];
+  }[];
+  necessaryResources: string[];
+  contentExplanation: string;
+  solvedExercises: {
+    statement: string;
+    solution: string;
+  }[];
+  evaluation: {
+    type: string;
+    criteria: string[];
+    weight: number;
+    registrationText: string;
+    exercises?: string[];
+  };
+  createdAt: string;
+  updatedAt: string;
 }

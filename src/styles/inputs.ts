@@ -1,41 +1,27 @@
 import styled from "styled-components";
+import { BaseInput } from "./baseComponents";
 
-export const Input = styled.input`
-    width: 100%;
-    padding: var(--space-sm) var(--space-md);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
-    background-color: var(--color-input);
-    color: var(--color-text);
-    font-size: var(--font-size-md);
-    transition: all 0.2s ease-in-out;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+export const Input = styled(BaseInput)`
+  font-size: var(--font-size-md);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
-    &:hover:not(:disabled):not(:focus) {
-        border-color: var(--color-input-border-dark, var(--color-primary-hover));
-    }
-
-    &:focus {
-        outline: none;
-        border-color: var(--color-input-focus);
-        box-shadow: var(--shadow-focus);
-        transform: translateY(-1px);
-    }
-    
-    &:disabled {
-        background-color: var(--color-background-third);
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-    
-    &::placeholder {
-        color: var(--color-text-third);
-        transition: opacity 0.2s ease;
-    }
-    
-    &:focus::placeholder {
-        opacity: 0.7;
-    }
+  &:hover:not(:disabled):not(:focus) {
+    border-color: var(--color-input-border-dark, var(--color-primary-hover));
+  }
+  
+  &:focus {
+    transform: translateY(-1px);
+  }
+  
+  &::placeholder {
+    color: var(--color-text-third);
+    transition: opacity 0.2s ease;
+  }
+  
+  &:focus::placeholder {
+    opacity: 0.7;
+  }
 `;
 
 export const Label = styled.label`
@@ -130,7 +116,6 @@ export const Select = styled.select`
   padding: var(--space-sm);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius-sm);
-  background-color: var(--color-background);
   color: var(--color-text);
   font-size: var(--font-size-base);
   

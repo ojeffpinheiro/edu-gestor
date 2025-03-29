@@ -1,61 +1,20 @@
 import styled from "styled-components";
+import { BaseButton } from "./baseComponents";
 import { getButtonColor } from "../utils/styles";
 
-export const Button = styled.button<{ variant?: "primary" | "secondary" | "success" | "error" | "warning" | "info" }>`
-    padding: var(--space-sm) var(--space-md);
-    border: none;
-    border-radius: var(--border-radius-md); // Aumentado para uma aparência mais moderna
-    cursor: pointer;
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-    color: var(--color-text-on-primary);
-    transition: all 0.2s ease;
-    
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: .75rem;
-    max-width: 13rem;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
+export const Button = styled(BaseButton)<{ variant?: "primary" | "secondary" | "success" | "error" | "warning" | "info" }>`
+  padding: var(--space-sm) var(--space-md);
+  color: var(--color-text-on-primary);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: .75rem;
+  max-width: 13rem;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 
-    ${({ variant = 'primary' }) => getButtonColor(variant)}
-
-    &:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-    
-    &:active:not(:disabled) {
-        transform: translateY(0);
-    }
-
-    &:disabled {
-        background-color: var(--color-button-disabled);
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-    
-    // Efeito de ripple ao clicar
-    &::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 5px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.5);
-        opacity: 0;
-        border-radius: 100%;
-        transform: scale(1, 1) translate(-50%, -50%);
-        transform-origin: 50% 50%;
-    }
-    
-    &:focus-visible {
-        outline: none;
-        box-shadow: var(--shadow-focus);
-    }
+  ${({ variant = 'primary' }) => getButtonColor(variant)}
 `;
 
 export const CloseButton = styled.button`
@@ -85,43 +44,14 @@ export const CloseButton = styled.button`
     }
 `;
 
-export const ActionButton = styled.button`
-    padding: var(--space-md) var(--space-lg);
-    background-color: var(--color-primary);
-    color: var(--color-text-on-primary);
-    border: none;
-    border-radius: var(--border-radius-md);
-    cursor: pointer;
-    font-size: var(--font-size-md);
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    transition: all 0.3s;
-    white-space: nowrap;
-    position: relative;
-    overflow: hidden;
-
-    &:hover:not(:disabled) {
-        filter: brightness(1.1);
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-sm);
-    }
-    
-    &:active:not(:disabled) {
-        transform: translateY(0);
-    }
-
-    &:disabled {
-        background-color: var(--color-button-disabled);
-        cursor: not-allowed;
-        opacity: 0.7;
-    }
-
-    &:focus-visible {
-        outline: none;
-        box-shadow: var(--shadow-focus);
-    }
+export const ActionButton = styled(BaseButton)`
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
 `;
 
 export const CancelButton = styled(ActionButton)`

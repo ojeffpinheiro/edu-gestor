@@ -1,71 +1,105 @@
 // src/hooks/useDidacticSequences.ts
-import { useState, useCallback } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import { DidacticSequence, SequenceStage, DisciplineType } from '../utils/types/DidacticSequence'
+
+import { useState, useEffect, useCallback } from 'react';
+import { DidacticSequence, DisciplineType } from '../utils/types/DidacticSequence';
 import { didacticSequencesService } from '../services/didacticSequencesService';
 
 export const useDidacticSequences = () => {
-  const queryClient = useQueryClient();
+  const [sequences, setSequences] = useState<DidacticSequence[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
   const [selectedDiscipline, setSelectedDiscipline] = useState<DisciplineType | null>(null);
 
-  // Obter todas as sequências ou filtradas por disciplina
-  const { data: sequences, isLoading, error } = useQuery<DidacticSequence[]>(
-    ['sequences', selectedDiscipline],
-    () => selectedDiscipline 
-      ? didacticSequencesService.getByDiscipline(selectedDiscipline)
-      : didacticSequencesService.getAll(),
-    {
-      staleTime: 5 * 60 * 1000, // 5 minutos
-    }
-  );
-
-  // Mutation para criar uma nova sequência
-  const createMutation = useMutation(
-    (newSequence: Omit<DidacticSequence, 'id' | 'createdAt' | 'updatedAt' | 'totalDuration'>) => 
-      didacticSequencesService.create(newSequence),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['sequences']);
+  // Carregar sequências
+  const loadSequences = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      let data: DidacticSequence[];
+      
+      if (selectedDiscipline) {
+        data = await didacticSequencesService.getSequencesByDiscipline(selectedDiscipline);
+      } else {
+        data = await didacticSequencesService.getSequences();
       }
+      
+      setSequences(data);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Ocorreu um erro desconhecido'));
+    } finally {
+      setIsLoading(false);
     }
-  );
+  }, [selectedDiscipline]);
 
-  // Mutation para atualizar uma sequência
-  const updateMutation = useMutation(
-    ({ id, data }: { id: string, data: Partial<Omit<DidacticSequence, 'id' | 'createdAt' | 'updatedAt'>> }) => 
-      didacticSequencesService.update(id, data),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['sequences']);
-      }
-    }
-  );
-
-  // Mutation para adicionar uma etapa
-  const addStageMutation = useMutation(
-    ({ sequenceId, stageData }: { sequenceId: string, stageData: Omit<SequenceStage, 'id'> }) => 
-      didacticSequencesService.addStage(sequenceId, stageData),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['sequences']);
-      }
-    }
-  );
-
-  // Mutation para deletar uma sequência
-  const deleteMutation = useMutation(
-    (id: string) => didacticSequencesService.delete(id),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(['sequences']);
-      }
-    }
-  );
-
-  // Função para filtrar por disciplina
-  const filterByDiscipline = useCallback((discipline: DisciplineType | null) => {
+  // Filtrar por disciplina
+  const filterByDiscipline = (discipline: DisciplineType | null) => {
     setSelectedDiscipline(discipline);
-  }, []);
+  };
+
+  // Criar nova sequência
+  const createSequence = async (data: Omit<DidacticSequence, 'id' | 'createdAt' | 'updatedAt'>) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const newSequence = await didacticSequencesService.createSequence(data);
+      setSequences(prev => [...prev, newSequence]);
+      return newSequence;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Erro ao criar sequência'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Atualizar sequência
+  const updateSequence = async ({ id, data }: { id: string, data: Partial<Omit<DidacticSequence, 'id' | 'createdAt' | 'updatedAt'>> }) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const updatedSequence = await didacticSequencesService.updateSequence(id, data);
+      
+      if (updatedSequence) {
+        setSequences(prev => prev.map(seq => seq.id === id ? updatedSequence : seq));
+      }
+      
+      return updatedSequence;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Erro ao atualizar sequência'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Excluir sequência
+  const deleteSequence = async (id: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const success = await didacticSequencesService.deleteSequence(id);
+      
+      if (success) {
+        setSequences(prev => prev.filter(seq => seq.id !== id));
+      }
+      
+      return success;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Erro ao excluir sequência'));
+      throw err;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Carregar sequências quando o componente montar ou quando a disciplina selecionada mudar
+  useEffect(() => {
+    loadSequences();
+  }, [loadSequences]);
 
   return {
     sequences,
@@ -73,12 +107,9 @@ export const useDidacticSequences = () => {
     error,
     selectedDiscipline,
     filterByDiscipline,
-    createSequence: createMutation.mutate,
-    updateSequence: updateMutation.mutate,
-    addStageToSequence: addStageMutation.mutate,
-    deleteSequence: deleteMutation.mutate,
-    isCreating: createMutation.isLoading,
-    isUpdating: updateMutation.isLoading,
-    isDeleting: deleteMutation.isLoading,
+    createSequence,
+    updateSequence,
+    deleteSequence,
+    refreshSequences: loadSequences
   };
 };

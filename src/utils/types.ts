@@ -235,6 +235,14 @@ export enum FormSectionOptions {
     CALCULATION = "Cálculo"
 }
 
+export enum SequenceFormOptions {
+    BASIC_INFO = 'Definições básicas',
+    OBJECTIVES = 'Objetivos',
+    SKILLS = 'Habilidades',
+    BNCC_CODES ='Códigos BNCC',
+    STAGES = 'Fases'
+}
+
 export interface RubricOrConcept {
     id: string;
     name: string;

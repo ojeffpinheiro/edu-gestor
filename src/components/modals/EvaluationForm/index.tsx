@@ -15,11 +15,6 @@ import EvaluationMethodSection from "../../EvaluationMethodSection";
 import CalculationSection from "../../CalculationSection";
 
 import {
-    ModalContainer,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     ErrorMessage,
     SuccessMessage,
     FormStepsNav,
@@ -28,6 +23,7 @@ import {
     FormProgress,
     FormProgressIndicator,
 } from './styles';
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
 
 interface EvaluationFormProps {
     evaluation: Evaluation | null;

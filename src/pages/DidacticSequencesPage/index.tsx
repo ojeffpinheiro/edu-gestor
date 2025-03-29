@@ -1,103 +1,16 @@
 import React, { useState, Fragment } from 'react';
-import styled from 'styled-components';
-import SequenceCard from '../../components/DidacticSequences/SequenceCard';
-import SequenceForm from '../../components/DidacticSequences/SequenceForm';
+import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+
 import { useDidacticSequences } from '../../hooks/useDidacticSequences';
+
 import { DidacticSequence, DisciplineType } from '../../utils/types/DidacticSequence';
 
-const PageContainer = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem;
-`;
+import SequenceForm from '../../components/DidacticSequences/SequenceForm';
 
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-`;
+import { Table, TableHeader, TableRow, Td } from '../../styles/table';
 
-const Title = styled.h1`
-  color: #333;
-  font-size: 1.75rem;
-  font-weight: 600;
-`;
-
-const Button = styled.button`
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.75rem 1.5rem;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:hover {
-    background-color: #1976d2;
-  }
-`;
-
-const FilterContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  flex-wrap: wrap;
-`;
-
-const FilterButton = styled.button<{ active: boolean }>`
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  background-color: ${props => props.active ? '#2196f3' : '#f5f5f5'};
-  color: ${props => props.active ? 'white' : '#666'};
-  border: 1px solid ${props => props.active ? '#2196f3' : '#ddd'};
-  
-  &:hover {
-    background-color: ${props => props.active ? '#1976d2' : '#e0e0e0'};
-  }
-`;
-
-const LoadingMessage = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: #666;
-  font-size: 1rem;
-`;
-
-const ErrorMessage = styled.div`
-  text-align: center;
-  padding: 2rem;
-  color: #d32f2f;
-  font-size: 1rem;
-  background-color: #ffebee;
-  border-radius: 4px;
-  margin-bottom: 2rem;
-`;
-
-const EmptyState = styled.div`
-  text-align: center;
-  padding: 3rem;
-  color: #666;
-  font-size: 1rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-`;
-
-const SequencesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: 1.5rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
+import { ActionsContainer, BadgeContainer, CodeBadge, EmptyState, ErrorMessage, FilterButton, FilterContainer, IconButton, LoadingMessage, PageContainer, PageHeader, StatusBadge, Title } from './styled'
+import { Button } from '../../styles/buttons';
 
 const DidacticSequencesPage: React.FC = () => {
   const disciplines: DisciplineType[] = ['Português', 'Matemática', 'História', 'Geografia', 'Ciências', 'Artes', 'Educação Física'];
@@ -148,12 +61,19 @@ const DidacticSequencesPage: React.FC = () => {
     deleteSequence(id);
   };
   
+  const handleViewDetails = (sequence: DidacticSequence) => {
+    // Implement view details functionality
+    console.log('View details for sequence:', sequence);
+  };
+  
   return (
     <PageContainer>
       <PageHeader>
         <Title>Sequências Didáticas</Title>
         {!showForm && (
-          <Button onClick={handleCreateClick}>Nova Sequência</Button>
+          <Button onClick={handleCreateClick}>
+            <FaPlus /> Nova Sequência
+          </Button>
         )}
       </PageHeader>
       
@@ -194,16 +114,70 @@ const DidacticSequencesPage: React.FC = () => {
           )}
           
           {!isLoading && !error && sequences && sequences.length > 0 && (
-            <SequencesGrid>
-              {sequences.map((sequence) => (
-                <SequenceCard
-                  key={sequence.id}
-                  sequence={sequence}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </SequencesGrid>
+            <Table>
+              <thead>
+                <TableRow>
+                  <TableHeader>Eixo Temático</TableHeader>
+                  <TableHeader>Sequência </TableHeader>
+                  <TableHeader>Título</TableHeader>
+                  <TableHeader>Nível de Ensino </TableHeader>
+                  <TableHeader>Códigos BNCC</TableHeader>
+                  <TableHeader>Status</TableHeader>
+                  <TableHeader>Ações</TableHeader>
+                </TableRow>
+              </thead>
+
+              <tbody>
+                {sequences.map((sequence) => (
+                  <TableRow key={sequence.id}>
+                    <Td>{sequence.thematicAxis}</Td>
+                    <Td>{sequence.sequence}</Td>
+                    <Td>{sequence.title}</Td>
+                    <Td>{sequence.educationLevel}</Td>
+                    <Td>
+                      <BadgeContainer>
+                        {sequence.bnccCodes?.map((code, index) => (
+                          <CodeBadge key={index}>{code}</CodeBadge>
+                        ))}
+                      </BadgeContainer>
+                    </Td>
+                    <Td>
+                      <StatusBadge status={sequence.status || 'draft'}>
+                        {sequence.status === 'draft' && 'Rascunho'}
+                        {sequence.status === 'active' && 'Ativa'}
+                        {sequence.status === 'completed' && 'Concluída'}
+                        {!sequence.status && 'Não definido'}
+                      </StatusBadge>
+                    </Td>
+                    <Td>
+                      <ActionsContainer>
+                        <IconButton 
+                          className="view" 
+                          onClick={() => handleViewDetails(sequence)}
+                          title="Ver detalhes"
+                        >
+                          <FaEye size={16} />
+                        </IconButton>
+                        <IconButton 
+                          className="edit" 
+                          onClick={() => handleEdit(sequence)}
+                          title="Editar"
+                        >
+                          <FaEdit size={16} />
+                        </IconButton>
+                        <IconButton 
+                          className="delete" 
+                          onClick={() => handleDelete(sequence.id)}
+                          title="Excluir"
+                        >
+                          <FaTrash size={16} />
+                        </IconButton>
+                      </ActionsContainer>
+                    </Td>
+                  </TableRow>
+                ))}
+              </tbody>
+            </Table>
           )}
         </Fragment>
       ) : (

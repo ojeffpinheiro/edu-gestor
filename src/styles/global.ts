@@ -212,7 +212,7 @@ export const GlobalStyles = createGlobalStyle`
     height: 1px;
     padding: 0;
     margin: -1px;
-    overflow: hidden;
+    overflow: auto;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
     border-width: 0;
@@ -249,8 +249,7 @@ export const GlobalStyles = createGlobalStyle`
   
   ::-webkit-scrollbar-thumb {
     background: var(--color-text-third);
-    border-radius: var(--border-radius-full);
-  }
+    border-radius: 2rem;
   
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-text-secondary);

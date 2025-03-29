@@ -1,582 +1,775 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { useForm, FormProvider } from 'react-hook-form';
+import React, { useState, useMemo } from 'react';
+import { useForm, FormProvider, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { DidacticSequence, DisciplineType } from '../../utils/types/DidacticSequence';
+import { FaTimes, FaCheck, FaExclamationTriangle, FaPlus, FaArrowLeft, FaArrowRight, FaSave } from "react-icons/fa";
+
+import { DidacticSequence } from '../../utils/types/DidacticSequence';
+
 import StageForm from './StageForm';
 
-interface SequenceFormProps {
-  initialData?: DidacticSequence;
-  onSubmit: (data: any) => void;
-  onCancel: () => void;
+import { SequenceFormStyle } from './style';
+import { Input, Label, Select, TextArea } from '../../styles/inputs';
+import { Button, CloseButton } from '../../styles/buttons';
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../styles/modals';
+
+// Enum for form sections
+enum FormSectionOptions {
+  BASIC_INFO = "Informações Básicas",
+  SKILLS = "Habilidades",
+  OBJECTIVES = "Objetivos",
+  BNCC_CODES = "Códigos BNCC",
+  STAGES = "Etapas"
 }
 
-const FormContainer = styled.div`
-  background-color: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  padding: 2rem;
-  margin-bottom: 2rem;
-`;
-
-const FormTitle = styled.h2`
-  color: #333;
-  margin-bottom: 1.5rem;
-  font-weight: 600;
-`;
-
-const FormSection = styled.div`
-  margin-bottom: 2rem;
-`;
-
-const SectionTitle = styled.h3`
-  color: #555;
-  font-size: 1.125rem;
-  margin-bottom: 1rem;
-  font-weight: 500;
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1.25rem;
-`;
-
-const FormRow = styled.div`
-  display: flex;
-  gap: 1.5rem;
-  margin-bottom: 1.25rem;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-`;
-
-const FormColumn = styled.div`
-  flex: 1;
-`;
-
-const Label = styled.label`
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: #555;
-`;
-
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  
-  &:focus {
-    outline: none;
-    border-color: #4dabf7;
-    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
-  }
-`;
-
-const Select = styled.select`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
-  
-  &:focus {
-    outline: none;
-    border-color: #4dabf7;
-    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
-  }
-`;
-
-const Textarea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  min-height: 100px;
-  resize: vertical;
-  
-  &:focus {
-    outline: none;
-    border-color: #4dabf7;
-    box-shadow: 0 0 0 2px rgba(77, 171, 247, 0.2);
-  }
-`;
-
-const ErrorMessage = styled.p`
-  color: #d32f2f;
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 2rem;
-`;
-
-const Button = styled.button`
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 500;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
-`;
-
-const CancelButton = styled(Button)`
-  background-color: #f5f5f5;
-  color: #666;
-  border: 1px solid #ddd;
-  
-  &:hover {
-    background-color: #e0e0e0;
-  }
-`;
-
-const SubmitButton = styled(Button)`
-  background-color: #2196f3;
-  color: white;
-  border: none;
-  
-  &:hover {
-    background-color: #1976d2;
-  }
-`;
-
-const AddButton = styled(Button)`
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: none;
-  margin-bottom: 1.5rem;
-  
-  &:hover {
-    background-color: #bbdefb;
-  }
-`;
-
-const ChipContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-`;
-
-const Chip = styled.div`
-  background-color: #e3f2fd;
-  color: #1976d2;
-  padding: 0.5rem;
-  border-radius: 16px;
-  font-size: 0.875rem;
-  display: flex;
-  align-items: center;
-`;
-
-const ChipDeleteButton = styled.button`
-  background: none;
-  border: none;
-  color: #1976d2;
-  font-size: 1rem;
-  margin-left: 0.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  
-  &:hover {
-    background-color: rgba(25, 118, 210, 0.1);
-  }
-`;
-
-const AddItemContainer = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-`;
-
-const AddItemInput = styled(Input)`
-  flex-grow: 1;
-`;
-
-const AddItemButton = styled.button`
-  background-color: #e3f2fd;
-  color: #1976d2;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: #bbdefb;
-  }
-`;
-
-// Schema de validação com Zod
+// Validation schema with Zod
 const sequenceSchema = z.object({
-  id: z.string(),
-  title: z.string().min(3, { message: 'O título deve ter pelo menos 3 caracteres' }),
-  discipline: z.nativeEnum(DisciplineType, { required_error: 'Selecione uma disciplina' }),
-  targetAudience: z.string().min(1, { message: 'Informe o público-alvo' }),
-  overview: z.string().min(10, { message: 'A visão geral deve ter pelo menos 10 caracteres' }),
-  objectives: z.array(z.string()).min(1, { message: 'Adicione pelo menos um objetivo' }),
+  id: z.string().optional(),
+  title: z.string().min(3, "O título deve ter pelo menos 3 caracteres"),
+  thematicAxis: z.string().min(3, "O eixo temático deve ter pelo menos 3 caracteres"),
+  teachingLevel: z.string().min(2, "O nível de ensino é obrigatório"),
+  discipline: z.string().min(2, "A disciplina é obrigatória"),
+  author: z.string().min(2, "O autor é obrigatório"),
+  totalDuration: z.number().min(1, "A carga horária deve ser maior que zero"),
+  overview: z.string().min(10, "A visão geral deve ter pelo menos 10 caracteres"),
+  numberOfLessons: z.number().int().min(1, "Número de aulas deve ser pelo menos 1"),
+  skills: z.array(z.string()).min(1, "Adicione pelo menos uma habilidade"),
   bnccCodes: z.array(
     z.object({
-      id: z.string(),
-      description: z.string()
+      id: z.string().min(1, "O código BNCC é obrigatório"),
+      description: z.string().min(1, "A descrição do código é obrigatória")
     })
   ),
-  skills: z.array(z.string()),
+  objectives: z.array(z.string()).min(1, "Adicione pelo menos um objetivo"),
   stages: z.array(
     z.object({
       id: z.string(),
-      title: z.string().min(3, { message: 'O título da etapa deve ter pelo menos 3 caracteres' }),
-      description: z.string().min(10, { message: 'A descrição deve ter pelo menos 10 caracteres' }),
-      duration: z.number().min(1, { message: 'A duração deve ser de pelo menos 1 minuto' }),
-      resources: z.array(z.string()),
-      activities: z.array(z.string()).min(1, { message: 'Adicione pelo menos uma atividade' }),
-      evaluationMethod: z.string().optional()
+      title: z.string().min(3, "O título da etapa é obrigatório"),
+      description: z.string(),
+      duration: z.number().min(1, "A duração deve ser maior que zero"),
+      activities: z.array(z.string())
     })
-  ).min(1, { message: 'Adicione pelo menos uma etapa' }),
-  author: z.string().min(1, { message: 'Informe o autor' }),
-  totalDuration: z.number().optional(),
+  ),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional()
 });
+
+type SequenceFormData = z.infer<typeof sequenceSchema>;
+
+interface SequenceFormProps {
+  initialData?: DidacticSequence;
+  onSubmit: (data: SequenceFormData) => void;
+  onCancel: () => void;
+}
+
+const {
+  AddButton,
+  AddItemButton,
+  AddItemContainer,
+  AddItemInput,
+  Chip,
+  ChipContainer,
+  ChipDeleteButton,
+  ErrorMessage,
+  FormColumn,
+  FormGroup,
+  FormProgress,
+  FormProgressIndicator,
+  FormRow,
+  FormSection,
+  FormStepButton,
+  FormStepDivider,
+  FormStepsNav,
+  NavigationButtons,
+  SectionTitle,
+  SubmitButton,
+  SuccessMessage,
+  ErrorSection
+} = SequenceFormStyle;
 
 const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCancel }) => {
   const [newObjective, setNewObjective] = useState('');
   const [newSkill, setNewSkill] = useState('');
   const [newBNCCCode, setNewBNCCCode] = useState({ id: '', description: '' });
-  
-  const methods = useForm({
-    resolver: zodResolver(sequenceSchema),
-    defaultValues: initialData || {
-      title: '',
-      discipline: undefined,
-      targetAudience: '',
-      overview: '',
-      objectives: [],
-      bnccCodes: [],
-      skills: [],
-      stages: [],
-      author: ''
-    }
+  const [currentSection, setCurrentSection] = useState<FormSectionOptions>(FormSectionOptions.BASIC_INFO);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [feedback, setFeedback] = useState({
+    errorMessage: '',
+    successMessage: '',
+    hasChanges: false
   });
-  
+
+  // Setup form with React Hook Form and Zod
+  const defaultValues = useMemo(() => {
+    if (initialData) {
+      return {
+        ...initialData,
+        createdAt: initialData.createdAt ? new Date(initialData.createdAt) : new Date(),
+        updatedAt: initialData.updatedAt ? new Date(initialData.updatedAt) : new Date(),
+        bnccCodes: initialData.bnccCodes.map(code => 
+          typeof code === 'string' 
+            ? { id: code, description: code }
+            : code
+        )
+      };
+    }
+    return {
+      id: uuidv4(),
+      title: '',
+      thematicAxis: '',
+      teachingLevel: '',
+      discipline: '',
+      author: '',
+      totalDuration: 0,
+      overview: '',
+      numberOfLessons: 1,
+      skills: [],
+      bnccCodes: [],
+      objectives: [],
+      stages: [],
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+  }, [initialData]);
+
+  const methods = useForm<SequenceFormData>({
+    resolver: zodResolver(sequenceSchema),
+    defaultValues,
+    mode: 'onChange'
+  });
+
   const { 
+    control, 
     register, 
     handleSubmit, 
-    formState: { errors }, 
-    control, 
+    formState: { errors, isValid, touchedFields, dirtyFields }, 
+    watch, 
     setValue, 
-    getValues,
-    watch
+    trigger,
+    getValues
   } = methods;
-  
-  const stages = watch('stages');
-  
+
+  // Setup field arrays for lists
+  const { 
+    fields: skillsFields, 
+    append: appendSkill, 
+    remove: removeSkill 
+  } = useFieldArray({ control, name: 'skills'});
+
+  const { 
+    fields: objectivesFields, 
+    append: appendObjective, 
+    remove: removeObjective 
+  } = useFieldArray({
+    control,
+    name: 'objectives',
+  });
+
+  const { 
+    fields: bnccCodesFields, 
+    append: appendBnccCode, 
+    remove: removeBnccCode 
+  } = useFieldArray({
+    control,
+    name: 'bnccCodes'
+  });
+
+  const { 
+    fields: stagesFields, 
+    append: appendStage, 
+    remove: removeStage 
+  } = useFieldArray({
+    control,
+    name: 'stages'
+  });
+
+  // Icons for each form section
+  const sectionIcons = useMemo(() => ({
+    [FormSectionOptions.BASIC_INFO]: "📋",
+    [FormSectionOptions.OBJECTIVES]: "🎯",
+    [FormSectionOptions.SKILLS]: "🧠",
+    [FormSectionOptions.BNCC_CODES]: "📚",
+    [FormSectionOptions.STAGES]: "🧩"
+  }), []);
+
+  // Descriptions for each section
+  const sectionDescriptions = useMemo(() => ({
+    [FormSectionOptions.BASIC_INFO]: "Informações básicas da sequência",
+    [FormSectionOptions.OBJECTIVES]: "Objetivos de aprendizagem",
+    [FormSectionOptions.SKILLS]: "Habilidades desenvolvidas",
+    [FormSectionOptions.BNCC_CODES]: "Códigos da Base Nacional Comum Curricular",
+    [FormSectionOptions.STAGES]: "Etapas da sequência didática"
+  }), []);
+
+  // Check section validation status
+  const isSectionValid = (section: FormSectionOptions): boolean => {
+    switch (section) {
+      case FormSectionOptions.BASIC_INFO:
+        return !errors.title && !errors.thematicAxis && !errors.teachingLevel && 
+               !errors.discipline && !errors.author && !errors.overview && !errors.numberOfLessons;
+      case FormSectionOptions.SKILLS:
+        return !errors.skills;
+      case FormSectionOptions.OBJECTIVES:
+        return !errors.objectives;
+      case FormSectionOptions.BNCC_CODES:
+        return !errors.bnccCodes;
+      case FormSectionOptions.STAGES:
+        return !errors.stages;
+      default:
+        return true;
+    }
+  };
+
+  // Handle form submission
+  const onFormSubmit = handleSubmit(async (data: SequenceFormData) => {
+    try {
+      setIsSubmitting(true);
+      setFeedback({
+        errorMessage: '',
+        successMessage: '',
+        hasChanges: true
+      });
+
+      // Calculate total duration from stages
+      const totalDuration = data.stages.reduce(
+        (total: number, stage: any) => total + stage.duration, 0
+      );
+      data.totalDuration = totalDuration;
+
+      // Set or update dates
+      data.updatedAt = new Date();
+      if (!data.createdAt) {
+        data.createdAt = new Date();
+      }
+
+      await onSubmit(data);
+
+      setFeedback({
+        errorMessage: '',
+        successMessage: 'Sequência didática salva com sucesso!',
+        hasChanges: false
+      });
+    } catch (error) {
+      console.error('Erro ao salvar sequência:', error);
+      setFeedback({
+        errorMessage: 'Ocorreu um erro ao salvar a sequência. Por favor, tente novamente.',
+        successMessage: '',
+        hasChanges: true
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  });
+
+  // Navigate to next section
+  const handleNextSection = async () => {
+    // Validate current section fields before proceeding
+    let isValid = false;
+    
+    switch (currentSection) {
+      case FormSectionOptions.BASIC_INFO:
+        isValid = await trigger(['title', 'thematicAxis', 'teachingLevel', 'discipline', 'author', 'overview', 'numberOfLessons']);
+        break;
+      case FormSectionOptions.SKILLS:
+        isValid = await trigger('skills');
+        break;
+      case FormSectionOptions.OBJECTIVES:
+        isValid = await trigger('objectives');
+        break;
+      case FormSectionOptions.BNCC_CODES:
+        isValid = await trigger('bnccCodes');
+        break;
+      default:
+        isValid = true;
+    }
+
+    if (isValid) {
+      const sections = Object.values(FormSectionOptions);
+      const currentIndex = sections.indexOf(currentSection);
+      
+      if (currentIndex < sections.length - 1) {
+        setCurrentSection(sections[currentIndex + 1]);
+      }
+    }
+  };
+
+  // Navigate to previous section
+  const handlePreviousSection = () => {
+    const sections = Object.values(FormSectionOptions);
+    const currentIndex = sections.indexOf(currentSection);
+    
+    if (currentIndex > 0) {
+      setCurrentSection(sections[currentIndex - 1]);
+    }
+  };
+
+  // Add a new objective
+  const handleAddObjective = () => {
+    if (newObjective.trim()) {
+      appendObjective(newObjective.trim());
+      setNewObjective('');
+      setFeedback({ ...feedback, hasChanges: true });
+    }
+  };
+
+  // Add a new skill
+  const handleAddSkill = () => {
+    if (newSkill.trim()) {
+      appendSkill(newSkill.trim());
+      setNewSkill('');
+      setFeedback({ ...feedback, hasChanges: true });
+    }
+  };
+
+  // Add a new BNCC code
+  const handleAddBNCCCode = () => {
+    if (newBNCCCode.id.trim() && newBNCCCode.description.trim()) {
+      appendBnccCode(newBNCCCode);
+      setNewBNCCCode({ id: '', description: '' });
+      setFeedback({ ...feedback, hasChanges: true });
+    }
+  };
+
+  // Add a new stage
   const handleAddStage = () => {
-    const currentStages = getValues('stages') || [];
-    setValue('stages', [...currentStages, {
+    appendStage({
       id: uuidv4(),
       title: '',
       description: '',
-      duration: 0,
-      resources: [],
-      activities: [],
-      evaluationMethod: ''
-    }]);
+      duration: 1,
+      activities: []
+    });
+    setFeedback({ ...feedback, hasChanges: true });
   };
-  
-  const handleRemoveStage = (index: number) => {
-    const currentStages = getValues('stages');
-    setValue(
-      'stages',
-      currentStages.filter((_: any, i: number) => i !== index)
-    );
-  };
-  
-  const handleAddObjective = () => {
-    if (newObjective.trim()) {
-      const currentObjectives = getValues('objectives') || [];
-      setValue('objectives', [...currentObjectives, newObjective]);
-      setNewObjective('');
+
+  // Key press handler for entering objectives and skills
+  const handleKeyPress = (e: React.KeyboardEvent, action: () => void) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      action();
     }
   };
-  
-  const handleRemoveObjective = (index: number) => {
-    const currentObjectives = getValues('objectives');
-    setValue(
-      'objectives',
-      currentObjectives.filter((_: any, i: number) => i !== index)
-    );
-  };
-  
-  const handleAddSkill = () => {
-    if (newSkill.trim()) {
-      const currentSkills = getValues('skills') || [];
-      setValue('skills', [...currentSkills, newSkill]);
-      setNewSkill('');
+
+  // Render the current section
+  const renderCurrentSection = () => {
+    try {
+      switch (currentSection) {
+        case FormSectionOptions.BASIC_INFO:
+          return (
+            <FormSection>
+              <SectionTitle>Informações Básicas</SectionTitle>
+
+              <FormGroup>
+                <Label htmlFor="title">Título da Sequência</Label>
+                <Input
+                  id="title"
+                  placeholder="Ex: Introdução à Geometria Espacial"
+                  {...register("title")}
+                />
+                {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
+              </FormGroup>
+
+              <FormRow>
+                <FormColumn>
+                  <FormGroup>
+                    <Label htmlFor="thematicAxis">Eixo Temático</Label>
+                    <Input
+                      id="thematicAxis"
+                      placeholder="Ex: Geometria"
+                      {...register("thematicAxis")}
+                    />
+                    {errors.thematicAxis && <ErrorMessage>{errors.thematicAxis.message}</ErrorMessage>}
+                  </FormGroup>
+                </FormColumn>
+
+                <FormColumn>
+                  <FormGroup>
+                    <Label htmlFor="teachingLevel">Nível de Ensino</Label>
+                    <Select id="teachingLevel" {...register("teachingLevel")}>
+                      <option value="">Selecione um nível</option>
+                      <option value="Educação Infantil">Educação Infantil</option>
+                      <option value="Ensino Fundamental I">Ensino Fundamental I</option>
+                      <option value="Ensino Fundamental II">Ensino Fundamental II</option>
+                      <option value="Ensino Médio">Ensino Médio</option>
+                      <option value="Ensino Superior">Ensino Superior</option>
+                    </Select>
+                    {errors.teachingLevel && <ErrorMessage>{errors.teachingLevel.message}</ErrorMessage>}
+                  </FormGroup>
+                </FormColumn>
+              </FormRow>
+
+              <FormRow>
+                <FormColumn>
+                  <FormGroup>
+                    <Label htmlFor="discipline">Disciplina</Label>
+                    <Select id="discipline" {...register("discipline")}>
+                      <option value="">Selecione uma disciplina</option>
+                      <option value="Português">Português</option>
+                      <option value="Matemática">Matemática</option>
+                      <option value="História">História</option>
+                      <option value="Geografia">Geografia</option>
+                      <option value="Ciências">Ciências</option>
+                      <option value="Artes">Artes</option>
+                      <option value="Educação Física">Educação Física</option>
+                      <option value="Inglês">Inglês</option>
+                      <option value="Outro">Outro</option>
+                    </Select>
+                    {errors.discipline && <ErrorMessage>{errors.discipline.message}</ErrorMessage>}
+                  </FormGroup>
+                </FormColumn>
+
+                <FormColumn>
+                  <FormGroup>
+                    <Label htmlFor="numberOfLessons">Número de Aulas</Label>
+                    <Input
+                      id="numberOfLessons"
+                      type="number"
+                      min="1"
+                      {...register("numberOfLessons", { valueAsNumber: true })}
+                    />
+                    {errors.numberOfLessons && <ErrorMessage>{errors.numberOfLessons.message}</ErrorMessage>}
+                  </FormGroup>
+                </FormColumn>
+              </FormRow>
+
+              <FormGroup>
+                <Label htmlFor="overview">Visão Geral</Label>
+                <TextArea
+                  id="overview"
+                  placeholder="Descreva brevemente o que será abordado nesta sequência didática..."
+                  {...register("overview")}
+                  rows={4}
+                />
+                {errors.overview && <ErrorMessage>{errors.overview.message}</ErrorMessage>}
+              </FormGroup>
+
+              <FormGroup>
+                <Label htmlFor="author">Autor</Label>
+                <Input
+                  id="author"
+                  placeholder="Seu nome"
+                  {...register("author")}
+                />
+                {errors.author && <ErrorMessage>{errors.author.message}</ErrorMessage>}
+              </FormGroup>
+            </FormSection>
+          );
+
+        case FormSectionOptions.SKILLS:
+          return (
+            <FormSection>
+              <SectionTitle>Habilidades</SectionTitle>
+              
+              <FormGroup>
+                <Label>Habilidades Desenvolvidas</Label>
+                <ChipContainer>
+                  {skillsFields.map((field, index) => (
+                    <Chip key={field.id}>
+                      {watch(`skills.${index}`)}
+                      <ChipDeleteButton
+                        type="button"
+                        onClick={() => removeSkill(index)}
+                        aria-label="Remover habilidade"
+                      >
+                        <FaTimes />
+                      </ChipDeleteButton>
+                    </Chip>
+                  ))}
+                </ChipContainer>
+                {errors.skills && <ErrorMessage>{errors.skills.message}</ErrorMessage>}
+
+                <AddItemContainer>
+                  <AddItemInput
+                    value={newSkill}
+                    onChange={(e) => setNewSkill(e.target.value)}
+                    placeholder="Adicionar habilidade..."
+                    onKeyPress={(e) => handleKeyPress(e, handleAddSkill)}
+                  />
+                  <AddItemButton
+                    type="button"
+                    onClick={handleAddSkill}
+                    disabled={!newSkill.trim()}
+                  >
+                    <FaPlus /> Adicionar
+                  </AddItemButton>
+                </AddItemContainer>
+              </FormGroup>
+            </FormSection>
+          );
+
+        case FormSectionOptions.OBJECTIVES:
+          return (
+            <FormSection>
+              <SectionTitle>Objetivos</SectionTitle>
+              
+              <FormGroup>
+                <Label>Objetivos de Aprendizagem</Label>
+                <ChipContainer>
+                  {objectivesFields.map((field, index) => (
+                    <Chip key={field.id}>
+                      {watch(`objectives.${index}`)}
+                      <ChipDeleteButton
+                        type="button"
+                        onClick={() => removeObjective(index)}
+                        aria-label="Remover objetivo"
+                      >
+                        <FaTimes />
+                      </ChipDeleteButton>
+                    </Chip>
+                  ))}
+                </ChipContainer>
+                {errors.objectives && <ErrorMessage>{errors.objectives.message}</ErrorMessage>}
+
+                <AddItemContainer>
+                  <AddItemInput
+                    value={newObjective}
+                    onChange={(e) => setNewObjective(e.target.value)}
+                    placeholder="Adicionar objetivo..."
+                    onKeyPress={(e) => handleKeyPress(e, handleAddObjective)}
+                  />
+                  <AddItemButton
+                    type="button"
+                    onClick={handleAddObjective}
+                    disabled={!newObjective.trim()}
+                  >
+                    <FaPlus /> Adicionar
+                  </AddItemButton>
+                </AddItemContainer>
+              </FormGroup>
+            </FormSection>
+          );
+
+        case FormSectionOptions.BNCC_CODES:
+          return (
+            <FormSection>
+              <SectionTitle>Códigos BNCC</SectionTitle>
+              
+              <FormGroup>
+                <Label>Códigos da Base Nacional Comum Curricular</Label>
+                <ChipContainer>
+                  {bnccCodesFields.map((field, index) => (
+                    <Chip key={field.id}>
+                      {watch(`bnccCodes.${index}.id`)}: {watch(`bnccCodes.${index}.description`)}
+                      <ChipDeleteButton
+                        type="button"
+                        onClick={() => removeBnccCode(index)}
+                        aria-label="Remover código BNCC"
+                      >
+                        <FaTimes />
+                      </ChipDeleteButton>
+                    </Chip>
+                  ))}
+                </ChipContainer>
+                {errors.bnccCodes && <ErrorMessage>{errors.bnccCodes.message}</ErrorMessage>}
+
+                <FormRow>
+                  <FormColumn>
+                    <FormGroup>
+                      <Label htmlFor="bnccId">Código BNCC</Label>
+                      <Input
+                        id="bnccId"
+                        value={newBNCCCode.id}
+                        onChange={(e) => setNewBNCCCode({ ...newBNCCCode, id: e.target.value })}
+                        placeholder="Ex: EF06MA01"
+                      />
+                    </FormGroup>
+                  </FormColumn>
+
+                  <FormColumn>
+                    <FormGroup>
+                      <Label htmlFor="bnccDescription">Descrição</Label>
+                      <Input
+                        id="bnccDescription"
+                        value={newBNCCCode.description}
+                        onChange={(e) => setNewBNCCCode({ ...newBNCCCode, description: e.target.value })}
+                        placeholder="Descrição da habilidade BNCC"
+                      />
+                    </FormGroup>
+                  </FormColumn>
+                </FormRow>
+
+                <AddItemButton
+                  type="button"
+                  onClick={handleAddBNCCCode}
+                  disabled={!newBNCCCode.id.trim() || !newBNCCCode.description.trim()}
+                >
+                  <FaPlus /> Adicionar Código BNCC
+                </AddItemButton>
+              </FormGroup>
+            </FormSection>
+          );
+
+        case FormSectionOptions.STAGES:
+          return (
+            <FormSection>
+              <SectionTitle>Etapas da Sequência</SectionTitle>
+              
+              {stagesFields.length === 0 ? (
+                <div className="empty-state">
+                  <p>Nenhuma etapa adicionada. Adicione etapas para sua sequência didática.</p>
+                </div>
+              ) : (
+                stagesFields.map((field, index) => (
+                  <StageForm
+                    key={field.id}
+                    stageIndex={index}
+                    control={control}
+                    register={register}
+                    errors={errors}
+                    onRemove={() => removeStage(index)}
+                  />
+                ))
+              )}
+              
+              <AddButton type="button" onClick={handleAddStage}>
+                <FaPlus /> Adicionar Nova Etapa
+              </AddButton>
+              
+              {errors.stages && 
+                <ErrorMessage>
+                  É necessário adicionar pelo menos uma etapa com informações válidas
+                </ErrorMessage>
+              }
+            </FormSection>
+          );
+
+        default:
+          return null;
+      }
+    } catch (error) {
+      console.error("Erro ao renderizar seção:", error);
+      return (
+        <ErrorSection role="alert">
+          <h4><FaExclamationTriangle /> Erro</h4>
+          <p>Ocorreu um erro ao carregar esta seção. Por favor, tente novamente ou contate o suporte.</p>
+        </ErrorSection>
+      );
     }
   };
-  
-  const handleRemoveSkill = (index: number) => {
-    const currentSkills = getValues('skills');
-    setValue(
-      'skills',
-      currentSkills.filter((_ : any, i: number) => i !== index)
-    );
-  };
-  
-  const handleAddBNCCCode = () => {
-    if (newBNCCCode.id.trim() && newBNCCCode.description.trim()) {
-      const currentBNCCCodes = getValues('bnccCodes') || [];
-      setValue('bnccCodes', [...currentBNCCCodes, { ...newBNCCCode }]);
-      setNewBNCCCode({ id: '', description: '' });
+
+  // Check if there are unsaved changes to confirm before closing
+  const handleCloseModal = () => {
+    if (feedback.hasChanges) {
+      if (window.confirm("Existem mudanças não salvas. Deseja realmente sair?")) {
+        onCancel();
+      }
+    } else {
+      onCancel();
     }
   };
-  
-  const handleRemoveBNCCCode = (index: number) => {
-    const currentBNCCCodes = getValues('bnccCodes');
-    setValue(
-      'bnccCodes',
-      currentBNCCCodes.filter((_, i) => i !== index)
-    );
+
+  // Calculate form progress
+  const calculateProgress = () => {
+    const sections = Object.values(FormSectionOptions);
+    const currentIndex = sections.indexOf(currentSection);
+    return Math.round(((currentIndex + 1) / sections.length) * 100);
   };
-  
-  const onFormSubmit = (data: any) => {
-    onSubmit(data);
-  };
-  
+
+  // Check if form has validation errors
+  const hasErrors = useMemo(() => {
+    return Object.keys(errors).length > 0;
+  }, [errors]);
+
   return (
-    <FormProvider {...methods}>
-      <FormContainer>
-        <FormTitle>{initialData ? 'Editar Sequência Didática' : 'Nova Sequência Didática'}</FormTitle>
-        
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-          <FormSection>
-            <SectionTitle>Informações Básicas</SectionTitle>
-            
-            <FormGroup>
-              <Label htmlFor="title">Título da Sequência</Label>
-              <Input 
-                id="title" 
-                {...register('title')} 
-                placeholder="Ex: Introdução à Geometria Espacial"
-              />
-              {errors.title && <ErrorMessage>{errors.title.message as string}</ErrorMessage>}
-            </FormGroup>
-            
-            <FormRow>
-              <FormColumn>
-                <FormGroup>
-                  <Label htmlFor="discipline">Disciplina</Label>
-                  <Select id="discipline" {...register('discipline')}>
-                    <option value="">Selecione uma disciplina</option>
-                    <option value="Português">Português</option>
-                    <option value="Matemática">Matemática</option>
-                    <option value="História">História</option>
-                    <option value="Geografia">Geografia</option>
-                    <option value="Ciências">Ciências</option>
-                    <option value="Artes">Artes</option>
-                    <option value="Educação Física">Educação Física</option>
-                    <option value="Inglês">Inglês</option>
-                    <option value="Outro">Outro</option>
-                  </Select>
-                  {errors.discipline && <ErrorMessage>{errors.discipline.message as string}</ErrorMessage>}
-                </FormGroup>
-              </FormColumn>
-              
-              <FormColumn>
-                <FormGroup>
-                  <Label htmlFor="targetAudience">Público-alvo</Label>
-                  <Input 
-                    id="targetAudience" 
-                    {...register('targetAudience')} 
-                    placeholder="Ex: 6º Ano do Ensino Fundamental"
-                  />
-                  {errors.targetAudience && <ErrorMessage>{errors.targetAudience.message as string}</ErrorMessage>}
-                </FormGroup>
-              </FormColumn>
-            </FormRow>
-            
-            <FormGroup>
-              <Label htmlFor="overview">Visão Geral</Label>
-              <Textarea 
-                id="overview" 
-                {...register('overview')} 
-                placeholder="Descreva brevemente o que será abordado nesta sequência didática..."
-              />
-              {errors.overview && <ErrorMessage>{errors.overview.message as string}</ErrorMessage>}
-            </FormGroup>
-            
-            <FormGroup>
-              <Label htmlFor="author">Autor</Label>
-              <Input 
-                id="author" 
-                {...register('author')} 
-                placeholder="Seu nome"
-              />
-              {errors.author && <ErrorMessage>{errors.author.message as string}</ErrorMessage>}
-            </FormGroup>
-          </FormSection>
-          
-          <FormSection>
-            <SectionTitle>Objetivos</SectionTitle>
-            
-            <Label>Objetivos de Aprendizagem</Label>
-            <ChipContainer>
-              {watch('objectives')?.map((objective: string, i: number) => (
-                <Chip key={i}>
-                  {objective}
-                  <ChipDeleteButton
+    <ModalContainer>
+      <ModalContent>
+        <ModalHeader>
+          <h3>{initialData ? 'Editar Sequência' : 'Nova Sequência'}</h3>
+          <CloseButton onClick={handleCloseModal} aria-label="Fechar modal">
+            <FaTimes />
+          </CloseButton>
+        </ModalHeader>
+
+        <FormProvider {...methods}>
+          <form onSubmit={onFormSubmit}>
+            <ModalBody>
+              {/* Feedback Messages */}
+              {feedback.errorMessage && (
+                <ErrorMessage role="alert">
+                  <FaExclamationTriangle />
+                  {feedback.errorMessage}
+                </ErrorMessage>
+              )}
+              {feedback.successMessage && (
+                <SuccessMessage role="status">
+                  <FaCheck />
+                  {feedback.successMessage}
+                </SuccessMessage>
+              )}
+
+              {/* Progress bar */}
+              <FormProgress>
+                <FormProgressIndicator progress={calculateProgress()} />
+              </FormProgress>
+
+              {/* Enhanced section navigation */}
+              <FormStepsNav>
+                {Object.values(FormSectionOptions).map((section, index) => (
+                  <React.Fragment key={section}>
+                    {index > 0 && <FormStepDivider />}
+                    <FormStepButton
+                      type="button"
+                      $isActive={currentSection === section}
+                      $isValid={isSectionValid(section)}
+                      onClick={() => setCurrentSection(section)}
+                      title={sectionDescriptions[section]}
+                    >
+                      <span className="step-icon">{sectionIcons[section]}</span>
+                      <span className="step-text">{section}</span>
+                      {isSectionValid(section) && (
+                        <span className="status-indicator">
+                          <FaCheck size={8} />
+                        </span>
+                      )}
+                    </FormStepButton>
+                  </React.Fragment>
+                ))}
+              </FormStepsNav>
+
+              {/* Current section content */}
+              {renderCurrentSection()}
+            </ModalBody>
+
+            <ModalFooter>
+              {/* Navigation and submission buttons */}
+              <NavigationButtons>
+                {currentSection !== FormSectionOptions.BASIC_INFO && (
+                  <Button
                     type="button"
-                    onClick={() => handleRemoveObjective(i)}
+                    className="secondary"
+                    onClick={handlePreviousSection}
                   >
-                    ×
-                  </ChipDeleteButton>
-                </Chip>
-              ))}
-            </ChipContainer>
-            {errors.objectives && <ErrorMessage>{errors.objectives.message as string}</ErrorMessage>}
-            
-            <AddItemContainer>
-              <AddItemInput
-                value={newObjective}
-                onChange={(e) => setNewObjective(e.target.value)}
-                placeholder="Digite um objetivo de aprendizagem..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddObjective())}
-              />
-              <AddItemButton type="button" onClick={handleAddObjective}>
-                Adicionar
-              </AddItemButton>
-            </AddItemContainer>
-          </FormSection>
-          
-          <FormSection>
-            <SectionTitle>Habilidades</SectionTitle>
-            
-            <Label>Habilidades Desenvolvidas</Label>
-            <ChipContainer>
-              {watch('skills')?.map((skill: string, i: number) => (
-                <Chip key={i}>
-                  {skill}
-                  <ChipDeleteButton
+                    <FaArrowLeft /> Anterior
+                  </Button>
+                )}
+
+                {currentSection !== FormSectionOptions.STAGES ? (
+                  <Button
                     type="button"
-                    onClick={() => handleRemoveSkill(i)}
+                    className="primary"
+                    onClick={handleNextSection}
                   >
-                    ×
-                  </ChipDeleteButton>
-                </Chip>
-              ))}
-            </ChipContainer>
-            
-            <AddItemContainer>
-              <AddItemInput
-                value={newSkill}
-                onChange={(e) => setNewSkill(e.target.value)}
-                placeholder="Digite uma habilidade..."
-                onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddSkill())}
-              />
-              <AddItemButton type="button" onClick={handleAddSkill}>
-                Adicionar
-              </AddItemButton>
-            </AddItemContainer>
-          </FormSection>
-          
-          <FormSection>
-            <SectionTitle>Códigos BNCC</SectionTitle>
-            
-            <ChipContainer>
-              {watch('bnccCodes')?.map((code: { id: string; description: string }, i: number) => (
-                <Chip key={i}>
-                  {code.id}: {code.description}
-                  <ChipDeleteButton
-                    type="button"
-                    onClick={() => handleRemoveBNCCCode(i)}
+                    Próximo <FaArrowRight />
+                  </Button>
+                ) : (
+                  <SubmitButton
+                    type="submit"
+                    disabled={isSubmitting || hasErrors}
                   >
-                    ×
-                  </ChipDeleteButton>
-                </Chip>
-              ))}
-            </ChipContainer>
-            
-            <FormRow>
-              <FormColumn>
-                <FormGroup>
-                  <Label htmlFor="bnccId">Código BNCC</Label>
-                  <Input
-                    id="bnccId"
-                    value={newBNCCCode.id}
-                    onChange={(e) => setNewBNCCCode({ ...newBNCCCode, id: e.target.value })}
-                    placeholder="Ex: EF06MA01"
-                  />
-                </FormGroup>
-              </FormColumn>
-              
-              <FormColumn>
-                <FormGroup>
-                  <Label htmlFor="bnccDescription">Descrição</Label>
-                  <Input
-                    id="bnccDescription"
-                    value={newBNCCCode.description}
-                    onChange={(e) => setNewBNCCCode({ ...newBNCCCode, description: e.target.value })}
-                    placeholder="Descrição da habilidade BNCC"
-                  />
-                </FormGroup>
-              </FormColumn>
-            </FormRow>
-            
-            <AddItemButton 
-              type="button" 
-              onClick={handleAddBNCCCode}
-              style={{ marginTop: '0.5rem' }}
-            >
-              Adicionar Código BNCC
-            </AddItemButton>
-          </FormSection>
-          
-          <FormSection>
-            <SectionTitle>Etapas da Sequência</SectionTitle>
-            
-            {errors.stages && typeof errors.stages.message === 'string' && (
-              <ErrorMessage>{errors.stages.message}</ErrorMessage>
-            )}
-            
-            {stages?.map((_, index) => (
-              <StageForm
-                key={index}
-                index={index}
-                onRemove={() => handleRemoveStage(index)}
-              />
-            ))}
-            
-            <AddButton type="button" onClick={handleAddStage}>
-              Adicionar Nova Etapa
-            </AddButton>
-          </FormSection>
-          
-          <ButtonGroup>
-            <CancelButton type="button" onClick={onCancel}>
-              Cancelar
-            </CancelButton>
-            <SubmitButton type="submit">
-              {initialData ? 'Atualizar' : 'Criar'} Sequência
-            </SubmitButton>
-          </ButtonGroup>
-        </form>
-      </FormContainer>
-    </FormProvider>
+                    {isSubmitting ? 'Salvando...' : (
+                      <>
+                        <FaSave /> {initialData ? 'Atualizar Sequência' : 'Criar Sequência'}
+                      </>
+                    )}
+                  </SubmitButton>
+                )}
+              </NavigationButtons>
+            </ModalFooter>
+          </form>
+        </FormProvider>
+      </ModalContent>
+    </ModalContainer>
   );
 };
 

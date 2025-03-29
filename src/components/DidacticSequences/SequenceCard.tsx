@@ -1,25 +1,24 @@
 // src/components/DidacticSequences/SequenceCard.tsx
+
 import React from 'react';
 import styled from 'styled-components';
 import { DidacticSequence } from '../../utils/types/DidacticSequence';
 
 interface SequenceCardProps {
   sequence: DidacticSequence;
-  onEdit: (sequence: DidacticSequence) => void;
   onDelete: (id: string) => void;
 }
 
 const Card = styled.div`
-  background-color: #ffffff;
+  background-color: white;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  margin-bottom: 1.5rem;
   transition: transform 0.2s, box-shadow 0.2s;
-
+  
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -30,168 +29,214 @@ const CardHeader = styled.div`
   margin-bottom: 1rem;
 `;
 
-const Title = styled.h3`
+const Title = styled.h2`
   font-size: 1.25rem;
   font-weight: 600;
-  color: #333;
+  color: var(--color-primary);
   margin: 0;
+  margin-bottom: 0.5rem;
 `;
 
-const DisciplineTag = styled.span`
-  background-color: #e0f7fa;
-  color: #00838f;
+const Discipline = styled.span`
+  display: inline-block;
+  background-color: #e3f2fd;
+  color: #1976d2;
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  display: inline-block;
+  margin-right: 0.5rem;
 `;
 
-const AudienceTag = styled.span`
+const EducationLevel = styled.span`
+  display: inline-block;
   background-color: #e8f5e9;
-  color: #2e7d32;
+  color: #388e3c;
   font-size: 0.75rem;
   font-weight: 500;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
+`;
+
+const StatusBadge = styled.span<{ status: string }>`
   display: inline-block;
-  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  margin-left: auto;
+  
+  ${props => {
+    switch (props.status) {
+      case 'Em planejamento':
+        return 'background-color: #fff8e1; color: #ffa000;';
+      case 'Planejada':
+        return 'background-color: #e8f5e9; color: #388e3c;';
+      case 'Em aplicação':
+        return 'background-color: #e3f2fd; color: #1976d2;';
+      case 'Aplicada':
+        return 'background-color: #f3e5f5; color: #7b1fa2;';
+      case 'Finalizada':
+        return 'background-color: #e0f2f1; color: #00897b;';
+      default:
+        return 'background-color: #f5f5f5; color: #616161;';
+    }
+  }}
 `;
 
 const Overview = styled.p`
   color: #666;
   font-size: 0.875rem;
-  margin-bottom: 1rem;
+  margin: 0.5rem 0 1rem 0;
   line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
-const MetaInfo = styled.div`
+const InfoItem = styled.div`
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #666;
+`;
+
+const InfoLabel = styled.span`
+  font-weight: 500;
+  margin-right: 0.5rem;
+  color: #333;
+`;
+
+const TagsContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+`;
+
+const Tag = styled.span`
+  background-color: #f5f5f5;
+  color: #616161;
   font-size: 0.75rem;
-  color: #777;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
 `;
 
-const Duration = styled.span`
-  display: flex;
-  align-items: center;
-  
-  &:before {
-    content: '⏱️';
-    margin-right: 0.25rem;
-  }
-`;
-
-const StageCount = styled.span`
-  display: flex;
-  align-items: center;
-  
-  &:before {
-    content: '📋';
-    margin-right: 0.25rem;
-  }
-`;
-
-const ButtonGroup = styled.div`
+const CardActions = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  border-top: 1px solid #eee;
+  padding-top: 1rem;
 `;
 
-const Button = styled.button`
-  padding: 0.5rem 1rem;
+const ActionButton = styled.button`
+  background: none;
+  border: none;
+  padding: 0.5rem 0.75rem;
   border-radius: 4px;
-  font-weight: 500;
   font-size: 0.875rem;
+  font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
+  
+  &:hover {
+    background-color: #f5f5f5;
+  }
 `;
 
-const EditButton = styled(Button)`
-  background-color: #e3f2fd;
+const EditButton = styled(ActionButton)`
   color: #1976d2;
-  border: none;
   
   &:hover {
-    background-color: #bbdefb;
+    background-color: #e3f2fd;
   }
 `;
 
-const DeleteButton = styled(Button)`
-  background-color: #ffebee;
+const DeleteButton = styled(ActionButton)`
   color: #d32f2f;
-  border: none;
   
   &:hover {
-    background-color: #ffcdd2;
+    background-color: #ffebee;
   }
 `;
 
-const formatDuration = (minutes: number): string => {
-  const hours = Math.floor(minutes / 60);
-  const mins = minutes % 60;
-  
-  if (hours === 0) return `${mins} min`;
-  if (mins === 0) return `${hours}h`;
-  return `${hours}h ${mins}min`;
-};
-
-const formatDate = (date: Date): string => {
-  return new Date(date).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  });
-};
-
-const SequenceCard: React.FC<SequenceCardProps> = ({ sequence, onEdit, onDelete }) => {
-  const handleEdit = () => {
-    onEdit(sequence);
+const SequenceCard: React.FC<SequenceCardProps> = ({ sequence, onDelete }) => {
+  // Formatação de data
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    }).format(date);
   };
-  
-  const handleDelete = () => {
-    if (window.confirm('Tem certeza que deseja excluir esta sequência didática?')) {
-      onDelete(sequence.id);
-    }
-  };
-  
+
   return (
     <Card>
       <CardHeader>
-        <Title>{sequence.title}</Title>
         <div>
-          <DisciplineTag>{sequence.discipline}</DisciplineTag>
-          <AudienceTag>{sequence.targetAudience}</AudienceTag>
+          <Title>{sequence.title}</Title>
+          <div>
+            <Discipline>{sequence.discipline}</Discipline>
+            <EducationLevel>{sequence.educationLevel}</EducationLevel>
+            <StatusBadge status={sequence.status}>{sequence.status}</StatusBadge>
+          </div>
         </div>
       </CardHeader>
       
       <Overview>{sequence.overview}</Overview>
       
-      <div>
-        <strong>Objetivos:</strong>
-        <ul>
-          {sequence.objectives.slice(0, 2).map((objective, index) => (
-            <li key={index}>{objective}</li>
-          ))}
-          {sequence.objectives.length > 2 && <li>...</li>}
-        </ul>
-      </div>
+      <InfoItem>
+        <InfoLabel>Autor:</InfoLabel> {sequence.author}
+      </InfoItem>
       
-      <MetaInfo>
-        <div>
-          <Duration>{formatDuration(sequence.totalDuration)}</Duration>
-          <StageCount style={{ marginLeft: '1rem' }}>{sequence.stages.length} etapas</StageCount>
-        </div>
-        <div>Atualizado em: {formatDate(sequence.updatedAt)}</div>
-      </MetaInfo>
+      <InfoItem>
+        <InfoLabel>Eixo temático:</InfoLabel> {sequence.thematicAxis}
+      </InfoItem>
       
-      <ButtonGroup>
-        <EditButton onClick={handleEdit}>Editar</EditButton>
-        <DeleteButton onClick={handleDelete}>Excluir</DeleteButton>
-      </ButtonGroup>
+      <InfoItem>
+        <InfoLabel>Carga horária:</InfoLabel> {sequence.workload} horas
+      </InfoItem>
+      
+      <InfoItem>
+        <InfoLabel>Aulas:</InfoLabel> {sequence.lessonsCount}
+      </InfoItem>
+      
+      {sequence.skills.length > 0 && (
+        <>
+          <InfoLabel>Habilidades:</InfoLabel>
+          <TagsContainer>
+            {sequence.skills.slice(0, 2).map((skill, index) => (
+              <Tag key={index}>{skill}</Tag>
+            ))}
+            {sequence.skills.length > 2 && <Tag>+{sequence.skills.length - 2}</Tag>}
+          </TagsContainer>
+        </>
+      )}
+      
+      {sequence.bnccCodes.length > 0 && (
+        <>
+          <InfoLabel>Códigos BNCC:</InfoLabel>
+          <TagsContainer>
+            {sequence.bnccCodes.map((code, index) => (
+              <Tag key={index}>{code}</Tag>
+            ))}
+          </TagsContainer>
+        </>
+      )}
+      
+      <InfoItem>
+        <InfoLabel>Criado em:</InfoLabel> {formatDate(sequence.createdAt)}
+      </InfoItem>
+      
+      <CardActions>
+        <EditButton>Editar</EditButton>
+        <DeleteButton onClick={() => onDelete(sequence.id)}>Excluir</DeleteButton>
+      </CardActions>
     </Card>
   );
 };
