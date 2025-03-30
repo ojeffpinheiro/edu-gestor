@@ -7,7 +7,7 @@ import { AuthContextProvider } from './contexts/AuthContext';
 
 import { GlobalStyles } from './styles/global';
 
-import DidacticSequencesPage from './pages/DidacticSequencesPage';
+
 
 // import LoginPage from './pages/LoginPage/indes';
 // import HomePage from './pages/Home';
@@ -16,8 +16,8 @@ import DidacticSequencesPage from './pages/DidacticSequencesPage';
 // import DailyReport from './pages/DailyReport/';
 // import TeamManagement from './pages/TeamManagement';
 // import EvaluationManagement from './pages/EvaluationManagement';
-// import PlanningDashboard from './pages/PlanningDashboard';
-
+import PlanningDashboard from './pages/PlanningDashboard';
+// import DidacticSequencesPage from './pages/DidacticSequencesPage';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -31,7 +31,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <DidacticSequencesPage />
+          <PlanningDashboard />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>
