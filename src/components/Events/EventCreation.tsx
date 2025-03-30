@@ -2,27 +2,29 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import styled from 'styled-components';
 import { FaSave, FaTimes, FaTrash } from 'react-icons/fa';
 import { format } from 'date-fns';
+import styled from 'styled-components';
+import { BaseButton, BaseInput } from '../../styles/baseComponents';
 import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
 
+// Form styled components
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-md);
 `;
 
 const FormHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-md);
 `;
 
 const FormTitle = styled.h2`
   color: var(--color-primary);
-  font-size: 1.5rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   margin: 0;
 `;
@@ -30,72 +32,69 @@ const FormTitle = styled.h2`
 const CloseButton = styled.button`
   background: none;
   border: none;
-  color: #666;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  font-size: 1.25rem;
+  font-size: var(--font-size-xl);
   
   &:hover {
-    color: #333;
+    color: var(--color-text-primary);
   }
 `;
 
 const FormGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 `;
 
 const Label = styled.label`
   font-weight: 500;
-  color: #333;
+  color: var(--color-text-primary);
 `;
 
-const Input = styled.input`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  
-  &:focus {
-    outline: none;
-    border-color: #2196f3;
-    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
-  }
+const Input = styled(BaseInput)`
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
 `;
 
 const Select = styled.select`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  background-color: white;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-md);
+  background-color: var(--color-input);
+  color: var(--color-text);
   
   &:focus {
     outline: none;
-    border-color: #2196f3;
-    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    border-color: var(--color-input-focus);
+    box-shadow: var(--shadow-focus);
   }
 `;
 
 const Textarea = styled.textarea`
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-md);
   min-height: 100px;
   resize: vertical;
+  background-color: var(--color-input);
+  color: var(--color-text);
   
   &:focus {
     outline: none;
-    border-color: #2196f3;
-    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.2);
+    border-color: var(--color-input-focus);
+    box-shadow: var(--shadow-focus);
   }
 `;
 
 const CheckboxContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--space-sm);
 `;
 
 const Checkbox = styled.input`
@@ -105,60 +104,64 @@ const Checkbox = styled.input`
 `;
 
 const ErrorMessage = styled.p`
-  color: #f44336;
-  font-size: 0.85rem;
-  margin: 0.25rem 0 0 0;
+  color: var(--color-error);
+  font-size: var(--font-size-xs);
+  margin: 0;
 `;
 
 const ButtonsContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  margin-top: var(--space-lg);
 `;
 
-const ActionButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
-  font-weight: 500;
-  cursor: pointer;
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: var(--space-md);
+`;
+
+const SaveButton = styled(BaseButton)`
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  padding: var(--space-sm) var(--space-lg);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: all 0.2s;
-`;
-
-const SaveButton = styled(ActionButton)`
-  background-color: #2196f3;
-  color: white;
-  border: none;
+  gap: var(--space-xs);
   
-  &:hover {
-    background-color: #1976d2;
+  &:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
   }
   
   &:disabled {
-    background-color: #bbdefb;
+    background-color: var(--color-button-disabled);
     cursor: not-allowed;
   }
 `;
 
-const CancelButton = styled(ActionButton)`
+const CancelButton = styled(BaseButton)`
   background-color: transparent;
-  color: #666;
-  border: 1px solid #ddd;
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   
-  &:hover {
-    background-color: #f5f5f5;
+  &:hover:not(:disabled) {
+    background-color: var(--color-background-third);
   }
 `;
 
-const DeleteButton = styled(ActionButton)`
-  background-color: #f44336;
+const DeleteButton = styled(BaseButton)`
+  background-color: var(--color-error);
   color: white;
-  border: none;
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
   
-  &:hover {
-    background-color: #d32f2f;
+  &:hover:not(:disabled) {
+    background-color: var(--color-error-hover);
   }
 `;
 
@@ -206,19 +209,19 @@ const EventCreation: React.FC<EventCreationProps> = ({
       location: initialData?.location || '',
       type: (initialData?.type as EventType) || 'other',
       isAllDay: initialData?.isAllDay || false,
-      start: initialData?.start 
-        ? typeof initialData.start === 'string' 
-          ? initialData.start.slice(0, 16) 
-          : format(initialData.start, "yyyy-MM-dd'T'HH:mm") 
-        : startDate 
-          ? format(startDate, "yyyy-MM-dd'T'HH:mm") 
+      start: initialData?.start
+        ? typeof initialData.start === 'string'
+          ? initialData.start.slice(0, 16)
+          : format(initialData.start, "yyyy-MM-dd'T'HH:mm")
+        : startDate
+          ? format(startDate, "yyyy-MM-dd'T'HH:mm")
           : '',
-      end: initialData?.end 
-        ? typeof initialData.end === 'string' 
-          ? initialData.end.slice(0, 16) 
-          : format(initialData.end, "yyyy-MM-dd'T'HH:mm") 
-        : endDate 
-          ? format(endDate, "yyyy-MM-dd'T'HH:mm") 
+      end: initialData?.end
+        ? typeof initialData.end === 'string'
+          ? initialData.end.slice(0, 16)
+          : format(initialData.end, "yyyy-MM-dd'T'HH:mm")
+        : endDate
+          ? format(endDate, "yyyy-MM-dd'T'HH:mm")
           : '',
     },
   });
@@ -329,14 +332,14 @@ const EventCreation: React.FC<EventCreationProps> = ({
             </DeleteButton>
           )}
         </div>
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <ButtonGroup>
           <CancelButton type="button" onClick={onCancel}>
             <FaTimes /> Cancelar
           </CancelButton>
           <SaveButton type="submit" disabled={isSubmitting}>
             <FaSave /> Salvar
           </SaveButton>
-        </div>
+        </ButtonGroup>
       </ButtonsContainer>
     </FormContainer>
   );
