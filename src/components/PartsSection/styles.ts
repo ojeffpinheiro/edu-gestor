@@ -1,5 +1,5 @@
 import styled from "styled-components"
-import { Badge } from "../../utils/CriteriaCard";
+import { Badge } from "../../styles/CriteriaCard";
 
 export const PartsList = styled.ul`
     list-style: none;

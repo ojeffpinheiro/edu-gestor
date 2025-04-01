@@ -1,6 +1,6 @@
 // src/components/CriteriaCard.tsx
 import styled from 'styled-components';
-import { Input } from '../styles/inputs';
+import { Input } from './inputs';
 
 // Interface para as propriedades do CriteriaHeader
 interface CriteriaHeaderProps {
@@ -121,6 +121,7 @@ const CriteriaOptionItem = styled.label`
       cursor: not-allowed;
     }
 `;
+
 const WeightInput = styled(Input)`
   width: 4rem;
   text-align: center;

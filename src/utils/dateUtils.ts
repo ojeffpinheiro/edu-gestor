@@ -9,7 +9,6 @@ import {
     endOfMonth,
     eachDayOfInterval,
     isSameDay,
-    isSameMonth,
     isBefore,
     isAfter,
     parseISO

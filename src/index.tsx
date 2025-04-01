@@ -18,8 +18,8 @@ import { GlobalStyles } from './styles/global';
 // import EvaluationManagement from './pages/EvaluationManagement';
 // import PlanningDashboard from './pages/PlanningDashboard';
 // import DidacticSequencesPage from './pages/DidacticSequencesPage';
-
-import TestPage from './pages/TestPage';
+//import TestPage from './pages/TestPage';
+import ResultsViewer from './pages/ResultsViewer';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -33,7 +33,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <TestPage />
+          <ResultsViewer />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>

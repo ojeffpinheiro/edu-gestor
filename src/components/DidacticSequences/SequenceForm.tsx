@@ -34,7 +34,8 @@ const sequenceSchema = z.object({
   totalDuration: z.number().min(1, "A carga horária deve ser maior que zero"),
   overview: z.string().min(10, "A visão geral deve ter pelo menos 10 caracteres"),
   numberOfLessons: z.number().int().min(1, "Número de aulas deve ser pelo menos 1"),
-  skills: z.array(z.string()).min(1, "Adicione pelo menos uma habilidade"),
+  skills: z.array(
+    z.string()).min(1, "Adicione pelo menos uma habilidade"),
   bnccCodes: z.array(
     z.object({
       id: z.string().min(1, "O código BNCC é obrigatório"),
@@ -55,7 +56,29 @@ const sequenceSchema = z.object({
   updatedAt: z.date().optional()
 });
 
-type SequenceFormData = z.infer<typeof sequenceSchema>;
+interface SequenceFormData {
+  title: string;
+  thematicAxis: string;
+  teachingLevel: string;
+  discipline: string;
+  author: string;
+  totalDuration: number;
+  overview: string;
+  numberOfLessons: number;
+  skills: string[];
+  objectives: string[];
+  bnccCodes: { id: string; description: string }[];
+  stages: {
+    id: string;
+    title: string;
+    description: string;
+    duration: number;
+    activities: string[];
+  }[];
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 
 interface SequenceFormProps {
   initialData?: DidacticSequence;
@@ -107,8 +130,8 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
         ...initialData,
         createdAt: initialData.createdAt ? new Date(initialData.createdAt) : new Date(),
         updatedAt: initialData.updatedAt ? new Date(initialData.updatedAt) : new Date(),
-        bnccCodes: initialData.bnccCodes.map(code => 
-          typeof code === 'string' 
+        bnccCodes: initialData.bnccCodes.map(code =>
+          typeof code === 'string'
             ? { id: code, description: code }
             : code
         )
@@ -139,50 +162,41 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
     mode: 'onChange'
   });
 
-  const { 
-    control, 
-    register, 
-    handleSubmit, 
-    formState: { errors, isValid, touchedFields, dirtyFields }, 
-    watch, 
-    setValue, 
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isValid, touchedFields, dirtyFields },
+    watch,
+    setValue,
     trigger,
     getValues
   } = methods;
 
   // Setup field arrays for lists
-  const { 
-    fields: skillsFields, 
-    append: appendSkill, 
-    remove: removeSkill 
-  } = useFieldArray({ control, name: 'skills'});
+  const {
+    fields: skillsFields,
+    append: appendSkill,
+    remove: removeSkill
+  } = useFieldArray({ control, name: 'skills' });
 
   const { 
     fields: objectivesFields, 
     append: appendObjective, 
     remove: removeObjective 
-  } = useFieldArray({
-    control,
-    name: 'objectives',
-  });
+  } = useFieldArray({ control, name: 'objectives' });
 
-  const { 
-    fields: bnccCodesFields, 
-    append: appendBnccCode, 
-    remove: removeBnccCode 
-  } = useFieldArray({
-    control,
-    name: 'bnccCodes'
-  });
+  const {
+    fields: bnccCodesFields,
+    append: appendBnccCode,
+    remove: removeBnccCode
+  } = useFieldArray({ control, name: 'bnccCodes' });
 
-  const { 
-    fields: stagesFields, 
-    append: appendStage, 
-    remove: removeStage 
-  } = useFieldArray({
-    control,
-    name: 'stages'
-  });
+  const {
+    fields: stagesFields,
+    append: appendStage,
+    remove: removeStage
+  } = useFieldArray({ control, name: 'stages' });
 
   // Icons for each form section
   const sectionIcons = useMemo(() => ({
@@ -206,8 +220,8 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
   const isSectionValid = (section: FormSectionOptions): boolean => {
     switch (section) {
       case FormSectionOptions.BASIC_INFO:
-        return !errors.title && !errors.thematicAxis && !errors.teachingLevel && 
-               !errors.discipline && !errors.author && !errors.overview && !errors.numberOfLessons;
+        return !errors.title && !errors.thematicAxis && !errors.teachingLevel &&
+          !errors.discipline && !errors.author && !errors.overview && !errors.numberOfLessons;
       case FormSectionOptions.SKILLS:
         return !errors.skills;
       case FormSectionOptions.OBJECTIVES:
@@ -266,7 +280,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
   const handleNextSection = async () => {
     // Validate current section fields before proceeding
     let isValid = false;
-    
+
     switch (currentSection) {
       case FormSectionOptions.BASIC_INFO:
         isValid = await trigger(['title', 'thematicAxis', 'teachingLevel', 'discipline', 'author', 'overview', 'numberOfLessons']);
@@ -287,7 +301,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
     if (isValid) {
       const sections = Object.values(FormSectionOptions);
       const currentIndex = sections.indexOf(currentSection);
-      
+
       if (currentIndex < sections.length - 1) {
         setCurrentSection(sections[currentIndex + 1]);
       }
@@ -298,7 +312,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
   const handlePreviousSection = () => {
     const sections = Object.values(FormSectionOptions);
     const currentIndex = sections.indexOf(currentSection);
-    
+
     if (currentIndex > 0) {
       setCurrentSection(sections[currentIndex - 1]);
     }
@@ -460,7 +474,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
           return (
             <FormSection>
               <SectionTitle>Habilidades</SectionTitle>
-              
+
               <FormGroup>
                 <Label>Habilidades Desenvolvidas</Label>
                 <ChipContainer>
@@ -502,7 +516,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
           return (
             <FormSection>
               <SectionTitle>Objetivos</SectionTitle>
-              
+
               <FormGroup>
                 <Label>Objetivos de Aprendizagem</Label>
                 <ChipContainer>
@@ -544,7 +558,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
           return (
             <FormSection>
               <SectionTitle>Códigos BNCC</SectionTitle>
-              
+
               <FormGroup>
                 <Label>Códigos da Base Nacional Comum Curricular</Label>
                 <ChipContainer>
@@ -604,7 +618,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
           return (
             <FormSection>
               <SectionTitle>Etapas da Sequência</SectionTitle>
-              
+
               {stagesFields.length === 0 ? (
                 <div className="empty-state">
                   <p>Nenhuma etapa adicionada. Adicione etapas para sua sequência didática.</p>
@@ -621,12 +635,12 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
                   />
                 ))
               )}
-              
+
               <AddButton type="button" onClick={handleAddStage}>
                 <FaPlus /> Adicionar Nova Etapa
               </AddButton>
-              
-              {errors.stages && 
+
+              {errors.stages &&
                 <ErrorMessage>
                   É necessário adicionar pelo menos uma etapa com informações válidas
                 </ErrorMessage>
