@@ -5,16 +5,37 @@ import { Exam, Question } from '../../../utils/types/Assessment';
 import QRCodeService from '../../../utils/qrCodeGenerator';
 import ExamPdfGenerator from '../../../utils/examPdfGenerator';
 
-import { Alert, Button, ButtonGroup, Container, Divider, FormContainer, FormGroup, IconWrapper, Label, NumberInput, SwitchContainer, SwitchInput, SwitchLabel, Tag, TextInput, Title, VariantActions, VariantCard, VariantDetails, VariantHeader, VariantTitle } from './styles'
+import { Button } from '../../../styles/buttons';
+import {
+  Container,
+  Alert,
+  TextInput,
+  NumberInput,
+  FormContainer,
+  FormGroup,
+  Label,
+  Title,
+  Divider,
+  TwoColumnGrid,
+  SwitchContainer,
+  StyledSwitch,
+  IconWrapper,
+  ButtonGroup,
+  VariantCard,
+  VariantHeader,
+  VariantTitle,
+  VariantDetails,
+  Tag,
+  VariantActions
+} from './ExamVariantGeneratorStyles';
 
-// Types
 interface ExamVariantGeneratorProps {
   baseExam: Exam;
   questions: Question[];
   onVariantsGenerated: (variants: Exam[]) => void;
 }
 
-// Component
+// Main component
 const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
   baseExam,
   questions,
@@ -165,125 +186,143 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
 
   return (
     <Container>
-      <Title>Exam Variant Generator</Title>
+      <Title>Exam Variant Generator </Title>
 
-      <FormContainer>
-        <FormGroup>
-          <Label>Number of Variants</Label>
-          <NumberInput
-            min={1}
-            max={10}
-            value={numVariants}
-            onChange={handleNumberInputChange}
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <Label>Variant Prefix</Label>
-          <TextInput
-            value={variantPrefix}
-            onChange={(e) => setVariantPrefix(e.target.value)}
-            placeholder="Variant"
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <Label>Shuffle Questions</Label>
-          <SwitchContainer>
-            <SwitchInput
-              checked={shuffleQuestions}
-              onChange={() => setShuffleQuestions(!shuffleQuestions)}
+      < FormContainer >
+        <TwoColumnGrid>
+          <FormGroup>
+            <Label>Número de variantes </Label>
+            <NumberInput
+              min={1}
+              max={10}
+              value={numVariants}
+              onChange={handleNumberInputChange}
             />
-            <SwitchLabel>{shuffleQuestions ? 'Yes' : 'No'}</SwitchLabel>
-          </SwitchContainer>
-        </FormGroup>
+          </FormGroup>
 
-        <FormGroup>
-          <Label>Shuffle Options (for multiple choice)</Label>
-          <SwitchContainer>
-            <SwitchInput
-              checked={shuffleOptions}
-              onChange={() => setShuffleOptions(!shuffleOptions)}
+          < FormGroup >
+            <Label>Prefixo</Label>
+            < TextInput
+              value={variantPrefix}
+              onChange={(e) => setVariantPrefix(e.target.value)}
+              placeholder="Variant"
             />
-            <SwitchLabel>{shuffleOptions ? 'Yes' : 'No'}</SwitchLabel>
-          </SwitchContainer>
-        </FormGroup>
+          </FormGroup>
+        </TwoColumnGrid>
 
-        <FormGroup>
-          <Label>Use Sequential IDs</Label>
-          <SwitchContainer>
-            <SwitchInput
-              checked={useSequentialIds}
-              onChange={() => setUseSequentialIds(!useSequentialIds)}
-            />
-            <SwitchLabel>{useSequentialIds ? 'Yes' : 'No'}</SwitchLabel>
-          </SwitchContainer>
-        </FormGroup>
+        < TwoColumnGrid >
+          <FormGroup>
+            <Label>Embaralhar questões</Label>
+            <SwitchContainer>
+              <StyledSwitch>
+                <input
+                  type="checkbox"
+                  checked={shuffleQuestions}
+                  onChange={() => setShuffleQuestions(!shuffleQuestions)}
+                />
+                <span></span>
+              </StyledSwitch>
+              <label>{shuffleQuestions ? 'Sim' : 'Não'} </label>
+            </SwitchContainer>
+          </FormGroup>
 
-        <Button
-          primary
+          <FormGroup>
+            <Label>Embaralhar alternativa (for múltipla escolha)</Label>
+            <SwitchContainer>
+            <StyledSwitch>
+                <input
+                  type="checkbox"
+                  checked={shuffleOptions}
+                  onChange={() => setShuffleOptions(!shuffleOptions)}
+                />
+                <span></span>
+              </StyledSwitch>
+              <label>{shuffleOptions ? 'Sim' : 'Não'}</label>
+            </SwitchContainer>
+          </FormGroup>
+
+          < FormGroup >
+            <Label>Usar sequencia de ID's </Label>
+            < SwitchContainer >
+            <StyledSwitch>
+                <input
+                  type="checkbox"
+                  checked={useSequentialIds}
+                  onChange={() => setUseSequentialIds(!useSequentialIds)}/>
+                <span></span>
+              </StyledSwitch>
+              <label>{useSequentialIds ? 'Sim' : 'Não'}</label>
+            </SwitchContainer>
+          </FormGroup>
+        </TwoColumnGrid>
+
+        < Button
+          variant="primary"
           onClick={generateVariants}
           disabled={isGenerating}
         >
           <IconWrapper>
             <FaRandom />
           </IconWrapper>
-          {isGenerating ? 'Generating...' : 'Generate Variants'}
+          {isGenerating ? 'Gerando...' : 'Gerar variantes'}
         </Button>
       </FormContainer>
 
-      {generatedVariants.length > 0 && (
-        <>
-          <Divider />
-          <Title>Generated Variants</Title>
+      {
+        generatedVariants.length > 0 && (
+          <>
+            <Divider />
+            < Title > Generated Variants </Title>
 
-          <Alert type="success">
-            {`${generatedVariants.length} variants generated successfully!`}
-          </Alert>
+            < Alert type="success" >
+              {`${generatedVariants.length} variants generated successfully!`
+              }
+            </Alert>
 
-          <ButtonGroup>
-            <Button onClick={exportAllVariantsAsPdf}>
-              <IconWrapper>
-                <FaFileExport />
-              </IconWrapper>
-              Export All Variants
-            </Button>
-          </ButtonGroup>
+            < ButtonGroup >
+              <Button onClick={exportAllVariantsAsPdf}>
+                <IconWrapper>
+                  <FaFileExport />
+                </IconWrapper>
+                Export All Variants
+              </Button>
+            </ButtonGroup>
 
-          {generatedVariants.map((variant) => (
-            <VariantCard key={variant.id}>
-              <VariantHeader>
-                <VariantTitle>{variant.title}</VariantTitle>
-                <VariantActions>
-                  <Button onClick={() => copyToClipboard(variant.id)}>
-                    <IconWrapper>
-                      <FaCopy />
-                    </IconWrapper>
-                    Copy ID
-                  </Button>
-                  <Button onClick={() => exportVariantAsPdf(variant)}>
-                    <IconWrapper>
-                      <FaPlus />
-                    </IconWrapper>
-                    Export PDF
-                  </Button>
-                </VariantActions>
-              </VariantHeader>
+            {
+              generatedVariants.map((variant) => (
+                <VariantCard key={variant.id} >
+                  <VariantHeader>
+                    <VariantTitle>{variant.title} </VariantTitle>
+                    < VariantActions >
+                      <Button onClick={() => copyToClipboard(variant.id || '')}>
+                        <IconWrapper>
+                          <FaCopy />
+                        </IconWrapper>
+                        Copy ID
+                      </Button>
+                      < Button onClick={() => exportVariantAsPdf(variant)}>
+                        <IconWrapper>
+                          <FaPlus />
+                        </IconWrapper>
+                        Export PDF
+                      </Button>
+                    </VariantActions>
+                  </VariantHeader>
 
-              <VariantDetails>
-                <p><strong>ID:</strong> {variant.id}</p>
-                <p><strong>Password:</strong> {variant.password}</p>
-                <p>
-                  <strong>Questions:</strong>{' '}
-                  {variant.questions.length} questions
-                  {shuffleQuestions && <Tag color="blue">Shuffled order</Tag>}
-                  {shuffleOptions && <Tag color="green">Shuffled options</Tag>}
-                </p>
-              </VariantDetails>
-            </VariantCard>
-          ))}
-        </>
-      )}
+                  < VariantDetails >
+                    <p><strong>ID: </strong> {variant.id}</p >
+                    <p><strong>Password: </strong> {variant.password}</p >
+                    <p>
+                      <strong>Questions: </strong>{' '}
+                      {variant.questions.length} questions
+                      {shuffleQuestions && <Tag color="blue" > Shuffled order </Tag>}
+                      {shuffleOptions && <Tag color="green" > Shuffled options </Tag>}
+                    </p>
+                  </VariantDetails>
+                </VariantCard>
+              ))}
+          </>
+        )}
     </Container>
   );
 };

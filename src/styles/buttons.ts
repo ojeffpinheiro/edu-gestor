@@ -26,8 +26,8 @@ export const CloseButton = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 2.7rem;
+    height: 2.7rem;
     border-radius: var(--border-radius-full);
     cursor: pointer;
     color: var(--color-text);

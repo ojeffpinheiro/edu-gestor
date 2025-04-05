@@ -3,6 +3,7 @@ import { Button } from "../../../styles/buttons";
 import { flexRow, gap, spaceBetween } from "../../../styles/layoutUtils";
 import { BaseInput } from "../../../styles/baseComponents";
 import { Table, TableCell, TableHeader, TableRow } from "../../../styles/table";
+import { fadeIn } from "../../../styles/animations";
 
 export const Container = styled.div`
   width: 100%;
@@ -368,4 +369,155 @@ export const DropdownItem = styled.button`
   &:hover {
     background-color: var(--color-background-third);
   }
+`;
+
+// Styled Components
+export const DashboardContainer = styled.div`
+  animation: ${fadeIn} 0.5s ease-out;
+`;
+
+export const DashboardHeader = styled.div`
+  ${flexRow}
+  ${spaceBetween}
+  margin-bottom: var(--space-lg);
+  
+  h2 {
+    margin: 0;
+  }
+`;
+
+export const TimeframeSelector = styled.div`
+  ${flexRow}
+  ${gap('sm')}
+`;
+
+export const SummaryCards = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+`;
+
+export const MetricCard = styled(Card)`
+  ${flexRow}
+  padding: var(--space-md);
+  background-color: var(--color-background-secondary);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+`;
+
+export const CardIcon = styled.div`
+  width: 48px;
+  height: 48px;
+  ${flexRow}
+  justify-content: center;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-md);
+  color: var(--color-text-on-primary);
+  font-size: var(--font-size-xl);
+  margin-right: var(--space-md);
+`;
+
+export const CardContentDashboard = styled.div`
+  flex: 1;
+`;
+
+export const MetricTitle = styled.h4`
+  margin: 0 0 var(--space-xs) 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+`;
+
+export const MetricValue = styled.div`
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--color-text);
+`;
+
+export const MetricValueWithTrend = styled(MetricValue)`
+  ${flexRow}
+  ${gap('sm')}
+`;
+
+export const TrendUpIndicator = styled.span`
+  color: var(--color-success);
+  font-size: var(--font-size-sm);
+  ${flexRow}
+`;
+
+export const TrendDownIndicator = styled.span`
+  color: var(--color-error);
+  font-size: var(--font-size-sm);
+  ${flexRow}
+`;
+
+export const DetailSection = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+  
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const DetailCard = styled(Card)`
+  padding: var(--space-lg);
+  
+  h3 {
+    margin-top: 0;
+    margin-bottom: var(--space-md);
+    font-size: var(--font-size-lg);
+  }
+`;
+
+export const CategoryBreakdown = styled.div`
+  ${flexRow}
+  flex-direction: column;
+  gap: var(--space-md);
+`;
+
+export const CategoryItem = styled.div`
+  width: 100%;
+`;
+
+export const CategoryName = styled.div`
+  margin-bottom: var(--space-xs);
+  font-weight: 500;
+`;
+
+export const CategoryScoreWrapper = styled.div`
+  ${flexRow}
+  ${gap('sm')}
+  align-items: center;
+  height: 24px;
+`;
+
+export const CategoryScoreBar = styled.div<{ percentage: number }>`
+  height: 100%;
+  width: ${({ percentage }) => percentage}%;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius-sm);
+  transition: width 1s ease-out;
+`;
+
+export const CategoryScore = styled.div`
+  font-weight: 600;
+  min-width: 48px;
+  text-align: right;
+`;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
 `;

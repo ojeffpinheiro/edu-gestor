@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { FaFileAlt, FaDownload, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle } from 'react-icons/fa';
+import { FaFileAlt, FaDownload, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle, FaTimes } from 'react-icons/fa';
 
 import { Exam, ExamResult, Question } from '../../../utils/types/Assessment';
 
 // Importação de componentes de estilo
-import { Button, ActionButton, PrimaryActionButton } from '../../../styles/buttons';
+import { Button, ActionButton, PrimaryActionButton, CloseButton } from '../../../styles/buttons';
 import { InputGroup, Label, Select, TextArea } from '../../../styles/inputs';
 import { Card } from '../../../styles/containers';
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
 import { ModalContainer, ModalContent, ModalHeader, ModalBody, ModalFooter } from '../../../styles/modals';
-import { CloseButton } from '../../../styles/buttons';
-import { fadeIn } from '../../../styles/animations';
 
 interface Student {
     id: string;
@@ -47,18 +45,18 @@ interface ReportGeneratorProps {
     results: ExamResult[];
     exam: Exam | null;
     statistics: {
-      average: number;
-      median: number;
-      highest: number;
-      lowest: number;
-      passingRate: number;
-      standardDeviation: number;
+        average: number;
+        median: number;
+        highest: number;
+        lowest: number;
+        passingRate: number;
+        standardDeviation: number;
     };
     examId?: string;
     classId?: string;
     studentId?: string;
     onGenerate?: (reportData: any) => void;
-  }
+}
 
 // Componentes estilizados adicionais
 const ReportContainer = styled.div`
@@ -133,19 +131,6 @@ const SectionContainer = styled.div`
   }
 `;
 
-const PreviewContainer = styled.div`
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-lg);
-  background-color: white;
-  margin-top: var(--space-lg);
-  box-shadow: var(--shadow-md);
-  min-height: 400px;
-  max-height: 600px;
-  overflow-y: auto;
-  animation: ${fadeIn} 0.3s ease-out;
-`;
-
 const TabsContainer = styled.div`
   display: flex;
   border-bottom: 1px solid var(--color-border);
@@ -183,7 +168,7 @@ const InfoMessage = styled.div`
 `;
 
 // Componente principal
-const ReportGenerator: React.FC<ReportGeneratorProps> = ({ 
+const ReportGenerator: React.FC<ReportGeneratorProps> = ({
     examId, classId, studentId, onGenerate }) => {
     const [activeTab, setActiveTab] = useState<'templates' | 'custom'>('templates');
     const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
@@ -378,7 +363,8 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                     questionDistribution: [],
                     useQRCode: false,
                     useBarCode: false,
-                    requirePassword: false
+                    requirePassword: false,
+                    variants: [],
                 },
                 results: [
                     {
@@ -800,7 +786,9 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 <ModalContent>
                     <ModalHeader>
                         <h3>Prévia do Relatório</h3>
-                        <CloseButton onClick={handleClosePreview}>×</CloseButton>
+                        <CloseButton onClick={handleClosePreview}>
+                            <FaTimes />
+                        </CloseButton>
                     </ModalHeader>
 
                     <ModalBody>
@@ -832,28 +820,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
     return (
         <ReportContainer>
             <h2>Gerador de Relatórios</h2>
-
-            <InputGroup>
-                <Label htmlFor="report-title">Título do Relatório</Label>
-                <input
-                    id="report-title"
-                    type="text"
-                    value={reportTitle}
-                    onChange={(e) => setReportTitle(e.target.value)}
-                    placeholder="Digite o título do relatório"
-                />
-            </InputGroup>
-
-            <InputGroup>
-                <Label htmlFor="report-description">Descrição do Relatório</Label>
-                <TextArea
-                    id="report-description"
-                    value={reportDescription}
-                    onChange={(e) => setReportDescription(e.target.value)}
-                    placeholder="Descreva o propósito deste relatório"
-                />
-            </InputGroup>
-
             <TabsContainer>
                 <Tab
                     active={activeTab === 'templates'}
@@ -933,6 +899,26 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                     <Button onClick={handleAddSection}>+ Adicionar Seção</Button>
                 </>
             )}
+            <InputGroup>
+                <Label htmlFor="report-title">Título do Relatório</Label>
+                <input
+                    id="report-title"
+                    type="text"
+                    value={reportTitle}
+                    onChange={(e) => setReportTitle(e.target.value)}
+                    placeholder="Digite o título do relatório"
+                />
+            </InputGroup>
+
+            <InputGroup>
+                <Label htmlFor="report-description">Descrição do Relatório</Label>
+                <TextArea
+                    id="report-description"
+                    value={reportDescription}
+                    onChange={(e) => setReportDescription(e.target.value)}
+                    placeholder="Descreva o propósito deste relatório"
+                />
+            </InputGroup>
 
             <div style={{
                 display: 'flex',

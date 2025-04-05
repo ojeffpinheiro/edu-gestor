@@ -84,7 +84,8 @@ export const mockExams: Exam[] = [
     ],
     useQRCode: true,
     useBarCode: true,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   },
   {
     id: 'exam2',
@@ -107,7 +108,8 @@ export const mockExams: Exam[] = [
     ],
     useQRCode: false,
     useBarCode: true,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   },
 ];
 

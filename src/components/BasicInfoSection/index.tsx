@@ -6,7 +6,22 @@ import { Evaluation, EvaluationType } from "../../utils/types";
 import { initializeEmptyEvaluation } from "../../hooks/useEvaluationForm";
 
 import { Label } from "../../styles/inputs";
-import { Container, ErrorMessage, FormGrid, FormSection, Grid2Columns, IconWrapper, InputWithIcon, RequiredFieldsNote, SectionHeader, SectionTitle, StyledInput, StyledInputGroup, StyledSelect, StyledTextArea } from './styles'
+import { 
+    Container, 
+    ErrorMessage, 
+    FormGrid, 
+    FormSection, 
+    Grid2Columns, 
+    IconWrapper, 
+    InputWithIcon, 
+    RequiredFieldsNote, 
+    SectionHeader, 
+    SectionTitle, 
+    StyledInput, 
+    StyledInputGroup, 
+    StyledSelect, 
+    StyledTextArea
+ } from './styles'
 
 interface BasicInfoSectionProps {
     evaluationData: Evaluation | null;

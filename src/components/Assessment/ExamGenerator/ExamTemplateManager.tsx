@@ -6,7 +6,6 @@ import { Notifications } from '../../shared/Notifications';
 import { Exam } from '../../../utils/types/Assessment';
 import examService from '../../../services/examService';
 
-// Interface para as props do componente
 interface ExamTemplateManagerProps {
   onTemplateSelect: (template: Exam) => void;
   currentExamConfig?: Partial<Exam>;
@@ -58,7 +57,8 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({
           questionDistribution: exam.questionDistribution,
           useQRCode: exam.useQRCode,
           useBarCode: exam.useBarCode,
-          requirePassword: exam.requirePassword
+          requirePassword: exam.requirePassword,
+          variants: exam.variants || []
         }));
         setTemplates(fetchedTemplates);
       }
@@ -107,7 +107,9 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({
         questionDistribution: [],
         useQRCode: false,
         useBarCode: false,
-        requirePassword: false
+        requirePassword: false,
+        variants: [],
+        ...templateForm
       };
   
       if (templateForm.id) {
@@ -155,8 +157,10 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({
 
   // Selecionar e carregar um template
   const handleSelectTemplate = (template: Exam) => {
-    setSelectedTemplate(template.id);
-    onTemplateSelect(template);
+    if (template.id) {
+      setSelectedTemplate(template.id);
+      onTemplateSelect(template);
+    }
   };
 
   // Remover um template
@@ -517,7 +521,7 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({
                       </button>
                       <button 
                         className="delete-button"
-                        onClick={(e) => handleDeleteTemplate(template.id, e)}
+                        onClick={(e) => template.id && handleDeleteTemplate(template.id, e)}
                       >
                         Excluir
                       </button>

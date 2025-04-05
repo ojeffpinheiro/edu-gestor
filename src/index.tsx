@@ -8,18 +8,19 @@ import { AuthContextProvider } from './contexts/AuthContext';
 import { GlobalStyles } from './styles/global';
 
 
-
-// import LoginPage from './pages/LoginPage/indes';
-// import HomePage from './pages/Home';
-// import DigitalNotebook from './pages/DigitalNotebook';
-// import TeamPage from './pages/TeamPage';
 // import DailyReport from './pages/DailyReport/';
-// import TeamManagement from './pages/TeamManagement';
-// import EvaluationManagement from './pages/EvaluationManagement';
-// import PlanningDashboard from './pages/PlanningDashboard';
 // import DidacticSequencesPage from './pages/DidacticSequencesPage';
+// import DigitalNotebook from './pages/DigitalNotebook';
+// import EvaluationManagement from './pages/EvaluationManagement';
+import ExamManager from './pages/ExamManager';
+// import HomePage from './pages/Home';
+// import LoginPage from './pages/LoginPage/';
+// import PlanningDashboard from './pages/PlanningDashboard';
+// import ResultsViewer from './pages/ResultsViewer';
+// import TeamManagement from './pages/TeamManagement';
+// import TeamPage from './pages/TeamPage';
 //import TestPage from './pages/TestPage';
-import ResultsViewer from './pages/ResultsViewer';
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -33,7 +34,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <ResultsViewer />
+          <ExamManager />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>

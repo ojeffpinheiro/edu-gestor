@@ -48,6 +48,7 @@ interface ResultsTableProps {
   title?: string;
   customColumns?: { key: string; label: string }[];
   onRowClick?: (result: ResultItem) => void;
+  onSort?: (column: string) => void;
   onExport?: (filteredResults: ResultItem[]) => void;
 }
 
@@ -56,7 +57,8 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
   title = 'Assessment Results',
   customColumns = [],
   onRowClick,
-  onExport,
+  onSort,
+  onExport
 }) => {
   const [sortColumn, setSortColumn] = useState<string>('studentName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
@@ -213,7 +215,10 @@ const ResultsTable: React.FC<ResultsTableProps> = ({
 
     return (
       <ColumnHeader>
-        <SortableHeader onClick={() => handleSort(column.key)}>
+        <SortableHeader onClick={() => { 
+            handleSort(column.key);
+            if(onSort) onSort(column.key);
+        }}>
           {column.label}
           {isSorted && (
             sortDirection === 'asc' ? <FaChevronUp size={16} /> : <FaChevronDown size={16} />

@@ -1,29 +1,30 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, Divider, FormControl, FormHelperText, InputAdornment, Stack, Switch, TextField, Typography } from '@mui/material';
+import { FiLock, FiClock, FiAlertTriangle, FiEye, FiEyeOff, FiShield } from 'react-icons/fi';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { FiLock, FiClock, FiAlertTriangle, FiEye, FiEyeOff } from 'react-icons/fi';
-import { generatePassword } from '../../../utils/passwordGenerator';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 
-// Usando as interfaces definidas no documento
-interface Exam {
-  id: string;
-  title: string;
-  description: string;
-  questions: string[];
-  classIds: string[];
-  totalPoints: number;
-  qrCode: string;
-  barCode: string;
-  password: string;
-  createdAt: Date;
-  createdBy: string;
-  startTime?: Date;
-  endTime?: Date;
-  timeLimit?: number;
-  requirePassword: boolean;
-}
+import { generatePassword } from '../../../utils/passwordGenerator';
+import { Exam } from '../../../utils/types/Assessment';
+
+import { 
+  ButtonsContainer, 
+  CardHeader, 
+  DatePickerWrapper, 
+  Divider,
+  ErrorMessage,
+  GeneratePasswordButton,
+  InputField,
+  PasswordInputWrapper,
+  SaveButton,
+  Section,
+  SectionTitle,
+  SecurityCard,
+  StyledSwitch,
+  StyledTextField,
+  SwitchRow,
+  TimeLimitContainer,
+ } from './ExamSecurityManagerStyles'
 
 interface ExamSecurityManagerProps {
   exam: Exam;
@@ -102,161 +103,152 @@ const ExamSecurityManager: React.FC<ExamSecurityManagerProps> = ({ exam, onUpdat
   };
 
   return (
-    <Card variant="outlined" sx={{ mb: 3 }}>
-      <CardContent>
-        <Typography variant="h6" component="h2" sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <FiLock style={{ marginRight: 8 }} /> Segurança da Prova
-        </Typography>
-        
-        <Divider sx={{ mb: 3 }} />
-        
-        {/* Configuração de senha */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-            Proteção por Senha
-          </Typography>
+    <SecurityCard>
+      <CardHeader>
+        <h2>
+          <FiShield size={20} />
+          Segurança da Prova
+        </h2>
+      </CardHeader>
+      
+      <Divider />
+      
+      {/* Configuração de senha */}
+      <Section>
+        <SectionTitle>Proteção por Senha</SectionTitle>
 
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-            <Switch 
+        <SwitchRow>
+          <StyledSwitch>
+            <input 
+              type="checkbox" 
               checked={examSecurity.requirePassword}
               onChange={handleSwitchChange('requirePassword')}
-              color="primary"
             />
-            <Typography>Exigir senha para acesso à prova</Typography>
-          </Stack>
+            <span></span>
+          </StyledSwitch>
+          <label>Exigir senha para acesso à prova</label>
+        </SwitchRow>
 
-          {examSecurity.requirePassword && (
-            <Stack spacing={2}>
-              <FormControl fullWidth variant="outlined">
-                <TextField
-                  label="Senha da Prova"
-                  value={examSecurity.password}
-                  onChange={handleSecurityChange('password')}
-                  type={showPassword ? 'text' : 'password'}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <FiLock />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <Button onClick={togglePasswordVisibility} size="small">
-                          {showPassword ? <FiEyeOff /> : <FiEye />}
-                        </Button>
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </FormControl>
-
-              <Button 
-                variant="outlined" 
-                onClick={handleGeneratePassword}
-                startIcon={<FiLock />}
-                sx={{ alignSelf: 'flex-start' }}
+        {examSecurity.requirePassword && (
+          <>
+            <PasswordInputWrapper>
+              <FiLock className="icon-start" size={16} />
+              <StyledTextField
+                type={showPassword ? 'text' : 'password'}
+                value={examSecurity.password}
+                onChange={handleSecurityChange('password')}
+                placeholder="Senha de acesso"
+              />
+              <button 
+                className="toggle-visibility"
+                onClick={togglePasswordVisibility}
+                type="button"
               >
-                Gerar senha segura
-              </Button>
-            </Stack>
-          )}
-        </Box>
+                {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
+              </button>
+            </PasswordInputWrapper>
 
-        {/* Controle de Tempo */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="subtitle1" fontWeight="medium" gutterBottom>
-            Controle de Disponibilidade
-          </Typography>
+            <GeneratePasswordButton 
+              onClick={handleGeneratePassword}
+              type="button"
+            >
+              <FiLock size={16} />
+              Gerar senha segura
+            </GeneratePasswordButton>
+          </>
+        )}
+      </Section>
 
-          <Stack spacing={3}>
-            {/* Janela de tempo para disponibilidade */}
-            <Box>
-              <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <Switch 
-                  checked={examSecurity.enableTimeWindow}
-                  onChange={handleSwitchChange('enableTimeWindow')}
-                  color="primary"
+      {/* Controle de Tempo */}
+      <Section>
+        <SectionTitle>Controle de Disponibilidade</SectionTitle>
+
+        {/* Janela de tempo para disponibilidade */}
+        <SwitchRow>
+          <StyledSwitch>
+            <input 
+              type="checkbox" 
+              checked={examSecurity.enableTimeWindow}
+              onChange={handleSwitchChange('enableTimeWindow')}
+            />
+            <span></span>
+          </StyledSwitch>
+          <label>Definir período de disponibilidade</label>
+        </SwitchRow>
+
+        {examSecurity.enableTimeWindow && (
+          <>
+            <DatePickerWrapper>
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DateTimePicker
+                  label="Disponível a partir de"
+                  value={examSecurity.startTime}
+                  onChange={handleDateChange('startTime')}
+                  format="dd/MM/yyyy HH:mm"
                 />
-                <Typography>Definir período de disponibilidade</Typography>
-              </Stack>
-
-              {examSecurity.enableTimeWindow && (
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                  <Stack spacing={2} direction={{ xs: 'column', sm: 'row' }} sx={{ ml: 4 }}>
-                    <DateTimePicker
-                      label="Disponível a partir de"
-                      value={examSecurity.startTime}
-                      onChange={handleDateChange('startTime')}
-                      format="dd/MM/yyyy HH:mm"
-                    />
-                    <DateTimePicker
-                      label="Disponível até"
-                      value={examSecurity.endTime}
-                      onChange={handleDateChange('endTime')}
-                      format="dd/MM/yyyy HH:mm"
-                    />
-                  </Stack>
-                </LocalizationProvider>
-              )}
-
-              {examSecurity.enableTimeWindow && !isDateRangeValid() && (
-                <Typography color="error" sx={{ display: 'flex', alignItems: 'center', mt: 1, ml: 4 }}>
-                  <FiAlertTriangle style={{ marginRight: 8 }} /> 
-                  A data final deve ser posterior à data inicial.
-                </Typography>
-              )}
-            </Box>
-
-            {/* Limite de tempo para realizar a prova */}
-            <Box>
-              <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
-                <Switch 
-                  checked={examSecurity.enableTimeLimit}
-                  onChange={handleSwitchChange('enableTimeLimit')}
-                  color="primary"
+                <DateTimePicker
+                  label="Disponível até"
+                  value={examSecurity.endTime}
+                  onChange={handleDateChange('endTime')}
+                  format="dd/MM/yyyy HH:mm"
                 />
-                <Typography>Definir tempo limite para realização</Typography>
-              </Stack>
+              </LocalizationProvider>
+            </DatePickerWrapper>
 
-              {examSecurity.enableTimeLimit && (
-                <FormControl sx={{ ml: 4, width: 200 }}>
-                  <TextField
-                    label="Duração em minutos"
-                    value={examSecurity.timeLimit}
-                    onChange={handleSecurityChange('timeLimit')}
-                    type="number"
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <FiClock />
-                        </InputAdornment>
-                      ),
-                      inputProps: { min: 1 }
-                    }}
-                  />
-                  <FormHelperText>
-                    {Math.floor(examSecurity.timeLimit / 60) > 0 
-                      ? `${Math.floor(examSecurity.timeLimit / 60)}h ${examSecurity.timeLimit % 60}min` 
-                      : ''}
-                  </FormHelperText>
-                </FormControl>
-              )}
-            </Box>
-          </Stack>
-        </Box>
+            {!isDateRangeValid() && (
+              <ErrorMessage>
+                <FiAlertTriangle size={16} />
+                <span>A data final deve ser posterior à data inicial.</span>
+              </ErrorMessage>
+            )}
+          </>
+        )}
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button 
-            variant="contained" 
-            color="primary"
-            onClick={saveSecuritySettings}
-            disabled={examSecurity.enableTimeWindow && !isDateRangeValid()}
-          >
-            Salvar Configurações de Segurança
-          </Button>
-        </Box>
-      </CardContent>
-    </Card>
+        {/* Limite de tempo para realizar a prova */}
+        <SwitchRow>
+          <StyledSwitch>
+            <input 
+              type="checkbox" 
+              checked={examSecurity.enableTimeLimit}
+              onChange={handleSwitchChange('enableTimeLimit')}
+            />
+            <span></span>
+          </StyledSwitch>
+          <label>Definir tempo limite para realização</label>
+        </SwitchRow>
+
+        {examSecurity.enableTimeLimit && (
+          <TimeLimitContainer>
+            <InputField>
+              <FiClock size={16} />
+              <StyledTextField
+                type="number"
+                value={examSecurity.timeLimit}
+                onChange={handleSecurityChange('timeLimit')}
+                placeholder="Duração em minutos"
+                min={1}
+              />
+            </InputField>
+            {examSecurity.timeLimit > 0 && (
+              <small>
+                {Math.floor(examSecurity.timeLimit / 60) > 0 
+                  ? `${Math.floor(examSecurity.timeLimit / 60)}h ${examSecurity.timeLimit % 60}min` 
+                  : `${examSecurity.timeLimit} minutos`}
+              </small>
+            )}
+          </TimeLimitContainer>
+        )}
+      </Section>
+
+      <ButtonsContainer>
+        <SaveButton 
+          onClick={saveSecuritySettings}
+          disabled={examSecurity.enableTimeWindow && !isDateRangeValid()}
+        >
+          Salvar Configurações de Segurança
+        </SaveButton>
+      </ButtonsContainer>
+    </SecurityCard>
   );
 };
 

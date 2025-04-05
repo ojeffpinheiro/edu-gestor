@@ -26,15 +26,21 @@ export interface EvaluationRubric {
 }
 
 export interface Exam {
-    id: string;
+    id?: string;
     title: string;
     description: string;
     questions: string[];
     classIds: string[];
     totalPoints: number;
     qrCode: string;
+    useQRCode: boolean;
     barCode: string;
+    useBarCode: boolean;
     password: string;
+    requirePassword: boolean;
+    startTime?: Date;
+    endTime?: Date;
+    timeLimit?: number;
     createdAt: Date;
     createdBy: string;
     questionDistribution: {
@@ -42,9 +48,7 @@ export interface Exam {
         difficulty: 'easy' | 'medium' | 'hard';
         count: number;
     }[];
-    useQRCode: boolean;
-    useBarCode: boolean;
-    requirePassword: boolean;
+    variants: string[];
 }
 
 export interface ExamResult {

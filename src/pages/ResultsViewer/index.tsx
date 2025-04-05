@@ -6,8 +6,9 @@ import { LoadingStates } from '../../components/shared/LoadingStates';
 import ExportButton from '../../components/shared/ExportButton';
 
 import ReportGenerator from '../../components/Assessment/Results/ReportGenerator';
-
 import ResultsStatistics from '../../components/Assessment/Results/ResultsStatistics';
+import { Select } from '../../styles/inputs';
+import { Button } from '../../styles/buttons';
 
 // Mock data for testing
 const mockExams: Exam[] = [
@@ -29,7 +30,8 @@ const mockExams: Exam[] = [
     ],
     useQRCode: true,
     useBarCode: false,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   },
   {
     id: 'exam2',
@@ -49,7 +51,8 @@ const mockExams: Exam[] = [
     ],
     useQRCode: false,
     useBarCode: true,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   }
 ];
 
@@ -145,29 +148,29 @@ const generateStatistics = (results: EnhancedExamResult[], totalPoints: number) 
   }
 
   const scores = results.map(r => r.totalScore);
-  
+
   // Calculate average
   const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-  
+
   // Calculate median
   const sortedScores = [...scores].sort((a, b) => a - b);
   const median = sortedScores.length % 2 === 0
     ? (sortedScores[sortedScores.length / 2 - 1] + sortedScores[sortedScores.length / 2]) / 2
     : sortedScores[Math.floor(sortedScores.length / 2)];
-  
+
   // Calculate max and min
   const max = Math.max(...scores);
   const min = Math.min(...scores);
-  
+
   // Calculate passing rate (assuming passing is 60% of total points)
   const passingThreshold = totalPoints * 0.6;
   const passingCount = scores.filter(score => score >= passingThreshold).length;
   const passingRate = (passingCount / scores.length) * 100;
-  
+
   // Calculate standard deviation
   const variance = scores.reduce((sum, score) => sum + Math.pow(score - average, 2), 0) / scores.length;
   const standardDeviation = Math.sqrt(variance);
-  
+
   return {
     averageScore: average,
     medianScore: median,
@@ -217,17 +220,17 @@ const ResultsViewer: React.FC = () => {
   });
 
   // Fetch results for a specific exam
-  const fetchResults = async (examId: string, classId?: string) => {
+  const fetchResults = async (examId: string | undefined, classId?: string) => {
     setIsLoading(true);
     setError(null);
-    
+
     try {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       // Filter mock results for the selected exam
       let filtered = mockResults.filter(result => result.examId === examId);
-      
+
       // Filter by class if specified
       if (classId) {
         filtered = filtered.filter(result => {
@@ -235,16 +238,16 @@ const ResultsViewer: React.FC = () => {
           return student?.classId === classId;
         });
       }
-      
+
       // Enhance results with student info
       const enhanced: EnhancedExamResult[] = filtered.map(result => ({
         ...result,
         student: mockStudents[result.studentId as keyof typeof mockStudents],
         classId: mockStudents[result.studentId as keyof typeof mockStudents]?.classId
       }));
-      
+
       setExamResults(enhanced);
-      
+
       // Calculate stats
       const examObj = mockExams.find(e => e.id === examId);
       if (examObj) {
@@ -294,7 +297,7 @@ const ResultsViewer: React.FC = () => {
   // Load exams on component mount
   useEffect(() => {
     setAvailableExams(mockExams);
-    
+
     // Auto-select first exam for demonstration
     if (mockExams.length > 0) {
       handleExamSelect(mockExams[0]);
@@ -304,8 +307,10 @@ const ResultsViewer: React.FC = () => {
   // Handle exam selection
   const handleExamSelect = (exam: Exam) => {
     setSelectedExam(exam);
-    fetchResults(exam.id);
-    
+    if (exam.id) {
+      fetchResults(exam.id);
+    }
+
     // Reset filters when changing exam
     setFilterOptions({
       studentName: '',
@@ -381,12 +386,27 @@ const ResultsViewer: React.FC = () => {
   };
 
   return (
-    <div className="results-viewer-container">
+    <div className="results-viewer-container" style={{ margin: `2rem` }} >
       <div className="results-header">
         <h1>Resultados de Avaliações</h1>
+        {selectedReportType && (
+          <ReportGenerator
+            type={selectedReportType}
+            results={filteredResults}
+            exam={selectedExam}
+            statistics={{
+              average: stats.averageScore,
+              median: stats.medianScore,
+              highest: stats.maxScore,
+              lowest: stats.minScore,
+              passingRate: stats.passingRate,
+              standardDeviation: stats.standardDeviation
+            }}
+          />
+        )}
         <div className="exam-selector">
           <label htmlFor="exam-select">Selecionar Avaliação:</label>
-          <select
+          <Select
             id="exam-select"
             value={selectedExam?.id || ''}
             onChange={(e) => {
@@ -400,7 +420,41 @@ const ResultsViewer: React.FC = () => {
                 {exam.title}
               </option>
             ))}
-          </select>
+          </Select>
+        </div>
+        <div className="report-controls">
+          <div className="report-generator">
+            <h3>Gerar Relatório</h3>
+            <div className="report-options" style={{ display: 'flex', gap: '1rem' }} >
+              <Select
+                value={selectedReportType}
+                onChange={(e) => setSelectedReportType(e.target.value as 'summary' | 'detailed' | 'individual' | 'comparative')}
+              >
+                <option value="summary">Resumo Geral</option>
+                <option value="detailed">Relatório Detalhado</option>
+                <option value="individual">Relatórios Individuais</option>
+                <option value="comparative">Análise Comparativa</option>
+              </Select>
+              <Button variant='primary'
+                onClick={handleGenerateReport}
+                disabled={isGeneratingReport}
+                className="generate-button"
+              >
+                {isGeneratingReport ? 'Gerando...' : 'Gerar Relatório'}
+              </Button>
+            </div>
+          </div>
+
+          <div className="export-options">
+            <h3>Exportar Dados</h3>
+            <div className="export-buttons">
+              <ExportButton
+                data={filteredResults}
+                filename={`resultados_${selectedExam?.title}`}
+                onExport={handleExport}
+              />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -468,7 +522,7 @@ const ResultsViewer: React.FC = () => {
                   {selectedExam?.classIds && selectedExam.classIds.length > 0 && (
                     <div className="filter-item">
                       <label htmlFor="class-filter">Turma:</label>
-                      <select
+                      <Select
                         id="class-filter"
                         value={filterOptions.classId}
                         onChange={(e) => handleClassSelect(e.target.value)}
@@ -481,7 +535,7 @@ const ResultsViewer: React.FC = () => {
                                 classId === 'class3' ? 'Turma C' : classId}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   )}
                 </div>
@@ -490,61 +544,10 @@ const ResultsViewer: React.FC = () => {
               <div className="statistics-container">
                 <h3>Estatísticas</h3>
                 <ResultsStatistics
-                  statistics={stats}
-                  assessmentId={selectedExam?.id}
-                  className="custom-stats"
-                />
-              </div>
-
-              <div className="report-controls">
-                <div className="report-generator">
-                  <h3>Gerar Relatório</h3>
-                  <div className="report-options">
-                    <select
-                      value={selectedReportType}
-                      onChange={(e) => setSelectedReportType(e.target.value as 'summary' | 'detailed' | 'individual' | 'comparative')}
-                    >
-                      <option value="summary">Resumo Geral</option>
-                      <option value="detailed">Relatório Detalhado</option>
-                      <option value="individual">Relatórios Individuais</option>
-                      <option value="comparative">Análise Comparativa</option>
-                    </select>
-                    <button
-                      onClick={handleGenerateReport}
-                      disabled={isGeneratingReport}
-                      className="generate-button"
-                    >
-                      {isGeneratingReport ? 'Gerando...' : 'Gerar Relatório'}
-                    </button>
-                  </div>
-
-                  {selectedReportType && (
-                    <ReportGenerator
-                      type={selectedReportType}
-                      results={filteredResults}
-                      exam={selectedExam}
-                      statistics={{
-                        average: stats.averageScore,
-                        median: stats.medianScore,
-                        highest: stats.maxScore,
-                        lowest: stats.minScore,
-                        passingRate: stats.passingRate,
-                        standardDeviation: stats.standardDeviation
-                      }}
-                    />
-                  )}
-                </div>
-
-                <div className="export-options">
-                  <h3>Exportar Dados</h3>
-                  <div className="export-buttons">
-                    <ExportButton
-                      data={filteredResults}
-                      filename={`resultados_${selectedExam?.title}`}
-                      onExport={handleExport}
-                    />
-                  </div>
-                </div>
+                    {...stats}
+                    assessmentId={selectedExam?.id}
+                    className="custom-stats"
+                  />
               </div>
             </div>
           ) : selectedExam ? (

@@ -256,7 +256,9 @@ const StudentModal: React.FC<StudentModalProps> = ({
         return (
             <ModalContainer role="dialog" aria-modal="true" aria-labelledby="loading-title">
                 <ModalContent>
-                    <CloseButton onClick={onClose} aria-label="Fechar modal">X</CloseButton>
+                    <CloseButton onClick={onClose} aria-label="Fechar modal">
+                        <FaTimes />
+                    </CloseButton>
                     <div className="loading-container">
                         <h2 id="loading-title">Carregando informações do aluno</h2>
                         <Spinner size="medium" />

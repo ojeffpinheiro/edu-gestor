@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { FaChartLine, FaUsers, FaClipboardCheck, FaChartBar, FaCaretUp, FaCaretDown } from 'react-icons/fa';
 
 import { EnhancedExamResult, Exam, ExamResult } from '../../../utils/types/Assessment';
 
 import { useExams } from '../../../hooks/useExams';
 
-import { Card } from '../../../styles/containers';
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
 import { Button } from '../../../styles/buttons';
-import { flexRow, spaceBetween, gap } from '../../../styles/layoutUtils';
-import { fadeIn } from '../../../styles/animations';
 import ResultsTable from './ResultsTable';
+import { CardContent, CardIcon, CategoryBreakdown, CategoryItem, CategoryName, CategoryScore, CategoryScoreBar, CategoryScoreWrapper, DashboardContainer, DashboardHeader, DetailCard, DetailSection, LoadingContainer, MetricCard, MetricTitle, MetricValue, MetricValueWithTrend, SummaryCards, TimeframeSelector, TrendDownIndicator, TrendUpIndicator } from './styles';
 
 interface ResultsSummary {
   totalExams: number;
@@ -57,7 +54,8 @@ const mockExams: Exam[] = [
     ],
     useQRCode: true,
     useBarCode: false,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   },
   {
     id: 'exam2',
@@ -77,7 +75,8 @@ const mockExams: Exam[] = [
     ],
     useQRCode: false,
     useBarCode: true,
-    requirePassword: true
+    requirePassword: true,
+    variants: []
   }
 ];
 
@@ -106,6 +105,8 @@ const ResultsDashboard: React.FC = () => {
     sortOrder: 'desc' as 'asc' | 'desc',
     classId: ''
   });
+
+  const [selectedReportType, setSelectedReportType] = useState<'detailed' | 'summary'>('detailed');
 
   // Mock students for testing
   const mockStudents = {
@@ -223,8 +224,8 @@ const ResultsDashboard: React.FC = () => {
   // Handle class selection for filtering
   const handleClassSelect = (classId: string) => {
     setFilterOptions(prev => ({ ...prev, classId }));
-    if (selectedExam) {
-      fetchResults(selectedExam.id, classId || undefined);
+    if (selectedExam?.id) {
+      fetchResults(selectedExam.id);
     }
   };
 
@@ -244,21 +245,21 @@ const ResultsDashboard: React.FC = () => {
   };
 
   // Handle export
-  const handleExport = async (format: 'pdf' | 'csv' | 'excel') => {
-    if (!selectedExam || filteredResults.length === 0) return;
+  const handleExport = async (resultsToExport: any[]) => {
+    if (!selectedExam || resultsToExport.length === 0) return;
 
     try {
-      console.log(`Exporting ${filteredResults.length} results in ${format} format`);
+      console.log(`Exporting ${resultsToExport.length} results`);
       // In a real implementation, this would call an export service
     } catch (err) {
-      console.error(`Failed to export as ${format}:`, err);
+      console.error(`Failed to export results:`, err);
     }
   };
 
-    // Load exams on component mount
+  // Load exams on component mount
   useEffect(() => {
     setAvailableExams(mockExams);
-    
+
     // Auto-select first exam for demonstration
     if (mockExams.length > 0) {
       handleExamSelect(mockExams[0]);
@@ -302,31 +303,31 @@ const ResultsDashboard: React.FC = () => {
         standardDeviation: 0
       };
     }
-  
+
     const scores = results.map(r => r.totalScore);
-    
+
     // Calculate average
     const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-    
+
     // Calculate median
     const sortedScores = [...scores].sort((a, b) => a - b);
     const median = sortedScores.length % 2 === 0
       ? (sortedScores[sortedScores.length / 2 - 1] + sortedScores[sortedScores.length / 2]) / 2
       : sortedScores[Math.floor(sortedScores.length / 2)];
-    
+
     // Calculate max and min
     const max = Math.max(...scores);
     const min = Math.min(...scores);
-    
+
     // Calculate passing rate (assuming passing is 60% of total points)
     const passingThreshold = totalPoints * 0.6;
     const passingCount = scores.filter(score => score >= passingThreshold).length;
     const passingRate = (passingCount / scores.length) * 100;
-    
+
     // Calculate standard deviation
     const variance = scores.reduce((sum, score) => sum + Math.pow(score - average, 2), 0) / scores.length;
     const standardDeviation = Math.sqrt(variance);
-    
+
     return {
       averageScore: average,
       medianScore: median,
@@ -441,7 +442,8 @@ const ResultsDashboard: React.FC = () => {
   };
 
   // Handle sorting
-  const handleSort = (field: 'score' | 'name' | 'date') => {
+  const handleSort = (column: string) => {
+    const field = column as 'score' | 'name' | 'date';
     if (filterOptions.sortBy === field) {
       // Toggle order if same field
       setFilterOptions({
@@ -467,7 +469,9 @@ const ResultsDashboard: React.FC = () => {
   // Handle exam selection
   const handleExamSelect = (exam: Exam) => {
     setSelectedExam(exam);
-    fetchResults(exam.id);
+    if (exam.id) {
+      fetchResults(exam.id);
+    }
 
     // Reset filters when changing exam
     setFilterOptions({
@@ -610,164 +614,14 @@ const ResultsDashboard: React.FC = () => {
         <ResultsTable
           results={tableResults}
           title={`Resultados: ${selectedExam?.title || ''}`}
+          customColumns={[{ key: 'customField', label: 'Custom Field' }]}
           onRowClick={handleRowClick}
+          onExport={handleExport}
           onSort={handleSort}
-          sortBy={filterOptions.sortBy}
-          sortOrder={filterOptions.sortOrder} />
+        />
       </DetailCard>
     </DashboardContainer>
   );
 };
-
-// Styled Components
-const DashboardContainer = styled.div`
-  animation: ${fadeIn} 0.5s ease-out;
-`;
-
-const DashboardHeader = styled.div`
-  ${flexRow}
-  ${spaceBetween}
-  margin-bottom: var(--space-lg);
-  
-  h2 {
-    margin: 0;
-  }
-`;
-
-const TimeframeSelector = styled.div`
-  ${flexRow}
-  ${gap('sm')}
-`;
-
-const SummaryCards = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  grid-gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-`;
-
-const MetricCard = styled(Card)`
-  ${flexRow}
-  padding: var(--space-md);
-  background-color: var(--color-background-secondary);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-`;
-
-const CardIcon = styled.div`
-  width: 48px;
-  height: 48px;
-  ${flexRow}
-  justify-content: center;
-  background-color: var(--color-primary);
-  border-radius: var(--border-radius-md);
-  color: var(--color-text-on-primary);
-  font-size: var(--font-size-xl);
-  margin-right: var(--space-md);
-`;
-
-const CardContent = styled.div`
-  flex: 1;
-`;
-
-const MetricTitle = styled.h4`
-  margin: 0 0 var(--space-xs) 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-`;
-
-const MetricValue = styled.div`
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  color: var(--color-text);
-`;
-
-const MetricValueWithTrend = styled(MetricValue)`
-  ${flexRow}
-  ${gap('sm')}
-`;
-
-const TrendUpIndicator = styled.span`
-  color: var(--color-success);
-  font-size: var(--font-size-sm);
-  ${flexRow}
-`;
-
-const TrendDownIndicator = styled.span`
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  ${flexRow}
-`;
-
-const DetailSection = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: var(--space-lg);
-  margin-bottom: var(--space-lg);
-  
-  @media (max-width: 992px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const DetailCard = styled(Card)`
-  padding: var(--space-lg);
-  
-  h3 {
-    margin-top: 0;
-    margin-bottom: var(--space-md);
-    font-size: var(--font-size-lg);
-  }
-`;
-
-const CategoryBreakdown = styled.div`
-  ${flexRow}
-  flex-direction: column;
-  gap: var(--space-md);
-`;
-
-const CategoryItem = styled.div`
-  width: 100%;
-`;
-
-const CategoryName = styled.div`
-  margin-bottom: var(--space-xs);
-  font-weight: 500;
-`;
-
-const CategoryScoreWrapper = styled.div`
-  ${flexRow}
-  ${gap('sm')}
-  align-items: center;
-  height: 24px;
-`;
-
-const CategoryScoreBar = styled.div<{ percentage: number }>`
-  height: 100%;
-  width: ${({ percentage }) => percentage}%;
-  background-color: var(--color-primary);
-  border-radius: var(--border-radius-sm);
-  transition: width 1s ease-out;
-`;
-
-const CategoryScore = styled.div`
-  font-weight: 600;
-  min-width: 48px;
-  text-align: right;
-`;
-
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 400px;
-  font-size: var(--font-size-lg);
-  color: var(--color-text-secondary);
-`;
 
 export default ResultsDashboard;

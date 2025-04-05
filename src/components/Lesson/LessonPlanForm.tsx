@@ -28,6 +28,7 @@ import {
 
 import { LessonContentEditor } from './LessonContentEditor';
 import styled from 'styled-components';
+import { FaTimes } from 'react-icons/fa';
 
 // Define the schema for form validation
 const lessonPlanSchema = z.object({
@@ -182,7 +183,9 @@ export const LessonPlanForm: React.FC<LessonPlanFormProps> = ({
             <ModalContent>
                 <ModalHeader>
                     <h3>{initialData ? 'Editar Plano de Aula' : 'Novo Plano de Aula'}</h3>
-                    <CloseButton onClick={onCancel}>×</CloseButton>
+                    <CloseButton onClick={onCancel}>
+                        <FaTimes />
+                    </CloseButton>
                 </ModalHeader>
 
                 <ModalBody>

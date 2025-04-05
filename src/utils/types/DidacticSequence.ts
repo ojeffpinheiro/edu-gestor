@@ -6,9 +6,35 @@ export type EducationLevel = 'Infantil' | 'Fundamental I' | 'Fundamental II' | '
 
 export type SequenceStatus = 'draft' | 'active' | 'completed';
 
+export type StageType = {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  status: 'draft' | 'active' | 'completed';
+  type: 'aula' | 'atividade' | 'outro' | 'bncc' | 'objective';
+  objectives: string[];
+  skills: string[];
+  evaluationCriteria: string[];
+  methodologies: string[];
+  bnccCodes: string[];
+  prerequisites: string[];
+  comments: string[];
+  attachments: string[];
+  estimatedTime: number;
+  difficulty: 'easy' | 'medium' | 'hard';
+  resources: string[];
+  activities: string[];
+  contentExplanation: string;
+  evaluationType: string;
+  evaluationMethod: string;
+  evaluationWeight: number;
+  evaluationNotes: string;
+};
+
+
 export interface DidacticSequence {
   id: string;
-  // Informações Básicas
   title: string;
   discipline: DisciplineType;
   author: string;
@@ -25,6 +51,9 @@ export interface DidacticSequence {
   
   // Objetivos
   objectives: string[];
+  
+  // Etapas
+  stages: StageType[];
   
   // Metadados
   createdAt: string;
@@ -68,4 +97,24 @@ export interface LessonPlan {
   };
   createdAt: string;
   updatedAt: string;
+}
+
+export interface SequenceFormData {
+  id: string;
+  title: string;
+  thematicAxis: string;
+  sequence: string;
+  educationLevel: string;
+  discipline: string;
+  author: string;
+  workload: number;
+  overview: string;
+  lessonsCount: number;
+  skills: string[];
+  objectives: string[];
+  bnccCodes: string[];
+  stages: StageType[];
+  createdAt: string;
+  updatedAt: string;
+  status: SequenceStatus;
 }

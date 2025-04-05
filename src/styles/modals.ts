@@ -54,7 +54,6 @@ export const ModalHeader = styled.div`
 `;
 
 export const ModalBody = styled.div`
-    padding: var(--space-lg, 1.5rem);
     overflow-y: auto;
     flex: 1;
     animation: ${slideIn} 0.3s ease-out;
