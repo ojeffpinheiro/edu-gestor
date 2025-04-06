@@ -26,6 +26,28 @@ const shake = keyframes`
   20%, 40%, 60%, 80% { transform: translateX(5px); }
 `;
 
+const cardAppear = keyframes`
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+`;
+
+const slideUp = keyframes`
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
+
 const cardHoverTransition = 'transform 0.3s ease, box-shadow 0.3s ease';
 
-export { fadeIn, slideIn, pulse, shake, cardHoverTransition };
+export { fadeIn, slideIn, pulse, shake, cardHoverTransition, cardAppear, slideUp };

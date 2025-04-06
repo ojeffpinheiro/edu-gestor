@@ -5,6 +5,20 @@ interface RubricFormProps {
     onTitleChange: (title: string) => void;
 }
 
+interface CriterionFormProps {
+    criterion: {
+        id: string;
+        description: string;
+        weight: number;
+        levels: {
+            score: number;
+            description: string;
+        }[];
+    };
+    onUpdate: (criterion: any) => void;
+    onCancel: () => void;
+}
+
 const RubricForm: React.FC<RubricFormProps> = ({ title, onTitleChange }) => {
     return (
         <div className="rubric-form">
@@ -20,20 +34,6 @@ const RubricForm: React.FC<RubricFormProps> = ({ title, onTitleChange }) => {
         </div>
     );
 };
-
-interface CriterionFormProps {
-    criterion: {
-        id: string;
-        description: string;
-        weight: number;
-        levels: {
-            score: number;
-            description: string;
-        }[];
-    };
-    onUpdate: (criterion: any) => void;
-    onCancel: () => void;
-}
 
 const CriterionForm: React.FC<CriterionFormProps> = ({
     criterion,

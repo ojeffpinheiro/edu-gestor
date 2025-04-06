@@ -128,8 +128,8 @@ export const LinkButton = styled.button`
 
 // Botão de ícone
 export const IconButton = styled.button`
-    width: 40px;
-    height: 40px;
+    width: 2.7rem;
+    height: 2.7rem;
     border-radius: var(--border-radius-full);
     display: flex;
     align-items: center;

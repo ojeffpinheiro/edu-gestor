@@ -12,15 +12,16 @@ import { GlobalStyles } from './styles/global';
 // import DidacticSequencesPage from './pages/DidacticSequencesPage';
 // import DigitalNotebook from './pages/DigitalNotebook';
 // import EvaluationManagement from './pages/EvaluationManagement';
-import ExamManager from './pages/ExamManager';
+// import ExamManager from './pages/ExamManager';
 // import HomePage from './pages/Home';
 // import LoginPage from './pages/LoginPage/';
 // import PlanningDashboard from './pages/PlanningDashboard';
+import QuestionsManagementPage from './pages/QuestionsManagementPage';
 // import ResultsViewer from './pages/ResultsViewer';
 // import TeamManagement from './pages/TeamManagement';
 // import TeamPage from './pages/TeamPage';
 //import TestPage from './pages/TestPage';
-
+// import TopicContentManagement from './pages/TopicContentManagement';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -34,7 +35,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <ExamManager />
+          <QuestionsManagementPage />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>

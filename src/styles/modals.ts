@@ -58,6 +58,7 @@ export const ModalBody = styled.div`
     flex: 1;
     animation: ${slideIn} 0.3s ease-out;
     position: relative;
+    padding: var(--space-xl);
     
     &::-webkit-scrollbar {
         width: 8px;
