@@ -35,7 +35,7 @@ export const Section = styled.section`
 
 export const Flex = styled.div<{
   direction?: 'row' | 'column';
-  justify?: 'start' | 'end' | 'center' | 'between' | 'around';
+  justify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'space-between';
   align?: 'start' | 'end' | 'center' | 'stretch';
   gap?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   wrap?: boolean;

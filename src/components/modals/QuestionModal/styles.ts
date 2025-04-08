@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
-import { FormGroup } from '../../../styles/formControls';
-import { cardAppear, fadeIn, pulse, slideUp } from '../../../styles/animations';
+import { fadeIn, slideUp } from '../../../styles/animations';
+import Button from '../../shared/Button';
 
 export const TwoColumnLayout = styled.div`
   display: grid;
@@ -269,5 +269,107 @@ export const ImageUploadContainer = styled.div`
   
   svg {
     color: var(--color-text-third);
+  }
+`;
+
+export const StepsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--color-border-light);
+  padding-bottom: var(--space-md);
+`;
+
+export const StepItem = styled.div<{ active: boolean, completed: boolean }>`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  flex: 1;
+  
+  ${props => props.active && css`
+    color: var(--color-primary);
+    font-weight: 600;
+  `}
+  
+  ${props => props.completed && css`
+    color: var(--color-success);
+  `}
+  
+  ${props => !props.active && !props.completed && css`
+    color: var(--color-text-third);
+  `}
+  
+  &:not(:last-child):after {
+    content: '';
+    position: absolute;
+    top: 12px;
+    right: -50%;
+    width: 100%;
+    height: 2px;
+    background-color: ${props => props.completed ? 'var(--color-success)' : 'var(--color-border-light)'};
+    z-index: 1;
+  }
+`;
+
+export const StepCircle = styled.div<{ active: boolean, completed: boolean }>`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: ${props =>
+    props.active ? 'var(--color-primary)' :
+      props.completed ? 'var(--color-success)' : 'var(--color-background-secondary)'
+  };
+  color: ${props => (props.active || props.completed) ? 'white' : 'var(--color-text-third)'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-xs);
+  border: 2px solid ${props =>
+    props.active ? 'var(--color-primary)' :
+      props.completed ? 'var(--color-success)' : 'var(--color-border-light)'
+  };
+  z-index: 2;
+  transition: all 0.3s ease;
+  
+  svg {
+    font-size: 14px;
+  }
+`;
+
+export const StepLabel = styled.span`
+  font-size: var(--font-size-sm);
+  text-align: center;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+export const StepControls = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-lg);
+`;
+
+export const StepContent = styled.div`
+  animation: ${fadeIn} 0.4s ease;
+`;
+
+export const StepperButton = styled(Button)`
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
