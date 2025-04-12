@@ -60,3 +60,22 @@ export enum FormStep {
   Alternatives = 2,
   Feedback = 3
 }
+
+export interface UnitType {
+  id: string;
+  name: string;
+  symbol: string;
+  type: string;
+  description?: string;
+  baseUnit?: boolean;
+  conversionFactor?: number;
+  baseUnitId?: string;
+}
+
+export interface ConversionRelation {
+  fromUnit: string;
+  toUnit: string;
+  factor: number;
+  formula?: string;
+  description?: string;
+}

@@ -6,12 +6,13 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthContextProvider } from './contexts/AuthContext';
 
 import { GlobalStyles } from './styles/global';
+import UnitsManagement from './pages/UnitsManagement';
 
 
 // import DailyReport from './pages/DailyReport/';
 // import DidacticSequencesPage from './pages/DidacticSequencesPage';
 // import DigitalNotebook from './pages/DigitalNotebook';
-import EquationSystem from './pages/EquationSystem';
+// import EquationSystem from './pages/EquationSystem';
 // import EvaluationManagement from './pages/EvaluationManagement';
 // import ExamManager from './pages/ExamManager';
 // import HomePage from './pages/Home';
@@ -36,7 +37,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <EquationSystem />
+          <UnitsManagement />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>
