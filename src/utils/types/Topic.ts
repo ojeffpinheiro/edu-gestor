@@ -31,3 +31,14 @@ export interface FilterOptions {
   discipline: string;
   knowledgeArea: string;
 }
+
+export interface Equation {
+  id: string;
+  latex: string;
+  name: string;
+  description: string;
+  variables: Array<{ symbol: string; name: string; unit: string; }>;
+  tags: string[];
+  topics: string[];
+  createdAt: Date;
+}

@@ -42,6 +42,18 @@ export interface StepProps {
     setValidationErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
 }
 
+export interface Variable {
+  name: string;
+  min: number;
+  max: number;
+  unit: string;
+  precision: number;
+  value?: number;
+  step?: number;
+  isRandom?: boolean;
+  currentValue?: number;
+}
+
 export enum FormStep {
   Classification = 0,
   Content = 1,

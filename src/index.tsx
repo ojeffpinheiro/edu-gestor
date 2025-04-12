@@ -11,6 +11,7 @@ import { GlobalStyles } from './styles/global';
 // import DailyReport from './pages/DailyReport/';
 // import DidacticSequencesPage from './pages/DidacticSequencesPage';
 // import DigitalNotebook from './pages/DigitalNotebook';
+import EquationSystem from './pages/EquationSystem';
 // import EvaluationManagement from './pages/EvaluationManagement';
 // import ExamManager from './pages/ExamManager';
 // import HomePage from './pages/Home';
@@ -20,8 +21,8 @@ import { GlobalStyles } from './styles/global';
 // import ResultsViewer from './pages/ResultsViewer';
 // import TeamManagement from './pages/TeamManagement';
 // import TeamPage from './pages/TeamPage';
-//import TestPage from './pages/TestPage';
-import TopicContentManagement from './pages/TopicContentManagement';
+// import TestPage from './pages/TestPage';
+// import TopicContentManagement from './pages/TopicContentManagement';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -35,7 +36,7 @@ root.render(
       <AuthContextProvider>
         <QueryClientProvider client={queryClient} >
           <GlobalStyles />
-          <TopicContentManagement />
+          <EquationSystem />
         </QueryClientProvider>
       </AuthContextProvider>
     </ThemeProvider>
