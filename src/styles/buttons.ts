@@ -67,6 +67,7 @@ export const CancelButton = styled(ActionButton)`
 export const PrimaryActionButton = styled(ActionButton)`
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-hover) 100%);
     box-shadow: var(--shadow-sm);
+    max-width: 13rem;
     
     &:hover:not(:disabled) {
         box-shadow: var(--shadow-md);

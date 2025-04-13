@@ -289,7 +289,6 @@ const FormSection = styled.div`
     padding: 1.5rem;
     border: 1px solid #e5e7eb;
     border-radius: 0.5rem;
-    background-color: white;
   `;
 
 export const StageFormStyle = {
@@ -350,7 +349,6 @@ export const SequenceFormStyle = {
   `,
 
   FormStepButton: styled.button<{ $isActive: boolean; $isValid: boolean }>`
-    background: ${props => props.$isActive ? '#f0f9ff' : 'white'};
     border: 1px solid ${props => props.$isActive ? '#3b82f6' : props.$isValid ? '#10b981' : '#e5e7eb'};
     border-radius: 0.5rem;
     color: ${props => props.$isActive ? '#3b82f6' : props.$isValid ? '#10b981' : '#4b5563'};
@@ -365,7 +363,7 @@ export const SequenceFormStyle = {
     position: relative;
     
     &:hover {
-      background: ${props => props.$isActive ? '#e0f2fe' : '#f9fafb'};
+      background: ${props => props.$isActive ? 'var(--color-secondary-hover)' : 'var(--color-secondary)'};
     }
     
     .step-icon {

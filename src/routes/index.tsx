@@ -44,6 +44,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/results" element={<ResultsViewer />} />
           <Route path="/team-management" element={<TeamManagement />} />
           <Route path="/team" element={<TeamPage />} />
+          <Route path="/team/daily-report" element={<DailyReport />} />
           <Route path="/test" element={<TestPage />} />
           <Route path="/topic-content" element={<TopicContentManagement />} />
           <Route path="/not-found" element={<NotFound />} />

@@ -12,7 +12,7 @@ import TopicForm from '../../components/Topic/TopicForm';
 // Estilos específicos da página
 const PageContainer = styled.div`
   padding: var(--space-xl);
-  max-width: 1200px;
+  max-width: 95vw;
   margin: 0 auto;
 `;
 

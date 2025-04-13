@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FaClipboardList, FaChartBar, FaUsers, FaUserEdit, FaPlus } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,15 @@ import { CalendarEvent } from '../../utils/types/CalendarEvent';
 import { generateMockEvents } from '../../hooks/useCalendar';
 
 import { Container, Title, CardsContainer, Card, Header, AddButton } from './styles';
-import { ComponentWrapper, HeaderEvent, Modal, ModalContent, SectionTitle } from '../../styles/eventsStyles';
+import { ComponentWrapper, HeaderEvent, SectionTitle } from '../../styles/eventsStyles';
 import EventList from '../../components/Events/EventList';
 import EventCreation from '../../components/Events/EventCreation';
+import { ModalContainer, ModalContent } from '../../styles/modals';
 
 const TeamPage: React.FC = () => {
   const navigate = useNavigate();
+
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const [events, setEvents] = useState<CalendarEvent[]>(generateMockEvents());
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -21,6 +24,10 @@ const TeamPage: React.FC = () => {
   const handleTeamMnagement = () => {
     navigate('/team-management');
   };
+
+  const handleDailyReport = () => {
+    navigate('daily-report');
+  }
 
   // Manipulador para abrir modal de criação de evento
   const handleAddEvent = () => {
@@ -79,6 +86,15 @@ const TeamPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  useEffect(() => {
+      const handleOutsideClick = (event: MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+          handleCloseModal();
+        }
+      };
+      document.addEventListener("mousedown", handleOutsideClick);
+      return () => document.removeEventListener("mousedown", handleOutsideClick);
+    }, [isModalOpen]);
 
   return (
     <Container>
@@ -87,7 +103,7 @@ const TeamPage: React.FC = () => {
       </Header>
 
       <CardsContainer>
-        <Card>
+        <Card onClick={handleDailyReport}>
           <FaClipboardList size={40} />
           <span>Realizar Chamada</span>
         </Card>
@@ -122,8 +138,8 @@ const TeamPage: React.FC = () => {
       </ComponentWrapper>
 
       {isModalOpen && (
-        <Modal>
-          <ModalContent>
+        <ModalContainer role='dialog' aria-modal >
+          <ModalContent ref={modalRef}>
             {modalMode === 'view' ? (
               // No modo de visualização, podemos reutilizar o EventCreation com props para torná-lo somente leitura
               // ou implementar um componente de EventView específico
@@ -163,7 +179,7 @@ const TeamPage: React.FC = () => {
               />
             )}
           </ModalContent>
-        </Modal>
+        </ModalContainer>
       )}
     </Container>
   );

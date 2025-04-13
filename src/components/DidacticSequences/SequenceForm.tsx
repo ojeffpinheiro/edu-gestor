@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -136,13 +136,15 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
     trigger
   } = methods;
 
+  const modalRef = useRef<HTMLDivElement>(null);
+
   // Icons for each form section
   const sectionIcons = useMemo(() => ({
-    [FormSectionOptions.BASIC_INFO]: "📋",
-    [FormSectionOptions.OBJECTIVES]: "🎯",
-    [FormSectionOptions.SKILLS]: "🧠",
-    [FormSectionOptions.BNCC_CODES]: "📚",
-    [FormSectionOptions.STAGES]: "🧩"
+    [FormSectionOptions.BASIC_INFO]: "FaFileAlt",
+    [FormSectionOptions.OBJECTIVES]: "FaBullseye",
+    [FormSectionOptions.SKILLS]: "FaBrain",
+    [FormSectionOptions.BNCC_CODES]: "FaCubes",
+    [FormSectionOptions.STAGES]: "FaPuzzlePiece"
   }), []);
 
   // Descriptions for each section
@@ -305,14 +307,28 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
     return Math.round(((currentIndex + 1) / sections.length) * 100);
   };
 
+   /**
+      * Fecha o modal ao clicar fora dele
+    */
+    useEffect(() => {
+      const handleOutsideClick = (event: MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+          onCancel();
+        }
+      };
+      document.addEventListener("mousedown", handleOutsideClick);
+      return () => document.removeEventListener("mousedown", handleOutsideClick);
+    }, [onCancel]);
+  
+
   // Check if form has validation errors
   const hasErrors = useMemo(() => {
     return Object.keys(errors).length > 0;
   }, [errors]);
 
   return (
-    <ModalContainer>
-      <ModalContent>
+    <ModalContainer role='dialog' aria-modal='true' >
+      <ModalContent ref={modalRef} >
         <ModalHeader>
           <h3>{initialData ? 'Editar Sequência' : 'Nova Sequência'}</h3>
           <CloseButton onClick={handleCloseModal} aria-label="Fechar modal">

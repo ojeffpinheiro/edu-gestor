@@ -95,7 +95,7 @@ const EmptyState = styled.div`
   padding: 3rem;
   color: #666;
   font-size: 1rem;
-  background-color: #f9f9f9;
+  background-color: var(--color-background-third);
   border-radius: 8px;
   margin-bottom: 2rem;
 `;

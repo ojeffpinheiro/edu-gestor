@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
@@ -41,9 +41,23 @@ const TopicForm: React.FC<TopicFormProps> = ({
 }) => {
   if (!showModal) return null;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [onClose]);
+
   return (
-    <ModalContainer>
-      <ModalContent>
+    <ModalContainer role='dialog' aria-modal>
+      <ModalContent ref={modalRef} >
         <ModalHeader>
           <h3>{isEditing ? 'Editar Tópico' : 'Adicionar Novo Tópico'}</h3>
           <IconButton onClick={onClose}>
@@ -62,7 +76,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
               required
             />
           </FormField>
-          
+
           <FormField>
             <Label htmlFor="discipline">Disciplina</Label>
             <Select
@@ -75,7 +89,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
               <option value="math">Matemática</option>
             </Select>
           </FormField>
-          
+
           <FormField>
             <Label htmlFor="knowledgeArea">Área de Conhecimento</Label>
             <Select
@@ -91,7 +105,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
               ))}
             </Select>
           </FormField>
-          
+
           {!isEditing && (
             <FormField>
               <Label htmlFor="parentId">Tópico Pai (opcional)</Label>

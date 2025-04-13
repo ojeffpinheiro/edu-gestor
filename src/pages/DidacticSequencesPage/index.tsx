@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 import { useDidacticSequences } from '../../hooks/useDidacticSequences';
 
@@ -8,11 +9,28 @@ import { DidacticSequence, DisciplineType } from '../../utils/types/DidacticSequ
 import SequenceForm from '../../components/DidacticSequences/SequenceForm';
 
 import { Table, TableHeader, TableRow, Td } from '../../styles/table';
-
-import { ActionsContainer, BadgeContainer, CodeBadge, EmptyState, ErrorMessage, FilterButton, FilterContainer, IconButton, LoadingMessage, PageContainer, PageHeader, StatusBadge, Title } from './styled'
 import { Button } from '../../styles/buttons';
 
+import { 
+  ActionsContainer,
+  BadgeContainer,
+  CodeBadge,
+  EmptyState,
+  ErrorMessage,
+  FilterButton,
+  FilterContainer,
+  IconButton,
+  LoadingMessage,
+  PageContainer,
+  PageHeader,
+  StatusBadge,
+  Title
+} from './styled'
+
+
+
 const DidacticSequencesPage: React.FC = () => {
+  const navigate = useNavigate();
   const disciplines: DisciplineType[] = ['Português', 'Matemática', 'História', 'Geografia', 'Ciências', 'Artes', 'Educação Física'];
   const [showForm, setShowForm] = useState(false);
   const [editingSequence, setEditingSequence] = useState<DidacticSequence | null>(null);
@@ -64,6 +82,7 @@ const DidacticSequencesPage: React.FC = () => {
   const handleViewDetails = (sequence: DidacticSequence) => {
     // Implement view details functionality
     console.log('View details for sequence:', sequence);
+    navigate('/topic-content')
   };
   
   return (
