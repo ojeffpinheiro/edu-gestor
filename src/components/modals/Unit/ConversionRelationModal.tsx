@@ -112,8 +112,8 @@ const ConversionRelationModal: React.FC<ConversionRelationModalProps> = ({
   }, [units]);
 
   /**
-       * Fecha o modal ao clicar fora dele
-       */
+    * Fecha o modal ao clicar fora dele
+  */
   useEffect(() => {
     const handleOutsideClick = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {

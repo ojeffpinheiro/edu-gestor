@@ -1,6 +1,8 @@
 import React from "react";
 import { FaUsers } from "react-icons/fa";
-import { useTheme } from "../../contexts/ThemeContext";
+import { useNavigate } from "react-router-dom";
+
+import { classes } from "../../mocks/classesData";
 
 import {
   Container,
@@ -12,36 +14,16 @@ import {
   ClassDescription,
 } from "./styles";
 
-const classes = [
-  { id: 1, name: "Turma 1A", description: "Matemática - 9º Ano" },
-  { id: 2, name: "Turma 2B", description: "História - 7º Ano" },
-  { id: 3, name: "Turma 3C", description: "Física - 2º Ano EM" }, 
-  { id: 4, name: "Turma 1A", description: "Matemática - 9º Ano" },
-  { id: 5, name: "Turma 2B", description: "História - 7º Ano" },
-  { id: 6, name: "Turma 3C", description: "Física - 2º Ano EM" },  
-  { id: 7, name: "Turma 1A", description: "Matemática - 9º Ano" },
-  { id: 8, name: "Turma 2B", description: "História - 7º Ano" },
-  { id: 9, name: "Turma 3C", description: "Física - 2º Ano EM" },
-  { id: 10, name: "Turma 3C", description: "Física - 2º Ano EM" },  
-  { id: 11, name: "Turma 1A", description: "Matemática - 9º Ano" },
-  { id: 12, name: "Turma 2B", description: "História - 7º Ano" },
-  { id: 13, name: "Turma 3C", description: "Física - 2º Ano EM" },
-  { id: 14, name: "Turma 3C", description: "Física - 2º Ano EM" },
-  { id: 15, name: "Turma 3C", description: "Física - 2º Ano EM" },  
-  { id: 16, name: "Turma 1A", description: "Matemática - 9º Ano" },
-  { id: 17, name: "Turma 2B", description: "História - 7º Ano" },
-  { id: 18, name: "Turma 3C", description: "Física - 2º Ano EM" }
-];
-
 const DigitalNotebook: React.FC = () => {
-  const theme = useTheme();
+  const navigate = useNavigate();
   
   const handleClassClick = (classId: number) => {
     console.log(`Clicked on class ${classId}`);
+    navigate('/team-management');
   };
 
   return (
-    <Container theme={theme}>
+    <Container>
       <Title>Caderno Digital</Title>
 
       <ClassList>

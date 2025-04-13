@@ -28,6 +28,7 @@ const StudentTable: React.FC<StudentTableProps> = ({ students, onEdit, onDelete 
                     <TableRow>
                         <TableHeader>Nome</TableHeader>
                         <TableHeader>Email</TableHeader>
+                        <TableHeader>Frequência</TableHeader>
                         <TableHeader>Ações</TableHeader>
                     </TableRow>
                 </thead>

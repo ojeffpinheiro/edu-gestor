@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '../../styles/buttons';
 
 export const Container = styled.div`
   display: flex;
@@ -7,6 +8,28 @@ export const Container = styled.div`
   padding: var(--space-lg);
   background: var(--color-background);
   min-height: 100vh;
+  font-family: var(--font-family);
+`;
+
+export const Header = styled.div`
+display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+`;
+
+export const AddButton = styled(Button)`
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  font-weight: 500;
+  
+  &:hover {
+    background-color: var(--color-primary-hover);
+  }
 `;
 
 export const Title = styled.h1`

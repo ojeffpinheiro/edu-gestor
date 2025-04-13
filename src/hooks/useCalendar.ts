@@ -134,3 +134,69 @@ export const useCalendar = () => {
     filterByType
   };
 };
+
+// Dados mockados para eventos
+export const generateMockEvents = (): CalendarEvent[] => {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const yesterday = new Date(now);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const nextWeek = new Date(now);
+  nextWeek.setDate(nextWeek.getDate() + 7);
+  const lastWeek = new Date(now);
+  lastWeek.setDate(lastWeek.getDate() - 7);
+
+  return [
+    {
+      id: "event1",
+      title: "Reunião de Planejamento",
+      description: "Discussão sobre os próximos projetos e distribuição de tarefas para o trimestre.",
+      start: yesterday,
+      end: yesterday,
+      type: "meeting",
+      isAllDay: false,
+      location: "Sala de Conferências A"
+    },
+    {
+      id: "event2",
+      title: "Aula de Matemática",
+      description: "Introdução às funções quadráticas e suas aplicações.",
+      start: now,
+      end: new Date(now.getTime() + 2 * 60 * 60 * 1000), // 2 horas depois
+      type: "class",
+      isAllDay: false,
+      location: "Sala 305"
+    },
+    {
+      id: "event3",
+      title: "Entrega de Relatório",
+      description: "Prazo final para entrega do relatório trimestral.",
+      start: tomorrow,
+      end: tomorrow,
+      type: "deadline",
+      isAllDay: true,
+      location: ""
+    },
+    {
+      id: "event4",
+      title: "Feriado Municipal",
+      description: "Aniversário da cidade.",
+      start: nextWeek,
+      end: nextWeek,
+      type: "holiday",
+      isAllDay: true,
+      location: ""
+    },
+    {
+      id: "event5",
+      title: "Workshop de Design",
+      description: "Introdução às ferramentas de design UI/UX e práticas modernas.",
+      start: lastWeek,
+      end: lastWeek,
+      type: "other",
+      isAllDay: false,
+      location: "Laboratório de Design"
+    }
+  ];
+};

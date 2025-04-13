@@ -10,6 +10,18 @@ import {
   FaCalendar
 } from 'react-icons/fa';
 
+import { formatDate } from '../../utils/dateFormatter';
+import { 
+  notificacoes, 
+  planejamentoPorSerie, 
+  planejamentoPorTurma, 
+  proximasAtividades, 
+  resumoPorDisciplina, 
+  resumoPorTurma
+ } from '../../mocks/planner';
+
+import { Table, TableHeader, TableRow, Td } from '../../styles/table';
+
 import { 
   DashboardContainer, 
   GridSection, 
@@ -18,16 +30,14 @@ import {
   PlanningCardWrapper, 
   ProgressBar, 
   QuickAccessCard, 
+  QuickHeader, 
   SectionCard, 
   SectionHeader, 
   TabButton, 
   TabButtons } 
 from './styles'
-import { Table, TableHeader, TableRow, Td } from '../../styles/table';
+import { useNavigate } from 'react-router-dom';
 
-// Utility Functions
-const formatDate = (dateString: string) =>
-  new Date(dateString).toLocaleDateString('pt-BR');
 
 const calculatePercentages = (total: number, completed: number, partial?: number) => {
   const completePercent = Math.round((completed / total) * 100);
@@ -103,79 +113,17 @@ const DataTable = <T extends Record<string, any>>({ data, columns }: {
 // Main Dashboard Component
 const PlanningDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'series' | 'turma'>('series');
+  const navigate = useNavigate();
 
   // Centralized Data Management
   const dashboardData = {
-    planejamentoPorSerie: [
-      { serie: '6º ano', completo: 85, parcial: 10, pendente: 5 },
-      { serie: '7º ano', completo: 90, parcial: 5, pendente: 5 },
-      { serie: '8º ano', completo: 80, parcial: 15, pendente: 5 },
-      { serie: '9º ano', completo: 95, parcial: 5, pendente: 0 }
-    ],
-    planejamentoPorTurma: [
-      { turma: '101', completo: 100, pendente: 0 },
-      { turma: '301', completo: 100, pendente: 0 },
-      { turma: '202', completo: 85, pendente: 15 },
-      { turma: '203', completo: 50, pendente: 50 },
-      { turma: '204', completo: 10, pendente: 90 }
-    ],
-    notificacoes: [
-      {
-        id: 1,
-        tipo: 'prazo',
-        mensagem: 'Entrega de notas do 1º bimestre até 15/04',
-        data: '2025-04-15'
-      },
-      {
-        id: 2,
-        tipo: 'lembrete',
-        mensagem: 'Reunião pedagógica amanhã às 14h',
-        data: '2025-03-25'
-      },
-      {
-        id: 3,
-        tipo: 'evento',
-        mensagem: 'Feira de ciências em 10 dias',
-        data: '2025-04-03'
-      }
-    ],
-    proximasAtividades: [
-      {
-        id: 1,
-        titulo: 'Avaliação de Matemática - 9º ano A',
-        data: '2025-03-26',
-        horario: '10:00'
-      },
-      {
-        id: 2,
-        titulo: 'Entrega de trabalho - 8º ano B',
-        data: '2025-03-28',
-        horario: '08:00'
-      },
-      {
-        id: 3,
-        titulo: 'Aula prática de Ciências - 7º ano C',
-        data: '2025-03-31',
-        horario: '13:30'
-      }
-    ],
-    resumoPorDisciplina: [
-      { Disciplina: 'Matemática', Turmas: 5, Aulas: 20, Planejadas: 18, Pendentes: 2 },
-      { Disciplina: 'Português', Turmas: 4, Aulas: 16, Planejadas: 16, Pendentes: 0 },
-      { Disciplina: 'Ciências', Turmas: 3, Aulas: 12, Planejadas: 10, Pendentes: 2 }
-    ],
-    resumoPorTurma: [
-      { turma: '9º ano A', disciplinas: 8, aulas: 32, planejadas: 30, pendentes: 2 },
-      { turma: '8º ano B', disciplinas: 8, aulas: 32, planejadas: 29, pendentes: 3 },
-      { turma: '7º ano C', disciplinas: 8, aulas: 32, planejadas: 28, pendentes: 4 }
-    ],
     accessCards: [
       {
         id: 1,
         titulo: 'Sequência Didática',
         icon: <FaLayerGroup size={24} />,
         color: 'var(--color-primary)',
-        link: '/sequencias'
+        link: '/didactic-sequences'
       },
       {
         id: 2,
@@ -196,14 +144,14 @@ const PlanningDashboard: React.FC = () => {
         titulo: 'Atividades e Avaliações',
         icon: <FaCheckSquare size={24} />,
         color: 'var(--color-feedback-success)',
-        link: '/atividades'
+        link: '/evaluations'
       },
       {
         id: 5,
         titulo: 'Gestão de Turmas',
         icon: <FaUsers size={24} />,
         color: 'var(--color-feedback-error)',
-        link: '/turmas'
+        link: '/digital-notebook'
       },
       {
         id: 6,
@@ -218,10 +166,14 @@ const PlanningDashboard: React.FC = () => {
   // Memoized Data for Performance
   const currentPlanningData = useMemo(() =>
     activeTab === 'series'
-      ? dashboardData.planejamentoPorSerie
-      : dashboardData.planejamentoPorTurma,
+      ? planejamentoPorSerie
+      : planejamentoPorTurma,
     [activeTab]
   );
+
+  const handleClickQuick = (link: string) => {
+    navigate(link);
+  }
 
   return (
     <DashboardContainer>
@@ -242,11 +194,12 @@ const PlanningDashboard: React.FC = () => {
             <QuickAccessCard
               key={card.id}
               $color={card.color}
+              onClick={() => handleClickQuick(card.link)}
             >
-              <div className="flex items-center gap-1rem mb-4">
+              <QuickHeader>
                 {card.icon}
                 <h3 className="ml-2 text-lg font-semibold">{card.titulo}</h3>
-              </div>
+              </QuickHeader>
               <p className="text-sm opacity-80">
                 Acesse e gerencie {card.titulo.toLowerCase()}
               </p>
@@ -298,7 +251,7 @@ const PlanningDashboard: React.FC = () => {
               </h2>
             </SectionHeader>
             <NotificationList>
-              {dashboardData.notificacoes.map(notificacao => (
+              {notificacoes.map(notificacao => (
                 <NotificationItem key={notificacao.id}>
                   <div>
                     <span className="text-sm font-medium">
@@ -320,7 +273,7 @@ const PlanningDashboard: React.FC = () => {
               </h2>
             </SectionHeader>
             <NotificationList>
-              {dashboardData.proximasAtividades.map(atividade => (
+              {proximasAtividades.map(atividade => (
                 <NotificationItem key={atividade.id}>
                   <div>
                     <span className="text-sm font-medium">
@@ -345,7 +298,7 @@ const PlanningDashboard: React.FC = () => {
               <h2 className="text-xl font-semibold">Resumo por Disciplina</h2>
             </SectionHeader>
             <DataTable
-              data={dashboardData.resumoPorDisciplina}
+              data={resumoPorDisciplina}
             />
           </SectionCard>
 
@@ -354,7 +307,7 @@ const PlanningDashboard: React.FC = () => {
               <h2 className="text-xl font-semibold">Resumo por Turma</h2>
             </SectionHeader>
             <DataTable
-              data={dashboardData.resumoPorTurma}
+              data={resumoPorTurma}
             />
           </SectionCard>
         </GridSection>

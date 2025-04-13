@@ -81,4 +81,11 @@ export const QuickAccessCard = styled.div<{ $color: string }>`
   border-radius: 0.5rem;
   background-color: var(--color-card);
   border-left: 4px solid ${({ $color }) => $color};
+  cursor: pointer;
 `;
+
+export const QuickHeader = styled.header`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+`

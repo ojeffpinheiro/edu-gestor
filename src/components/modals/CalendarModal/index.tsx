@@ -41,8 +41,8 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ events, onClose, selected
     }));
 
     /**
-         * Detecta cliques fora do modal para fechá-lo
-         */
+        * Detecta cliques fora do modal para fechá-lo
+    */
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
@@ -54,10 +54,23 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ events, onClose, selected
         return () => document.removeEventListener('mousedown', handleOutsideClick);
     }, []);
 
+    /**
+        * Fecha o modal ao clicar fora dele
+    */
+    useEffect(() => {
+        const handleOutsideClick = (event: MouseEvent) => {
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
+        document.addEventListener("mousedown", handleOutsideClick);
+        return () => document.removeEventListener("mousedown", handleOutsideClick);
+    }, [onClose]);
+
 
     return (
-        <ModalContainer>
-            <ModalContent className="large">
+        <ModalContainer role="dialog" aria-modal="true" data-testid="calendar-modal">
+            <ModalContent ref={modalRef} className="large" >
                 <ModalHeader>
                     <h3>Calendário da Turma</h3>
                     <CloseButton
