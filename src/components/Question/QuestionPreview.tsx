@@ -5,7 +5,7 @@ import { Variable } from '../../utils/types/Question';
 import { PreviewActions, PreviewContainer, PreviewHeader, PreviewTitle, QuestionContent, RenderedEquation, VariablesTable } from './QuestionPreviewStyles';
 import { Button } from '../../styles/buttons';
 import { formatUnits, parseQuestion, substituteVariables } from '../../utils/questionHelpers';
-import { Question } from '../../pages/QuestionEditor';
+import { Question } from '../../pages/Question/QuestionEditor';
 
 interface QuestionPreviewProps {
   question: Question;

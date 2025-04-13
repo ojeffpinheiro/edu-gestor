@@ -7,12 +7,12 @@ import useEvaluationForm from '../../../hooks/useEvaluationForm';
 
 import { Button, CloseButton } from '../../../styles/buttons';
 
-import BasicInfoSection from "../../BasicInfoSection";
-import ResourcesSection from "../../ResourcesSection";
-import PartsSection from "../../PartsSection";
-import EvaluationCriteriaSection from "../../EvaluationCriteriaSection";
-import EvaluationMethodSection from "../../EvaluationMethodSection";
-import CalculationSection from "../../CalculationSection";
+import BasicInfoSection from "../../Evaluation/StepForm/BasicInfoSection";
+import ResourcesSection from "../../Evaluation/StepForm/ResourcesSection";
+import PartsSection from "../../Evaluation/StepForm/PartsSection";
+import EvaluationCriteriaSection from "../../Evaluation/StepForm/EvaluationCriteriaSection";
+import EvaluationMethodSection from "../../Evaluation/StepForm/EvaluationMethodSection";
+import CalculationSection from "../../Evaluation/StepForm/CalculationSection";
 
 import {
     ErrorMessage,

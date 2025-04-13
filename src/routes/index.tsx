@@ -3,20 +3,20 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Páginas
-import DailyReport from '../pages/DailyReport';
-import DidacticSequencesPage from '../pages/DidacticSequencesPage';
-import DigitalNotebook from '../pages/DigitalNotebook';
+import DailyReport from '../pages/Team/DailyReport';
+import DidacticSequencesPage from '../pages/Planning/DidacticSequencesPage';
+import DigitalNotebook from '../pages/Planning/DigitalNotebook';
 import EquationSystem from '../pages/EquationSystem';
-import EvaluationManagement from '../pages/EvaluationManagement';
+import EvaluationManagement from '../pages/Evaluation/EvaluationManagement';
 import ExamManager from '../pages/ExamManager';
 import HomePage from '../pages/Home';
 import LoginPage from '../pages/LoginPage/indes';
 import NotFound from '../pages/NotFound';
-import PlanningDashboard from '../pages/PlanningDashboard';
-import QuestionsManagementPage from '../pages/QuestionsManagementPage';
+import PlanningDashboard from '../pages/Planning/PlanningDashboard';
+import QuestionsManagementPage from '../pages/Question/QuestionsManagementPage';
 import ResultsViewer from '../pages/ResultsViewer';
-import TeamManagement from '../pages/TeamManagement';
-import TeamPage from '../pages/TeamPage';
+import TeamManagement from '../pages/Team/TeamManagement';
+import TeamPage from '../pages/Team/TeamPage';
 import TestPage from '../pages/TestPage';
 import TopicContentManagement from '../pages/TopicContentManagement';
 import UnitsManagement from '../pages/UnitsManagement';
