@@ -48,6 +48,14 @@ const slideUp = keyframes`
   }
 `;
 
+/**
+ * Animação de rotação para o spinner de carregamento
+ */
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
 const cardHoverTransition = 'transform 0.3s ease, box-shadow 0.3s ease';
 
-export { fadeIn, slideIn, pulse, shake, cardHoverTransition, cardAppear, slideUp };
+export { fadeIn, slideIn, pulse, shake, cardHoverTransition, cardAppear, slideUp, spin };

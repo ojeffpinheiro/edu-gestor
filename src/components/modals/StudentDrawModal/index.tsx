@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from "react";
 import { FaRandom, FaTimes } from "react-icons/fa";
-import { StudentAttendance } from "../../../utils/types";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
@@ -14,6 +13,7 @@ import {
     EmptyState,
     DrawnStudentContainer
 } from "./styles";
+import { StudentAttendance } from "../../../utils/types/BasicUser";
 
 interface StudentDrawModalProps {
     students: StudentAttendance[];

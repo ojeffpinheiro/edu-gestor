@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 
-import { StudentScore, EvaluationPart } from "../../../utils/types";
-
 import { CloseButton, Button } from "../../../styles/buttons";
 import { Table, TableCell, TableHeader, TableRow } from '../../../styles/table'
 import { ModalContainer, ModalContent, ModalHeader, ModalBody, ModalFooter, } from "./styles";
+import { EvaluationPart, StudentScore } from "../../../utils/types/AssessmentEvaluation";
 
 interface RegisterScoresModalProps {
     students: { id: number; name: string }[];

@@ -32,7 +32,6 @@ export type StageType = {
   evaluationNotes: string;
 };
 
-
 export interface DidacticSequence {
   id: string;
   title: string;
@@ -117,4 +116,44 @@ export interface SequenceFormData {
   createdAt: string;
   updatedAt: string;
   status: SequenceStatus;
+}
+
+export interface Discipline {
+  id: string;
+  name: string;
+}
+
+export interface DidacticSequenceType {
+  id: string;
+  disciplineId: string;
+  title: string;
+  description: string;
+  grade: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface DidacticSequenceStage {
+  id: string;
+  sequenceId: string;
+  title: string;
+  learningObjectives: string[];
+  order: number;
+}
+
+export interface ContentSection {
+  id: string;
+  stageId: string;
+  type: 'text' | 'example' | 'solved-exercise' | 'exercise-list';
+  content: string;
+  explanation?: string;
+  order: number;
+}
+
+export interface Exercise {
+  id: string;
+  contentSectionId: string;
+  question: string;
+  solution?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
 }

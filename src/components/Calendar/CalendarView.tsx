@@ -3,7 +3,6 @@ import { Calendar, momentLocalizer, Views } from 'react-big-calendar';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import styled from 'styled-components';
 
 import DailyView from './DailyView';
 import WeeklyView from './WeeklyView';
@@ -12,102 +11,11 @@ import HolidayManager from './HolidayManager';
 import { useCalendar } from '../../hooks/useCalendar';
 import { CalendarEvent } from '../../utils/types/CalendarEvent';
 import EventCreation from '../Events/EventCreation';
+import { StyleCalendarView } from './styles';
 
 // Configure moment locale
 moment.locale('pt-br');
 const localizer = momentLocalizer(moment);
-
-const ViewToggleButton = styled.button<{ active: boolean }>`
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  background-color: ${props => props.active ? '#2196f3' : '#f5f5f5'};
-  color: ${props => props.active ? 'white' : '#666'};
-  border: 1px solid ${props => props.active ? '#2196f3' : '#ddd'};
-  margin-right: 0.5rem;
-  
-  &:hover {
-    background-color: ${props => props.active ? '#1976d2' : '#e0e0e0'};
-  }
-`;
-
-const ViewToggleContainer = styled.div`
-  display: flex;
-  margin-bottom: 1rem;
-`;
-
-const CalendarContainer = styled.div`
-  height: 80vh;
-  
-  .rbc-calendar {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
-  }
-  
-  .rbc-event {
-    background-color: #2196f3;
-  }
-  
-  .rbc-today {
-    background-color: #e3f2fd;
-  }
-  
-  .rbc-toolbar button {
-    color: #2196f3;
-  }
-  
-  .rbc-toolbar button.rbc-active {
-    background-color: #2196f3;
-    color: white;
-  }
-  
-  .holiday-event {
-    background-color: #ff9800 !important;
-    border-color: #f57c00 !important;
-  }
-`;
-
-const EventModalContainer = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-`;
-
-const EventModal = styled.div`
-  background-color: white;
-  border-radius: 8px;
-  padding: 2rem;
-  width: 500px;
-  max-width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
-`;
-
-const CalendarLayout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 1.5rem;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const SidebarContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-`;
 
 interface CalendarViewProps {
   className?: string;
@@ -120,7 +28,16 @@ const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date, end: Date } | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
 
-  const { events, isLoading, error, createEvent, updateEvent, deleteEvent } = useCalendar();
+  const { events, createEvent, updateEvent, deleteEvent } = useCalendar();
+  const { 
+    CalendarContainer, 
+    CalendarLayout, 
+    EventModal, 
+    EventModalContainer, 
+    SidebarContainer, 
+    ViewToggleButton, 
+    ViewToggleContainer
+  } = StyleCalendarView
 
   const handleViewChange = (newView: string) => {
     setView(newView);
@@ -241,7 +158,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
         </ViewToggleButton>
       </ViewToggleContainer>
 
-      < CalendarLayout >
+      <CalendarLayout >
         <CalendarContainer>
           <Calendar
             localizer={localizer}
@@ -274,13 +191,12 @@ const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
           />
         </CalendarContainer>
 
-        < SidebarContainer >
+        <SidebarContainer >
           <HolidayManager />
         </SidebarContainer>
       </CalendarLayout>
 
-      {
-        showEventModal && (
+      {showEventModal && (
           <EventModalContainer>
             <EventModal>
               <EventCreation
@@ -293,8 +209,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ className }) => {
               />
             </EventModal>
           </EventModalContainer>
-        )
-      }
+        )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 import React from "react";
-import { StudentAttendance } from "../../utils/types";
 import { Table, TableHeader, TableRow, Td } from "../../styles/table";
 
 import { AttendanceGrade } from './styles'
+import { StudentAttendance } from "../../utils/types/BasicUser";
 
 
 interface StudentsTableProps {

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaExclamationTriangle, FaCheck, FaInfoCircle, FaSort } from "react-icons/fa";
 
-import { Evaluation, EvaluationCriterion } from "../../../../utils/types";
-
 import { Input, InputRow, Label, TextArea, InputGroup } from "../../../../styles/inputs";
 import { Button, ActionButton } from "../../../../styles/buttons";
 import CollapsibleSection from "../../CollapsibleSection";
 import { AddCriterionContainer, Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, DragHandle, EmptyCriteriaState, ErrorMessage, FormActions, StatusBanner, Tooltip, WeightInput } from "./styles";
+import { EvaluationCriterion } from "../../../../utils/types/RubricCriteria";
+import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
 
 interface EvaluationCriteriaSectionProps {
 }

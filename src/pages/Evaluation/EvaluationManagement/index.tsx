@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Evaluation, StudentScore } from "../../../utils/types";
 
 import EvaluationsList from "../../../components/Evaluation/EvaluationsList";
 import EvaluationForm from "../../../components/modals/EvaluationForm";
@@ -18,6 +17,7 @@ import {
     FilterLabel,
     FilterContainer
 } from './styles';
+import { Evaluation, StudentScore } from "../../../utils/types/AssessmentEvaluation";
 
 const EvaluationManagement: React.FC = () => {
     const [isEvaluationModalOpen, setIsEvaluationModalOpen] = useState<boolean>(false);

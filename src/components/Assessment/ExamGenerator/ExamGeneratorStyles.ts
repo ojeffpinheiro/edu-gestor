@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { fadeIn, slideIn, pulse } from "../../../styles/animations";
+import { slideIn, pulse } from "../../../styles/animations";
 import { BaseCard } from "../../../styles/baseComponents";
 import { flexColumn, flexRow, spaceBetween, gap } from "../../../styles/layoutUtils";
 import { Button, PrimaryActionButton } from "../../../styles/buttons";

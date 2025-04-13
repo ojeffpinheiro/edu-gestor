@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
 
-import { CollapsibleProps } from "../../utils/types";
-
 import ReportCheckbox from "./ReportCheckbox";
 import styled from "styled-components";
+import { CollapsibleProps } from "../../utils/types/UIComponent";
 
 
 const CollapsibleSection: React.FC<CollapsibleProps> = ({

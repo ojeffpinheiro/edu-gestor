@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 
-import { EvaluationPart } from '../../../utils/types';
+import { EvaluationPart } from "../../../utils/types/AssessmentEvaluation";
+
 import { Table, TableHeader, TableRow, Td, EmptyStateMessage } from "../../../styles/table";
 import { Input, Label } from "../../../styles/inputs";
 import { Button, ActionButton } from "../../../styles/buttons";
 import { ButtonGroup, CancelButtonStyled, CloseButtonStyled, CriteriaSectionContainer, EmptyState, ErrorMessage, FeedbackContainer, FormGroup, ModalContent, ModalHeader, ModalOverlay, SectionHeader, SuccessMessage, WeightSummaryContainer, WeightWarning } from "./styles";
+
 
 // Interface para componente EditableRow
 interface EditableRowProps {

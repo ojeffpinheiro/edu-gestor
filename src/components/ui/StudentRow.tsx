@@ -1,11 +1,10 @@
 import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
-import { StudentAttendance } from "../../utils/types";
-
 import { TableCell, TableRow } from "../../styles/table";
 import { IconButton } from "../StudentTable/styles";
 import { AttendanceGrade } from "../StudentsTable/styles";
+import { StudentAttendance } from "../../utils/types/BasicUser";
 
 interface StudentRowProps {
     studentData: StudentAttendance,

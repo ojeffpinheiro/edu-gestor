@@ -1,13 +1,12 @@
 import React from 'react'
 import { SECTION_CONFIG } from "../../utils/setting";
-import { AttendanceRecord } from "../../utils/types";
-
 import { Table, TableCell, TableHeader, TableRow, EmptyStateMessage } from '../../styles/table'
 
 import AttendanceStatusBadge from './AttendanceStatusBadge';
 
 import { formatDate } from '../../utils/dateFormatter';
 import styled from 'styled-components';
+import { AttendanceRecord } from '../../utils/types/Attendance';
 
 /**
  * Calculates attendance statistics for visual feedback

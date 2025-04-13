@@ -1,4 +1,5 @@
-import { StudentData, Discipline } from "./types";
+import { StudentData } from "./types/BasicUser";
+import { Discipline } from "./types/DidacticSequence";
 
 const SECTION_CONFIG = {
     GRADES: {

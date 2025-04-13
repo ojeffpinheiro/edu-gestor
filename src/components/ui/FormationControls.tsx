@@ -1,6 +1,8 @@
 import React from 'react';
 import { Input } from '../../styles/inputs'
-import { GroupFormationState, GroupFormationType, FORMATION_CONFIG, StudentAttendance } from '../../utils/types'
+
+import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../../utils/types/GroupFormation';
+import { StudentAttendance } from '../../utils/types/BasicUser';
 
 interface FormationControlsProps {
     formationParams: GroupFormationState;

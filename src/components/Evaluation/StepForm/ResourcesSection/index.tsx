@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash } from "react-icons/fa";
 
-import { Resource } from "../../../../utils/types";
-
 import CollapsibleSection from "../../CollapsibleSection";
 
 import { CollapsibleHeader } from "../../../ui/CollapsibleComponents";
 import { AddButton, DeleteButton, EmptyMessage, FeedbackMessage, HelpText, InputContainer, ResourceItem, ResourceName, ResourcesContainer, ResourcesContent, ResourcesList, StyledInput } from "./styles";
+import { Resource } from "../../../../utils/types/Resource";
 
 
 interface ResourcesSectionProps {

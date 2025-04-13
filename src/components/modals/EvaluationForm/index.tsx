@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
 import { FaTimes, FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
-import { Evaluation, FormSectionOptions } from "../../../utils/types";
-
 import useEvaluationForm from '../../../hooks/useEvaluationForm';
 
 import { Button, CloseButton } from '../../../styles/buttons';
@@ -24,6 +22,8 @@ import {
     FormProgressIndicator,
 } from './styles';
 import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
+import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
+import { FormSectionOptions } from "../../../utils/types/FormSection";
 
 interface EvaluationFormProps {
     evaluation: Evaluation | null;

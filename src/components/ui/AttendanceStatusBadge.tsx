@@ -1,8 +1,8 @@
 import React from "react";
 
-import { AttendanceStatus } from "../../utils/types";
 import { colorPalette } from "../../styles/colors";
 import styled from "styled-components";
+import { AttendanceStatus } from "../../utils/types/Attendance";
 
 const AttendanceStatusBadge: React.FC<{ status: AttendanceStatus }> = ({ status }) => {
     const getStatusColor = () => {

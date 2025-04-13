@@ -4,14 +4,6 @@ import { FaDownload, FaTimes } from 'react-icons/fa';
 import { useExportData } from '../../../hooks/useExportData';
 import { useToast } from '../../../hooks/useToast';
 
-import {
-    Assessment,
-    ExportOptions,
-    StudentData,
-    StudentModalProps
-} from '../../../utils/types';
-
-import ErrorBoundary from '../../ui/ErrorBoundary';
 import Spinner from '../../ui/Spinner';
 import ConfirmationDialog from '../../ui/ConfirmationDialog';
 import CollapsibleSection from '../../ui/CollapsibleSection';
@@ -30,6 +22,11 @@ import {
 } from './styles';
 
 import AttendanceTable from '../../ui/AttendanceTable';
+import { ErrorBoundary } from '../../ui/ErrorBoundary';
+import { Assessment } from '../../../utils/types/AssessmentEvaluation';
+import { StudentModalProps } from '../../../utils/types/UIComponent';
+import { StudentData } from '../../../utils/types/BasicUser';
+import { ExportOptions } from '../../../utils/types/ExportReport';
 
 // Default student data for testing when no real data is available
 

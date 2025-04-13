@@ -1,7 +1,5 @@
 import React from "react";
 
-import { StudentAttendance } from "../../utils/types";
-
 import { Table, TableHeader, TableRow } from '../../styles/table'
 
 import {
@@ -9,6 +7,7 @@ import {
     EmptyState
 } from "./styles";
 import StudentRow from "../ui/StudentRow";
+import { StudentAttendance } from "../../utils/types/BasicUser";
 
 
 interface StudentTableProps {

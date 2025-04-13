@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaGripLines } from "react-icons/fa";
-import { Evaluation, EvaluationPart } from "../../../../utils/types";
 import useEvaluationForm from "../../../../hooks/useEvaluationForm";
 import { Input, InputRow, Label } from "../../../../styles/inputs";
 import { Button } from "../../../../styles/buttons";
@@ -8,6 +7,7 @@ import { CollapsibleContent, CollapsibleHeader } from "../../../ui/CollapsibleCo
 
 import CollapsibleSection from "../../CollapsibleSection";
 import { EmptyMessage, IconButton, InputContainer, PartControls, PartHeader, PartItem, PartName, PartsList, SectionTitle, WeightBadge } from "./styles";
+import { Evaluation, EvaluationPart } from "../../../../utils/types/AssessmentEvaluation";
 
 interface PartsSectionProps {
     parts: EvaluationPart[];

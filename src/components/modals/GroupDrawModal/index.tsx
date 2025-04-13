@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { FaRandom, FaUsers, FaTimes, FaCheckCircle } from "react-icons/fa";
 
-import { GroupFormationModalProps, GroupFormationType, FORMATION_CONFIG } from '../../../utils/types'
 import { validateFormationParams } from '../../../utils/groupFormationValidators'
 import { createStudentGroups } from '../../../services/groupFormationService'
 import { useFormationState } from '../../../hooks/useFormationState'
@@ -24,6 +23,7 @@ import {
     RadioOption,
     LoadingIndicator
 } from './styles';
+import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
 
 /**
  * Modal de formação de grupos aleatórios de estudantes

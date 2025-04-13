@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   format,
   addMonths,
@@ -11,13 +10,14 @@ import {
   eachDayOfInterval,
   isSameMonth,
   isSameDay,
-  isToday
+  isToday,
+  isValid,
+  Locale
 } from 'date-fns';
-
 import { ptBR } from 'date-fns/locale';
 
+// Importações dos componentes estilizados
 import {
-  CalendarContainer,
   CalendarHeader,
   MonthDisplay,
   NavigationButtons,
@@ -25,127 +25,265 @@ import {
   WeekdaysRow,
   WeekdayLabel,
   DaysGrid,
-  DayCell,
   DayCellContent,
   EventIndicator,
   CalendarFooter,
   TodayButton
 } from './styles';
 
-interface Event {
+// Constantes
+const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
+
+// Tipos
+export interface CalendarEvent {
+  id: string;
   date: Date;
   title: string;
-}
-interface Props {
-  onSelectDate?: (date: Date) => void;
-  initialSelectedDate?: Date;
-  events?: Event[];
-  minSelectableDate?: Date;
-  maxSelectableDate?: Date;
-  className?: string;
+  type?: 'default' | 'meeting' | 'deadline' | 'holiday' | 'personal';
+  color?: string;
 }
 
-const Calendar: React.FC<Props> = ({
+export interface CalendarProps {
+  /** Função chamada quando uma data é selecionada */
+  onSelectDate?: (date: Date) => void;
+  /** Data inicialmente selecionada */
+  initialSelectedDate?: Date;
+  /** Lista de eventos para mostrar no calendário */
+  events?: CalendarEvent[];
+  /** Data mínima selecionável */
+  minSelectableDate?: Date;
+  /** Data máxima selecionável */
+  maxSelectableDate?: Date;
+  /** Classes CSS adicionais */
+  className?: string;
+  /** Locale para formatação de datas (padrão: ptBR) */
+  locale?: Locale;
+  /** Função para formatar a exibição do mês e ano (padrão: 'MMMM yyyy') */
+  monthYearFormat?: string;
+  /** Indica se o botão "Hoje" deve ser exibido */
+  showTodayButton?: boolean;
+}
+
+/**
+ * Componente de calendário com seleção de data e exibição de eventos
+ */
+const Calendar: React.FC<CalendarProps> = ({
   onSelectDate,
   initialSelectedDate,
   events = [],
   minSelectableDate,
   maxSelectableDate,
-  className
+  className,
+  locale = ptBR,
+  monthYearFormat = 'MMMM yyyy',
+  showTodayButton = true
 }) => {
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(initialSelectedDate || new Date());
+  // Validação da data inicial
+  const validInitialDate = useMemo(() => {
+    if (!initialSelectedDate || !isValid(initialSelectedDate)) {
+      return new Date();
+    }
+    return initialSelectedDate;
+  }, [initialSelectedDate]);
 
+  // Estados
+  const [currentMonth, setCurrentMonth] = useState<Date>(validInitialDate);
+  const [selectedDate, setSelectedDate] = useState<Date>(validInitialDate);
+
+  // Sincronizar com a data inicial quando ela mudar
   useEffect(() => {
-    if (initialSelectedDate) {
+    if (initialSelectedDate && isValid(initialSelectedDate)) {
       setSelectedDate(initialSelectedDate);
       setCurrentMonth(initialSelectedDate);
     }
   }, [initialSelectedDate]);
 
-  const handleDateClick = (day: Date) => {
+  // Verificar se uma data está desabilitada
+  const isDateDisabled = useCallback((date: Date): boolean => {
+    if (!isValid(date)) return true;
+    
+    const isBeforeMinDate = minSelectableDate && date < minSelectableDate;
+    const isAfterMaxDate = maxSelectableDate && date > maxSelectableDate;
+    
+    return Boolean(isBeforeMinDate || isAfterMaxDate);
+  }, [minSelectableDate, maxSelectableDate]);
+
+  // Verificar se um dia tem eventos
+  const getDayEvents = useCallback((day: Date): CalendarEvent[] => {
+    return events.filter(event => isSameDay(event.date, day));
+  }, [events]);
+
+  // Manipuladores de eventos
+  const handleDateClick = useCallback((day: Date) => {
     if (!isDateDisabled(day) && isSameMonth(day, currentMonth)) {
       setSelectedDate(day);
-      onSelectDate?.(day);
+      if (onSelectDate) {
+        onSelectDate(day);
+      }
     }
-  };
+  }, [isDateDisabled, currentMonth, onSelectDate]);
 
-  const nextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
-  const prevMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+  const handleNextMonth = useCallback(() => {
+    setCurrentMonth(prevMonth => addMonths(prevMonth, 1));
+  }, []);
 
-  const goToToday = () => {
+  const handlePrevMonth = useCallback(() => {
+    setCurrentMonth(prevMonth => subMonths(prevMonth, 1));
+  }, []);
+
+  const handleGoToToday = useCallback(() => {
     const today = new Date();
     setCurrentMonth(today);
     setSelectedDate(today);
-    onSelectDate?.(today);
-  };
+    if (onSelectDate) {
+      onSelectDate(today);
+    }
+  }, [onSelectDate]);
 
-  const hasEvent = (day: Date) => events.some(event => isSameDay(event.date, day));
-
-  const isDateDisabled = (day: Date) =>
-    (minSelectableDate && day < minSelectableDate) ||
-    (maxSelectableDate && day > maxSelectableDate);
-
-  const renderHeader = () => (
+  // Renderizar o cabeçalho do calendário
+  const renderHeader = useCallback(() => (
     <CalendarHeader>
-      <MonthDisplay>{format(currentMonth, 'MMMM yyyy', { locale: ptBR })}</MonthDisplay>
+      <MonthDisplay>
+        {format(currentMonth, monthYearFormat, { locale })}
+      </MonthDisplay>
       <NavigationButtons>
-        <NavButton onClick={prevMonth} aria-label="Mês anterior">&lt;</NavButton>
-        <NavButton onClick={nextMonth} aria-label="Próximo mês">&gt;</NavButton>
+        <NavButton 
+          onClick={handlePrevMonth} 
+          aria-label="Mês anterior"
+        >
+          &lt;
+        </NavButton>
+        <NavButton 
+          onClick={handleNextMonth} 
+          aria-label="Próximo mês"
+        >
+          &gt;
+        </NavButton>
       </NavigationButtons>
     </CalendarHeader>
-  );
+  ), [currentMonth, handleNextMonth, handlePrevMonth, locale, monthYearFormat]);
 
-  const renderWeekDays = () => (
+  // Renderizar os dias da semana
+  const renderWeekDays = useCallback(() => (
     <WeekdaysRow>
-      {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"].map(day => (
+      {WEEKDAYS.map(day => (
         <WeekdayLabel key={day}>{day}</WeekdayLabel>
       ))}
     </WeekdaysRow>
-  );
+  ), []);
 
-  const renderDays = () => {
+  // Calcular os dias a serem renderizados
+  const daysToRender = useMemo(() => {
     const monthStart = startOfMonth(currentMonth);
     const monthEnd = endOfMonth(monthStart);
-    const startDate = startOfWeek(monthStart);
-    const endDate = endOfWeek(monthEnd);
+    const calendarStart = startOfWeek(monthStart);
+    const calendarEnd = endOfWeek(monthEnd);
 
-    const days = eachDayOfInterval({ start: startDate, end: endDate });
+    return eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+  }, [currentMonth]);
 
+  // Renderizar a grade de dias
+  const renderDays = useCallback(() => {
     return (
       <DaysGrid>
-        {days.map(day => {
-          const isCurrentMonth = isSameMonth(day, currentMonth);
-          const isSelected = isSameDay(day, selectedDate);
-          const dayHasEvent = hasEvent(day);
-          const disabled = isDateDisabled(day);
+        {daysToRender.map(day => {
+          const isCurrentMonthDay = isSameMonth(day, currentMonth);
+          const isSelectedDay = isSameDay(day, selectedDate);
+          const isTodayDay = isToday(day);
+          const dayEvents = getDayEvents(day);
+          const hasEvents = dayEvents.length > 0;
+          const isDisabled = isDateDisabled(day) || !isCurrentMonthDay;
+
+          // Interface para as props do DayCell
+          interface DayCellProps {
+            isToday: boolean;
+            isSelected: boolean;
+            isOutsideMonth: boolean;
+            disabled: boolean;
+            onClick: () => void;
+            children: React.ReactNode;
+            [key: string]: any;
+          }
+
+          // Componente de célula do dia
+          const DayCell = ({ 
+            isToday, 
+            isSelected, 
+            isOutsideMonth, 
+            disabled,
+            onClick,
+            children,
+            ...props 
+          }: DayCellProps) => (
+            <button
+              type="button"
+              className={`
+                day-cell
+                ${isToday ? 'is-today' : ''}
+                ${isSelected ? 'is-selected' : ''}
+                ${isOutsideMonth ? 'is-outside-month' : ''}
+                ${disabled ? 'is-disabled' : ''}
+              `}
+              disabled={disabled}
+              onClick={onClick}
+              {...props}
+            >
+              {children}
+            </button>
+          );
 
           return (
             <DayCell
               key={day.toString()}
-              isToday={isToday(day)}
-              isSelected={isSelected}
-              isOutsideMonth={!isCurrentMonth}
-              disabled={disabled || !isCurrentMonth}
+              isToday={isTodayDay}
+              isSelected={isSelectedDay}
+              isOutsideMonth={!isCurrentMonthDay}
+              disabled={isDisabled}
               onClick={() => handleDateClick(day)}
-              aria-label={format(day, 'PPP', { locale: ptBR })}
-              aria-selected={isSelected}
+              aria-label={format(day, 'PPP', { locale })}
+              aria-selected={isSelectedDay}
+              aria-disabled={isDisabled}
             >
               <DayCellContent>
                 {format(day, 'd')}
-                {dayHasEvent && <EventIndicator />}
+                {hasEvents && <EventIndicator title={`${dayEvents.length} eventos`} />}
               </DayCellContent>
             </DayCell>
           );
         })}
       </DaysGrid>
     );
-  };
+  }, [
+    currentMonth, 
+    daysToRender, 
+    getDayEvents, 
+    handleDateClick, 
+    isDateDisabled, 
+    locale, 
+    selectedDate
+  ]);
 
-  const renderFooter = () => (
-    <CalendarFooter>
-      <TodayButton onClick={goToToday}>Hoje</TodayButton>
-    </CalendarFooter>
+  // Renderizar o rodapé do calendário
+  const renderFooter = useCallback(() => {
+    if (!showTodayButton) return null;
+    
+    return (
+      <CalendarFooter>
+        <TodayButton 
+          onClick={handleGoToToday} 
+          aria-label="Ir para hoje"
+        >
+          Hoje
+        </TodayButton>
+      </CalendarFooter>
+    );
+  }, [handleGoToToday, showTodayButton]);
+
+  // Componente Container com fallback
+  const CalendarContainer: React.FC<React.PropsWithChildren<{ className?: string }>> = ({ className, children }) => (
+    <div className={`calendar-container ${className || ''}`}>
+      {children}
+    </div>
   );
 
   return (

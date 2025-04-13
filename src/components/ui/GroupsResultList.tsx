@@ -1,8 +1,8 @@
 import React from 'react';
 import { FaUsers } from "react-icons/fa";
 
-import { StudentAttendance } from '../../utils/types'
 import styled from 'styled-components';
+import { StudentAttendance } from '../../utils/types/BasicUser';
 
 interface GroupsResultListProps {
     studentGroups: StudentAttendance[][];

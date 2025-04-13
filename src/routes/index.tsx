@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Páginas
+
 import DailyReport from '../pages/Team/DailyReport';
 import DidacticSequencesPage from '../pages/Planning/DidacticSequencesPage';
 import DigitalNotebook from '../pages/Planning/DigitalNotebook';
@@ -21,6 +22,7 @@ import TestPage from '../pages/TestPage';
 import TopicContentManagement from '../pages/TopicContentManagement';
 import UnitsManagement from '../pages/UnitsManagement';
 import HomeTest from '../pages/HomeTest';
+import Calendar from '../components/Calendar';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -31,6 +33,7 @@ const AppRoutes: React.FC = () => {
         
         {/* Rotas protegidas */}
           <Route path='/' index element={<HomeTest />} />
+          <Route path="/calendar" element={<Calendar />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/units" element={<UnitsManagement />} />
           <Route path="/daily-report" element={<DailyReport />} />

@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { FiInfo, FiCalendar, FiBook, FiClipboard } from "react-icons/fi";
 
-import { Evaluation, EvaluationType } from "../../../../utils/types";
-
 import { initializeEmptyEvaluation } from "../../../../hooks/useEvaluationForm";
 
 import { Label } from "../../../../styles/inputs";
@@ -22,6 +20,7 @@ import {
     StyledSelect, 
     StyledTextArea
  } from './styles'
+import { Evaluation, EvaluationType } from "../../../../utils/types/AssessmentEvaluation";
 
 interface BasicInfoSectionProps {
     evaluationData: Evaluation | null;

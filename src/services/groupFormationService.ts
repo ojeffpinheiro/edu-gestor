@@ -1,6 +1,6 @@
-import { GroupFormationState, GroupFormationType, StudentAttendance  } from '../utils/types'
-
 import { distributeStudentsIntoGroups } from '../hooks/useRandomSelection';
+import { StudentAttendance } from '../utils/types/BasicUser';
+import { GroupFormationState, GroupFormationType } from '../utils/types/GroupFormation';
 
 /**
  * Distribui os estudantes em grupos baseado nos parâmetros selecionados

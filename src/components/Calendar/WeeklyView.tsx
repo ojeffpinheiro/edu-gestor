@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from '../../utils/types/CalendarEvent';
+import { ErrorBoundary } from '../ui/ErrorBoundary';
 
+// Constants
+const DAYS_IN_WEEK = 7;
+const WEEKEND_DAYS = [0, 6]; // Sunday and Saturday
+
+// Styled Components
 const WeekViewContainer = styled.div`
   height: 100%;
   border: 1px solid #e0e0e0;
@@ -44,6 +50,46 @@ const DayColumn = styled.div<{ isWeekend: boolean }>`
   }
 `;
 
+const EmptyDayMessage = styled.div`
+  color: #757575;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem 0;
+`;
+
+// Event styling by type
+const getEventStyles = (eventType?: string) => {
+  const eventStyles = {
+    class: {
+      backgroundColor: '#c8e6c9',
+      color: '#2e7d32',
+      borderLeft: '4px solid #2e7d32',
+    },
+    meeting: {
+      backgroundColor: '#bbdefb',
+      color: '#0d47a1',
+      borderLeft: '4px solid #0d47a1',
+    },
+    deadline: {
+      backgroundColor: '#ffccbc',
+      color: '#bf360c',
+      borderLeft: '4px solid #bf360c',
+    },
+    holiday: {
+      backgroundColor: '#d1c4e9',
+      color: '#4527a0',
+      borderLeft: '4px solid #4527a0',
+    },
+    default: {
+      backgroundColor: '#e1f5fe',
+      color: '#0288d1',
+      borderLeft: '4px solid #0288d1',
+    },
+  };
+
+  return eventStyles[eventType as keyof typeof eventStyles] || eventStyles.default;
+};
+
 const EventItem = styled.div<{ eventType?: string }>`
   margin: 0.25rem 0;
   padding: 0.5rem;
@@ -52,38 +98,12 @@ const EventItem = styled.div<{ eventType?: string }>`
   cursor: pointer;
   
   ${({ eventType }) => {
-    switch (eventType) {
-      case 'class':
-        return `
-          background-color: #c8e6c9;
-          color: #2e7d32;
-          border-left: 4px solid #2e7d32;
-        `;
-      case 'meeting':
-        return `
-          background-color: #bbdefb;
-          color: #0d47a1;
-          border-left: 4px solid #0d47a1;
-        `;
-      case 'deadline':
-        return `
-          background-color: #ffccbc;
-          color: #bf360c;
-          border-left: 4px solid #bf360c;
-        `;
-      case 'holiday':
-        return `
-          background-color: #d1c4e9;
-          color: #4527a0;
-          border-left: 4px solid #4527a0;
-        `;
-      default:
-        return `
-          background-color: #e1f5fe;
-          color: #0288d1;
-          border-left: 4px solid #0288d1;
-        `;
-    }
+    const styles = getEventStyles(eventType);
+    return `
+      background-color: ${styles.backgroundColor};
+      color: ${styles.color};
+      border-left: ${styles.borderLeft};
+    `;
   }}
 `;
 
@@ -94,74 +114,113 @@ const TimeLabel = styled.span`
   margin-right: 0.5rem;
 `;
 
+// Types
 interface WeeklyViewProps {
   date: Date;
   events: CalendarEvent[];
   onSelectEvent: (event: CalendarEvent) => void;
 }
 
+/**
+ * WeeklyView Component
+ * 
+ * Displays a week view of a calendar with events.
+ * 
+ * @param date - The current date
+ * @param events - List of calendar events
+ * @param onSelectEvent - Callback for when an event is selected
+ */
 const WeeklyView: React.FC<WeeklyViewProps> = ({ date, events, onSelectEvent }) => {
-  const renderWeekDays = () => {
+  // Calculate week days and associated events
+  const weekDays = useMemo(() => {
     const days = [];
     const weekStart = startOfWeek(date, { weekStartsOn: 0 });
     
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < DAYS_IN_WEEK; i++) {
       const currentDay = addDays(weekStart, i);
-      const isWeekend = [0, 6].includes(currentDay.getDay());
+      const isWeekend = WEEKEND_DAYS.includes(currentDay.getDay());
       
       const dayEvents = events.filter((event) => {
-        const eventDate = new Date(event.start);
-        return isSameDay(eventDate, currentDay);
+        try {
+          const eventDate = new Date(event.start);
+          return isSameDay(eventDate, currentDay);
+        } catch (error) {
+          console.error(`Error filtering events for ${currentDay}:`, error);
+          return false;
+        }
       });
       
-      days.push(
-        <DayColumn key={i} isWeekend={isWeekend}>
-          {dayEvents.map((event) => (
-            <EventItem 
-              key={event.id} 
-              eventType={event.type}
-              onClick={() => onSelectEvent(event)}
-            >
-              <TimeLabel>
-                {format(new Date(event.start), 'HH:mm')}
-              </TimeLabel>
-              {event.title}
-            </EventItem>
-          ))}
-        </DayColumn>
-      );
+      days.push({
+        day: currentDay,
+        isWeekend,
+        events: dayEvents
+      });
     }
     
     return days;
+  }, [date, events]);
+
+  // Render an individual event
+  const renderEvent = (event: CalendarEvent) => {
+    try {
+      return (
+        <EventItem 
+          key={event.id} 
+          eventType={event.type}
+          onClick={() => onSelectEvent(event)}
+          aria-label={`Event: ${event.title} at ${format(new Date(event.start), 'HH:mm')}`}
+        >
+          <TimeLabel>
+            {format(new Date(event.start), 'HH:mm')}
+          </TimeLabel>
+          {event.title}
+        </EventItem>
+      );
+    } catch (error) {
+      console.error(`Error rendering event ${event.id}:`, error);
+      return (
+        <EventItem 
+          key={event.id} 
+          eventType="default"
+          onClick={() => onSelectEvent(event)}
+        >
+          Error displaying event
+        </EventItem>
+      );
+    }
   };
   
-  const renderWeekHeader = () => {
-    const days = [];
-    const weekStart = startOfWeek(date, { weekStartsOn: 0 });
-    
-    for (let i = 0; i < 7; i++) {
-      const currentDay = addDays(weekStart, i);
-      const isWeekend = [0, 6].includes(currentDay.getDay());
-      
-      days.push(
-        <DayHeaderCell key={i} isWeekend={isWeekend}>
-          {format(currentDay, "EEE, d", { locale: ptBR })}
+  // Render a day column with its events
+  const renderDayColumn = ({ day, isWeekend, events }: { day: Date, isWeekend: boolean, events: CalendarEvent[] }) => (
+    <DayColumn key={day.toString()} isWeekend={isWeekend}>
+      {events.length > 0 ? (
+        events.map(event => renderEvent(event))
+      ) : (
+        <EmptyDayMessage>No events</EmptyDayMessage>
+      )}
+    </DayColumn>
+  );
+  
+  // Render the week header
+  const renderWeekHeader = () => (
+    <WeekHeader>
+      {weekDays.map(({ day, isWeekend }) => (
+        <DayHeaderCell key={day.toString()} isWeekend={isWeekend}>
+          {format(day, "EEE, d", { locale: ptBR })}
         </DayHeaderCell>
-      );
-    }
-    
-    return days;
-  };
+      ))}
+    </WeekHeader>
+  );
   
   return (
-    <WeekViewContainer>
-      <WeekHeader>
+    <ErrorBoundary fallback={<div>Error loading weekly view</div>}>
+      <WeekViewContainer data-testid="weekly-view">
         {renderWeekHeader()}
-      </WeekHeader>
-      <WeekDaysContainer>
-        {renderWeekDays()}
-      </WeekDaysContainer>
-    </WeekViewContainer>
+        <WeekDaysContainer>
+          {weekDays.map(dayData => renderDayColumn(dayData))}
+        </WeekDaysContainer>
+      </WeekViewContainer>
+    </ErrorBoundary>
   );
 };
 

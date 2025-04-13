@@ -181,8 +181,7 @@ export const ExamResults: React.FC = () => {
     // Usa o hook de resultados corretamente passando um objeto de props
     const {
         results,
-        isLoading: resultsLoading,
-        error
+        isLoading: resultsLoading
     } = useExamResults({
         examId: selectedExam,
         classId: selectedClass

@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 
-import { Evaluation } from "../../../../utils/types";
-
 import useEvaluationForm from "../../../../hooks/useEvaluationForm";
 
 import { Input, InputRow, Label, Select, TextArea } from "../../../../styles/inputs";
@@ -12,6 +10,7 @@ import { Tooltip } from "../../../ui/Tooltip";
 
 import CollapsibleSection from "../../CollapsibleSection";
 import { InputGroup } from "../../../modals/EvaluationForm/styles";
+import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
 
 interface CalculationSectionProps {
     evaluationData: Evaluation | null;

@@ -1,4 +1,4 @@
-import { StudentAttendance } from '../utils/types';
+import { StudentAttendance } from "../utils/types/BasicUser";
 
 /**
  * Realiza o sorteio de grupos com base no tamanho especificado.

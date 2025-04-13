@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import { Event, StudentAttendance } from '../../../utils/types';
-
 import { useStudents } from '../../../hooks/useStudent';
 import { drawStudent } from '../../../hooks/useRandomSelection';
 
@@ -18,6 +16,8 @@ import {
     PageContainer,
     Title
 } from './styles';
+import { StudentAttendance } from '../../../utils/types/BasicUser';
+import { Event } from '../../../utils/types/Event';
 
 const TeamManagement: React.FC = () => {
     const { studentList, formData, handleAddStudent, handleEditStudent, handleDelStudent, handleInputChange } = useStudents();

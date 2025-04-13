@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StudentAttendance } from '../utils/types'
+import { StudentAttendance } from "../utils/types/BasicUser";
 
 export const useStudents = () => {
     const [studentList, setStudentList] = useState<StudentAttendance[]>([        

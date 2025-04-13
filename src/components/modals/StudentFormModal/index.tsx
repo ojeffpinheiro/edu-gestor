@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FaUser, FaSave, FaTimes } from "react-icons/fa";
-import { StudentAttendance } from "../../../utils/types";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
@@ -17,6 +16,7 @@ import {
     Label,
     LoadingIndicator
 } from "./styles";
+import { StudentAttendance } from "../../../utils/types/BasicUser";
 
 /**
  * Interface para as propriedades do modal de estudante

@@ -1,4 +1,5 @@
-import { GroupFormationType, GroupFormationState, FORMATION_CONFIG, StudentAttendance } from '../utils/types'
+import { StudentAttendance } from "./types/BasicUser";
+import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from "./types/GroupFormation";
 
 /**
  * Valida os parâmetros antes da formação dos grupos

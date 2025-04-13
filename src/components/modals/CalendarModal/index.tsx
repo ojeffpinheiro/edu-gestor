@@ -1,8 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { FaTimes } from "react-icons/fa";
 
-import { Event } from "../../../utils/types";
-
 import Calendar from "../../../components/Calendar";
 
 import { Button, CloseButton } from '../../../styles/buttons'
@@ -16,6 +14,7 @@ import {
     TabButton,
     EventIndicator
 } from "./style";
+import { Event } from "../../../utils/types/Event";
 
 
 interface CalendarModalProps {
@@ -90,7 +89,7 @@ const CalendarModal: React.FC<CalendarModalProps> = ({ events, onClose, selected
                         <TabButton active={activeTab === 'evento'} onClick={() => onTabChange('evento')}>Eventos</TabButton>
                     </TabContainer>
 
-                    <Calendar initialSelectedDate={selectedDate} onSelectDate={onSelectDate} events={filteredEvents} className="calendar-wrapper" />
+                    {/*<Calendar initialSelectedDate={selectedDate} onSelectDate={onSelectDate} events={filteredEvents} className="calendar-wrapper" />*/}
 
                     <div className="legend" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                         <div style={{ marginRight: '1rem' }}><EventIndicator className="atividade" /> Atividades</div>

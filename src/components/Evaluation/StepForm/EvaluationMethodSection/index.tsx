@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { FaChevronDown, FaChevronUp, FaPlus, FaTrash, FaInfoCircle } from "react-icons/fa";
 
-import { Evaluation, EvaluationCriteria } from "../../../../utils/types";
-
 import CollapsibleSection from "../../CollapsibleSection";
 import { Tooltip } from "../../../ui/Tooltip";
 
@@ -11,6 +9,8 @@ import { Input, InputRow, Label, TextArea } from "../../../../styles/inputs";
 import { CollapsibleContent, CollapsibleHeader } from "../../../ui/CollapsibleComponents";
 import { EmptyStateMessage } from "../../../../styles/table";
 import { CriteriaActions, CriteriaCard, CriteriaHeader, CriteriaTitle, DeleteButton, FormFeedback, TotalWeightDisplay, WeightBadge } from "./styles";
+import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
+import { EvaluationCriteria } from "../../../../utils/types/RubricCriteria";
 
 interface EvaluationCriteriaSectionProps {
     evaluation: Evaluation | null;
