@@ -1,3 +1,5 @@
+import { Event } from "../utils/types/Event";
+
 const planejamentoPorSerie = [
     { serie: '6º ano', completo: 85, parcial: 10, pendente: 5 },
     { serie: '7º ano', completo: 90, parcial: 5, pendente: 5 },
@@ -60,17 +62,42 @@ const resumoPorDisciplina = [
     { Disciplina: 'Ciências', Turmas: 3, Aulas: 12, Planejadas: 10, Pendentes: 2 }
 ];
 
-const  resumoPorTurma = [
+const resumoPorTurma = [
     { turma: '9º ano A', disciplinas: 8, aulas: 32, planejadas: 30, pendentes: 2 },
     { turma: '8º ano B', disciplinas: 8, aulas: 32, planejadas: 29, pendentes: 3 },
     { turma: '7º ano C', disciplinas: 8, aulas: 32, planejadas: 28, pendentes: 4 }
-  ];
+];
 
-export { 
-    resumoPorTurma, 
-    notificacoes, 
-    planejamentoPorSerie, 
-    planejamentoPorTurma, 
+const eventInital: Event[] = [
+    {
+        id: 1,
+        title: 'Prova Bimestral',
+        date: new Date(),
+        type: 'assessment',
+        description: 'Avaliação de conteúdos do bimestre'
+    },
+    {
+        id: 2,
+        title: 'Entrega de Trabalho',
+        date: new Date(),
+        type: 'activity',
+        description: 'Entrega do trabalho em grupo sobre o tema estudado'
+    },
+    {
+        id: 3,
+        title: 'Feira de Ciências',
+        date: new Date(),
+        type: 'event',
+        description: 'Apresentação dos projetos na feira de ciências'
+    }
+]
+
+export {
+    resumoPorTurma,
+    notificacoes,
+    planejamentoPorSerie,
+    planejamentoPorTurma,
     proximasAtividades,
     resumoPorDisciplina,
- }
+    eventInital
+}

@@ -103,3 +103,18 @@ export interface EnhancedExamResult extends ExamResult {
     };
     classId?: string;
   }
+
+export  interface ReportSection {
+    id: string;
+    title: string;
+    type: 'scores' | 'chart' | 'statistics' | 'comments' | 'questions';
+    config: any;
+}
+
+export  interface ReportTemplate {
+    id: string;
+    name: string;
+    description: string;
+    type: 'individual' | 'class' | 'question' | 'summary';
+    sections: ReportSection[];
+}

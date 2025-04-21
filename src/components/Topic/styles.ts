@@ -1,10 +1,12 @@
 import styled from "styled-components";
 
-export const TreeContainer = styled.div`
+import { Input } from '../../styles/inputs';
+
+const TreeContainer = styled.div`
     margin - top: var(--space - lg);
 `
     ;
-export const TopicItem = styled.div<{ level: number; isExpanded: boolean }>`
+const TopicItem = styled.div<{ level: number; isExpanded: boolean }>`
     padding: var(--space - md);
     margin - left: ${({ level }) => `${level * 1.5}rem`};
     border-radius: var(--border-radius-md);
@@ -25,19 +27,19 @@ export const TopicItem = styled.div<{ level: number; isExpanded: boolean }>`
     `)};
 `
 
-export const TopicName = styled.div`
+const TopicName = styled.div`
     display: flex;
     align-items: center;
     gap: var(--space - sm);
     flex: 1;
 `;
 
-export const TopicActions = styled.div`
+const TopicActions = styled.div`
     display: flex;
     gap: var(--space - sm);
 `
 
-export const DisciplineTag = styled.span<{ discipline: 'Física' | 'Matemática' }>`
+const DisciplineTag = styled.span<{ discipline: 'Física' | 'Matemática' }>`
     display: inline - flex;
     align - items: center;
     gap: 0.25rem;
@@ -52,7 +54,7 @@ export const DisciplineTag = styled.span<{ discipline: 'Física' | 'Matemática'
         discipline === 'Física' ? '#3498db' : '#27ae60'};
 `;
 
-export const AreaTag = styled.span`
+const AreaTag = styled.span`
     display: inline - flex;
     padding: 0.25rem 0.5rem;
     border-radius: var(--border - radius - sm);
@@ -61,3 +63,39 @@ export const AreaTag = styled.span`
     color: var(--color - text - secondary);
     margin-left: var(--space - sm);
 `
+
+const FilterContainer = styled.div`
+  display: flex;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+  align-items: center;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const SearchContainer = styled.div`
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  
+  svg {
+    position: absolute;
+    left: var(--space-md);
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-third);
+  }
+`;
+
+const SearchInput = styled(Input)`
+  padding-left: 2.5rem;
+  width: 100%;
+`;
+
+export const TopicTreeStyles = { TreeContainer, TopicItem, TopicName, TopicActions, DisciplineTag, AreaTag };
+
+export const TopicFilterStyles = { FilterContainer, SearchContainer, SearchInput };

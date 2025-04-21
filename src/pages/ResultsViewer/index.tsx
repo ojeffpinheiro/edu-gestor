@@ -9,119 +9,7 @@ import ReportGenerator from '../../components/Assessment/Results/ReportGenerator
 import ResultsStatistics from '../../components/Assessment/Results/ResultsStatistics';
 import { Select } from '../../styles/inputs';
 import { Button } from '../../styles/buttons';
-
-// Mock data for testing
-const mockExams: Exam[] = [
-  {
-    id: 'exam1',
-    title: 'Avaliação de Matemática - 1º Bimestre',
-    description: 'Avaliação cobrindo equações, geometria e álgebra',
-    questions: ['q1', 'q2', 'q3', 'q4', 'q5'],
-    classIds: ['class1', 'class2'],
-    totalPoints: 100,
-    qrCode: 'qr-code-data-url',
-    barCode: 'bar-code-data',
-    password: 'mat2023',
-    createdAt: new Date('2023-03-15'),
-    createdBy: 'prof1',
-    questionDistribution: [
-      { categories: ['algebra'], difficulty: 'medium', count: 3 },
-      { categories: ['geometry'], difficulty: 'hard', count: 2 }
-    ],
-    useQRCode: true,
-    useBarCode: false,
-    requirePassword: true,
-    variants: []
-  },
-  {
-    id: 'exam2',
-    title: 'Avaliação de Português - 1º Bimestre',
-    description: 'Avaliação de interpretação textual e gramática',
-    questions: ['q6', 'q7', 'q8', 'q9', 'q10'],
-    classIds: ['class1', 'class3'],
-    totalPoints: 100,
-    qrCode: 'qr-code-data-url-2',
-    barCode: 'bar-code-data-2',
-    password: 'port2023',
-    createdAt: new Date('2023-03-18'),
-    createdBy: 'prof2',
-    questionDistribution: [
-      { categories: ['grammar'], difficulty: 'easy', count: 2 },
-      { categories: ['interpretation'], difficulty: 'medium', count: 3 }
-    ],
-    useQRCode: false,
-    useBarCode: true,
-    requirePassword: true,
-    variants: []
-  }
-];
-
-// Mock results for testing
-const mockResults: ExamResult[] = [
-  {
-    id: 'result1',
-    examId: 'exam1',
-    studentId: 'student1',
-    answers: [
-      { questionId: 'q1', answer: 'resposta1', score: 20 },
-      { questionId: 'q2', answer: 'resposta2', score: 15 },
-      { questionId: 'q3', answer: 'resposta3', score: 18 },
-      { questionId: 'q4', answer: 'resposta4', score: 10 },
-      { questionId: 'q5', answer: 'resposta5', score: 20 }
-    ],
-    totalScore: 83,
-    completedAt: new Date('2023-03-20')
-  },
-  {
-    id: 'result2',
-    examId: 'exam1',
-    studentId: 'student2',
-    answers: [
-      { questionId: 'q1', answer: 'resposta1', score: 18 },
-      { questionId: 'q2', answer: 'resposta2', score: 12 },
-      { questionId: 'q3', answer: 'resposta3', score: 15 },
-      { questionId: 'q4', answer: 'resposta4', score: 8 },
-      { questionId: 'q5', answer: 'resposta5', score: 17 }
-    ],
-    totalScore: 70,
-    completedAt: new Date('2023-03-20')
-  },
-  {
-    id: 'result3',
-    examId: 'exam1',
-    studentId: 'student3',
-    answers: [
-      { questionId: 'q1', answer: 'resposta1', score: 10 },
-      { questionId: 'q2', answer: 'resposta2', score: 8 },
-      { questionId: 'q3', answer: 'resposta3', score: 12 },
-      { questionId: 'q4', answer: 'resposta4', score: 5 },
-      { questionId: 'q5', answer: 'resposta5', score: 10 }
-    ],
-    totalScore: 45,
-    completedAt: new Date('2023-03-21')
-  },
-  {
-    id: 'result4',
-    examId: 'exam2',
-    studentId: 'student1',
-    answers: [
-      { questionId: 'q6', answer: 'resposta6', score: 18 },
-      { questionId: 'q7', answer: 'resposta7', score: 17 },
-      { questionId: 'q8', answer: 'resposta8', score: 19 },
-      { questionId: 'q9', answer: 'resposta9', score: 20 },
-      { questionId: 'q10', answer: 'resposta10', score: 16 }
-    ],
-    totalScore: 90,
-    completedAt: new Date('2023-03-25')
-  }
-];
-
-// Mock students for testing
-const mockStudents = {
-  'student1': { id: 'student1', name: 'João Silva', email: 'joao@example.com', classId: 'class1' },
-  'student2': { id: 'student2', name: 'Maria Oliveira', email: 'maria@example.com', classId: 'class1' },
-  'student3': { id: 'student3', name: 'Pedro Santos', email: 'pedro@example.com', classId: 'class2' },
-};
+import { mockExams, mockResults, mockStudents } from '../../mocks/assessmentData';
 
 // Interface for enhanced exam result with student info
 interface EnhancedExamResult extends ExamResult {
@@ -129,9 +17,8 @@ interface EnhancedExamResult extends ExamResult {
     id: string;
     name: string;
     email?: string;
-    classId?: string;
+    classId?: string | number;
   };
-  classId?: string;
 }
 
 // Mock statistics generator
@@ -220,7 +107,7 @@ const ResultsViewer: React.FC = () => {
   });
 
   // Fetch results for a specific exam
-  const fetchResults = async (examId: string | undefined, classId?: string) => {
+  const fetchResults = async (examId: string | undefined, classId?: number) => {
     setIsLoading(true);
     setError(null);
 
@@ -323,9 +210,9 @@ const ResultsViewer: React.FC = () => {
 
   // Handle class selection for filtering
   const handleClassSelect = (classId: string) => {
-    setFilterOptions(prev => ({ ...prev, classId }));
+    setFilterOptions(prev => ({ ...prev, classId: String(classId) }));
     if (selectedExam) {
-      fetchResults(selectedExam.id, classId || undefined);
+      fetchResults(selectedExam.id, classId ? Number(classId) : undefined);
     }
   };
 

@@ -1,44 +1,5 @@
+import { mockResults } from "../mocks/assessmentData";
 import { ExamResult } from "../utils/types/Assessment";
-
-// Dados mockados para testes
-const mockResults: ExamResult[] = [
-  {
-    id: '1',
-    examId: 'exam-001',
-    studentId: 'student-101',
-    answers: [
-      { questionId: 'q-001', answer: 'Lorem ipsum dolor sit amet', score: 8 },
-      { questionId: 'q-002', answer: 'Consectetur adipiscing elit', score: 7 },
-      { questionId: 'q-003', answer: 'Sed do eiusmod tempor', score: 10 }
-    ],
-    totalScore: 25,
-    completedAt: new Date('2025-03-15T14:30:00')
-  },
-  {
-    id: '2',
-    examId: 'exam-001',
-    studentId: 'student-102',
-    answers: [
-      { questionId: 'q-001', answer: 'Ut enim ad minim veniam', score: 6 },
-      { questionId: 'q-002', answer: 'Quis nostrud exercitation', score: 9 },
-      { questionId: 'q-003', answer: 'Ullamco laboris nisi ut aliquip', score: 8 }
-    ],
-    totalScore: 23,
-    completedAt: new Date('2025-03-15T15:15:00')
-  },
-  {
-    id: '3',
-    examId: 'exam-002',
-    studentId: 'student-103',
-    answers: [
-      { questionId: 'q-004', answer: 'Duis aute irure dolor', score: 9 },
-      { questionId: 'q-005', answer: 'Reprehenderit in voluptate', score: 10 },
-      { questionId: 'q-006', answer: 'Velit esse cillum dolore', score: 7 }
-    ],
-    totalScore: 26,
-    completedAt: new Date('2025-03-16T10:45:00')
-  }
-];
 
 /**
  * Serviço para gerenciamento de resultados de exames

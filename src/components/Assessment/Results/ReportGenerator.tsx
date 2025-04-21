@@ -1,36 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
 import { FaFileAlt, FaDownload, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle, FaTimes } from 'react-icons/fa';
 
-import { Exam, ExamResult, Question } from '../../../utils/types/Assessment';
+import { Exam, ExamResult, Question, ReportSection, ReportTemplate } from '../../../utils/types/Assessment';
 
 // Importação de componentes de estilo
 import { Button, ActionButton, PrimaryActionButton, CloseButton } from '../../../styles/buttons';
 import { InputGroup, Label, Select, TextArea } from '../../../styles/inputs';
-import { Card } from '../../../styles/containers';
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
 import { ModalContainer, ModalContent, ModalHeader, ModalBody, ModalFooter } from '../../../styles/modals';
+import { predefinedTemplates } from '../../../mocks/assessmentData';
+import {
+    InfoMessage, 
+    ReportContainer, 
+    SectionContainer, 
+    Tab, 
+    TabsContainer, 
+    TemplateCard,
+    TemplatesGrid
+} from './ReportGeneratorStyle'
 
 interface Student {
     id: string;
     name: string;
     email: string;
     registrationNumber: string;
-}
-
-interface ReportTemplate {
-    id: string;
-    name: string;
-    description: string;
-    type: 'individual' | 'class' | 'question' | 'summary';
-    sections: ReportSection[];
-}
-
-interface ReportSection {
-    id: string;
-    title: string;
-    type: 'scores' | 'chart' | 'statistics' | 'comments' | 'questions';
-    config: any;
 }
 
 interface ReportData {
@@ -58,115 +51,6 @@ interface ReportGeneratorProps {
     onGenerate?: (reportData: any) => void;
 }
 
-// Componentes estilizados adicionais
-const ReportContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-`;
-
-const TemplateCard = styled(Card)`
-  cursor: pointer;
-  padding: var(--space-md);
-  transition: all 0.2s ease;
-  border: 2px solid transparent;
-  
-  &:hover {
-    border-color: var(--color-primary);
-  }
-  
-  &.selected {
-    border-color: var(--color-primary);
-    background-color: var(--color-background-third);
-  }
-  
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    margin-bottom: var(--space-md);
-    
-    svg {
-      color: var(--color-primary);
-      font-size: 1.5rem;
-    }
-    
-    h3 {
-      margin: 0;
-    }
-  }
-  
-  .card-body {
-    color: var(--color-text-secondary);
-  }
-`;
-
-const TemplatesGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-`;
-
-const SectionContainer = styled.div`
-  margin-bottom: var(--space-lg);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-md);
-  
-  .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-md);
-    padding-bottom: var(--space-sm);
-    border-bottom: 1px solid var(--color-border-light);
-    
-    h3 {
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-  }
-`;
-
-const TabsContainer = styled.div`
-  display: flex;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--space-lg);
-`;
-
-const Tab = styled.button<{ active: boolean }>`
-  padding: var(--space-md) var(--space-lg);
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid ${props => props.active ? 'var(--color-primary)' : 'transparent'};
-  color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-text-secondary)'};
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  &:hover {
-    background-color: var(--color-background-third);
-  }
-`;
-
-const InfoMessage = styled.div`
-  padding: var(--space-md);
-  background-color: var(--color-background-third);
-  border-left: 4px solid var(--color-info);
-  margin-bottom: var(--space-lg);
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  
-  svg {
-    color: var(--color-info);
-    font-size: 1.5rem;
-  }
-`;
-
 // Componente principal
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({
     examId, classId, studentId, onGenerate }) => {
@@ -183,108 +67,6 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
     // Efeito para carregar templates pré-definidos
     useEffect(() => {
         // Em um cenário real, esses templates viriam de uma API
-        const predefinedTemplates: ReportTemplate[] = [
-            {
-                id: 'template-individual',
-                name: 'Relatório Individual',
-                description: 'Relatório detalhado do desempenho de um estudante específico',
-                type: 'individual',
-                sections: [
-                    {
-                        id: 'section-1',
-                        title: 'Informações da Avaliação',
-                        type: 'statistics',
-                        config: { showDate: true, showScore: true }
-                    },
-                    {
-                        id: 'section-2',
-                        title: 'Desempenho por Questão',
-                        type: 'questions',
-                        config: { showDifficulty: true, showCategories: true }
-                    },
-                    {
-                        id: 'section-3',
-                        title: 'Comentários',
-                        type: 'comments',
-                        config: { editable: true }
-                    }
-                ]
-            },
-            {
-                id: 'template-class',
-                name: 'Relatório de Turma',
-                description: 'Visão geral do desempenho de toda a turma na avaliação',
-                type: 'class',
-                sections: [
-                    {
-                        id: 'section-1',
-                        title: 'Estatísticas Gerais',
-                        type: 'statistics',
-                        config: { showAverage: true, showMedian: true, showHighest: true, showLowest: true }
-                    },
-                    {
-                        id: 'section-2',
-                        title: 'Gráfico de Desempenho',
-                        type: 'chart',
-                        config: { chartType: 'bar', showLabels: true }
-                    },
-                    {
-                        id: 'section-3',
-                        title: 'Resultados Individuais',
-                        type: 'scores',
-                        config: { sortBy: 'score', order: 'desc' }
-                    }
-                ]
-            },
-            {
-                id: 'template-questions',
-                name: 'Análise de Questões',
-                description: 'Análise detalhada das respostas para cada questão',
-                type: 'question',
-                sections: [
-                    {
-                        id: 'section-1',
-                        title: 'Estatísticas por Questão',
-                        type: 'statistics',
-                        config: { showPercentCorrect: true, showAverageScore: true }
-                    },
-                    {
-                        id: 'section-2',
-                        title: 'Gráfico de Acertos',
-                        type: 'chart',
-                        config: { chartType: 'pie', showPercentage: true }
-                    }
-                ]
-            },
-            {
-                id: 'template-summary',
-                name: 'Resumo Executivo',
-                description: 'Visão geral concisa dos principais resultados da avaliação',
-                type: 'summary',
-                sections: [
-                    {
-                        id: 'section-1',
-                        title: 'Resumo da Avaliação',
-                        type: 'statistics',
-                        config: {
-                            showAverage: true,
-                            showPassRate: true,
-                            showTotalStudents: true
-                        }
-                    },
-                    {
-                        id: 'section-2',
-                        title: 'Análise por Categoria',
-                        type: 'chart',
-                        config: {
-                            chartType: 'radar',
-                            groupBy: 'category'
-                        }
-                    }
-                ]
-            }
-        ];
-
         setTemplates(predefinedTemplates);
     }, []);
 

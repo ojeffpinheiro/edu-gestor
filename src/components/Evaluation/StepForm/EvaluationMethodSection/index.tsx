@@ -11,6 +11,7 @@ import { EmptyStateMessage } from "../../../../styles/table";
 import { CriteriaActions, CriteriaCard, CriteriaHeader, CriteriaTitle, DeleteButton, FormFeedback, TotalWeightDisplay, WeightBadge } from "./styles";
 import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
 import { EvaluationCriteria } from "../../../../utils/types/RubricCriteria";
+import { evaluationCriteria } from "../../../../mocks/evaluation";
 
 interface EvaluationCriteriaSectionProps {
     evaluation: Evaluation | null;
@@ -22,11 +23,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({ e
     const [expandedCriteria, setExpandedCriteria] = useState<string | null>(null);
     
     // Example state - replace with your actual hook or state management
-    const [criteria, setCriteria] = useState<EvaluationCriteria[]>([
-        { id: "1", name: "Participação", description: "Envolvimento ativo nas atividades", weight: 30 },
-        { id: "2", name: "Conhecimento Técnico", description: "Domínio do conteúdo apresentado", weight: 40 },
-        { id: "3", name: "Entrega de Atividades", description: "Conclusão das tarefas no prazo", weight: 30 }
-    ]);
+    const [criteria, setCriteria] = useState<EvaluationCriteria[]>(evaluationCriteria);
     
     const [newCriteria, setNewCriteria] = useState<Partial<EvaluationCriteria>>({
         name: "",

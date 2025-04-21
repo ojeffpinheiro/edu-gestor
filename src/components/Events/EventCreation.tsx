@@ -4,166 +4,28 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { FaSave, FaTimes, FaTrash } from 'react-icons/fa';
 import { format } from 'date-fns';
-import styled from 'styled-components';
-import { BaseButton, BaseInput } from '../../styles/baseComponents';
+
 import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
 
-// Form styled components
-const FormContainer = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-`;
-
-const FormHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-`;
-
-const FormTitle = styled.h2`
-  color: var(--color-primary);
-  font-size: var(--font-size-2xl);
-  font-weight: 600;
-  margin: 0;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  font-size: var(--font-size-xl);
-  
-  &:hover {
-    color: var(--color-text-primary);
-  }
-`;
-
-const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-`;
-
-const Label = styled.label`
-  font-weight: 500;
-  color: var(--color-text-primary);
-`;
-
-const Input = styled(BaseInput)`
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-md);
-  background-color: var(--color-input);
-  color: var(--color-text);
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-input-focus);
-    box-shadow: var(--shadow-focus);
-  }
-`;
-
-const Textarea = styled.textarea`
-  width: 100%;
-  padding: var(--space-sm) var(--space-md);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--border-radius-md);
-  font-size: var(--font-size-md);
-  min-height: 100px;
-  resize: vertical;
-  background-color: var(--color-input);
-  color: var(--color-text);
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-input-focus);
-    box-shadow: var(--shadow-focus);
-  }
-`;
-
-const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-`;
-
-const Checkbox = styled.input`
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-`;
-
-const ErrorMessage = styled.p`
-  color: var(--color-error);
-  font-size: var(--font-size-xs);
-  margin: 0;
-`;
-
-const ButtonsContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: var(--space-lg);
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  gap: var(--space-md);
-`;
-
-const SaveButton = styled(BaseButton)`
-  background-color: var(--color-primary);
-  color: var(--color-text-on-primary);
-  padding: var(--space-sm) var(--space-lg);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  
-  &:hover:not(:disabled) {
-    background-color: var(--color-primary-hover);
-  }
-  
-  &:disabled {
-    background-color: var(--color-button-disabled);
-    cursor: not-allowed;
-  }
-`;
-
-const CancelButton = styled(BaseButton)`
-  background-color: transparent;
-  color: var(--color-text-secondary);
-  border: 1px solid var(--color-border);
-  padding: var(--space-sm) var(--space-lg);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  
-  &:hover:not(:disabled) {
-    background-color: var(--color-background-third);
-  }
-`;
-
-const DeleteButton = styled(BaseButton)`
-  background-color: var(--color-error);
-  color: white;
-  padding: var(--space-sm) var(--space-lg);
-  display: flex;
-  align-items: center;
-  gap: var(--space-xs);
-  
-  &:hover:not(:disabled) {
-    background-color: var(--color-error-hover);
-  }
-`;
+import {
+  ButtonGroup,
+  ButtonsContainer,
+  CancelButton,
+  Checkbox,
+  CheckboxContainer,
+  CloseButton,
+  DeleteButton,
+  ErrorMessage,
+  FormContainer,
+  FormGroup,
+  FormHeader,
+  FormTitle,
+  Input,
+  Label,
+  SaveButton,
+  Select,
+  Textarea
+} from './EventCreationStyle'
 
 // Create a schema for form validation
 const eventSchema = z.object({

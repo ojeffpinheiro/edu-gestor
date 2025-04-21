@@ -14,69 +14,7 @@ import {
     TableWrapper,
     StudentName
 } from './styles';
-
-const studentList = ['Ana Souza', 'Carlos Oliveira', 'Fernanda Lima', 'Rafael Mendes'];
-
-const categorias = [
-    {
-        titulo: 'Presença',
-        subcategorias: [
-            { nome: 'Presença', opcoes: ['Presente', 'Ausente', 'Ausência justificada'] },
-            { nome: 'Pontualidade', opcoes: ['Pontual', 'Atraso', 'Atraso justificado'] }
-        ]
-    },
-    {
-        titulo: 'Colaboração',
-        subcategorias: [
-            { nome: 'Ajuda colegas', opcoes: ['Não ajudou', 'Ajudou às vezes', 'Sempre ajuda'] },
-            { nome: 'Trabalho em grupo', opcoes: ['Excelente', 'Limitado', 'Não colabora'] },
-            { nome: 'Colaboração', opcoes: ['Baixa', 'Ocasional', 'Constante'] }
-        ]
-    },
-    {
-        titulo: 'Participação',
-        subcategorias: [
-            { nome: 'Atividades', opcoes: ['Ativa', 'Mínima', 'Não participou', 'Dormiu'] },
-            { nome: 'Conversas', opcoes: ['Focado', 'Algumas distrações', 'Muitas distrações'] },
-            { nome: 'Concentração', opcoes: ['Total', 'Parcial', 'Ausente'] },
-            { nome: 'Uso de celular', opcoes: ['Não usou', 'Uso frequente', 'Uso constante'] }
-        ]
-    },
-    {
-        titulo: 'Comportamento',
-        subcategorias: [
-            { nome: 'Integridade', opcoes: ['Honesto', 'Plágio', 'Sem integridade'] },
-            { nome: 'Conduta', opcoes: ['Adequada', 'Inadequada', 'Desrespeitosa'] },
-            { nome: 'Respeito', opcoes: ['Com todos', 'Parcial', 'Ausente'] },
-            { nome: 'Uniforme', opcoes: ['Completo', 'Parcial', 'Sem uniforme'] },
-            { nome: 'Regras', opcoes: ['Cumpriu todas', 'Cumpriu algumas', 'Não cumpriu'] }
-        ]
-    },
-    {
-        titulo: 'Organização',
-        subcategorias: [
-            { nome: 'Material', opcoes: ['Completo', 'Parcial', 'Ausente'] },
-            { nome: 'Calculadora', opcoes: ['Trouxe', 'Não trouxe'] }
-        ]
-    },
-    {
-        titulo: 'Caderno',
-        subcategorias: [
-            { nome: 'Atividades', opcoes: ['Completas', 'Incompletas'] },
-            { nome: 'Organização', opcoes: ['Muito organizado', 'Organizado', 'Desorganizado'] },
-            { nome: 'Tarefas', opcoes: ['Todas completas', 'Algumas completas', 'Incompletas'] }
-        ]
-    },
-    {
-        titulo: 'Responsabilidade',
-        subcategorias: [
-            { nome: 'Prazos', opcoes: ['No prazo', 'Atraso justificado', 'Atraso', 'Não entregou'] },
-            { nome: 'Patrimônio', opcoes: ['Cuidadoso', 'Descuidado'] },
-            { nome: 'Materiais', opcoes: ['Uso adequado', 'Uso inadequado'] },
-            { nome: 'Laboratório', opcoes: ['Seguiu instruções', 'Dificuldades parciais', 'Não seguiu'] }
-        ]
-    }
-];
+import { categorias, studentList } from '../../../mocks/assessmentData';
 
 const DailyReport = () => {
     const [categoriaSelecionada, setCategoriaSelecionada] = useState<string>('Presença');

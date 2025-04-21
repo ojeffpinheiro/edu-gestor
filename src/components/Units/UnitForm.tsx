@@ -44,8 +44,8 @@ const UnitForm: React.FC<UnitFormProps> = ({
     const modalRef = useRef<HTMLDivElement>(null);
 
     /**
-           * Fecha o modal ao clicar fora dele
-           */
+    * Fecha o modal ao clicar fora dele
+    */
     useEffect(() => {
         const handleOutsideClick = (event: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(event.target as Node)) {

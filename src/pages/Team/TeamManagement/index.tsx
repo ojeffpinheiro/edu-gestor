@@ -18,6 +18,7 @@ import {
 } from './styles';
 import { StudentAttendance } from '../../../utils/types/BasicUser';
 import { Event } from '../../../utils/types/Event';
+import { eventInital } from '../../../mocks/planner';
 
 const TeamManagement: React.FC = () => {
     const { studentList, formData, handleAddStudent, handleEditStudent, handleDelStudent, handleInputChange } = useStudents();
@@ -35,29 +36,7 @@ const TeamManagement: React.FC = () => {
     const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
 
     // Eventos de exemplo para o calendário
-    const [events, setEvents] = useState<Event[]>([
-        {
-            id: 1,
-            title: 'Prova Bimestral',
-            date: new Date(new Date().getFullYear(), new Date().getMonth(), 15),
-            type: 'assessment',
-            description: 'Avaliação de conteúdos do bimestre'
-        },
-        {
-            id: 2,
-            title: 'Entrega de Trabalho',
-            date: new Date(new Date().getFullYear(), new Date().getMonth(), 22),
-            type: 'activity',
-            description: 'Entrega do trabalho em grupo sobre o tema estudado'
-        },
-        {
-            id: 3,
-            title: 'Feira de Ciências',
-            date: new Date(new Date().getFullYear(), new Date().getMonth(), 28),
-            type: 'event',
-            description: 'Apresentação dos projetos na feira de ciências'
-        }
-    ]);
+    const events: Event[] = eventInital;
 
     // Funções para modais existentes
     const handleCloseSortGroupModal = () => setShowModalStudent(false);

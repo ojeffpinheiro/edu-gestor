@@ -4,7 +4,20 @@ import { FaFileExport, FaChartBar, FaUserGraduate, FaFilter } from "react-icons/
 import { useExamResults } from "../../../hooks/useExamResults";
 import { Exam, ExamResult } from "../../../utils/types/Assessment";
 
-import { Card, Container, ExportButton, ExportContainer, FiltersContainer, LoadingContainer, Select, SpinnerIcon, SummaryCard, Table, Title, VisualizationsContainer } from './styles'
+import { 
+    Card, 
+    Container, 
+    ExportButton, 
+    ExportContainer, 
+    FiltersContainer, 
+    LoadingContainer, 
+    Select, 
+    SpinnerIcon, 
+    SummaryCard, 
+    Table, 
+    Title, 
+    VisualizationsContainer
+ } from './styles'
 import examService from "../../../services/examService";
 
 const ExamSelector: React.FC<{
@@ -171,7 +184,6 @@ const ExportOptions: React.FC<{
     </ExportContainer>
 );
 
-// Componente principal
 export const ExamResults: React.FC = () => {
     const [selectedExam, setSelectedExam] = useState<string>('');
     const [selectedClass, setSelectedClass] = useState<string>('');

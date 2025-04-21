@@ -1,195 +1,28 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import { FaCalculator, FaChevronDown, FaChevronRight, FaEdit, FaPlus, FaRocket, FaTrash } from 'react-icons/fa';
 
 import { Topic } from '../../utils/types/Topic';
-import { EmptyStateMessage } from '../../styles/table';
-import { IconButton, PrimaryActionButton } from '../../styles/buttons';
-import { Card } from '../../styles/containers';
+
+
 import TopicFilter from '../../components/Topic/TopicFilter';
 import TopicForm from '../../components/Topic/TopicForm';
+import { initialTopics, knowledgeAreas } from '../../mocks/topic';
 
 // Estilos específicos da página
-const PageContainer = styled.div`
-  padding: var(--space-xl);
-  max-width: 95vw;
-  margin: 0 auto;
-`;
-
-const PageHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-xl);
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-md);
-  }
-`;
-
-const PageTitle = styled.h1`
-  margin: 0;
-`;
-
-const TopicTree = styled.div`
-  margin-top: var(--space-lg);
-`;
-
-const TopicItem = styled.div<{ level: number; isExpanded: boolean }>`
-  padding: var(--space-md);
-  margin-left: ${({ level }) => `${level * 1.5}rem`};
-  border-radius: var(--border-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background-color: var(--color-background-secondary);
-  margin-bottom: var(--space-xs);
-  transition: all 0.2s;
-  cursor: pointer;
-  
-  &:hover {
-    background-color: var(--color-background-third);
-  }
-  
-  ${({ isExpanded }) => isExpanded && `
-    border-left: 3px solid var(--color-primary);
-    font-weight: 500;
-  `}
-`;
-
-const TopicName = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  flex: 1;
-`;
-
-const TopicActions = styled.div`
-  display: flex;
-  gap: var(--space-sm);
-`;
-
-const DisciplineTag = styled.span<{ discipline: 'Física' | 'Matemática' }>`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
-  font-weight: 500;
-  background-color: ${({ discipline }) => 
-    discipline === 'Física' ? 'rgba(52, 152, 219, 0.2)' : 'rgba(46, 204, 113, 0.2)'};
-  color: ${({ discipline }) => 
-    discipline === 'Física' ? '#3498db' : '#27ae60'};
-`;
-
-const AreaTag = styled.span`
-  display: inline-flex;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--border-radius-sm);
-  font-size: var(--font-size-xs);
-  background-color: var(--color-background-third);
-  color: var(--color-text-secondary);
-  margin-left: var(--space-sm);
-`;
-
-// Mock de dados iniciais
-const initialTopics: Topic[] = [
-  {
-    id: '1',
-    title: 'Mecânica',
-    discipline: 'Física',
-    knowledgeArea: 'Mecânica Clássica',
-    parentId: null,
-    level: 0,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    children: [
-      {
-        id: '2',
-        title: 'Cinemática',
-        discipline: 'Física',
-        knowledgeArea: 'Mecânica Clássica',
-        parentId: '1',
-        level: 1,
-        children: [
-          {
-            id: '3',
-            title: 'Movimento Retilíneo Uniforme',
-            discipline: 'Física',
-            knowledgeArea: 'Mecânica Clássica',
-            parentId: '2',
-            level: 2,
-            children: []
-          },
-          {
-            id: '4',
-            title: 'Movimento Retilíneo Uniformemente Variado',
-            discipline: 'Física',
-            knowledgeArea: 'Mecânica Clássica',
-            parentId: '2',
-            level: 2,
-            children: []
-          }
-        ]
-      },
-      {
-        id: '5',
-        title: 'Dinâmica',
-        discipline: 'Física',
-        knowledgeArea: 'Mecânica Clássica',
-        parentId: '1',
-        level: 1,
-        children: [
-          {
-            id: '6',
-            title: 'Leis de Newton',
-            discipline: 'Física',
-            knowledgeArea: 'Mecânica Clássica',
-            parentId: '5',
-            level: 2,
-            children: []
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: '7',
-    title: 'Álgebra',
-    discipline: 'Matemática',
-    knowledgeArea: 'Matemática Básica',
-    parentId: null,
-    level: 0,
-    children: [
-      {
-        id: '8',
-        title: 'Equações',
-        discipline: 'Matemática',
-        knowledgeArea: 'Matemática Básica',
-        parentId: '7',
-        level: 1,
-        children: []
-      }
-    ]
-  }
-];
-
-// Lista de áreas de conhecimento
-const knowledgeAreas = [
-  'Mecânica Clássica',
-  'Eletromagnetismo',
-  'Termodinâmica',
-  'Óptica',
-  'Física Moderna',
-  'Matemática Básica',
-  'Cálculo',
-  'Geometria',
-  'Estatística',
-  'Álgebra Linear'
-];
+import { EmptyStateMessage } from '../../styles/table';
+import { Card } from '../../styles/containers';
+import { IconButton, PrimaryActionButton } from '../../styles/buttons';
+import {
+  AreaTag,
+  TopicItem,
+  TopicName,
+  DisciplineTag,
+  TopicActions,
+  PageContainer,
+  PageHeader,
+  PageTitle,
+  TopicTree
+} from './styles'
 
 // Componente principal
 const TopicManagementPage: React.FC = () => {

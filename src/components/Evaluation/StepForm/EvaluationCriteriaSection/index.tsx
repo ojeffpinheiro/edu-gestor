@@ -7,6 +7,7 @@ import CollapsibleSection from "../../CollapsibleSection";
 import { AddCriterionContainer, Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, DragHandle, EmptyCriteriaState, ErrorMessage, FormActions, StatusBanner, Tooltip, WeightInput } from "./styles";
 import { EvaluationCriterion } from "../../../../utils/types/RubricCriteria";
 import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
+import { initialEvaluationCriteria } from "../../../../mocks/evaluation";
 
 interface EvaluationCriteriaSectionProps {
 }
@@ -37,73 +38,7 @@ const EvaluationCriteriaSection: React.FC<EvaluationCriteriaSectionProps> = ({
     const [showSuccessMessage, setShowSuccessMessage] = useState<boolean>(false);
 
     // Estado para critérios de avaliação
-    const [evaluationCriteria, setEvaluationCriteria] = useState<EvaluationCriterion[]>([
-        {
-            id: "1",
-            name: "Organização das Ideias",
-            weight: 2,
-            comment: "",
-            isExpanded: false,
-            options: [
-                { id: "1-1", description: "Completo. O orador transmite claramente a ideia principal e fornece detalhes que são relevantes e interessantes." },
-                { id: "1-2", description: "Geralmente completo. O orador transmite a ideia principal, mas não fornece detalhes relevantes adequados para apoiá-la." },
-                { id: "1-3", description: "Um tanto incompleto. A ideia principal não é clara. Muitos detalhes são irrelevantes." },
-                { id: "1-4", description: "Incompleto. A ideia principal não é clara. Os detalhes são inexistentes ou aleatórios e irrelevantes." }
-            ]
-        },
-        {
-            id: "2",
-            name: "Compreensibilidade",
-            weight: 2,
-            comment: "",
-            isExpanded: false,
-            options: [
-                { id: "2-1", description: "Compreensível. O orador usa linguagem apropriada para transmitir a ideia principal deste item claramente." },
-                { id: "2-2", description: "Geralmente compreensível. A mensagem não é clara em alguns lugares. A linguagem usada é inadequada para tornar a mensagem totalmente clara." },
-                { id: "2-3", description: "Um tanto incompreensível. A mensagem só poderia ser entendida por um falante nativo simpático. A linguagem usada é frequentemente inapropriada ou distorcida pela interferência do inglês." },
-                { id: "2-4", description: "Incompreensível. A mensagem não pode ser entendida." }
-            ]
-        },
-        {
-            id: "3",
-            name: "Fluência",
-            weight: 2,
-            comment: "",
-            isExpanded: false,
-            options: [
-                { id: "3-1", description: "O aluno fala muito claramente, sem hesitação. A pronúncia e a entonação soam naturais." },
-                { id: "3-2", description: "O aluno fala com alguma hesitação. Problemas com pronúncia e entonação não impedem a comunicação." },
-                { id: "3-3", description: "O aluno hesita frequentemente. Problemas com pronúncia e entonação distorcem o significado e inibem a comunicação em alguns casos." },
-                { id: "3-4", description: "Hesitações frequentes e problemas extremos com a pronúncia causam interrupções na comunicação." }
-            ]
-        },
-        {
-            id: "4",
-            name: "Precisão",
-            weight: 2,
-            comment: "",
-            isExpanded: false,
-            options: [
-                { id: "4-1", description: "Funções, gramática e vocabulário são usados corretamente." },
-                { id: "4-2", description: "Pequenos problemas de uso não distorcem o significado nem inibem a comunicação." },
-                { id: "4-3", description: "Problemas no uso distorcem significativamente o significado e inibem a comunicação em alguns casos." },
-                { id: "4-4", description: "Problemas no uso distorcem completamente o significado e inibem as comunicações." }
-            ]
-        },
-        {
-            id: "5",
-            name: "Esforço",
-            weight: 2,
-            comment: "",
-            isExpanded: false,
-            options: [
-                { id: "5-1", description: "Excede os requisitos mínimos da tarefa e fornece evidências de contribuição ponderada." },
-                { id: "5-2", description: "Atende aos requisitos mínimos da tarefa e fornece evidências de contribuição ponderada." },
-                { id: "5-3", description: "Atende aos requisitos mínimos da tarefa, mas não demonstra evidências de contribuição ponderada." },
-                { id: "5-4", description: "Não cumpre os requisitos mínimos da tarefa nem fornece evidências de contribuição ponderada." }
-            ]
-        }
-    ]);
+    const [evaluationCriteria, setEvaluationCriteria] = useState<EvaluationCriterion[]>(initialEvaluationCriteria);
 
     // Estado para novo critério
     const [newCriterion, setNewCriterion] = useState<{ name: string }>({ name: "" });

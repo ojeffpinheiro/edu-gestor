@@ -4,11 +4,35 @@ import { FaChartLine, FaUsers, FaClipboardCheck, FaChartBar, FaCaretUp, FaCaretD
 import { EnhancedExamResult, Exam, ExamResult } from '../../../utils/types/Assessment';
 
 import { useExams } from '../../../hooks/useExams';
+import { mockExams } from '../../../mocks/assessmentData';
 
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
 import { Button } from '../../../styles/buttons';
 import ResultsTable from './ResultsTable';
-import { CardContent, CardIcon, CategoryBreakdown, CategoryItem, CategoryName, CategoryScore, CategoryScoreBar, CategoryScoreWrapper, DashboardContainer, DashboardHeader, DetailCard, DetailSection, LoadingContainer, MetricCard, MetricTitle, MetricValue, MetricValueWithTrend, SummaryCards, TimeframeSelector, TrendDownIndicator, TrendUpIndicator } from './styles';
+
+import { 
+  CardContent, 
+  CardIcon, 
+  CategoryBreakdown, 
+  CategoryItem, 
+  CategoryName, 
+  CategoryScore, 
+  CategoryScoreBar, 
+  CategoryScoreWrapper, 
+  DashboardContainer, 
+  DashboardHeader, 
+  DetailCard, 
+  DetailSection, 
+  LoadingContainer, 
+  MetricCard, 
+  MetricTitle, 
+  MetricValue, 
+  MetricValueWithTrend, 
+  SummaryCards, 
+  TimeframeSelector, 
+  TrendDownIndicator, 
+  TrendUpIndicator
+ } from './styles';
 
 interface ResultsSummary {
   totalExams: number;
@@ -33,52 +57,6 @@ interface ResultsSummary {
     score: number;
   }[];
 }
-
-// Mock data for testing
-const mockExams: Exam[] = [
-  {
-    id: 'exam1',
-    title: 'Avaliação de Matemática - 1º Bimestre',
-    description: 'Avaliação cobrindo equações, geometria e álgebra',
-    questions: ['q1', 'q2', 'q3', 'q4', 'q5'],
-    classIds: ['class1', 'class2'],
-    totalPoints: 100,
-    qrCode: 'qr-code-data-url',
-    barCode: 'bar-code-data',
-    password: 'mat2023',
-    createdAt: new Date('2023-03-15'),
-    createdBy: 'prof1',
-    questionDistribution: [
-      { categories: ['algebra'], difficulty: 'medium', count: 3 },
-      { categories: ['geometry'], difficulty: 'hard', count: 2 }
-    ],
-    useQRCode: true,
-    useBarCode: false,
-    requirePassword: true,
-    variants: []
-  },
-  {
-    id: 'exam2',
-    title: 'Avaliação de Português - 1º Bimestre',
-    description: 'Avaliação de interpretação textual e gramática',
-    questions: ['q6', 'q7', 'q8', 'q9', 'q10'],
-    classIds: ['class1', 'class3'],
-    totalPoints: 100,
-    qrCode: 'qr-code-data-url-2',
-    barCode: 'bar-code-data-2',
-    password: 'port2023',
-    createdAt: new Date('2023-03-18'),
-    createdBy: 'prof2',
-    questionDistribution: [
-      { categories: ['grammar'], difficulty: 'easy', count: 2 },
-      { categories: ['interpretation'], difficulty: 'medium', count: 3 }
-    ],
-    useQRCode: false,
-    useBarCode: true,
-    requirePassword: true,
-    variants: []
-  }
-];
 
 const ResultsDashboard: React.FC = () => {
   const [isGeneratingReport, setIsGeneratingReport] = useState(false);

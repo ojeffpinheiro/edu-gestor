@@ -6,7 +6,6 @@ import { ConversionRelation, UnitType } from '../../utils/types/Question';
 import { sampleConversions, sampleUnits } from '../../mocks/conversionRelation';
 import ConversionRelationModal from '../../components/modals/Unit/ConversionRelationModal';
 
-// Importando os novos componentes
 import UnitForm from '../../components/Units/UnitForm';
 import UnitListItem from '../../components/Units/UnitListItem';
 import UnitCategoryTable from '../../components/Units/UnitCategoryTable';

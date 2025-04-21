@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Content, Question, Topic } from "../../../utils/types/Question";
 import BasicDefinitionsStep from "../../Question/steps/BasicInfo";
 import StatementStep from "../../Question/steps/StatementStep";
@@ -28,6 +28,9 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
   onSave
 }) => {
   const isEditMode = !!question?.id;
+
+
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Estado para controlar os passos
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -168,7 +171,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
 
     return isValid;
   };
-  
+
   const handleNextStep = () => {
     if (validateStep(currentStep)) {
       setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
@@ -265,26 +268,33 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     }
   };
 
-  const handleBackdropClick = (event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
+  /**
+  * Fecha o modal ao clicar fora dele
+  */
+  useEffect(() => {
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <ModalContainer onClick={handleBackdropClick} role="dialog" aria-modal="true">
-      <ModalContent style={{ maxWidth: '900px', width: '95%' }}>
+    <ModalContainer role="dialog" aria-modal="true">
+      <ModalContent ref={modalRef}>
         <ModalHeader>
-          <h3>{isEditMode ? 'Editar Questão' : 'Nova Questão'}</h3>
+          <h2>{isEditMode ? 'Editar Questão' : 'Nova Questão'}</h2>
           <CloseButton onClick={onClose}>
             <FaTimes />
           </CloseButton>
         </ModalHeader>
 
-        <ModalBody>
-          <form onSubmit={handleSubmit} id="questionForm">
+        <form onSubmit={handleSubmit} id="questionForm" >
+          <ModalBody>
             {/* Navegação entre passos */}
             <Flex justify="center" style={{ marginBottom: '2rem' }}>
               {steps.map((step, index) => (
@@ -315,20 +325,16 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
 
             {/* Componente do passo atual */}
             {renderCurrentStep()}
-          </form>
-        </ModalBody>
+          </ModalBody>
 
-        <ModalFooter>
-          <Flex justify="space-between" style={{ width: '100%' }}>
-            <div>
+          <ModalFooter>
+            <Flex justify="end" gap="md">
               {currentStep > 0 && (
                 <Button onClick={handlePreviousStep}>
                   Voltar
                 </Button>
               )}
-            </div>
 
-            <div>
               <CancelButton onClick={onClose} disabled={isSubmitting}>
                 Cancelar
               </CancelButton>
@@ -349,9 +355,9 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
                   <FaSave /> {isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Salvar'}
                 </PrimaryActionButton>
               )}
-            </div>
-          </Flex>
-        </ModalFooter>
+            </Flex>
+          </ModalFooter>
+        </form>
       </ModalContent>
     </ModalContainer>
   );

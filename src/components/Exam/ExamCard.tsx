@@ -1,80 +1,25 @@
 import React from 'react';
 
 import { Exam } from '../../utils/types/Assessment';
-import styled from 'styled-components';
-import { flexColumn, flexRow, gap } from '../../styles/layoutUtils';
+
 import { Button } from '../../styles/buttons';
-import { cardHoverTransition } from '../../styles/animations';
+
+import {
+  ExamActions,
+  ExamCard,
+  ExamMeta,
+  ExamTitle,
+  ExamStatistics,
+  StatItem,
+  StatValue,
+  StatLabel
+} from './styles'
 
 interface ExamCardProps {
   exam: Exam;
   onOpenSecuritySettings: () => void;
   onOpenVariantGenerator: () => void;
 }
-
-const ExamCard = styled.article`
-  ${flexColumn}
-  padding: var(--space-lg);
-  height: 100%;
-  background-color: var(--color-card);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: ${cardHoverTransition};
-  
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-  }
-`;
-
-const ExamTitle = styled.h3`
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--space-sm);
-  color: var(--color-title-card);
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const ExamMeta = styled.p`
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-`;
-
-const ExamStatistics = styled.div`
-  ${flexRow}
-  ${gap('md')}
-  margin-bottom: var(--space-md);
-  padding: var(--space-sm) 0;
-  border-top: 1px solid var(--color-border-light);
-  border-bottom: 1px solid var(--color-border-light);
-`;
-
-const StatItem = styled.div`
-  text-align: center;
-  flex: 1;
-`;
-
-const StatValue = styled.div`
-  font-size: var(--font-size-xl);
-  font-weight: 600;
-  color: var(--color-primary);
-`;
-
-const StatLabel = styled.div`
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-`;
-
-const ExamActions = styled.div`
-  ${flexRow}
-  ${gap('sm')}
-  margin-top: auto;
-  padding-top: var(--space-md);
-`;
 
 /**
  * Componente que renderiza um cartão individual de exame

@@ -1,8 +1,7 @@
 // src/mocks/assessmentData.ts
 
-import { Question, Exam, EvaluationRubric, ExamResult } from '../utils/types/Assessment';
+import { Question, Exam, EvaluationRubric, ExamResult, ReportTemplate } from '../utils/types/Assessment';
 
-// Mock de Questions
 export const mockQuestions: Question[] = [
   {
     id: '1',
@@ -61,7 +60,7 @@ export const mockQuestions: Question[] = [
   },
 ];
 
-// Mock de Exams
+
 export const mockExams: Exam[] = [
   {
     id: 'exam1',
@@ -195,6 +194,62 @@ export const mockResults: ExamResult[] = [
     ],
     totalScore: 18,
     completedAt: new Date('2023-04-20')
+  },
+  {
+    id: 'result1',
+    examId: 'exam1',
+    studentId: 'student1',
+    answers: [
+      { questionId: 'q1', answer: 'resposta1', score: 20 },
+      { questionId: 'q2', answer: 'resposta2', score: 15 },
+      { questionId: 'q3', answer: 'resposta3', score: 18 },
+      { questionId: 'q4', answer: 'resposta4', score: 10 },
+      { questionId: 'q5', answer: 'resposta5', score: 20 }
+    ],
+    totalScore: 83,
+    completedAt: new Date('2023-03-20')
+  },
+  {
+    id: 'result2',
+    examId: 'exam1',
+    studentId: 'student2',
+    answers: [
+      { questionId: 'q1', answer: 'resposta1', score: 18 },
+      { questionId: 'q2', answer: 'resposta2', score: 12 },
+      { questionId: 'q3', answer: 'resposta3', score: 15 },
+      { questionId: 'q4', answer: 'resposta4', score: 8 },
+      { questionId: 'q5', answer: 'resposta5', score: 17 }
+    ],
+    totalScore: 70,
+    completedAt: new Date('2023-03-20')
+  },
+  {
+    id: 'result3',
+    examId: 'exam1',
+    studentId: 'student3',
+    answers: [
+      { questionId: 'q1', answer: 'resposta1', score: 10 },
+      { questionId: 'q2', answer: 'resposta2', score: 8 },
+      { questionId: 'q3', answer: 'resposta3', score: 12 },
+      { questionId: 'q4', answer: 'resposta4', score: 5 },
+      { questionId: 'q5', answer: 'resposta5', score: 10 }
+    ],
+    totalScore: 45,
+    completedAt: new Date('2023-03-21')
+  },
+  {
+    id: 'result4',
+    examId: 'exam2',
+    studentId: 'student1',
+    answers: [
+      { questionId: 'q6', answer: 'resposta6', score: 18 },
+      { questionId: 'q7', answer: 'resposta7', score: 17 },
+      { questionId: 'q8', answer: 'resposta8', score: 19 },
+      { questionId: 'q9', answer: 'resposta9', score: 20 },
+      { questionId: 'q10', answer: 'resposta10', score: 16 }
+    ],
+    totalScore: 90,
+    completedAt: new Date('2023-03-25')
   }
 ];
 
@@ -217,16 +272,184 @@ export const mockClasses = [
   }
 ];
 
-// Mock de students
-export const mockStudents = [
-  { id: 'student1', name: 'Ana Silva', email: 'ana@email.com' },
-  { id: 'student2', name: 'Bruno Santos', email: 'bruno@email.com' },
-  { id: 'student3', name: 'Carla Oliveira', email: 'carla@email.com' },
-  { id: 'student4', name: 'Daniel Souza', email: 'daniel@email.com' },
-  { id: 'student5', name: 'Elena Martins', email: 'elena@email.com' },
-  { id: 'student6', name: 'Felipe Costa', email: 'felipe@email.com' },
-  { id: 'student7', name: 'Gabriela Lima', email: 'gabriela@email.com' },
-  { id: 'student8', name: 'Henrique Alves', email: 'henrique@email.com' }
+export const predefinedTemplates: ReportTemplate[] = [
+  {
+    id: 'template-individual',
+    name: 'Relatório Individual',
+    description: 'Relatório detalhado do desempenho de um estudante específico',
+    type: 'individual',
+    sections: [
+      {
+        id: 'section-1',
+        title: 'Informações da Avaliação',
+        type: 'statistics',
+        config: { showDate: true, showScore: true }
+      },
+      {
+        id: 'section-2',
+        title: 'Desempenho por Questão',
+        type: 'questions',
+        config: { showDifficulty: true, showCategories: true }
+      },
+      {
+        id: 'section-3',
+        title: 'Comentários',
+        type: 'comments',
+        config: { editable: true }
+      }
+    ]
+  },
+  {
+    id: 'template-class',
+    name: 'Relatório de Turma',
+    description: 'Visão geral do desempenho de toda a turma na avaliação',
+    type: 'class',
+    sections: [
+      {
+        id: 'section-1',
+        title: 'Estatísticas Gerais',
+        type: 'statistics',
+        config: { showAverage: true, showMedian: true, showHighest: true, showLowest: true }
+      },
+      {
+        id: 'section-2',
+        title: 'Gráfico de Desempenho',
+        type: 'chart',
+        config: { chartType: 'bar', showLabels: true }
+      },
+      {
+        id: 'section-3',
+        title: 'Resultados Individuais',
+        type: 'scores',
+        config: { sortBy: 'score', order: 'desc' }
+      }
+    ]
+  },
+  {
+    id: 'template-questions',
+    name: 'Análise de Questões',
+    description: 'Análise detalhada das respostas para cada questão',
+    type: 'question',
+    sections: [
+      {
+        id: 'section-1',
+        title: 'Estatísticas por Questão',
+        type: 'statistics',
+        config: { showPercentCorrect: true, showAverageScore: true }
+      },
+      {
+        id: 'section-2',
+        title: 'Gráfico de Acertos',
+        type: 'chart',
+        config: { chartType: 'pie', showPercentage: true }
+      }
+    ]
+  },
+  {
+    id: 'template-summary',
+    name: 'Resumo Executivo',
+    description: 'Visão geral concisa dos principais resultados da avaliação',
+    type: 'summary',
+    sections: [
+      {
+        id: 'section-1',
+        title: 'Resumo da Avaliação',
+        type: 'statistics',
+        config: {
+          showAverage: true,
+          showPassRate: true,
+          showTotalStudents: true
+        }
+      },
+      {
+        id: 'section-2',
+        title: 'Análise por Categoria',
+        type: 'chart',
+        config: {
+          chartType: 'radar',
+          groupBy: 'category'
+        }
+      }
+    ]
+  }
+];
+
+// Mock students for testing
+export const mockStudents = {
+  'student1': { id: 'student1', name: 'João Silva', email: 'joao@example.com', classId: 101 },
+  'student2': { id: 'student2', name: 'Maria Oliveira', email: 'maria@example.com', classId: 101 },
+  'student3': { id: 'student3', name: 'Pedro Santos', email: 'pedro@example.com', classId: 101 },
+  'student4': { id: 'student4', name: 'Ana Silva', email: 'ana@email.com', classId: 102 },
+  'student5': { id: 'student5', name: 'Bruno Santos', email: 'bruno@email.com', classId: 102 },
+  'student6': { id: 'student6', name: 'Carla Oliveira', email: 'carla@email.com', classId: 102 },
+  'student7': { id: 'student7', name: 'Daniel Souza', email: 'daniel@email.com', classId: 102 },
+  'student8': { id: 'student8', name: 'Elena Martins', email: 'elena@email.com', classId: 102 },
+  'student9': { id: 'student9', name: 'Felipe Costa', email: 'felipe@email.com', classId: 102 },
+  'student10': { id: 'student10', name: 'Gabriela Lima', email: 'gabriela@email.com', classId: 102 },
+  'student11': { id: 'student11', name: 'Henrique Alves', email: 'henrique@email.com', classId: 102 }
+};
+
+export const studentList = ['Ana Souza', 'Carlos Oliveira', 'Fernanda Lima', 'Rafael Mendes'];
+
+export const categorias = [
+    {
+        titulo: 'Presença',
+        subcategorias: [
+            { nome: 'Presença', opcoes: ['Presente', 'Ausente', 'Ausência justificada'] },
+            { nome: 'Pontualidade', opcoes: ['Pontual', 'Atraso', 'Atraso justificado'] }
+        ]
+    },
+    {
+        titulo: 'Colaboração',
+        subcategorias: [
+            { nome: 'Ajuda colegas', opcoes: ['Não ajudou', 'Ajudou às vezes', 'Sempre ajuda'] },
+            { nome: 'Trabalho em grupo', opcoes: ['Excelente', 'Limitado', 'Não colabora'] },
+            { nome: 'Colaboração', opcoes: ['Baixa', 'Ocasional', 'Constante'] }
+        ]
+    },
+    {
+        titulo: 'Participação',
+        subcategorias: [
+            { nome: 'Atividades', opcoes: ['Ativa', 'Mínima', 'Não participou', 'Dormiu'] },
+            { nome: 'Conversas', opcoes: ['Focado', 'Algumas distrações', 'Muitas distrações'] },
+            { nome: 'Concentração', opcoes: ['Total', 'Parcial', 'Ausente'] },
+            { nome: 'Uso de celular', opcoes: ['Não usou', 'Uso frequente', 'Uso constante'] }
+        ]
+    },
+    {
+        titulo: 'Comportamento',
+        subcategorias: [
+            { nome: 'Integridade', opcoes: ['Honesto', 'Plágio', 'Sem integridade'] },
+            { nome: 'Conduta', opcoes: ['Adequada', 'Inadequada', 'Desrespeitosa'] },
+            { nome: 'Respeito', opcoes: ['Com todos', 'Parcial', 'Ausente'] },
+            { nome: 'Uniforme', opcoes: ['Completo', 'Parcial', 'Sem uniforme'] },
+            { nome: 'Regras', opcoes: ['Cumpriu todas', 'Cumpriu algumas', 'Não cumpriu'] }
+        ]
+    },
+    {
+        titulo: 'Organização',
+        subcategorias: [
+            { nome: 'Material', opcoes: ['Completo', 'Parcial', 'Ausente'] },
+            { nome: 'Calculadora', opcoes: ['Trouxe', 'Não trouxe'] }
+        ]
+    },
+    {
+        titulo: 'Caderno',
+        subcategorias: [
+            { nome: 'Atividades', opcoes: ['Completas', 'Incompletas'] },
+            { nome: 'Organização', opcoes: ['Muito organizado', 'Organizado', 'Desorganizado'] },
+            { nome: 'Tarefas', opcoes: ['Todas completas', 'Algumas completas', 'Incompletas'] }
+        ]
+    },
+    {
+        titulo: 'Responsabilidade',
+        subcategorias: [
+            { nome: 'Prazos', opcoes: ['No prazo', 'Atraso justificado', 'Atraso', 'Não entregou'] },
+            { nome: 'Patrimônio', opcoes: ['Cuidadoso', 'Descuidado'] },
+            { nome: 'Materiais', opcoes: ['Uso adequado', 'Uso inadequado'] },
+            { nome: 'Laboratório', opcoes: ['Seguiu instruções', 'Dificuldades parciais', 'Não seguiu'] }
+        ]
+    }
 ];
 
 export const getAllMockData = () => {

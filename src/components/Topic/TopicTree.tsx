@@ -10,7 +10,7 @@ import {
 
 import { EmptyStateMessage } from '../../styles/table';
 import { Topic } from '../../utils/types/Topic';
-import { AreaTag, DisciplineTag, TopicActions, TopicItem, TopicName, TreeContainer } from './TopicTreeStyles';
+import { TopicTreeStyles } from './styles'
 import { IconButton } from '../../styles/buttons';
 
 interface TopicTreeProps {
@@ -28,6 +28,8 @@ const TopicTree: React.FC<TopicTreeProps> = ({
   onEditTopic, 
   onDeleteTopic 
 }) => {
+  const { AreaTag, DisciplineTag, TopicActions, TopicItem, TopicName, TreeContainer } = TopicTreeStyles
+
   if (topics.length === 0) {
     return (
       <EmptyStateMessage>
