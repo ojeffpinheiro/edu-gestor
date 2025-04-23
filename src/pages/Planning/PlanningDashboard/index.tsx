@@ -1,7 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
-  FaBell,
-  FaCalendarAlt,
   FaClock,
   FaCheckSquare,
   FaLayerGroup,
@@ -10,169 +9,169 @@ import {
   FaCalendar
 } from 'react-icons/fa';
 
-import { formatDate } from '../../../utils/dateFormatter';
-import { 
-  notificacoes, 
-  planejamentoPorSerie, 
-  planejamentoPorTurma, 
-  proximasAtividades, 
-  resumoPorDisciplina, 
+import {
+  notificacoes,
+  planejamentoPorSerie,
+  planejamentoPorTurma,
+  proximasAtividades,
+  resumoPorDisciplina,
   resumoPorTurma
- } from '../../../mocks/planner';
+} from '../../../mocks/planner';
 
-import { Table, TableHeader, TableRow, Td } from '../../../styles/table';
+import {
+  DashboardContainer,
+  GridSection,
+  SectionCard,
+  SectionHeader,
+  TabButton,
+  TabButtons
+} from './styles'
+import { PlanningCard } from '../../../components/Planning/PlanningCard';
+import { DataTable } from '../../../components/Planning/DataTable';
+import { QuickAccessSection } from '../../../components/Planning/QuickAccessSection';
+import { NotificationSection } from '../../../components/Planning/NotificationSection';
+import { UpcomingActivitiesSection } from '../../../components/Planning/UpcomingActivitiesSection';
 
-import { 
-  DashboardContainer, 
-  GridSection, 
-  NotificationItem, 
-  NotificationList, 
-  PlanningCardWrapper, 
-  ProgressBar, 
-  QuickAccessCard, 
-  QuickHeader, 
-  SectionCard, 
-  SectionHeader, 
-  TabButton, 
-  TabButtons } 
-from './styles'
-import { useNavigate } from 'react-router-dom';
-
-
-const calculatePercentages = (total: number, completed: number, partial?: number) => {
-  const completePercent = Math.round((completed / total) * 100);
-  const pendingPercent = 100 - completePercent;
-  const partialPercent = partial ? Math.round((partial / total) * 100) : 0;
-
-  return { completePercent, pendingPercent, partialPercent };
-};
-
-// Components
-const PlanningCard: React.FC<{
-  title: string,
-  completo: number,
-  pendente: number,
-  parcial?: number
-}> = ({ title, completo, pendente, parcial }) => {
-  const { completePercent, pendingPercent, partialPercent } = calculatePercentages(
-    100, completo, parcial
-  );
-
-  return (
-    <PlanningCardWrapper>
-      <h3>{title}</h3>
-      <ProgressBar $progress={completePercent}>
-        <div></div>
-      </ProgressBar>
-      <div className="mt-2 flex justify-between text-sm">
-        <span className="text-green-600">{completePercent}% concluído</span>
-        {parcial !== undefined && (
-          <span className="text-yellow-600">{partialPercent}% parcial</span>
-        )}
-        <span className="text-red-600">{pendingPercent}% pendente</span>
-      </div>
-    </PlanningCardWrapper>
-  );
-};
-
-const DataTable = <T extends Record<string, any>>({ data, columns }: {
-  data: T[],
-  columns?: (keyof T)[]
-}) => {
-  const tableColumns = columns || Object.keys(data[0]) as (keyof T)[];
-
-  return (
-    <Table className="w-full">
-      <thead>
-        <tr>
-          {tableColumns.map(key => (
-            <TableHeader
-              key={String(key)}
-              className="text-left py-2 border-b capitalize"
-            >
-              {String(key).replace(/([A-Z])/g, ' $1').trim()}
-            </TableHeader>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((item, index) => (
-          <TableRow key={index}>
-            {tableColumns.map(key => (
-              <Td key={String(key)} className="py-2 border-b">
-                {String(item[key])}
-              </Td>
-            ))}
-          </TableRow>
-        ))}
-      </tbody>
-    </Table>
-  );
-};
+// Types definitions for better type safety
+interface PlanningItem {
+  completo: number;
+  pendente: number;
+  parcial?: number;
+  serie?: string;
+  turma?: string;
+}
 
 // Main Dashboard Component
 const PlanningDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'series' | 'turma'>('series');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Centralized Data Management
+  /// Define color constants for quick access cards
+  const COLORS = {
+    BLUE: '#1e40af',       // Sequência Didática
+    GREEN: '#15803d',      // Planejamento de Aulas
+    PURPLE: '#7e22ce',     // Horário Semanal
+    ORANGE: '#ea580c',     // Atividades e Avaliações
+    RED: '#b91c1c',        // Gestão de Turmas
+    TEAL: '#14b8a6'        // Calendário Acadêmico
+  };
+
+  // Centralized Data Management with updated colors
   const dashboardData = {
     accessCards: [
       {
         id: 1,
         titulo: 'Sequência Didática',
         icon: <FaLayerGroup size={24} />,
-        color: 'var(--color-primary)',
+        color: COLORS.BLUE,
         link: '/didactic-sequences'
       },
       {
         id: 2,
         titulo: 'Planejamento de Aulas',
         icon: <FaFileAlt size={24} />,
-        color: 'var(--color-secondary)',
+        color: COLORS.GREEN,
         link: '/planejamento'
       },
       {
         id: 3,
         titulo: 'Horário Semanal',
         icon: <FaClock size={24} />,
-        color: 'var(--color-feedback-warning)',
+        color: COLORS.PURPLE,
         link: '/horario'
       },
       {
         id: 4,
         titulo: 'Atividades e Avaliações',
         icon: <FaCheckSquare size={24} />,
-        color: 'var(--color-feedback-success)',
+        color: COLORS.ORANGE,
         link: '/evaluations'
       },
       {
         id: 5,
         titulo: 'Gestão de Turmas',
         icon: <FaUsers size={24} />,
-        color: 'var(--color-feedback-error)',
+        color: COLORS.RED,
         link: '/digital-notebook'
       },
       {
         id: 6,
         titulo: 'Calendário Acadêmico',
         icon: <FaCalendar size={24} />,
-        color: 'var(--color-info)',
+        color: COLORS.TEAL,
         link: '/calendario'
       }
     ]
   };
 
-  // Memoized Data for Performance
-  const currentPlanningData = useMemo(() =>
+  // Simulate data fetching
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        // In a real application, you would fetch data from an API here
+        // Simulating API call with setTimeout
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      } catch (err) {
+        setError("Não foi possível carregar os dados do dashboard. Por favor, tente novamente.");
+        setIsLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
+
+  // Memoized Data for Performance - only re-calculates when activeTab changes
+  const currentPlanningData = useMemo<PlanningItem[]>(() =>
     activeTab === 'series'
       ? planejamentoPorSerie
       : planejamentoPorTurma,
     [activeTab]
   );
 
-  const handleClickQuick = (link: string) => {
-    navigate(link);
+  // Navigation handler for quick access cards
+  const handleQuickAccessClick = (link: string) => {
+    try {
+      navigate(link);
+    } catch (error) {
+      console.error("Erro ao navegar para a página:", error);
+      // In a real application, you might want to show a toast notification here
+    }
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <DashboardContainer>
+        <div className="flex justify-center items-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+            <p className="mt-4">Carregando dashboard...</p>
+          </div>
+        </div>
+      </DashboardContainer>
+    );
+  }
+
+   // Error state
+   if (error) {
+    return (
+      <DashboardContainer>
+        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+          <p className="font-bold">Erro</p>
+          <p>{error}</p>
+          <button 
+            className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
+            onClick={() => window.location.reload()}
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </DashboardContainer>
+    );
   }
 
   return (
@@ -184,29 +183,11 @@ const PlanningDashboard: React.FC = () => {
         </p>
       </header>
 
-       {/* Quick Access Section */}
-       <section>
-        <SectionHeader>
-          <h2 className="text-xl font-semibold">Acesso Rápido</h2>
-        </SectionHeader>
-        <GridSection>
-          {dashboardData.accessCards.map(card => (
-            <QuickAccessCard
-              key={card.id}
-              $color={card.color}
-              onClick={() => handleClickQuick(card.link)}
-            >
-              <QuickHeader>
-                {card.icon}
-                <h3 className="ml-2 text-lg font-semibold">{card.titulo}</h3>
-              </QuickHeader>
-              <p className="text-sm opacity-80">
-                Acesse e gerencie {card.titulo.toLowerCase()}
-              </p>
-            </QuickAccessCard>
-          ))}
-        </GridSection>
-      </section>
+      {/* Quick Access Section */}
+      <QuickAccessSection 
+        accessCards={dashboardData.accessCards} 
+        onCardClick={handleQuickAccessClick} 
+      />
 
       {/* Planning Overview Section */}
       <section className="mb-8">
@@ -244,49 +225,8 @@ const PlanningDashboard: React.FC = () => {
       {/* Notifications and Upcoming Activities Section */}
       <section className="mb-8">
         <GridSection>
-          <SectionCard>
-            <SectionHeader>
-              <h2 className="text-xl font-semibold flex items-center">
-                <FaBell className="mr-2" /> Notificações
-              </h2>
-            </SectionHeader>
-            <NotificationList>
-              {notificacoes.map(notificacao => (
-                <NotificationItem key={notificacao.id}>
-                  <div>
-                    <span className="text-sm font-medium">
-                      {notificacao.mensagem}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {formatDate(notificacao.data)}
-                    </span>
-                  </div>
-                </NotificationItem>
-              ))}
-            </NotificationList>
-          </SectionCard>
-
-          <SectionCard>
-            <SectionHeader>
-              <h2 className="text-xl font-semibold flex items-center">
-                <FaCalendarAlt className="mr-2" /> Próximas Atividades
-              </h2>
-            </SectionHeader>
-            <NotificationList>
-              {proximasAtividades.map(atividade => (
-                <NotificationItem key={atividade.id}>
-                  <div>
-                    <span className="text-sm font-medium">
-                      {atividade.titulo}
-                    </span>
-                    <span className="text-xs text-gray-500 ml-2">
-                      {formatDate(atividade.data)} - {atividade.horario}
-                    </span>
-                  </div>
-                </NotificationItem>
-              ))}
-            </NotificationList>
-          </SectionCard>
+          <NotificationSection notifications={notificacoes} />
+          <UpcomingActivitiesSection activities={proximasAtividades} />
         </GridSection>
       </section>
 
@@ -299,6 +239,7 @@ const PlanningDashboard: React.FC = () => {
             </SectionHeader>
             <DataTable
               data={resumoPorDisciplina}
+              emptyMessage="Nenhuma disciplina cadastrada"
             />
           </SectionCard>
 
@@ -308,6 +249,7 @@ const PlanningDashboard: React.FC = () => {
             </SectionHeader>
             <DataTable
               data={resumoPorTurma}
+              emptyMessage="Nenhuma turma cadastrada"
             />
           </SectionCard>
         </GridSection>

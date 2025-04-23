@@ -1,27 +1,5 @@
 import styled from 'styled-components';
 
-export const PlanningCardWrapper = styled.div`
-  padding: 1rem;
-  border: 1px solid var(--color-border-light);
-  border-radius: 0.5rem;
-  background-color: var(--color-background-secondary);
-`;
-
-export const ProgressBar = styled.div<{ $progress: number }>`
-  position: relative;
-  width: 100%;
-  height: 8px;
-  background-color: var(--color-success);
-  border-radius: 4px;
-  overflow: hidden;
-
-  & > div {
-    width: ${({ $progress }) => $progress}%;
-    height: 100%;
-    background-color: var(--color-feedback-success);
-  }
-`;
-
 export const DashboardContainer = styled.div`
   padding: 2rem;
   background-color: var(--color-background);
@@ -61,31 +39,3 @@ export const SectionCard = styled.div`
   border-radius: 0.5rem;
   background-color: var(--color-background-secondary);
 `;
-
-export const NotificationList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-export const NotificationItem = styled.div`
-  padding: 0.5rem;
-  border: 1px solid var(--color-border-light);
-  border-radius: 0.25rem;
-  background-color: var(--color-card);
-`;
-
-export const QuickAccessCard = styled.div<{ $color: string }>`
-  padding: 1rem;
-  border: 1px solid var(--color-border-light);
-  border-radius: 0.5rem;
-  background-color: var(--color-card);
-  border-left: 4px solid ${({ $color }) => $color};
-  cursor: pointer;
-`;
-
-export const QuickHeader = styled.header`
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-`
