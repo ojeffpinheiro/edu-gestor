@@ -37,8 +37,32 @@ export interface Equation {
   latex: string;
   name: string;
   description: string;
-  variables: Array<{ symbol: string; name: string; unit: string; }>;
+  variables: Variable[];
   tags: string[];
   topics: string[];
   createdAt: Date;
+}
+
+/**
+ * Estrutura para um símbolo de equação
+ */
+export interface Symbol {
+  display: string;
+  insert: string;
+  tooltip: string;
+}
+
+/**
+ * Categoria de símbolos para o editor de equações
+ */
+export interface SymbolCategory {
+  id: string;
+  title: string;
+  symbols: Symbol[];
+}
+
+export interface Variable {
+  symbol: string;
+  name: string; 
+  unit: string[];
 }

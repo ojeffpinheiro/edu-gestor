@@ -7,7 +7,6 @@ import ExamPdfGenerator from '../../../utils/examPdfGenerator';
 
 import { Button } from '../../../styles/buttons';
 import {
-  Container,
   Alert,
   TextInput,
   NumberInput,
@@ -28,6 +27,7 @@ import {
   Tag,
   VariantActions
 } from './ExamVariantGeneratorStyles';
+import { Container } from '../../../styles/layoutUtils';
 
 interface ExamVariantGeneratorProps {
   baseExam: Exam;

@@ -1,186 +1,369 @@
-import React, { useState } from 'react';
-import { FaEdit, FaTrash, FaPlus, FaTags } from 'react-icons/fa';
+// index.tsx - Componente principal corrigido
+import React, { useState, useEffect } from 'react';
+import { 
+  FaEdit, FaTrash, FaPlus, FaTags, FaFilter, 
+  FaExclamationTriangle 
+} from 'react-icons/fa';
 
 import { Equation } from '../../utils/types/Topic';
-
-import EquationForm from '../../components/modals/EquationForm';
-import {
-    ActionButton,
-    Actions,
-    AddButton,
-    Container,
-    ControlsWrapper,
-    Description,
-    EmptyState,
-    EquationCard,
-    EquationContent,
-    EquationDisplay,
-    EquationHeader,
-    EquationsGrid,
-    Header,
-    SearchInput,
-    Tag,
-    TagFilter,
-    TagIcon,
-    TagsContainer,
-    Title,
-    VariablesList
-} from './styles';
 import { initialEquations } from '../../mocks/equation';
 
-// Componente principal
+// Componentes
+import EquationForm from '../../components/modals/EquationForm';
+import Notification from '../../components/shared/Notification';
+import ConfirmDialog from '../../components/shared/ConfirmDialog';
+
+// Estilos
+import {
+  ActionButton,
+  Actions,
+  AddButton,
+  ControlsWrapper,
+  EmptyState,
+  EquationCard,
+  EquationContent,
+  EquationHeader,
+  EquationsGrid,
+  FilterContainer,
+  FilterSection,
+  FilterTag,
+  Header,
+  SearchInput,
+  Tag as TagComponent,
+  TagFilter,
+  TagIcon,
+  TagsContainer,
+  Title,
+  ActiveFilters,
+  ClearFiltersButton
+} from './styles';
+import { Container } from '../../styles/layoutUtils';
+import EquationViewer from '../../components/Equation/EquationView';
+
+/**
+ * Sistema de Equações - Componente principal que gerencia o CRUD de equações físicas
+ * e sua visualização em formato LaTeX
+ */
 const EquationSystem = () => {
-    const [equations, setEquations] = useState(initialEquations);
-    const [filterTag, setFilterTag] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [isEditing, setIsEditing] = useState(false);
-    const [editingEquation, setEditingEquation] = useState<Equation | null>(null);
-    const [showForm, setShowForm] = useState(false);
+  // Estado principal
+  const [equations, setEquations] = useState<Equation[]>(initialEquations);
+  const [filteredEquations, setFilteredEquations] = useState<Equation[]>(equations);
+  
+  // Filtros
+  const [filterTags, setFilterTags] = useState<string[]>([]);
+  const [filterTopics, setFilterTopics] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Estado do formulário
+  const [showForm, setShowForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentEquation, setCurrentEquation] = useState<Equation | null>(null);
+  
+  // Estado de UI
+  const [confirmDialog, setConfirmDialog] = useState({ show: false, id: '', name: '' });
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
-    const filteredEquations = equations.filter(eq => {
-        const matchesTag = filterTag ? eq.tags.includes(filterTag) : true;
-        const matchesSearch = searchTerm
-            ? eq.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            eq.description.toLowerCase().includes(searchTerm.toLowerCase())
-            : true;
-        return matchesTag && matchesSearch;
+  // Extrair todas as tags e tópicos únicos
+  const allTags = Array.from(new Set(equations.flatMap(eq => eq.tags))).sort();
+  const allTopics = Array.from(new Set(equations.flatMap(eq => eq.topics))).sort();
+
+  // Filtrar equações quando os filtros ou equações mudam
+  useEffect(() => {
+    const filtered = equations.filter(equation => {
+      // Filtrar por tags selecionadas
+      const matchesTags = filterTags.length === 0 || 
+        filterTags.every(tag => equation.tags.includes(tag));
+      
+      // Filtrar por tópicos selecionados
+      const matchesTopics = filterTopics.length === 0 || 
+        filterTopics.some(topic => equation.topics.includes(topic));
+      
+      // Filtrar por termo de busca
+      const matchesSearch = searchTerm === '' || 
+        equation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        equation.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        equation.latex.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      return matchesTags && matchesTopics && matchesSearch;
     });
+    
+    setFilteredEquations(filtered);
+  }, [equations, filterTags, filterTopics, searchTerm]);
 
-    // Funções CRUD
-    const handleAddEquation = (newEquation: Omit<Equation, 'id' | 'createdAt'>) => {
-        const id = (equations.length + 1).toString();
-        const equationWithId = {
-            ...newEquation,
-            id,
-            createdAt: new Date()
-        };
-        setEquations([...equations, equationWithId]);
-        setShowForm(false);
-    };
+  /**
+   * Manipuladores de CRUD para equações
+   */
+  const handleAddEquation = (newEquation: Equation) => {
+    try {
+      // Gerar ID único baseado em timestamp para evitar colisões
+      const uniqueId = `eq_${Date.now()}`;
+      const equationWithId = {
+        ...newEquation,
+        id: uniqueId,
+        createdAt: new Date()
+      };
+      
+      setEquations(prevEquations => [...prevEquations, equationWithId]);
+      setShowForm(false);
+      showNotification('Equação adicionada com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao adicionar equação:', error);
+      showNotification('Erro ao adicionar equação. Tente novamente.', 'error');
+    }
+  };
 
-    const handleUpdateEquation = (updatedEquation: Equation) => {
-        setEquations(
-            equations.map(eq => (eq.id === updatedEquation.id ? updatedEquation : eq))
-        );
-        setIsEditing(false);
-        setEditingEquation(null);
-    };
+  const handleUpdateEquation = (updatedEquation: Equation) => {
+    try {
+      setEquations(prevEquations => 
+        prevEquations.map(eq => (eq.id === updatedEquation.id ? updatedEquation : eq))
+      );
+      setIsEditing(false);
+      setCurrentEquation(null);
+      setShowForm(false);
+      showNotification('Equação atualizada com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao atualizar equação:', error);
+      showNotification('Erro ao atualizar equação. Tente novamente.', 'error');
+    }
+  };
 
-    const handleDeleteEquation = (id: string) => {
-        if (window.confirm('Tem certeza que deseja excluir esta equação?')) {
-            setEquations(equations.filter(eq => eq.id !== id));
-        }
-    };
+  const handleDeleteEquation = (id: string) => {
+    try {
+      setEquations(prevEquations => prevEquations.filter(eq => eq.id !== id));
+      setConfirmDialog({ show: false, id: '', name: '' });
+      showNotification('Equação removida com sucesso!', 'success');
+    } catch (error) {
+      console.error('Erro ao remover equação:', error);
+      showNotification('Erro ao remover equação. Tente novamente.', 'error');
+    }
+  };
 
-    const handleEditClick = (equation: Equation) => {
-        setIsEditing(true);
-        setEditingEquation(equation);
-        setShowForm(true);
-    };
-
-    // Obtendo todas as tags únicas para o filtro
-    const allTags = Array.from(
-        new Set(equations.flatMap(eq => eq.tags))
-    ).sort();
-
-    return (
-        <Container>
-            <Header>
-                <Title>Sistema de Equações - Movimento Uniforme</Title>
-                <ControlsWrapper>
-                    <SearchInput
-                        type="text"
-                        placeholder="Buscar equações..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    <TagFilter>
-                        <select
-                            value={filterTag}
-                            onChange={(e) => setFilterTag(e.target.value)}
-                        >
-                            <option value="">Todas as tags</option>
-                            {allTags.map(tag => (
-                                <option key={tag} value={tag}>
-                                    {tag}
-                                </option>
-                            ))}
-                        </select>
-                    </TagFilter>
-                    <AddButton onClick={() => {
-                        setIsEditing(false);
-                        setEditingEquation(null);
-                        setShowForm(true);
-                    }}>
-                        <FaPlus /> Nova Equação
-                    </AddButton>
-                </ControlsWrapper>
-            </Header>
-
-            <EquationsGrid>
-                {filteredEquations.length > 0 ? (
-                    filteredEquations.map(equation => (
-                        <EquationCard key={equation.id}>
-                            <EquationHeader>
-                                <h3>{equation.name}</h3>
-                                <Actions>
-                                    <ActionButton onClick={() => handleEditClick(equation)}>
-                                        <FaEdit />
-                                    </ActionButton>
-                                    <ActionButton onClick={() => handleDeleteEquation(equation.id)}>
-                                        <FaTrash />
-                                    </ActionButton>
-                                </Actions>
-                            </EquationHeader>
-                            <EquationContent>
-                                <EquationDisplay>
-                                    {equation.latex}
-                                </EquationDisplay>
-                                <Description>{equation.description}</Description>
-                                <VariablesList>
-                                    <h4>Variáveis:</h4>
-                                    <ul>
-                                        {equation.variables.map((variable, index) => (
-                                            <li key={index}>
-                                                <strong>{variable.symbol}</strong>: {variable.name} ({variable.unit})
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </VariablesList>
-                                <TagsContainer>
-                                    <TagIcon><FaTags /></TagIcon>
-                                    {equation.tags.map((tag, index) => (
-                                        <Tag
-                                            key={index}
-                                            onClick={() => setFilterTag(tag)}
-                                            className={filterTag === tag ? 'active' : ''}
-                                        >
-                                            {tag}
-                                        </Tag>
-                                    ))}
-                                </TagsContainer>
-                            </EquationContent>
-                        </EquationCard>
-                    ))
-                ) : (
-                    <EmptyState>
-                        <p>Nenhuma equação encontrada.</p>
-                    </EmptyState>
-                )}
-            </EquationsGrid>
-
-            <EquationForm
-                isOpen={showForm}
-                equation={isEditing ? editingEquation : null}
-                onSave={isEditing ? handleUpdateEquation : handleAddEquation}
-                onCancel={() => {
-                    setShowForm(false);
-                    setIsEditing(false);
-                    setEditingEquation(null);
-                }}
-            />
-        </Container>
+  /**
+   * Manipuladores de filtros
+   */
+  const toggleTagFilter = (tag: string) => {
+    setFilterTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag) 
+        : [...prev, tag]
     );
+  };
+
+  const toggleTopicFilter = (topic: string) => {
+    setFilterTopics(prev => 
+      prev.includes(topic) 
+        ? prev.filter(t => t !== topic) 
+        : [...prev, topic]
+    );
+  };
+
+  const clearFilters = () => {
+    setFilterTags([]);
+    setFilterTopics([]);
+    setSearchTerm('');
+  };
+
+  /**
+   * Manipuladores de UI
+   */
+  const openEditForm = (equation: Equation) => {
+    setIsEditing(true);
+    setCurrentEquation(equation);
+    setShowForm(true);
+  };
+
+  const openNewForm = () => {
+    setIsEditing(false);
+    setCurrentEquation(null);
+    setShowForm(true);
+  };
+
+  const confirmDelete = (id: string, name: string) => {
+    setConfirmDialog({ show: true, id, name });
+  };
+
+  const showNotification = (message: string, type: string) => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: '' });
+    }, 3000);
+  };
+
+  return (
+    <Container>
+      <Header>
+        <Title>Sistema de Equações - Física e Matemática</Title>
+        
+        <FilterSection>
+          <SearchInput
+            type="text"
+            placeholder="Buscar equações por nome, descrição ou fórmula..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Buscar equações"
+          />
+          
+          <FilterContainer>
+            <TagFilter>
+              <details>
+                <summary>
+                  <FaTags /> Tags <span>({filterTags.length ? filterTags.length : 'Todas'})</span>
+                </summary>
+                <div className="filter-options">
+                  {allTags.map(tag => (
+                    <FilterTag 
+                      key={tag} 
+                      onClick={() => toggleTagFilter(tag)}
+                      isActive={filterTags.includes(tag)}
+                    >
+                      {tag}
+                    </FilterTag>
+                  ))}
+                </div>
+              </details>
+            </TagFilter>
+            
+            <TagFilter>
+              <details>
+                <summary>
+                  <FaFilter /> Tópicos <span>({filterTopics.length ? filterTopics.length : 'Todos'})</span>
+                </summary>
+                <div className="filter-options">
+                  {allTopics.map(topic => (
+                    <FilterTag 
+                      key={topic} 
+                      onClick={() => toggleTopicFilter(topic)}
+                      isActive={filterTopics.includes(topic)}
+                    >
+                      {topic}
+                    </FilterTag>
+                  ))}
+                </div>
+              </details>
+            </TagFilter>
+          </FilterContainer>
+        </FilterSection>
+        
+        <ControlsWrapper>
+          {(filterTags.length > 0 || filterTopics.length > 0 || searchTerm) && (
+            <ActiveFilters>
+              <span>Filtros ativos:</span>
+              {filterTags.map(tag => (
+                <FilterTag key={tag} isActive={true} onClick={() => toggleTagFilter(tag)}>
+                  {tag} ✕
+                </FilterTag>
+              ))}
+              {filterTopics.map(topic => (
+                <FilterTag key={topic} isActive={true} onClick={() => toggleTopicFilter(topic)}>
+                  {topic} ✕
+                </FilterTag>
+              ))}
+              {searchTerm && (
+                <FilterTag isActive={true} onClick={() => setSearchTerm('')}>
+                  "{searchTerm}" ✕
+                </FilterTag>
+              )}
+              <ClearFiltersButton onClick={clearFilters}>
+                Limpar filtros
+              </ClearFiltersButton>
+            </ActiveFilters>
+          )}
+          
+          <AddButton onClick={openNewForm}>
+            <FaPlus /> Nova Equação
+          </AddButton>
+        </ControlsWrapper>
+      </Header>
+
+      <EquationsGrid>
+        {filteredEquations.length > 0 ? (
+          filteredEquations.map(equation => (
+            <EquationCard key={equation.id}>
+              <EquationHeader>
+                <h3>{equation.name}</h3>
+                <Actions>
+                  <ActionButton 
+                    onClick={() => openEditForm(equation)}
+                    aria-label="Editar equação"
+                  >
+                    <FaEdit />
+                  </ActionButton>
+                  <ActionButton 
+                    onClick={() => confirmDelete(equation.id, equation.name)}
+                    aria-label="Excluir equação"
+                  >
+                    <FaTrash />
+                  </ActionButton>
+                </Actions>
+              </EquationHeader>
+              
+              <EquationContent>
+                {/* Visualizador de equações LaTeX */}
+                <EquationViewer equation={equation.latex} />
+                
+                <TagsContainer>
+                  <TagIcon><FaTags /></TagIcon>
+                  {equation.tags.map((tag, index) => (
+                    <TagComponent
+                      key={index}
+                      onClick={() => toggleTagFilter(tag)}
+                      className={filterTags.includes(tag) ? 'active' : ''}
+                    >
+                      {tag}
+                    </TagComponent>
+                  ))}
+                </TagsContainer>
+              </EquationContent>
+            </EquationCard>
+          ))
+        ) : (
+          <EmptyState>
+            <FaExclamationTriangle size={48} />
+            <p>Nenhuma equação encontrada com os filtros atuais.</p>
+            {(filterTags.length > 0 || filterTopics.length > 0 || searchTerm) && (
+              <ClearFiltersButton onClick={clearFilters}>
+                Limpar filtros
+              </ClearFiltersButton>
+            )}
+          </EmptyState>
+        )}
+      </EquationsGrid>
+
+      {/* Modal de formulário de equação */}
+      {showForm && (
+        <EquationForm
+          isOpen={showForm}
+          equation={isEditing ? currentEquation : null}
+          onSave={isEditing ? handleUpdateEquation : handleAddEquation}
+          onCancel={() => {
+            setShowForm(false);
+            setIsEditing(false);
+            setCurrentEquation(null);
+          }}
+        />
+      )}
+
+      {/* Diálogo de confirmação para exclusão */}
+      {confirmDialog.show && (
+        <ConfirmDialog
+          title="Confirmar exclusão"
+          message={`Tem certeza que deseja excluir a equação "${confirmDialog.name}"?`}
+          confirmLabel="Excluir"
+          cancelLabel="Cancelar"
+          onConfirm={() => handleDeleteEquation(confirmDialog.id)}
+          onCancel={() => setConfirmDialog({ show: false, id: '', name: '' })}
+        />
+      )}
+
+      {/* Notificações de feedback */}
+      {notification.show && (
+        <Notification 
+          message={notification.message} 
+          type={notification.type} 
+        />
+      )}
+    </Container>
+  );
 };
 
 export default EquationSystem;

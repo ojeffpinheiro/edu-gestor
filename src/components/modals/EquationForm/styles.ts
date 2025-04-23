@@ -1,71 +1,9 @@
 import styled from "styled-components";
 
-export const CancelButton = styled.button`
-  background-color: var(--color-secondary);
-  color: var(--color-text-button);
-  border: none;
-  border-radius: var(--border-radius-md);
-  padding: var(--space-sm) var(--space-md);
-  font-size: var(--font-size-md);
-  font-weight: 500;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-sm);
-  
-  &:hover {
-    background-color: var(--color-secondary-hover);
-  }
-  
-  @media (max-width: 576px) {
-    width: 100%;
-  }
-`;
-
-
-export const FormActions = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--space-md);
-  margin-top: var(--space-lg);
-  
-  @media (max-width: 576px) {
-    flex-direction: column-reverse;
-  }
-`;
-
-export const FormGroup = styled.div`
-  margin-bottom: var(--space-md);
-  
-  label {
-    display: block;
-    margin-bottom: var(--space-xs);
-    color: var(--color-text-secondary);
-    font-weight: 500;
-  }
-  
-  input, textarea {
-    width: 100%;
-    padding: var(--space-sm) var(--space-md);
-    border: 2px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-md);
-    
-    &:focus {
-      outline: none;
-      border-color: var(--color-primary);
-    }
-  }
-  
-  textarea {
-    resize: vertical;
-  }
-`;
 
 export const RemoveVariableButton = styled.button`
   background-color: var(--color-error);
-  color: white;
+  color: var(--color-title-card)
   border: none;
   border-radius: var(--border-radius-sm);
   height: 38px;
@@ -73,6 +11,7 @@ export const RemoveVariableButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: var(--space-xs);
   
   &:hover {
     background-color: var(--color-error-hover);
@@ -118,42 +57,79 @@ export const VariableRow = styled.div`
   align-items: end;
   
   @media (max-width: 768px) {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
   }
 `;
 
-export const VariablesHeader = styled.div`
+export const VariablesContainer = styled.div`
+  margin-top: var(--space-md);
+`;
+
+export const AddVariableButton = styled.button`
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-xs) var(--space-md);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--space-md);
+  gap: var(--space-sm);
+  transition: all 0.2s;
   
-  h3 {
-    margin: 0;
+  &:hover {
+    background-color: var(--color-background-third);
     color: var(--color-text);
   }
+`;
+
+export const TagsInput = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border: 2px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  min-height: 42px;
   
-  button {
-    background-color: var(--color-secondary);
-    color: var(--color-text-button);
+  &:focus-within {
+    border-color: var(--color-primary);
+  }
+  
+  input {
+    flex: 1;
+    min-width: 100px;
     border: none;
-    border-radius: var(--border-radius-sm);
-    padding: var(--space-xs) var(--space-sm);
-    font-size: var(--font-size-sm);
+    outline: none;
+    padding: 0;
+    background: transparent;
+  }
+`;
+
+export const Tag = styled.div`
+  background-color: var(--color-background-secondary);
+  color: var(--color-text-secondary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  
+  span {
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: var(--space-xs);
     
     &:hover {
-      background-color: var(--color-secondary-hover);
+      color: var(--color-danger);
     }
   }
 `;
 
-export const VariablesSection = styled.div`
-  margin-bottom: var(--space-lg);
-  padding: var(--space-md);
-  background-color: var(--color-background-third);
-  border-radius: var(--border-radius-md);
+export const PreviewHeader = styled.h3`
+  margin-top: 0;
+  margin-bottom: var(--space-md);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-md);
 `;

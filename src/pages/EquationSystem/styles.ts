@@ -1,12 +1,6 @@
 import styled from "styled-components";
 import { cardAppear } from "../../styles/animations";
 
-// Estilos
-export const Container = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: var(--space-lg);
-`;
 
 export const Header = styled.header`
   margin-bottom: var(--space-xl);
@@ -157,30 +151,6 @@ export const EquationDisplay = styled.div`
   overflow-x: auto;
 `;
 
-export const Description = styled.p`
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-`;
-
-export const VariablesList = styled.div`
-  margin-bottom: var(--space-md);
-  
-  h4 {
-    margin-bottom: var(--space-xs);
-    color: var(--color-text);
-  }
-  
-  ul {
-    list-style-type: none;
-    padding-left: var(--space-md);
-  }
-  
-  li {
-    margin-bottom: var(--space-xs);
-    color: var(--color-text-secondary);
-  }
-`;
-
 export const TagsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -231,5 +201,75 @@ export const SearchInput = styled.input`
   &:focus {
     border-color: var(--color-primary);
     outline: none;
+  }
+`;
+
+export const FilterSection = styled.div`
+  margin: var(--space-md) 0;
+`;
+
+export const FilterContainer = styled.div`
+  display: grid;
+  gap: var(--space-md);
+  margin-top: var(--space-sm);
+  grid-template-columns: 4fr 4fr;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  summary{
+    cursor: pointer;
+  }
+
+  .filter-options{
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr 2fr;
+  }
+`;
+
+export const FilterTag = styled.span<{ isActive: boolean }>`
+  background-color: ${props => props.isActive ? 'var(--color-primary)' : 'var(--color-background-third)'};
+  color: ${props => props.isActive ? 'var(--color-text-on-primary)' : 'var(--color-text-secondary)'};
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-block;
+  margin: var(--space-xs);
+  
+  &:hover {
+    background-color: ${props => props.isActive ? 'var(--color-primary-hover)' : 'var(--color-primary-light)'};
+  }
+`;
+
+export const ActiveFilters = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  
+  span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+  }
+`;
+
+export const ClearFiltersButton = styled.button`
+  background: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-text-secondary);
+  border-radius: var(--border-radius-sm);
+  padding: calc(var(--space-xs) / 2) var(--space-sm);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: var(--color-background-secondary);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
   }
 `;

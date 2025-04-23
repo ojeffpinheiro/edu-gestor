@@ -20,7 +20,7 @@ export const gap = (size: string) => css`
 `;
 
 export const Container = styled.div`
-  width: 100%;
+  width: 95vw;
   margin: 0 auto;
   padding: 0 var(--space-md);
   
@@ -89,3 +89,9 @@ export const Divider = styled.hr`
   border-top: 1px solid var(--color-border);
   margin: var(--space-lg) 0;
 `;
+
+export const EquationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: var(--space-xl);
+`
