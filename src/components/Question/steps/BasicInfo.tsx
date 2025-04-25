@@ -3,8 +3,7 @@ import React from 'react'
 import { FaClipboardList, FaExclamationTriangle } from "react-icons/fa";
 
 import { Alternative, StepProps } from "../../../utils/types/Question";
-import { 
-    FormCard, 
+import {
     RadioWrapper, 
     SectionTitle, 
     StepContent, 
@@ -12,6 +11,7 @@ import {
  } from "../../modals/QuestionModal/styles";
 import { InputGroup, Label, Select } from "../../../styles/inputs";
 import { Flex, Grid } from "../../../styles/layoutUtils";
+import { FormCard } from '../../../styles/containers';
 
 // Componente para o passo 1: Definições Básicas
 const BasicDefinitionsStep: React.FC<StepProps> = ({

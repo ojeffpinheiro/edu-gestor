@@ -2,39 +2,6 @@
 import styled, { css } from "styled-components";
 import { fadeIn, pulse, shake } from "../../../styles/animations";
 
-export const FormSectionTitle = styled.h2`
-    font-size: var(--font-size-xl);
-    color: var(--color-text);
-    margin-bottom: var(--space-xs);
-    display: flex;
-    align-items: center;
-    position: relative;
-    
-    &::after {
-        content: '';
-        position: absolute;
-        bottom: -8px;
-        left: 0;
-        width: 50px;
-        height: 3px;
-        background-color: var(--color-primary);
-        border-radius: 3px;
-    }
-    
-    .section-status {
-        margin-left: var(--space-sm);
-        display: inline-flex;
-        align-items: center;
-    }
-`;
-
-export const FormSectionDescription = styled.p`
-    color: var(--color-text-secondary);
-    margin-bottom: var(--space-lg);
-    font-size: var(--font-size-md);
-    line-height: 1.5;
-`;
-
 export const FormGrid = styled.div`
     display: grid;
     grid-template-columns: 1fr;
@@ -46,75 +13,6 @@ export const FormGrid = styled.div`
     
     @media (min-width: 1200px) {
         grid-template-columns: repeat(3, 1fr);
-    }
-`;
-
-export const FormSection = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md, 1rem);
-    padding: var(--space-lg);
-    background-color: var(--color-background-secondary);
-    border-radius: var(--border-radius-md);
-    margin-bottom: var(--space-lg);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
-    border-left: 3px solid transparent;
-    
-    &:hover {
-        box-shadow: var(--shadow-md);
-        border-left-color: var(--color-primary);
-        transform: translateY(-2px);
-    }
-`;
-
-export const InputGroup = styled.div`
-    margin-bottom: var(--space-md, 1rem);
-    position: relative;
-    
-    &:last-child {
-        margin-bottom: 0;
-    }
-    
-    &.mt-6 {
-        margin-top: var(--space-2xl, 3rem);
-    }
-    
-    .space-y-2 {
-        display: flex;
-        flex-direction: column;
-        gap: var(--space-sm, 0.5rem);
-    }
-    
-    .flex.items-center {
-        display: flex;
-        align-items: center;
-        gap: var(--space-sm, 0.5rem);
-    }
-    
-    .ml-2 {
-        margin-left: var(--space-sm, 0.5rem);
-    }
-    
-    .error-tooltip {
-        position: absolute;
-        right: 0;
-        top: 0;
-        color: var(--color-error);
-        cursor: pointer;
-    }
-`;
-
-export const Label = styled.label`
-    display: block;
-    font-size: var(--font-size-sm, 0.875rem);
-    font-weight: 500;
-    color: var(--color-text-secondary, #4a5568);
-    margin-bottom: var(--space-xs, 0.25rem);
-    
-    .required {
-        color: var(--color-error);
-        margin-left: 4px;
     }
 `;
 
@@ -177,46 +75,6 @@ export const TextArea = styled.textarea`
     &.error {
         border-color: var(--color-error);
         animation: ${shake} 0.5s ease-in-out;
-    }
-`;
-
-export const ErrorMessage = styled.div`
-    color: var(--color-error, #e53e3e);
-    font-size: var(--font-size-sm, 0.875rem);
-    padding: var(--space-md, 1rem);
-    background-color: rgba(254, 226, 226, 0.7);
-    border-radius: var(--border-radius-md, 0.375rem);
-    border-left: 3px solid var(--color-error, #e53e3e);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-    box-shadow: var(--shadow-sm);
-    animation: ${fadeIn} 0.3s ease-out;
-    
-    svg {
-        flex-shrink: 0;
-        font-size: var(--font-size-lg);
-    }
-`;
-
-export const SuccessMessage = styled.div`
-    color: var(--color-success, #38a169);
-    font-size: var(--font-size-sm, 0.875rem);
-    padding: var(--space-md, 1rem);
-    background-color: rgba(240, 255, 244, 0.7);
-    border-radius: var(--border-radius-md, 0.375rem);
-    border-left: 3px solid var(--color-success, #38a169);
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    margin-bottom: var(--space-md);
-    box-shadow: var(--shadow-sm);
-    animation: ${fadeIn} 0.3s ease-out;
-    
-    svg {
-        flex-shrink: 0;
-        font-size: var(--font-size-lg);
     }
 `;
 

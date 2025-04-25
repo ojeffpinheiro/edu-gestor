@@ -11,6 +11,7 @@ interface StudentsTableProps {
 }
 
 const StudentsTable: React.FC<StudentsTableProps> = ({ students, calculateAttendanceGrade}) => {
+    console.log(students)
     return(
         <Table>
             <thead>

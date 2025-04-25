@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components';
-import { fadeIn, slideUp } from '../../../styles/animations';
+import { fadeIn } from '../../../styles/animations';
 import Button from '../../shared/Button';
 
 export const TwoColumnLayout = styled.div`
@@ -16,20 +16,6 @@ export const Column = styled.div`
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
-`;
-
-export const FormCard = styled.section`
-  background-color: var(--color-background-secondary);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-border-light);
-  animation: ${slideUp} 0.3s ease;
-  transition: all 0.2s ease-in-out;
-  
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  }
 `;
 
 export const SectionTitle = styled.h3`

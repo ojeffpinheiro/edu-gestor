@@ -10,7 +10,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter
+  ModalFooter,
+  InfoBox
 } from '../../../styles/modals';
 import {
   Input,
@@ -35,20 +36,7 @@ interface ConversionRelationModalProps {
   editingConversion?: ConversionRelation | null;
   title?: string;
 }
-const InfoBox = styled.div`
-  background-color: var(--color-info);
-  color: var(--color-text-on-primary);
-  padding: var(--space-md);
-  border-radius: var(--border-radius-md);
-  margin-bottom: var(--space-md);
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  
-  svg {
-    margin-top: 3px;
-  }
-`;
+
 const FormulaPreview = styled.div`
   margin-top: var(--space-xs);
   background-color: var(--color-background-third);

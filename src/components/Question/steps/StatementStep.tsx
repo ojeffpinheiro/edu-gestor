@@ -2,9 +2,10 @@ import React from 'react'
 import { FaEdit, FaExclamationTriangle } from "react-icons/fa";
 
 import { StepProps } from "../../../utils/types/Question";
-import { FormCard, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
+import { SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
 import { FormGroup } from "../../../styles/formControls";
 import { Label, TextArea } from "../../../styles/inputs";
+import { FormCard } from '../../../styles/containers';
 
 // Componente para o passo 2: Enunciado
 const StatementStep: React.FC<StepProps> = ({

@@ -68,6 +68,11 @@ export const Label = styled.label`
   color: var(--color-text-secondary);
   margin-bottom: var(--space-xs);
   transition: color 0.2s ease;
+
+  .required {
+        color: var(--color-error);
+        margin-left: 4px;
+    }
 `;
 
 export const FormGroup = styled.div`
@@ -92,4 +97,94 @@ export const FormError = styled.div`
   color: var(--color-error);
   font-size: var(--font-size-sm);
   margin-top: var(--space-xs);
+`;
+
+
+export const FormSection = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md, 1rem);
+    padding: var(--space-lg);
+    background-color: var(--color-background-secondary);
+    border-radius: var(--border-radius-md);
+    margin-bottom: var(--space-lg);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    border-left: 3px solid transparent;
+    
+    &:hover {
+        box-shadow: var(--shadow-md);
+        border-left-color: var(--color-primary);
+        transform: translateY(-2px);
+    }
+`;
+
+export const FormSectionTitle = styled.h2`
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    margin-bottom: var(--space-xs);
+    display: flex;
+    align-items: center;
+    position: relative;
+    
+    &::after {
+        content: '';
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        width: 50px;
+        height: 3px;
+        background-color: var(--color-primary);
+        border-radius: 3px;
+    }
+    
+    .section-status {
+        margin-left: var(--space-sm);
+        display: inline-flex;
+        align-items: center;
+    }
+`;
+
+export const FormSectionDescription = styled.p`
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-md);
+    line-height: 1.5;
+`;
+
+export const InputGroup = styled.div`
+    margin-bottom: var(--space-md, 1rem);
+    position: relative;
+    
+    &:last-child {
+        margin-bottom: 0;
+    }
+    
+    &.mt-6 {
+        margin-top: var(--space-2xl, 3rem);
+    }
+    
+    .space-y-2 {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-sm, 0.5rem);
+    }
+    
+    .flex.items-center {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm, 0.5rem);
+    }
+    
+    .ml-2 {
+        margin-left: var(--space-sm, 0.5rem);
+    }
+    
+    .error-tooltip {
+        position: absolute;
+        right: 0;
+        top: 0;
+        color: var(--color-error);
+        cursor: pointer;
+    }
 `;

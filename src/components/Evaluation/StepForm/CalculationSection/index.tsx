@@ -9,8 +9,8 @@ import { CollapsibleContent } from "../../../ui/CollapsibleComponents";
 import { Tooltip } from "../../../ui/Tooltip";
 
 import CollapsibleSection from "../../CollapsibleSection";
-import { InputGroup } from "../../../modals/EvaluationForm/styles";
 import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
+import { InputGroup } from "../../../../styles/formControls";
 
 interface CalculationSectionProps {
     evaluationData: Evaluation | null;

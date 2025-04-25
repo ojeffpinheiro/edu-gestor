@@ -58,7 +58,7 @@ export const ModalBody = styled.div`
     flex: 1;
     animation: ${slideIn} 0.3s ease-out;
     position: relative;
-    padding: var(--space-xl);
+    padding: var(--space-md);
     
     &::-webkit-scrollbar {
         width: 8px;
@@ -92,4 +92,55 @@ export const ModalFooter = styled.div`
         gap: var(--space-md);
         margin-left: auto;
     }
+`;
+
+export const FormGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+`;
+
+export const SectionHeader = styled.div`
+    display: flex;
+    align-items: center;
+    text-align: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-on-primary);
+    
+    h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+    }
+`;
+export const Grid2Columns = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+`;
+
+export const StyledInputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+`;
+
+export const InfoBox = styled.div`
+  background-color: var(--color-info);
+  color: var(--color-text-on-primary);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  
+  svg {
+    margin-top: 3px;
+  }
 `;

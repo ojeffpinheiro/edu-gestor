@@ -12,18 +12,18 @@ import EvaluationCriteriaSection from "../../Evaluation/StepForm/EvaluationCrite
 import EvaluationMethodSection from "../../Evaluation/StepForm/EvaluationMethodSection";
 import CalculationSection from "../../Evaluation/StepForm/CalculationSection";
 
+import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
+import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
+import { FormSectionOptions } from "../../../utils/types/FormSection";
+
 import {
-    ErrorMessage,
-    SuccessMessage,
     FormStepsNav,
     FormStepButton,
     FormStepDivider,
     FormProgress,
     FormProgressIndicator,
 } from './styles';
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
-import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
-import { FormSectionOptions } from "../../../utils/types/FormSection";
 
 interface EvaluationFormProps {
     evaluation: Evaluation | null;

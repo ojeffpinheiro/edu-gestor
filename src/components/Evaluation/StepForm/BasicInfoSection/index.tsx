@@ -7,20 +7,17 @@ import { Label } from "../../../../styles/inputs";
 import { 
     Container, 
     ErrorMessage, 
-    FormGrid, 
     FormSection, 
-    Grid2Columns, 
     IconWrapper, 
     InputWithIcon, 
-    RequiredFieldsNote, 
-    SectionHeader, 
+    RequiredFieldsNote,
     SectionTitle, 
-    StyledInput, 
-    StyledInputGroup, 
+    StyledInput,
     StyledSelect, 
     StyledTextArea
  } from './styles'
 import { Evaluation, EvaluationType } from "../../../../utils/types/AssessmentEvaluation";
+import { FormGrid, Grid2Columns, SectionHeader, StyledInputGroup } from "../../../../styles/modals";
 
 interface BasicInfoSectionProps {
     evaluationData: Evaluation | null;

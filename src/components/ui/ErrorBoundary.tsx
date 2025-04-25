@@ -1,14 +1,26 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import styled from 'styled-components';
+import { fadeIn } from '../../styles/animations';
 
 // Styled components for error display
 const ErrorContainer = styled.div`
   margin: 1rem;
-  padding: 1rem;
+  padding: var(--space-md, 1rem);
   border-radius: 8px;
-  background-color: #ffebee;
-  border: 1px solid #ffcdd2;
+  background-color: rgba(254, 226, 226, 0.7);
+  border-radius: var(--border-radius-md, 0.375rem);
   color: #b71c1c;
+  
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  box-shadow: var(--shadow-sm);
+  animation: ${fadeIn} 0.3s ease-out;
+    
+  svg {
+    flex-shrink: 0;
+    font-size: var(--font-size-lg);
+  }
 `;
 
 const ErrorTitle = styled.h4`
@@ -79,7 +91,7 @@ export class ErrorBoundary extends Component<Props, State> {
       if (this.props.fallback) {
         return this.props.fallback;
       }
-      
+
       return (
         <ErrorContainer role="alert">
           <ErrorTitle>Something went wrong</ErrorTitle>

@@ -23,47 +23,10 @@ export const SectionTitle = styled.div`
     }
 `;
 
-export const SectionHeader = styled.div`
-    display: flex;
-    align-items: center;
-    text-align: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-    color: var(--color-text-on-primary);
-    
-    h3 {
-        font-size: 1rem;
-        font-weight: 600;
-        margin: 0;
-    }
-`;
-
-export const FormGrid = styled.div`
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    
-    @media (min-width: 768px) {
-        grid-template-columns: repeat(2, 1fr);
-    }
-`;
-
 export const FormSection = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1rem;
-`;
-
-export const Grid2Columns = styled.div`
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-`;
-
-export const StyledInputGroup = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
 `;
 
 export const StyledInput = styled(Input)<{ isValid?: boolean }>`

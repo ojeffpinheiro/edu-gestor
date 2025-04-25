@@ -1,10 +1,11 @@
 import React from 'react'
 import { FaExclamationTriangle, FaGripLines, FaPlus, FaPuzzlePiece, FaSortDown, FaSortUp, FaTrashAlt } from "react-icons/fa";
 import { StepProps } from "../../../utils/types/Question";
-import { AlternativeActions, AlternativeContent, AlternativeItem, AlternativesContainer, CorrectBadge, DragHandle, FormCard, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
+import { AlternativeActions, AlternativeContent, AlternativeItem, AlternativesContainer, CorrectBadge, DragHandle, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
 import { Input } from '../../../styles/inputs';
 import { Button } from '../../../styles/buttons';
 import { Flex } from '../../../styles/layoutUtils';
+import { FormCard } from '../../../styles/containers';
 
 // Componente para o passo 3: Alternativas
 const AlternativesStep: React.FC<StepProps> = ({
