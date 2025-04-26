@@ -7,6 +7,7 @@ import {
     TabContainer,
     EventIndicator
 } from "./style";
+import Modal from "../Modal";
 
 interface CalendarModalProps {
     events: CalendarEvent[];
@@ -14,6 +15,7 @@ interface CalendarModalProps {
     onSelectDate: (date: Date) => void;
     activeTab: string;
     onTabChange: (tab: string) => void;
+    onClose: () => void;
 }
 
 /**
@@ -24,7 +26,9 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
     selectedDate,
     onSelectDate,
     activeTab,
-    onTabChange }) => {
+    onTabChange,
+    onClose
+ }) => {
 
     const filteredEvents = events.filter(event =>
         activeTab === 'todos' || event.type === activeTab
@@ -36,26 +40,30 @@ const CalendarModal: React.FC<CalendarModalProps> = ({
     }));
 
     return (
-        <>
-            <TabContainer>
-                <TabButton active={activeTab === 'todos'} onClick={() => onTabChange('todos')}>Todos</TabButton>
-                <TabButton active={activeTab === 'atividade'} onClick={() => onTabChange('atividade')}>Atividades</TabButton>
-                <TabButton active={activeTab === 'avaliacao'} onClick={() => onTabChange('avaliacao')}>Avaliações</TabButton>
-                <TabButton active={activeTab === 'evento'} onClick={() => onTabChange('evento')}>Eventos</TabButton>
-            </TabContainer>
+        <Modal 
+            isOpen={!!events} 
+            title='Calendário da Turma'
+            onClose={onClose}
+            size="sm" >
+                <TabContainer>
+                    <TabButton active={activeTab === 'todos'} onClick={() => onTabChange('todos')}>Todos</TabButton>
+                    <TabButton active={activeTab === 'atividade'} onClick={() => onTabChange('atividade')}>Atividades</TabButton>
+                    <TabButton active={activeTab === 'avaliacao'} onClick={() => onTabChange('avaliacao')}>Avaliações</TabButton>
+                    <TabButton active={activeTab === 'evento'} onClick={() => onTabChange('evento')}>Eventos</TabButton>
+                </TabContainer>
 
-            <Calendar 
-                initialSelectedDate={selectedDate} 
-                onSelectDate={onSelectDate} 
-                events={filteredEvents} 
-                className="calendar-wrapper" />
+                <Calendar 
+                    initialSelectedDate={selectedDate} 
+                    onSelectDate={onSelectDate} 
+                    events={filteredEvents} 
+                    className="calendar-wrapper" />
 
-            <div className="legend" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                <div style={{ marginRight: '1rem' }}><EventIndicator className="atividade" /> Atividades</div>
-                <div style={{ marginRight: '1rem' }}><EventIndicator className="avaliacao" /> Avaliações</div>
-                <div><EventIndicator className="evento" /> Eventos</div>
-            </div>
-        </>
+                <div className="legend" style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+                    <div style={{ marginRight: '1rem' }}><EventIndicator className="atividade" /> Atividades</div>
+                    <div style={{ marginRight: '1rem' }}><EventIndicator className="avaliacao" /> Avaliações</div>
+                    <div><EventIndicator className="evento" /> Eventos</div>
+                </div>
+        </Modal>
     );
 };
 

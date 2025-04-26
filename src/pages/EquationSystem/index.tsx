@@ -1,8 +1,8 @@
 // index.tsx - Componente principal corrigido
 import React, { useState, useEffect } from 'react';
-import { 
-  FaEdit, FaTrash, FaPlus, FaTags, FaFilter, 
-  FaExclamationTriangle 
+import {
+  FaEdit, FaTrash, FaPlus, FaTags, FaFilter,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 
 import { Equation } from '../../utils/types/Topic';
@@ -48,17 +48,17 @@ const EquationSystem = () => {
   // Estado principal
   const [equations, setEquations] = useState<Equation[]>(initialEquations);
   const [filteredEquations, setFilteredEquations] = useState<Equation[]>(equations);
-  
+
   // Filtros
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [filterTopics, setFilterTopics] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  
+
   // Estado do formulário
   const [showForm, setShowForm] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentEquation, setCurrentEquation] = useState<Equation | null>(null);
-  
+
   // Estado de UI
   const [confirmDialog, setConfirmDialog] = useState({ show: false, id: '', name: '' });
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
@@ -71,22 +71,22 @@ const EquationSystem = () => {
   useEffect(() => {
     const filtered = equations.filter(equation => {
       // Filtrar por tags selecionadas
-      const matchesTags = filterTags.length === 0 || 
+      const matchesTags = filterTags.length === 0 ||
         filterTags.every(tag => equation.tags.includes(tag));
-      
+
       // Filtrar por tópicos selecionados
-      const matchesTopics = filterTopics.length === 0 || 
+      const matchesTopics = filterTopics.length === 0 ||
         filterTopics.some(topic => equation.topics.includes(topic));
-      
+
       // Filtrar por termo de busca
-      const matchesSearch = searchTerm === '' || 
+      const matchesSearch = searchTerm === '' ||
         equation.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         equation.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
         equation.latex.toLowerCase().includes(searchTerm.toLowerCase());
-      
+
       return matchesTags && matchesTopics && matchesSearch;
     });
-    
+
     setFilteredEquations(filtered);
   }, [equations, filterTags, filterTopics, searchTerm]);
 
@@ -102,7 +102,7 @@ const EquationSystem = () => {
         id: uniqueId,
         createdAt: new Date()
       };
-      
+
       setEquations(prevEquations => [...prevEquations, equationWithId]);
       setShowForm(false);
       showNotification('Equação adicionada com sucesso!', 'success');
@@ -114,7 +114,7 @@ const EquationSystem = () => {
 
   const handleUpdateEquation = (updatedEquation: Equation) => {
     try {
-      setEquations(prevEquations => 
+      setEquations(prevEquations =>
         prevEquations.map(eq => (eq.id === updatedEquation.id ? updatedEquation : eq))
       );
       setIsEditing(false);
@@ -142,17 +142,17 @@ const EquationSystem = () => {
    * Manipuladores de filtros
    */
   const toggleTagFilter = (tag: string) => {
-    setFilterTags(prev => 
-      prev.includes(tag) 
-        ? prev.filter(t => t !== tag) 
+    setFilterTags(prev =>
+      prev.includes(tag)
+        ? prev.filter(t => t !== tag)
         : [...prev, tag]
     );
   };
 
   const toggleTopicFilter = (topic: string) => {
-    setFilterTopics(prev => 
-      prev.includes(topic) 
-        ? prev.filter(t => t !== topic) 
+    setFilterTopics(prev =>
+      prev.includes(topic)
+        ? prev.filter(t => t !== topic)
         : [...prev, topic]
     );
   };
@@ -189,11 +189,17 @@ const EquationSystem = () => {
     }, 3000);
   };
 
+  const handleCloseEquationSystemModal = () => {
+    setShowForm(false);
+    setIsEditing(false);
+    setCurrentEquation(null);
+  }
+
   return (
     <Container>
       <Header>
         <Title>Sistema de Equações - Física e Matemática</Title>
-        
+
         <FilterSection>
           <SearchInput
             type="text"
@@ -202,7 +208,7 @@ const EquationSystem = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             aria-label="Buscar equações"
           />
-          
+
           <FilterContainer>
             <TagFilter>
               <details>
@@ -211,8 +217,8 @@ const EquationSystem = () => {
                 </summary>
                 <div className="filter-options">
                   {allTags.map(tag => (
-                    <FilterTag 
-                      key={tag} 
+                    <FilterTag
+                      key={tag}
                       onClick={() => toggleTagFilter(tag)}
                       isActive={filterTags.includes(tag)}
                     >
@@ -222,7 +228,7 @@ const EquationSystem = () => {
                 </div>
               </details>
             </TagFilter>
-            
+
             <TagFilter>
               <details>
                 <summary>
@@ -230,8 +236,8 @@ const EquationSystem = () => {
                 </summary>
                 <div className="filter-options">
                   {allTopics.map(topic => (
-                    <FilterTag 
-                      key={topic} 
+                    <FilterTag
+                      key={topic}
                       onClick={() => toggleTopicFilter(topic)}
                       isActive={filterTopics.includes(topic)}
                     >
@@ -243,7 +249,7 @@ const EquationSystem = () => {
             </TagFilter>
           </FilterContainer>
         </FilterSection>
-        
+
         <ControlsWrapper>
           {(filterTags.length > 0 || filterTopics.length > 0 || searchTerm) && (
             <ActiveFilters>
@@ -268,7 +274,7 @@ const EquationSystem = () => {
               </ClearFiltersButton>
             </ActiveFilters>
           )}
-          
+
           <AddButton onClick={openNewForm}>
             <FaPlus /> Nova Equação
           </AddButton>
@@ -282,13 +288,13 @@ const EquationSystem = () => {
               <EquationHeader>
                 <h3>{equation.name}</h3>
                 <Actions>
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => openEditForm(equation)}
                     aria-label="Editar equação"
                   >
                     <FaEdit />
                   </ActionButton>
-                  <ActionButton 
+                  <ActionButton
                     onClick={() => confirmDelete(equation.id, equation.name)}
                     aria-label="Excluir equação"
                   >
@@ -296,11 +302,11 @@ const EquationSystem = () => {
                   </ActionButton>
                 </Actions>
               </EquationHeader>
-              
+
               <EquationContent>
                 {/* Visualizador de equações LaTeX */}
                 <EquationViewer equation={equation.latex} />
-                
+
                 <TagsContainer>
                   <TagIcon><FaTags /></TagIcon>
                   {equation.tags.map((tag, index) => (
@@ -331,16 +337,12 @@ const EquationSystem = () => {
 
       {/* Modal de formulário de equação */}
       {showForm && (
-        <EquationForm
-          isOpen={showForm}
-          equation={isEditing ? currentEquation : null}
-          onSave={isEditing ? handleUpdateEquation : handleAddEquation}
-          onCancel={() => {
-            setShowForm(false);
-            setIsEditing(false);
-            setCurrentEquation(null);
-          }}
-        />
+          <EquationForm
+            isOpen={showForm}
+            equation={isEditing ? currentEquation : null}
+            onSave={isEditing ? handleUpdateEquation : handleAddEquation}
+           onClose={ handleCloseEquationSystemModal }
+          />
       )}
 
       {/* Diálogo de confirmação para exclusão */}
@@ -357,9 +359,9 @@ const EquationSystem = () => {
 
       {/* Notificações de feedback */}
       {notification.show && (
-        <Notification 
-          message={notification.message} 
-          type={notification.type} 
+        <Notification
+          message={notification.message}
+          type={notification.type}
         />
       )}
     </Container>

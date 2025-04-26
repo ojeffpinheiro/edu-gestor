@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { FaTimes, FaPlus, FaSave } from 'react-icons/fa';
+import React, { useState, useEffect, useMemo } from 'react';
+import { FaTimes, FaPlus } from 'react-icons/fa';
 
 import { Equation, Variable } from '../../../utils/types/Topic';
 
 import EnhancedEquationEditor from '../../Equation/EnhancedEquationEditor';
 import EquationViewer from '../../Equation/EquationView';
 
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../../styles/modals';
-import { ActionButton, CancelButton, CloseButton } from '../../../styles/buttons';
+import Modal from '../Modal';
+
 import { FormGroup } from '../../../styles/formControls';
 import { Input, Label, TextArea } from '../../../styles/inputs';
 
@@ -25,13 +25,12 @@ interface EquationFormProps {
     isOpen: boolean;
     equation: Equation | null;
     onSave: (equation: Equation) => void;
-    onCancel: () => void;
+    onClose: () => void;
 }
 
-const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, onCancel }) => {
-    const modalRef = useRef<HTMLDivElement>(null);
-
-    const emptyVariable: Variable = { symbol: '', name: '', unit: [] };
+const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, onClose }) => {
+    // Corrigindo a definição de Variable para corresponder à sua utilização
+    const emptyVariable = useMemo<Variable>(() => ({ symbol: '', name: '', unit: [] }), []);
 
     const [formData, setFormData] = useState<Equation>({
         id: '',
@@ -64,7 +63,7 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
                 createdAt: new Date()
             });
         }
-    }, [equation, isOpen]);
+    }, [equation, isOpen, emptyVariable]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -81,7 +80,8 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
         setFormData(prev => ({ ...prev, variables: updatedVariables }));
     };
 
-    const addVariable = () => {
+    const addVariable = (e: React.MouseEvent) => {
+        e.preventDefault(); // Previne o comportamento padrão do botão
         setFormData(prev => ({
             ...prev,
             variables: [...prev.variables, { ...emptyVariable }]
@@ -89,6 +89,7 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
     };
 
     const removeVariable = (index: number, e: React.MouseEvent) => {
+        e.preventDefault(); // Previne o comportamento padrão do botão
         e.stopPropagation(); // Previne a propagação do evento
         if (formData.variables.length <= 1) return;
 
@@ -106,6 +107,7 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
     };
 
     const removeTag = (tag: string, e: React.MouseEvent) => {
+        e.preventDefault(); // Previne o comportamento padrão do botão
         e.stopPropagation(); // Previne a propagação do evento
         setFormData(prev => ({
             ...prev,
@@ -123,6 +125,7 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
     };
 
     const removeTopic = (topic: string, e: React.MouseEvent) => {
+        e.preventDefault(); // Previne o comportamento padrão do botão
         e.stopPropagation(); // Previne a propagação do evento
         setFormData(prev => ({
             ...prev,
@@ -148,10 +151,7 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        e.stopPropagation(); // Previne a propagação do evento
-
+    const handleSubmit = () => {
         // Validação básica
         if (!formData.name.trim() || !formData.latex.trim()) {
             alert('Por favor, preencha o nome e a fórmula da equação.');
@@ -181,186 +181,141 @@ const EquationForm: React.FC<EquationFormProps> = ({ isOpen, equation, onSave, o
         onSave(finalEquation);
     };
 
-    const handleBackdropClick = (event: React.MouseEvent) => {
-        if (event.target === event.currentTarget) {
-            onCancel();
-        }
-    };
-
-    /**
-     * Detecta cliques fora do modal para fechá-lo
-     */
-    useEffect(() => {
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                onCancel();
-            }
-        };
-
-        if (isOpen) {
-            document.addEventListener('mousedown', handleOutsideClick);
-        }
-
-        return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, [isOpen, onCancel]);
-
-    const handleModalClick = (e: React.MouseEvent) => {
-        // Previne a propagação de cliques dentro do modal
-        e.stopPropagation();
-    };
-
+    // Não renderiza nada se o modal estiver fechado
     if (!isOpen) return null;
 
     return (
-        <ModalContainer onClick={handleBackdropClick} role="dialog" aria-modal="true" data-testid="equation-modal">
-            <ModalContent ref={modalRef} size='md' onClick={handleModalClick}>
-                <ModalHeader>
-                    <h2>{equation ? 'Editar Equação' : 'Nova Equação'}</h2>
-                    <CloseButton onClick={(e) => {
-                        e.stopPropagation();
-                        onCancel();
-                    }} aria-label="Fechar formulário">
-                        <FaTimes />
-                    </CloseButton>
-                </ModalHeader>
+        <Modal
+            isOpen={isOpen}
+            title={equation ? 'Editar Equação' : 'Nova Equação'}
+            onClose={onClose}
+            onSubmit={handleSubmit}
+            showFooter
+            size='md'
+            submitText={equation ? 'Atualizar' : 'Criar'}
+        >
+            <form onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+                <FormGroup>
+                    <Label htmlFor="name">Nome da Equação</Label>
+                    <Input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="Ex: Lei de Ohm, Equação Quadrática, etc."
+                        required
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </FormGroup>
 
-                <form onSubmit={handleSubmit}>
-                    <ModalBody>
-                        <FormGroup>
-                            <Label htmlFor="name">Nome da Equação</Label>
-                            <Input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                placeholder="Ex: Lei de Ohm, Equação Quadrática, etc."
-                                required
-                                onClick={(e) => e.stopPropagation()}
-                            />
-                        </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="description">Descrição</Label>
+                    <TextArea
+                        id="description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Descreva o que esta equação representa e em que contexto é utilizada..."
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </FormGroup>
 
-                        <FormGroup>
-                            <Label htmlFor="description">Descrição</Label>
-                            <TextArea
-                                id="description"
-                                name="description"
-                                value={formData.description}
-                                onChange={handleChange}
-                                placeholder="Descreva o que esta equação representa e em que contexto é utilizada..."
-                                onClick={(e) => e.stopPropagation()}
-                            />
-                        </FormGroup>
-
-                        <FormGroup>
-                            <Label>Variáveis</Label>
-                            <VariablesContainer>
-                                {formData.variables.map((variable, index) => (
-                                    <VariableRow key={index}>
-                                        <Input
-                                            type="text"
-                                            placeholder="Símbolo (ex: V)"
-                                            value={variable.symbol}
-                                            onChange={(e) => handleVariableChange(index, 'symbol', e.target.value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                        />
-                                        <Input
-                                            type="text"
-                                            placeholder="Nome (ex: Tensão)"
-                                            value={variable.name}
-                                            onChange={(e) => handleVariableChange(index, 'name', e.target.value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                        />
-                                        <Input
-                                            type="text"
-                                            placeholder="Unidade (ex: V)"
-                                            value={variable.unit}
-                                            onChange={(e) => handleVariableChange(index, 'unit', e.target.value)}
-                                            onClick={(e) => e.stopPropagation()}
-                                        />
-                                        <RemoveVariableButton
-                                            onClick={(e) => removeVariable(index, e)}
-                                            disabled={formData.variables.length <= 1}
-                                            title="Remover variável"
-                                            type="button"
-                                        >
-                                            <FaTimes />
-                                        </RemoveVariableButton>
-                                    </VariableRow>
-                                ))}
-                                <AddVariableButton onClick={addVariable} type="button">
-                                    <FaPlus /> Adicionar Variável
-                                </AddVariableButton>
-                            </VariablesContainer>
-                        </FormGroup>
-
-                        <FormGroup>
-                            <Label>Equação</Label>
-                            <EnhancedEquationEditor
-                                initialValue={formData.latex}
-                                variables={formData.variables}
-                                onChange={handleLatexChange}
-                            />
-                        </FormGroup>
-
-                        <FormGroup>
-                            <PreviewHeader>Pré-visualização da Equação</PreviewHeader>
-                            <EquationViewer equation={formData.latex} />
-                        </FormGroup>
-
-                        <FormGroup>
-                            <Label>Tags</Label>
-                            <TagsInput>
-                                {formData.tags.map((tag, index) => (
-                                    <Tag key={index}>
-                                        {tag} <span onClick={(e) => removeTag(tag, e)}><FaTimes /></span>
-                                    </Tag>
-                                ))}
-                                <input
+                <FormGroup>
+                    <Label>Variáveis</Label>
+                    <VariablesContainer>
+                        {formData.variables.map((variable, index) => (
+                            <VariableRow key={index}>
+                                <Input
                                     type="text"
-                                    placeholder="Adicione tags e pressione Enter..."
-                                    value={tagInput}
-                                    onChange={(e) => setTagInput(e.target.value)}
-                                    onKeyDown={handleTagKeyDown}
+                                    placeholder="Símbolo (ex: V)"
+                                    value={variable.symbol}
+                                    onChange={(e) => handleVariableChange(index, 'symbol', e.target.value)}
                                     onClick={(e) => e.stopPropagation()}
                                 />
-                            </TagsInput>
-                        </FormGroup>
-
-                        <FormGroup>
-                            <Label>Tópicos Relacionados</Label>
-                            <TagsInput>
-                                {formData.topics.map((topic, index) => (
-                                    <Tag key={index}>
-                                        {topic} <span onClick={(e) => removeTopic(topic, e)}><FaTimes /></span>
-                                    </Tag>
-                                ))}
-                                <input
+                                <Input
                                     type="text"
-                                    placeholder="Adicione tópicos e pressione Enter..."
-                                    value={topicInput}
-                                    onChange={(e) => setTopicInput(e.target.value)}
-                                    onKeyDown={handleTopicKeyDown}
+                                    placeholder="Nome (ex: Tensão)"
+                                    value={variable.name}
+                                    onChange={(e) => handleVariableChange(index, 'name', e.target.value)}
                                     onClick={(e) => e.stopPropagation()}
                                 />
-                            </TagsInput>
-                        </FormGroup>
-                    </ModalBody>
+                                <Input
+                                    type="text"
+                                    placeholder="Unidade (ex: V)"
+                                    value={variable.unit}
+                                    onChange={(e) => handleVariableChange(index, 'unit', e.target.value)}
+                                    onClick={(e) => e.stopPropagation()}
+                                />
+                                <RemoveVariableButton
+                                    onClick={(e) => removeVariable(index, e)}
+                                    disabled={formData.variables.length <= 1}
+                                    title="Remover variável"
+                                    type="button"
+                                >
+                                    <FaTimes />
+                                </RemoveVariableButton>
+                            </VariableRow>
+                        ))}
+                        <AddVariableButton onClick={addVariable} type="button">
+                            <FaPlus /> Adicionar Variável
+                        </AddVariableButton>
+                    </VariablesContainer>
+                </FormGroup>
 
-                    <ModalFooter>
-                        <CancelButton type="button" onClick={(e) => {
-                            e.stopPropagation();
-                            onCancel();
-                        }}>
-                            <FaTimes /> Cancelar
-                        </CancelButton>
-                        <ActionButton type="submit">
-                            <FaSave /> {equation ? 'Atualizar' : 'Criar'}
-                        </ActionButton>
-                    </ModalFooter>
-                </form>
-            </ModalContent>
-        </ModalContainer>
+                <FormGroup>
+                    <Label>Equação</Label>
+                    <EnhancedEquationEditor
+                        initialValue={formData.latex}
+                        variables={formData.variables}
+                        onChange={handleLatexChange}
+                    />
+                </FormGroup>
+
+                <FormGroup>
+                    <PreviewHeader>Pré-visualização da Equação</PreviewHeader>
+                    <EquationViewer equation={formData.latex} />
+                </FormGroup>
+
+                <FormGroup>
+                    <Label>Tags</Label>
+                    <TagsInput>
+                        {formData.tags.map((tag, index) => (
+                            <Tag key={index}>
+                                {tag} <span onClick={(e) => removeTag(tag, e)}><FaTimes /></span>
+                            </Tag>
+                        ))}
+                        <input
+                            type="text"
+                            placeholder="Adicione tags e pressione Enter..."
+                            value={tagInput}
+                            onChange={(e) => setTagInput(e.target.value)}
+                            onKeyDown={handleTagKeyDown}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </TagsInput>
+                </FormGroup>
+
+                <FormGroup>
+                    <Label>Tópicos Relacionados</Label>
+                    <TagsInput>
+                        {formData.topics.map((topic, index) => (
+                            <Tag key={index}>
+                                {topic} <span onClick={(e) => removeTopic(topic, e)}><FaTimes /></span>
+                            </Tag>
+                        ))}
+                        <input
+                            type="text"
+                            placeholder="Adicione tópicos e pressione Enter..."
+                            value={topicInput}
+                            onChange={(e) => setTopicInput(e.target.value)}
+                            onKeyDown={handleTopicKeyDown}
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </TagsInput>
+                </FormGroup>
+            </form>
+        </Modal>
     );
 };
 

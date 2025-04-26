@@ -2,17 +2,16 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { FaSave, FaTimes, FaTrash } from 'react-icons/fa';
 import { format } from 'date-fns';
 
 import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
 
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../styles/modals';
 import { Flex, Grid } from '../../styles/layoutUtils';
 import { Input, InputGroup, Label, Select, TextArea } from '../../styles/inputs';
-import { Checkbox, CheckboxContainer, DeleteButton, SaveButton } from './EventCreationStyle';
-import { CancelButton, CloseButton } from '../../styles/buttons';
 import { ErrorMessage } from '../../styles/errorMessages';
+import Modal from '../modals/Modal';
+
+import { Checkbox, CheckboxContainer } from './EventCreationStyle';
 
 // Create a schema for form validation
 const eventSchema = z.object({
@@ -49,7 +48,7 @@ const EventCreation: React.FC<EventCreationProps> = ({
     register,
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<EventFormValues>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -85,121 +84,101 @@ const EventCreation: React.FC<EventCreationProps> = ({
   };
 
   return (
-    <ModalContainer onSubmit={handleSubmit(onFormSubmit)}>
-      <ModalContent size='sm' >
-        <ModalHeader>
-          <h2>{isEditing ? 'Editar Evento' : 'Novo Evento'}</h2>
-          <CloseButton type="button" onClick={onCancel}>
-            <FaTimes />
-          </CloseButton>
-        </ModalHeader>
+    <Modal
+      isOpen
+      showFooter
+      size='sm'
+      onSubmit={handleSubmit(onFormSubmit)}
+      submitText='Salvar'
+      title={isEditing ? 'Editar Evento' : 'Novo Evento'}
+      onClose={onCancel} >
 
-        <form>
-          <ModalBody>
-            <Grid columns={2} gap='md' >
-              <InputGroup>
-                <Label htmlFor="title">Título</Label>
-                <Input
-                  type="text"
-                  id="title"
-                  placeholder="Título do evento"
-                  {...register('title')}
-                />
-                {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
-              </InputGroup>
+      <form>
+        <Grid columns={2} gap='md' >
+          <InputGroup>
+            <Label htmlFor="title">Título</Label>
+            <Input
+              type="text"
+              id="title"
+              placeholder="Título do evento"
+              {...register('title')}
+            />
+            {errors.title && <ErrorMessage>{errors.title.message}</ErrorMessage>}
+          </InputGroup>
 
-              <InputGroup>
-                <Label htmlFor="type">Tipo de Evento</Label>
-                <Select id="type" {...register('type')}>
-                  <option value="class">Aula</option>
-                  <option value="meeting">Reunião</option>
-                  <option value="deadline">Prazo</option>
-                  <option value="holiday">Feriado</option>
-                  <option value="other">Outro</option>
-                </Select>
-                {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
-              </InputGroup>
-            </Grid>
+          <InputGroup>
+            <Label htmlFor="type">Tipo de Evento</Label>
+            <Select id="type" {...register('type')}>
+              <option value="class">Aula</option>
+              <option value="meeting">Reunião</option>
+              <option value="deadline">Prazo</option>
+              <option value="holiday">Feriado</option>
+              <option value="other">Outro</option>
+            </Select>
+            {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
+          </InputGroup>
+        </Grid>
 
-            <Flex direction='column' >
-              <span>Período</span>
-              <Grid columns={2} gap='md' >
-                <InputGroup>
-                  <Label htmlFor="start">Início</Label>
-                  <Input
-                    type="datetime-local"
-                    id="start"
-                    {...register('start')}
-                  />
-                  {errors.start && <ErrorMessage>{errors.start.message}</ErrorMessage>}
-                </InputGroup>
-
-                <InputGroup>
-                  <Label htmlFor="end">Término</Label>
-                  <Input
-                    type="datetime-local"
-                    id="end"
-                    {...register('end')}
-                  />
-                  {errors.end && <ErrorMessage>{errors.end.message}</ErrorMessage>}
-                </InputGroup>
-              </Grid>
-              <CheckboxContainer>
-                <Controller
-                  name="isAllDay"
-                  control={control}
-                  render={({ field }) => (
-                    <Checkbox
-                      type="checkbox"
-                      id="isAllDay"
-                      checked={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                <Label htmlFor="isAllDay">O dia todo</Label>
-              </CheckboxContainer>
-            </Flex>
-
+        <Flex direction='column' >
+          <span>Período</span>
+          <Grid columns={2} gap='md' >
             <InputGroup>
-              <Label htmlFor="location">Local</Label>
+              <Label htmlFor="start">Início</Label>
               <Input
-                type="text"
-                id="location"
-                placeholder="Local do evento"
-                {...register('location')}
+                type="datetime-local"
+                id="start"
+                {...register('start')}
               />
+              {errors.start && <ErrorMessage>{errors.start.message}</ErrorMessage>}
             </InputGroup>
 
             <InputGroup>
-              <Label htmlFor="description">Descrição</Label>
-              <TextArea
-                id="description"
-                placeholder="Descrição detalhada do evento"
-                {...register('description')}
+              <Label htmlFor="end">Término</Label>
+              <Input
+                type="datetime-local"
+                id="end"
+                {...register('end')}
               />
+              {errors.end && <ErrorMessage>{errors.end.message}</ErrorMessage>}
             </InputGroup>
-          </ModalBody>
-
-          <ModalFooter>
-            <div>
-              {onDelete && (
-                <DeleteButton type="button" onClick={onDelete}>
-                  <FaTrash /> Excluir
-                </DeleteButton>
+          </Grid>
+          <CheckboxContainer>
+            <Controller
+              name="isAllDay"
+              control={control}
+              render={({ field }) => (
+                <Checkbox
+                  type="checkbox"
+                  id="isAllDay"
+                  checked={field.value}
+                  onChange={field.onChange}
+                />
               )}
-            </div>
-            <CancelButton type="button" onClick={onCancel}>
-              <FaTimes /> Cancelar
-            </CancelButton>
-            <SaveButton type="submit" disabled={isSubmitting}>
-              <FaSave /> Salvar
-            </SaveButton>
-          </ModalFooter>
+            />
+            <Label htmlFor="isAllDay">O dia todo</Label>
+          </CheckboxContainer>
+        </Flex>
 
-        </form>
-      </ModalContent>
-    </ModalContainer>
+        <InputGroup>
+          <Label htmlFor="location">Local</Label>
+          <Input
+            type="text"
+            id="location"
+            placeholder="Local do evento"
+            {...register('location')}
+          />
+        </InputGroup>
+
+        <InputGroup>
+          <Label htmlFor="description">Descrição</Label>
+          <TextArea
+            id="description"
+            placeholder="Descrição detalhada do evento"
+            {...register('description')}
+          />
+        </InputGroup>
+      </form>
+    </Modal>
   );
 };
 

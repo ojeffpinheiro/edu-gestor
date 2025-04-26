@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Content, Question, Topic } from "../../../utils/types/Question";
+
 import BasicDefinitionsStep from "../../Question/steps/BasicInfo";
 import StatementStep from "../../Question/steps/StatementStep";
 import AlternativesStep from "../../Question/steps/AlternativesStep";
 import ResourcesStep from "../../Question/steps/ResourcesStep";
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
-import { Button, CancelButton, CloseButton, PrimaryActionButton } from "../../../styles/buttons";
-import { FaSave, FaTimes } from "react-icons/fa";
+
 import { Flex } from "../../../styles/layoutUtils";
+import Modal from "../Modal";
 
 interface QuestionModalProps {
   isOpen: boolean;
@@ -28,9 +28,6 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
   onSave
 }) => {
   const isEditMode = !!question?.id;
-
-
-  const modalRef = useRef<HTMLDivElement>(null);
 
   // Estado para controlar os passos
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -268,98 +265,48 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     }
   };
 
-  /**
-  * Fecha o modal ao clicar fora dele
-  */
-  useEffect(() => {
-    const handleOutsideClick = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [onClose]);
-
   if (!isOpen) return null;
 
   return (
-    <ModalContainer role="dialog" aria-modal="true">
-      <ModalContent ref={modalRef} size='md' >
-        <ModalHeader>
-          <h2>{isEditMode ? 'Editar Questão' : 'Nova Questão'}</h2>
-          <CloseButton onClick={onClose}>
-            <FaTimes />
-          </CloseButton>
-        </ModalHeader>
+    <Modal
+      isOpen
+      title={isEditMode ? 'Editar Questão' : 'Nova Questão'}
+      size='md'
+      showFooter
+      onSubmit={() => handleSubmit(new Event('submit') as unknown as React.FormEvent)}
+      submitText={isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Salvar'}
+      onClose={onClose} >
+      {/* Navegação entre passos */}
+      <Flex justify="center" style={{ marginBottom: '2rem' }}>
+        {steps.map((step, index) => (
+          <div
+            key={step}
+            className={`step ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''
+              }`}
+            onClick={() => {
+              // Permitir navegar diretamente para passos anteriores
+              if (index < currentStep) {
+                setCurrentStep(index);
+              }
+            }}
+            style={{
+              cursor: index < currentStep ? 'pointer' : 'default',
+              padding: '0.5rem 1rem',
+              margin: '0 0.5rem',
+              borderRadius: '4px',
+              backgroundColor: index === currentStep ? '#2196f3' : index < currentStep ? '#e3f2fd' : '#f5f5f5',
+              color: index === currentStep ? 'white' : index < currentStep ? '#2196f3' : '#757575',
+              fontWeight: index === currentStep ? 'bold' : 'normal',
+            }}
+          >
+            {step}
+          </div>
+        ))}
+      </Flex>
 
-        <form onSubmit={handleSubmit} id="questionForm" >
-          <ModalBody>
-            {/* Navegação entre passos */}
-            <Flex justify="center" style={{ marginBottom: '2rem' }}>
-              {steps.map((step, index) => (
-                <div
-                  key={step}
-                  className={`step ${index === currentStep ? 'active' : ''} ${index < currentStep ? 'completed' : ''
-                    }`}
-                  onClick={() => {
-                    // Permitir navegar diretamente para passos anteriores
-                    if (index < currentStep) {
-                      setCurrentStep(index);
-                    }
-                  }}
-                  style={{
-                    cursor: index < currentStep ? 'pointer' : 'default',
-                    padding: '0.5rem 1rem',
-                    margin: '0 0.5rem',
-                    borderRadius: '4px',
-                    backgroundColor: index === currentStep ? '#2196f3' : index < currentStep ? '#e3f2fd' : '#f5f5f5',
-                    color: index === currentStep ? 'white' : index < currentStep ? '#2196f3' : '#757575',
-                    fontWeight: index === currentStep ? 'bold' : 'normal',
-                  }}
-                >
-                  {step}
-                </div>
-              ))}
-            </Flex>
-
-            {/* Componente do passo atual */}
-            {renderCurrentStep()}
-          </ModalBody>
-
-          <ModalFooter>
-            <Flex justify="end" gap="md">
-              {currentStep > 0 && (
-                <Button onClick={handlePreviousStep}>
-                  Voltar
-                </Button>
-              )}
-
-              <CancelButton onClick={onClose} disabled={isSubmitting}>
-                Cancelar
-              </CancelButton>
-
-              {currentStep < steps.length - 1 ? (
-                <PrimaryActionButton
-                  type="button"
-                  onClick={handleNextStep}
-                >
-                  Próximo
-                </PrimaryActionButton>
-              ) : (
-                <PrimaryActionButton
-                  form="questionForm"
-                  type="submit"
-                  disabled={isSubmitting}
-                >
-                  <FaSave /> {isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Salvar'}
-                </PrimaryActionButton>
-              )}
-            </Flex>
-          </ModalFooter>
-        </form>
-      </ModalContent>
-    </ModalContainer>
+      {/* Componente do passo atual */}
+      {renderCurrentStep()}
+    </Modal>
   );
 };
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { FaTimes, FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { FormSection, FormSectionDescription, FormSectionTitle, Input, Label } from "../../../styles/formControls";
 import { InputGroup } from "../../../styles/inputs";
+import Modal from "../Modal";
 
 interface StudentFormProps {
   onSave: (student: Student) => Promise<void>;
@@ -114,9 +115,18 @@ const StudentForm: React.FC<StudentFormProps> = ({ onSave, onClose, defaultClass
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  // Verifica se há mudanças não salvas para confirmar antes de fechar
+  const handleCloseModal = () => {
+    if (feedback.hasChanges) {
+      if (window.confirm("Existem mudanças não salvas. Deseja realmente sair?")) {
+        onClose();
+      }
+    } else {
+      onClose();
+    }
+  };
+
+  const handleSubmit = async () => {
     if (!validateForm()) {
       setFeedback({
         errorMessage: "Por favor, corrija os erros no formulário antes de enviar.",
@@ -157,205 +167,175 @@ const StudentForm: React.FC<StudentFormProps> = ({ onSave, onClose, defaultClass
     }
   };
 
-  // Verifica se há mudanças não salvas para confirmar antes de fechar
-  const handleCloseModal = () => {
-    if (feedback.hasChanges) {
-      if (window.confirm("Existem mudanças não salvas. Deseja realmente sair?")) {
-        onClose();
-      }
-    } else {
-      onClose();
-    }
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSubmit();
   };
 
   return (
-    <div className="modal-container">
-      <div className="modal-content">
-        <div className="modal-header">
-          <h3>Cadastro de Alun</h3>
-          <button 
-            className="close-button" 
-            onClick={handleCloseModal} 
-            aria-label="Fechar modal"
-          >
-            <FaTimes />
-          </button>
-        </div>
+    <Modal 
+      isOpen={true} 
+      title='Cadastro de Aluno'
+      onClose={handleCloseModal}
+      onSubmit={handleSubmit}
+      submitText={isSubmitting ? "Salvando..." : "Salvar Aluno"}
+      showFooter={true}
+    >
+      <div className="modal-body">
+        {/* Mensagens de Feedback */}
+        {feedback.errorMessage && (
+          <ErrorMessage role="alert">
+            <FaExclamationTriangle />
+            {feedback.errorMessage}
+          </ErrorMessage>
+        )}
+        {feedback.successMessage && (
+          <SuccessMessage role="status">
+            <FaCheck />
+            {feedback.successMessage}
+          </SuccessMessage>
+        )}
 
-        <div className="modal-body">
-          {/* Mensagens de Feedback */}
-          {feedback.errorMessage && (
-            <ErrorMessage role="alert">
-              <FaExclamationTriangle />
-              {feedback.errorMessage}
-            </ErrorMessage>
-          )}
-          {feedback.successMessage && (
-            <SuccessMessage role="status">
-              <FaCheck />
-              {feedback.successMessage}
-            </SuccessMessage>
-          )}
+        <form onSubmit={handleFormSubmit}>
+          <FormSection>
+            <FormSectionTitle>Dados do Aluno</FormSectionTitle>
+            <FormSectionDescription>
+              Preencha os dados cadastrais do aluno.
+            </FormSectionDescription>
 
-          <form onSubmit={handleSubmit}>
-            <FormSection>
-              <FormSectionTitle>Dados do Aluno</FormSectionTitle>
-              <FormSectionDescription>
-                Preencha os dados cadastrais do aluno.
-              </FormSectionDescription>
+            {/* Nome do Aluno */}
+            <InputGroup>
+              <Label htmlFor="name">
+                Nome <span className="required">*</span>
+              </Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={student.name}
+                onChange={handleInputChange}
+                placeholder="Nome completo do aluno"
+                className={errors.name ? "error" : ""}
+                aria-required="true"
+              />
+              {errors.name && <div className="error-message">{errors.name}</div>}
+            </InputGroup>
 
-              {/* Nome do Aluno */}
-              <InputGroup>
-                <Label htmlFor="name">
-                  Nome <span className="required">*</span>
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  type="text"
-                  value={student.name}
-                  onChange={handleInputChange}
-                  placeholder="Nome completo do aluno"
-                  className={errors.name ? "error" : ""}
-                  aria-required="true"
-                />
-                {errors.name && <div className="error-message">{errors.name}</div>}
-              </InputGroup>
+            {/* Turma */}
+            <InputGroup>
+              <Label htmlFor="className">
+                Turma <span className="required">*</span>
+              </Label>
+              <Input
+                id="className"
+                name="className"
+                type="text"
+                value={student.className}
+                onChange={handleInputChange}
+                placeholder="Turma do aluno"
+                className={errors.className ? "error" : ""}
+                aria-required="true"
+              />
+              {errors.className && <div className="error-message">{errors.className}</div>}
+            </InputGroup>
 
-              {/* Turma */}
-              <InputGroup>
-                <Label htmlFor="className">
-                  Turma <span className="required">*</span>
-                </Label>
-                <Input
-                  id="className"
-                  name="className"
-                  type="text"
-                  value={student.className}
-                  onChange={handleInputChange}
-                  placeholder="Turma do aluno"
-                  className={errors.className ? "error" : ""}
-                  aria-required="true"
-                />
-                {errors.className && <div className="error-message">{errors.className}</div>}
-              </InputGroup>
+            {/* Data de Nascimento (opcional) */}
+            <InputGroup>
+              <Label htmlFor="birthDate">
+                Data de Nascimento
+              </Label>
+              <Input
+                id="birthDate"
+                name="birthDate"
+                type="date"
+                value={student.birthDate}
+                onChange={handleInputChange}
+              />
+            </InputGroup>
 
-              {/* Data de Nascimento (opcional) */}
-              <InputGroup>
-                <Label htmlFor="birthDate">
-                  Data de Nascimento
-                </Label>
-                <Input
-                  id="birthDate"
-                  name="birthDate"
-                  type="date"
-                  value={student.birthDate}
-                  onChange={handleInputChange}
-                />
-              </InputGroup>
-
-              {/* Sexo */}
-              <InputGroup>
-                <Label htmlFor="gender">
-                  Sexo <span className="required">*</span>
-                </Label>
-                <select
-                  id="gender"
-                  name="gender"
-                  value={student.gender}
-                  onChange={handleInputChange}
-                  className={errors.gender ? "error" : ""}
-                  aria-required="true"
-                >
-                  <option value="">Selecione...</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="Feminino">Feminino</option>
-                  <option value="Outro">Outro</option>
-                  <option value="Não informado">Não informado</option>
-                </select>
-                {errors.gender && <div className="error-message">{errors.gender}</div>}
-              </InputGroup>
-
-              {/* Número da Chamada */}
-              <InputGroup>
-                <Label htmlFor="rollNumber">
-                  Número da Chamada <span className="required">*</span>
-                </Label>
-                <Input
-                  id="rollNumber"
-                  name="rollNumber"
-                  type="number"
-                  min="1"
-                  value={student.rollNumber || ""}
-                  onChange={handleInputChange}
-                  placeholder="Número da chamada"
-                  className={errors.rollNumber ? "error" : ""}
-                  aria-required="true"
-                />
-                {errors.rollNumber && <div className="error-message">{errors.rollNumber}</div>}
-              </InputGroup>
-
-              {/* Situação */}
-              <InputGroup>
-                <Label htmlFor="status">
-                  Situação <span className="required">*</span>
-                </Label>
-                <select
-                  id="status"
-                  name="status"
-                  value={student.status}
-                  onChange={handleInputChange}
-                  className={errors.status ? "error" : ""}
-                  aria-required="true"
-                >
-                  <option value="Ativo">Ativo</option>
-                  <option value="Inativo">Inativo</option>
-                  <option value="Transferido">Transferido</option>
-                  <option value="Trancado">Trancado</option>
-                </select>
-                {errors.status && <div className="error-message">{errors.status}</div>}
-              </InputGroup>
-
-              {/* E-mail */}
-              <InputGroup>
-                <Label htmlFor="email">
-                  E-mail <span className="required">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={student.email}
-                  onChange={handleInputChange}
-                  placeholder="email@exemplo.com"
-                  className={errors.email ? "error" : ""}
-                  aria-required="true"
-                />
-                {errors.email && <div className="error-message">{errors.email}</div>}
-              </InputGroup>
-            </FormSection>
-
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="button secondary"
-                onClick={handleCloseModal}
-                disabled={isSubmitting}
+            {/* Sexo */}
+            <InputGroup>
+              <Label htmlFor="gender">
+                Sexo <span className="required">*</span>
+              </Label>
+              <select
+                id="gender"
+                name="gender"
+                value={student.gender}
+                onChange={handleInputChange}
+                className={errors.gender ? "error" : ""}
+                aria-required="true"
               >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                className="button primary"
-                disabled={isSubmitting}
+                <option value="">Selecione...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+                <option value="Não informado">Não informado</option>
+              </select>
+              {errors.gender && <div className="error-message">{errors.gender}</div>}
+            </InputGroup>
+
+            {/* Número da Chamada */}
+            <InputGroup>
+              <Label htmlFor="rollNumber">
+                Número da Chamada <span className="required">*</span>
+              </Label>
+              <Input
+                id="rollNumber"
+                name="rollNumber"
+                type="number"
+                min="1"
+                value={student.rollNumber || ""}
+                onChange={handleInputChange}
+                placeholder="Número da chamada"
+                className={errors.rollNumber ? "error" : ""}
+                aria-required="true"
+              />
+              {errors.rollNumber && <div className="error-message">{errors.rollNumber}</div>}
+            </InputGroup>
+
+            {/* Situação */}
+            <InputGroup>
+              <Label htmlFor="status">
+                Situação <span className="required">*</span>
+              </Label>
+              <select
+                id="status"
+                name="status"
+                value={student.status}
+                onChange={handleInputChange}
+                className={errors.status ? "error" : ""}
+                aria-required="true"
               >
-                {isSubmitting ? "Salvando..." : "Salvar Aluno"}
-              </button>
-            </div>
-          </form>
-        </div>
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Transferido">Transferido</option>
+                <option value="Trancado">Trancado</option>
+              </select>
+              {errors.status && <div className="error-message">{errors.status}</div>}
+            </InputGroup>
+
+            {/* E-mail */}
+            <InputGroup>
+              <Label htmlFor="email">
+                E-mail <span className="required">*</span>
+              </Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={student.email}
+                onChange={handleInputChange}
+                placeholder="email@exemplo.com"
+                className={errors.email ? "error" : ""}
+                aria-required="true"
+              />
+              {errors.email && <div className="error-message">{errors.email}</div>}
+            </InputGroup>
+          </FormSection>
+        </form>
       </div>
-    </div>
+    </Modal>
   );
 };
 

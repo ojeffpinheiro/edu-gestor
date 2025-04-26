@@ -1,22 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes, FaCheck, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from "react";
+import { FaCheck, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
+
 import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { Input, Label } from "../../../styles/formControls";
 import { InputGroup } from "../../../styles/inputs";
 import { useStudents } from "../../../hooks/useStudent";
-import { InfoBox, ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader, StyledInputGroup } from "../../../styles/modals";
-import { CancelButton, CloseButton, PrimaryActionButton } from "../../../styles/buttons";
+import { InfoBox, StyledInputGroup } from "../../../styles/modals";
 import { Grid } from "../../../styles/layoutUtils";
 import { FormCard } from "../../../styles/containers";
-import { Select, InlineErrorMessage } from "./styles"; 
+import { Select, InlineErrorMessage } from "./styles";
+import Modal from "../Modal";
 
 interface StudentFormModalProps {
-  onSave: () => boolean;
+  isOpen: boolean;
+  onSave: () => Promise<boolean> | boolean;
   onClose: () => void;
   defaultClass?: string;
 }
 
-const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, defaultClass = "" }) => {
+const StudentFormModal: React.FC<StudentFormModalProps> = ({ 
+  isOpen, 
+  onSave, 
+  onClose, 
+  defaultClass = "" 
+}) => {
   const { formData, setFormData, validateForm } = useStudents();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -30,20 +37,31 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
   useEffect(() => {
     if (defaultClass && (!formData.className || formData.className === "")) {
       setFormData((prev) => ({ ...prev, className: defaultClass }));
-      // Mark this change as "system default" not a user change
       setFeedback(prev => ({ ...prev, hasChanges: false }));
     }
   }, [defaultClass, setFormData, formData.className]);
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  // Reseta o formulário quando o modal é aberto/fechado
+  useEffect(() => {
+    if (!isOpen) {
+      setErrors({});
+      setFeedback({
+        errorMessage: "",
+        successMessage: "",
+        hasChanges: false,
+      });
+    }
+  }, [isOpen]);
+
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
-    // Tratamento especial para o número de chamada (deve ser um número)
+    // Tratamento especial para o número de chamada
     if (name === "rollNumber") {
-      const numericValue = parseInt(value);
+      const numericValue = value === "" ? undefined : parseInt(value);
       setFormData((prev) => ({
         ...prev,
-        [name]: isNaN(numericValue) ? 0 : numericValue,
+        [name]: isNaN(numericValue as number) ? undefined : numericValue,
       }));
     } else {
       setFormData((prev) => ({
@@ -61,11 +79,10 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
       });
     }
 
-    // Marca que há mudanças não salvas
     setFeedback((prev) => ({ ...prev, hasChanges: true }));
-  };
+  }, [errors, setFormData]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Valida o formulário
@@ -81,16 +98,11 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
     }
 
     setIsSubmitting(true);
-    setFeedback({
-      errorMessage: "",
-      successMessage: "",
-      hasChanges: true,
-    });
+    setFeedback(prev => ({ ...prev, errorMessage: "", successMessage: "" }));
 
     try {
-      // Call onSave and check if it succeeded
-      const success = onSave();
-      
+      const success = await Promise.resolve(onSave());
+
       if (success) {
         setFeedback({
           errorMessage: "",
@@ -98,12 +110,10 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
           hasChanges: false,
         });
 
-        // Aguarda um pouco para mostrar a mensagem de sucesso antes de fechar
         setTimeout(() => {
           onClose();
         }, 1500);
       } else {
-        // If onSave returned false, there was an error
         setFeedback({
           errorMessage: "Ocorreu um erro ao salvar os dados. Verifique e tente novamente.",
           successMessage: "",
@@ -120,206 +130,186 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [onSave, onClose, validateForm]);
 
-  // Verifica se há mudanças não salvas para confirmar antes de fechar
-  const handleCloseModal = () => {
-    if (feedback.hasChanges) {
-      if (window.confirm("Existem mudanças não salvas. Deseja realmente sair?")) {
-        onClose();
-      }
-    } else {
+  const handleCloseModal = useCallback(() => {
+    if (!feedback.hasChanges || window.confirm("Existem mudanças não salvas. Deseja realmente sair?")) {
       onClose();
     }
-  };
+  }, [feedback.hasChanges, onClose]);
+
+  if (!isOpen) return null;
 
   return (
-    <ModalContainer>
-      <ModalContent size='sm' >
-        <ModalHeader>
-          <h3>Cadastro de Aluno</h3>
-          <CloseButton onClick={handleCloseModal}>
-            <FaTimes />
-          </CloseButton>
-        </ModalHeader>
+    <Modal
+      isOpen={isOpen}
+      size='sm'
+      title='Cadastro de Aluno'
+      onClose={handleCloseModal}
+      onSubmit={() => handleSubmit(new Event('submit') as unknown as React.FormEvent)}
+      submitText={isSubmitting ? "Salvando..." : "Salvar Aluno"}
+      closeOnClickOutside={false}
+    >
+      <FormCard>
+        <InfoBox>
+          <FaInfoCircle />
+          <div>Preencha os dados cadastrais do aluno.</div>
+        </InfoBox>
 
-        <form onSubmit={handleSubmit}>
-          <ModalBody>
-            <FormCard>
-              <InfoBox>
-                <FaInfoCircle />
-                <div>
-                  Preencha os dados cadastrais do aluno.
-                </div>
-              </InfoBox>
+        {/* Mensagens de Feedback */}
+        {feedback.errorMessage && (
+          <ErrorMessage role="alert">
+            <FaExclamationTriangle />
+            {feedback.errorMessage}
+          </ErrorMessage>
+        )}
+        {feedback.successMessage && (
+          <SuccessMessage role="status">
+            <FaCheck />
+            {feedback.successMessage}
+          </SuccessMessage>
+        )}
 
-              {/* Mensagens de Feedback */}
-              {feedback.errorMessage && (
-                <ErrorMessage role="alert">
-                  <FaExclamationTriangle />
-                  {feedback.errorMessage}
-                </ErrorMessage>
-              )}
-              {feedback.successMessage && (
-                <SuccessMessage role="status">
-                  <FaCheck />
-                  {feedback.successMessage}
-                </SuccessMessage>
-              )}
+        <Grid columns={2} gap='md'>
+          <InputGroup>
+            <Label htmlFor="name">
+              Nome <span className="required">*</span>
+            </Label>
+            <Input
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name || ""}
+              onChange={handleInputChange}
+              placeholder="Nome completo do aluno"
+              className={errors.name ? "error" : ""}
+              aria-required="true"
+              aria-invalid={!!errors.name}
+            />
+            {errors.name && <InlineErrorMessage role="alert">{errors.name}</InlineErrorMessage>}
+          </InputGroup>
 
-              <Grid columns={2} gap='md' >
-                <InputGroup>
-                  <Label htmlFor="name">
-                    Nome <span className="required">*</span>
-                  </Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    placeholder="Nome completo do aluno"
-                    className={errors.name ? "error" : ""}
-                    aria-required="true"
-                  />
-                  {errors.name && <InlineErrorMessage>{errors.name}</InlineErrorMessage>}
-                </InputGroup>
+          <InputGroup>
+            <Label htmlFor="birthDate">Data de Nascimento</Label>
+            <Input
+              id="birthDate"
+              name="birthDate"
+              type="date"
+              value={formData.birthDate || ""}
+              onChange={handleInputChange}
+              aria-invalid={!!errors.birthDate}
+            />
+            {errors.birthDate && <InlineErrorMessage role="alert">{errors.birthDate}</InlineErrorMessage>}
+          </InputGroup>
+        </Grid>
 
-                <InputGroup>
-                  <Label htmlFor="birthDate">
-                    Data de Nascimento
-                  </Label>
-                  <Input
-                    id="birthDate"
-                    name="birthDate"
-                    type="date"
-                    value={formData.birthDate || ""}
-                    onChange={handleInputChange}
-                  />
-                </InputGroup>
-              </Grid>
+        <InputGroup>
+          <Label htmlFor="email">
+            E-mail <span className="required">*</span>
+          </Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email || ""}
+            onChange={handleInputChange}
+            placeholder="email@exemplo.com"
+            className={errors.email ? "error" : ""}
+            aria-required="true"
+            aria-invalid={!!errors.email}
+          />
+          {errors.email && <InlineErrorMessage role="alert">{errors.email}</InlineErrorMessage>}
+        </InputGroup>
 
-              {/* E-mail */}
-              <InputGroup>
-                <Label htmlFor="email">
-                  E-mail <span className="required">*</span>
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email || ""}
-                  onChange={handleInputChange}
-                  placeholder="email@exemplo.com"
-                  className={errors.email ? "error" : ""}
-                  aria-required="true"
-                />
-                {errors.email && <InlineErrorMessage>{errors.email}</InlineErrorMessage>}
-              </InputGroup>
+        <Grid columns={2} gap='md'>
+          <InputGroup>
+            <Label htmlFor="className">
+              Turma <span className="required">*</span>
+            </Label>
+            <Input
+              id="className"
+              name="className"
+              type="text"
+              value={formData.className || ""}
+              onChange={handleInputChange}
+              placeholder="Turma do aluno"
+              className={errors.className ? "error" : ""}
+              aria-required="true"
+              aria-invalid={!!errors.className}
+            />
+            {errors.className && <InlineErrorMessage role="alert">{errors.className}</InlineErrorMessage>}
+          </InputGroup>
 
-              <Grid columns={2} gap='md' >
-                {/* Turma */}
-                <InputGroup>
-                  <Label htmlFor="className">
-                    Turma <span className="required">*</span>
-                  </Label>
-                  <Input
-                    id="className"
-                    name="className"
-                    type="text"
-                    value={formData.className || ""}
-                    onChange={handleInputChange}
-                    placeholder="Turma do aluno"
-                    className={errors.className ? "error" : ""}
-                    aria-required="true"
-                  />
-                  {errors.className && <InlineErrorMessage>{errors.className}</InlineErrorMessage>}
-                </InputGroup>
+          <InputGroup>
+            <Label htmlFor="rollNumber">
+              Número da Chamada <span className="required">*</span>
+            </Label>
+            <Input
+              id="rollNumber"
+              name="rollNumber"
+              type="number"
+              min="1"
+              value={formData.rollNumber || ""}
+              onChange={handleInputChange}
+              placeholder="Número da chamada"
+              className={errors.rollNumber ? "error" : ""}
+              aria-required="true"
+              aria-invalid={!!errors.rollNumber}
+            />
+            {errors.rollNumber && <InlineErrorMessage role="alert">{errors.rollNumber}</InlineErrorMessage>}
+          </InputGroup>
+        </Grid>
 
-                {/* Número da Chamada */}
-                <InputGroup>
-                  <Label htmlFor="rollNumber">
-                    Número da Chamada <span className="required">*</span>
-                  </Label>
-                  <Input
-                    id="rollNumber"
-                    name="rollNumber"
-                    type="number"
-                    min="1"
-                    value={formData.rollNumber || ""}
-                    onChange={handleInputChange}
-                    placeholder="Número da chamada"
-                    className={errors.rollNumber ? "error" : ""}
-                    aria-required="true"
-                  />
-                  {errors.rollNumber && <InlineErrorMessage>{errors.rollNumber}</InlineErrorMessage>}
-                </InputGroup>
-              </Grid>
+        <Grid columns={2} gap='md'>
+          <StyledInputGroup>
+            <InputGroup>
+              <Label htmlFor="status">
+                Situação <span className="required">*</span>
+              </Label>
+              <Select
+                id="status"
+                name="status"
+                value={formData.status || "Ativo"}
+                onChange={handleInputChange}
+                className={errors.status ? "error" : ""}
+                aria-required="true"
+                aria-invalid={!!errors.status}
+              >
+                <option value="Ativo">Ativo</option>
+                <option value="Inativo">Inativo</option>
+                <option value="Transferido">Transferido</option>
+                <option value="Trancado">Trancado</option>
+              </Select>
+              {errors.status && <InlineErrorMessage role="alert">{errors.status}</InlineErrorMessage>}
+            </InputGroup>
+          </StyledInputGroup>
 
-              <Grid columns={2} gap='md' >
-                <StyledInputGroup>
-                  {/* Situação */}
-                  <InputGroup>
-                    <Label htmlFor="status">
-                      Situação <span className="required">*</span>
-                    </Label>
-                    <Select
-                      id="status"
-                      name="status"
-                      value={formData.status || "Ativo"}
-                      onChange={handleInputChange}
-                      className={errors.status ? "error" : ""}
-                      aria-required="true"
-                    >
-                      <option value="Ativo">Ativo</option>
-                      <option value="Inativo">Inativo</option>
-                      <option value="Transferido">Transferido</option>
-                      <option value="Trancado">Trancado</option>
-                    </Select>
-                    {errors.status && <InlineErrorMessage>{errors.status}</InlineErrorMessage>}
-                  </InputGroup>
-                </StyledInputGroup>
-
-                <StyledInputGroup>
-                  <InputGroup>
-                    <Label htmlFor="gender">
-                      Sexo <span className="required">*</span>
-                    </Label>
-                    <Select
-                      id="gender"
-                      name="gender"
-                      value={formData.gender || ""}
-                      onChange={handleInputChange}
-                      className={errors.gender ? "error" : ""}
-                      aria-required="true"
-                    >
-                      <option value="">Selecione...</option>
-                      <option value="Masculino">Masculino</option>
-                      <option value="Feminino">Feminino</option>
-                      <option value="Outro">Outro</option>
-                      <option value="Não informado">Não informado</option>
-                    </Select>
-                    {errors.gender && <InlineErrorMessage>{errors.gender}</InlineErrorMessage>}
-                  </InputGroup>
-                </StyledInputGroup>
-              </Grid>
-            </FormCard>
-
-            <ModalFooter>
-              <CancelButton
-                type="button" onClick={handleCloseModal} disabled={isSubmitting}>
-                Cancelar
-              </CancelButton>
-
-              <PrimaryActionButton
-                type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Salvando..." : "Salvar Aluno"}
-              </PrimaryActionButton>
-            </ModalFooter>
-          </ModalBody>
-        </form>
-      </ModalContent>
-    </ModalContainer>
+          <StyledInputGroup>
+            <InputGroup>
+              <Label htmlFor="gender">
+                Sexo <span className="required">*</span>
+              </Label>
+              <Select
+                id="gender"
+                name="gender"
+                value={formData.gender || ""}
+                onChange={handleInputChange}
+                className={errors.gender ? "error" : ""}
+                aria-required="true"
+                aria-invalid={!!errors.gender}
+              >
+                <option value="">Selecione...</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Feminino">Feminino</option>
+                <option value="Outro">Outro</option>
+                <option value="Não informado">Não informado</option>
+              </Select>
+              {errors.gender && <InlineErrorMessage role="alert">{errors.gender}</InlineErrorMessage>}
+            </InputGroup>
+          </StyledInputGroup>
+        </Grid>
+      </FormCard>
+    </Modal>
   );
 };
 

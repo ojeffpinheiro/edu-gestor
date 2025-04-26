@@ -18,7 +18,6 @@ import CalendarModal from '../../../components/modals/CalendarModal';
 import { PageContainer, Title } from './styles';
 import Notification from '../../../components/shared/Notification';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
-import Modal from '../../../components/modals/Modal';
 
 const TeamManagement: React.FC = () => {
     const {
@@ -93,7 +92,7 @@ const TeamManagement: React.FC = () => {
                 showNotification('Verifique os campos obrigatórios', 'error');
                 return false;
             }
-            
+
             // Now properly call handleSaveStudent() which actually adds the student
             handleSaveStudent();
             setShowForm(false);
@@ -254,7 +253,7 @@ const TeamManagement: React.FC = () => {
                 />
 
                 <StudentTable
-                    students={studentList.filter((student): student is StudentAttendance => 
+                    students={studentList.filter((student): student is StudentAttendance =>
                         typeof student.id === 'number'
                     )}
                     onEdit={handleStudentEdit}
@@ -264,10 +263,11 @@ const TeamManagement: React.FC = () => {
 
             {/* Modals */}
             {showForm && (
-                <StudentFormModal 
+                <StudentFormModal
+                    isOpen={showForm}
                     defaultClass={currentClass}
-                    onSave={handleStudentAdd} 
-                    onClose={handleCloseStudentForm} 
+                    onSave={handleStudentAdd}
+                    onClose={handleCloseStudentForm}
                 />
             )}
 
@@ -275,7 +275,7 @@ const TeamManagement: React.FC = () => {
 
             {showSortGroupModal && (
                 <GroupDrawModal
-                    students={studentList.filter((student): student is StudentAttendance => 
+                    students={studentList.filter((student): student is StudentAttendance =>
                         typeof student.id === 'number'
                     )}
                     onClose={handleCloseSorteioGrupoModal}
@@ -284,7 +284,7 @@ const TeamManagement: React.FC = () => {
 
             {showStudentDrawModal && (
                 <StudentDrawModal
-                    students={studentList.filter((student): student is StudentAttendance => 
+                    students={studentList.filter((student): student is StudentAttendance =>
                         typeof student.id === 'number'
                     )}
                     onClose={handleCloseStudentDraw}
@@ -294,23 +294,17 @@ const TeamManagement: React.FC = () => {
             )}
 
             {showCalendarioModal && (
-                    <Modal 
-                        isOpen={!!events}
-                        title={'Calendário da Turma'}
-                        onClose={handleCloseCalendarioModal}
-                        showFooter
-                        size='sm'
-                    >
-                        <CalendarModal 
-                            events={events.map(event => ({
-                                ...event,
-                                id: String(event.id),
-                                type: event.type === 'activity' ? 'deadline' :
-                                      event.type === 'assessment' ? 'meeting' :
-                                      'default'
-                            }))} selectedDate={selectedDate} onSelectDate={handleDateSelect}
-                            activeTab={activeTab} onTabChange={handleTabChange} />
-                    </Modal>
+                <CalendarModal
+                    events={events.map(event => ({
+                        ...event,
+                        id: String(event.id),
+                        type: event.type === 'activity' ? 'deadline' :
+                            event.type === 'assessment' ? 'meeting' :
+                                'default'
+                    }))} selectedDate={selectedDate} onSelectDate={handleDateSelect}
+                    activeTab={activeTab}
+                    onTabChange={handleTabChange}
+                    onClose={handleCloseCalendarioModal} />
             )}
 
             {/* Notification component */}

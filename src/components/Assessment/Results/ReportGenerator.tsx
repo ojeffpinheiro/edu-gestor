@@ -1,23 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { FaFileAlt, FaDownload, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle, FaTimes } from 'react-icons/fa';
+import { FaFileAlt, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle } from 'react-icons/fa';
 
 import { Exam, ExamResult, Question, ReportSection, ReportTemplate } from '../../../utils/types/Assessment';
 
+import { predefinedTemplates } from '../../../mocks/assessmentData';
+
 // Importação de componentes de estilo
-import { Button, ActionButton, PrimaryActionButton, CloseButton } from '../../../styles/buttons';
+import { Button, PrimaryActionButton } from '../../../styles/buttons';
 import { InputGroup, Label, Select, TextArea } from '../../../styles/inputs';
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
-import { ModalContainer, ModalContent, ModalHeader, ModalBody, ModalFooter } from '../../../styles/modals';
-import { predefinedTemplates } from '../../../mocks/assessmentData';
+
+import Modal from '../../modals/Modal';
+
 import {
-    InfoMessage, 
-    ReportContainer, 
-    SectionContainer, 
-    Tab, 
-    TabsContainer, 
+    InfoMessage,
+    ReportContainer,
+    SectionContainer,
+    Tab,
+    TabsContainer,
     TemplateCard,
     TemplatesGrid
 } from './ReportGeneratorStyle'
+
 
 interface Student {
     id: string;
@@ -564,38 +568,25 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
         if (!showPreview || !previewData) return null;
 
         return (
-            <ModalContainer>
-                <ModalContent size='lg' >
-                    <ModalHeader>
-                        <h3>Prévia do Relatório</h3>
-                        <CloseButton onClick={handleClosePreview}>
-                            <FaTimes />
-                        </CloseButton>
-                    </ModalHeader>
+            <Modal
+                isOpen={!!previewData}
+                onClose={handleClosePreview}
+                title='Prévia do Relatório'
+                onSubmit={handleExportReport}
+                showFooter
+                size='lg'>
+                <h1>{previewData.title}</h1>
+                <p>{previewData.description}</p>
+                <p>Gerado em: {previewData.generatedAt.toLocaleString()}</p>
 
-                    <ModalBody>
-                        <h1>{previewData.title}</h1>
-                        <p>{previewData.description}</p>
-                        <p>Gerado em: {previewData.generatedAt.toLocaleString()}</p>
+                <hr style={{ margin: '1rem 0' }} />
 
-                        <hr style={{ margin: '1rem 0' }} />
-
-                        {previewData.sections.map((section: ReportSection) => (
-                            <div key={section.id} style={{ marginBottom: '2rem' }}>
-                                {renderSectionPreview(section, previewData.data)}
-                            </div>
-                        ))}
-                    </ModalBody>
-
-                    <ModalFooter>
-                        <Button variant="secondary" onClick={handleClosePreview}>Fechar</Button>
-                        <ActionButton onClick={handleExportReport}>
-                            <FaDownload />
-                            Exportar PDF
-                        </ActionButton>
-                    </ModalFooter>
-                </ModalContent>
-            </ModalContainer>
+                {previewData.sections.map((section: ReportSection) => (
+                    <div key={section.id} style={{ marginBottom: '2rem' }}>
+                        {renderSectionPreview(section, previewData.data)}
+                    </div>
+                ))}
+            </Modal>
         );
     };
 

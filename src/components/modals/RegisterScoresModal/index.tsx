@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaTimes } from "react-icons/fa";
 
-import { CloseButton, Button } from "../../../styles/buttons";
 import { Table, TableCell, TableHeader, TableRow } from '../../../styles/table'
 import { EvaluationPart, StudentScore } from "../../../utils/types/AssessmentEvaluation";
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
+import Modal from "../Modal";
 
 interface RegisterScoresModalProps {
     students: { id: number; name: string }[];
@@ -30,7 +28,7 @@ const RegisterScoresModal: React.FC<RegisterScoresModalProps> = ({ students, eva
 
         document.addEventListener('mousedown', handleOutsideClick);
         return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, [scores]);
+    }, [onClose]);
 
     const handleScoreChange = (studentId: number, partId: string, value: number) => {
         setScores(prevScores => {
@@ -50,60 +48,46 @@ const RegisterScoresModal: React.FC<RegisterScoresModalProps> = ({ students, eva
     };
 
     return (
-        <ModalContainer role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <ModalContent ref={modalRef} size='md' >
-                <ModalHeader>
-                    <h3>Registrar notas</h3>
-                    <CloseButton
-                        onClick={onClose}
-                        aria-label="Fechar modal"
-                        title="Fechar"
-                        data-testid="close-modal-btn"
-                    >
-                        <FaTimes />
-                    </CloseButton>
-                </ModalHeader>
-                <ModalBody>
-                    <Table>
-                        <thead>
-                            <TableRow>
-                                <TableHeader>Aluno</TableHeader>
-                                {evaluationParts.map(part => (
-                                    <TableHeader key={part.id}>{part.name}</TableHeader>
-                                ))}
-                                <TableHeader>Soma</TableHeader>
-                            </TableRow>
-                        </thead>
-                        <tbody>
-                            {students.map((student, index) => (
-                                <TableRow key={`grade-${index}`}>
-                                    <TableCell>{student.name}</TableCell>
-                                    {evaluationParts.map(part => (
-                                        <TableCell key={part.id}>
-                                            <input
-                                                type="number"
-                                                min="0"
-                                                max={part.maxScore}
-                                                onChange={(e) => handleScoreChange(student.id, part.id, Number(e.target.value))}
-                                            />
-                                        </TableCell>
-                                    ))}
-                                    <TableCell>
-                                        {scores
-                                            .filter(score => score.studentId === student.id.toString())
-                                            .reduce((total, score) => total + score.score, 0)}
-                                    </TableCell>
-                                </TableRow>
+        <Modal
+            isOpen
+            title='Registrar notas'
+            onSubmit={handleSave}
+            onClose={onClose}
+            size='md' >
+            <Table>
+                <thead>
+                    <TableRow>
+                        <TableHeader>Aluno</TableHeader>
+                        {evaluationParts.map(part => (
+                            <TableHeader key={part.id}>{part.name}</TableHeader>
+                        ))}
+                        <TableHeader>Soma</TableHeader>
+                    </TableRow>
+                </thead>
+                <tbody>
+                    {students.map((student, index) => (
+                        <TableRow key={`grade-${index}`}>
+                            <TableCell>{student.name}</TableCell>
+                            {evaluationParts.map(part => (
+                                <TableCell key={part.id}>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max={part.maxScore}
+                                        onChange={(e) => handleScoreChange(student.id, part.id, Number(e.target.value))}
+                                    />
+                                </TableCell>
                             ))}
-                        </tbody>
-                    </Table>
-                </ModalBody>
-                <ModalFooter>
-                    <Button onClick={handleSave}>Salvar</Button>
-                    <Button onClick={onClose}>Cancelar</Button>
-                </ModalFooter>
-            </ModalContent>
-        </ModalContainer>
+                            <TableCell>
+                                {scores
+                                    .filter(score => score.studentId === student.id.toString())
+                                    .reduce((total, score) => total + score.score, 0)}
+                            </TableCell>
+                        </TableRow>
+                    ))}
+                </tbody>
+            </Table>
+        </Modal>
     );
 };
 

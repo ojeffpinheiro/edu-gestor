@@ -85,19 +85,26 @@ const Modal: React.FC<ModalProps> = ({
       aria-labelledby="modal-title"
       className="modal-backdrop"
     >
-      <ModalContent ref={modalRef} className="modal" size={size}>
+      <ModalContent 
+        ref={modalRef} 
+        className="modal" 
+        size={size}
+        role="document"
+        aria-describedby="modal-content"
+      >
         <ModalHeader>
           <h3 id="modal-title">{title}</h3>
           <CloseButton 
             onClick={onClose} 
             aria-label="Fechar modal"
             data-testid="close-modal-button"
+            type="button"
           >
             <FaTimes size={24} />
           </CloseButton>
         </ModalHeader>
 
-        <ModalBody>
+        <ModalBody id="modal-content">
           <FormContainer>
             {children}
           </FormContainer>
@@ -109,8 +116,9 @@ const Modal: React.FC<ModalProps> = ({
               <Button 
                 variant="secondary" 
                 onClick={onClose}
-                aria-label="Cancelar ação"
+                aria-label={cancelText}
                 data-testid="cancel-button"
+                type="button"
               >
                 {cancelText}
               </Button>
@@ -120,6 +128,7 @@ const Modal: React.FC<ModalProps> = ({
                   onClick={onSubmit}
                   aria-label={submitText}
                   data-testid="submit-button"
+                  type="submit"
                 >
                   {submitText}
                 </Button>

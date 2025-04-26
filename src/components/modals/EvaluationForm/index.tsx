@@ -1,9 +1,14 @@
 import React, { useMemo } from "react";
-import { FaTimes, FaCheck, FaExclamationTriangle } from "react-icons/fa";
+import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 import useEvaluationForm from '../../../hooks/useEvaluationForm';
 
-import { Button, CloseButton } from '../../../styles/buttons';
+import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
+import { FormSectionOptions } from "../../../utils/types/FormSection";
+
+import { Button } from '../../../styles/buttons';
+import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
+import { ModalBody, ModalFooter } from "../../../styles/modals";
 
 import BasicInfoSection from "../../Evaluation/StepForm/BasicInfoSection";
 import ResourcesSection from "../../Evaluation/StepForm/ResourcesSection";
@@ -12,11 +17,7 @@ import EvaluationCriteriaSection from "../../Evaluation/StepForm/EvaluationCrite
 import EvaluationMethodSection from "../../Evaluation/StepForm/EvaluationMethodSection";
 import CalculationSection from "../../Evaluation/StepForm/CalculationSection";
 
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
-import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
-import { FormSectionOptions } from "../../../utils/types/FormSection";
-
+import Modal from "../Modal";
 import {
     FormStepsNav,
     FormStepButton,
@@ -85,18 +86,18 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         try {
             switch (currentSection) {
                 case FormSectionOptions.BASIC_INFO:
-                    return <BasicInfoSection 
-                        evaluationData={evaluationData} 
-                        handleInputChange={handleInputChange} 
+                    return <BasicInfoSection
+                        evaluationData={evaluationData}
+                        handleInputChange={handleInputChange}
                     />;
                 case FormSectionOptions.RESOURCES:
-                    return <ResourcesSection 
-                        addResource={handleAddResource} 
-                        removeResource={handleRemoveResource} 
-                        resources={resources} 
+                    return <ResourcesSection
+                        addResource={handleAddResource}
+                        removeResource={handleRemoveResource}
+                        resources={resources}
                     />;
                 case FormSectionOptions.PARTS:
-                    return <PartsSection 
+                    return <PartsSection
                         parts={parts}
                         evaluation={evaluationData}
                         addPart={handleAddPart}
@@ -112,19 +113,19 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                         updateCriterion={handleUpdateCriterion}
                     />;
                 case FormSectionOptions.EVALUATION_METHOD:
-                    return <EvaluationMethodSection 
+                    return <EvaluationMethodSection
                         evaluation={evaluationData}
                         updateMethod={updateEvaluationMethod}
                     />;
                 case FormSectionOptions.CALCULATION:
-                    return <CalculationSection 
+                    return <CalculationSection
                         evaluationData={evaluationData}
                         updateCalculationMethod={updateCalculationMethod}
                     />;
                 default:
-                    return <BasicInfoSection 
-                        evaluationData={evaluationData} 
-                        handleInputChange={handleInputChange} 
+                    return <BasicInfoSection
+                        evaluationData={evaluationData}
+                        handleInputChange={handleInputChange}
                     />;
             }
         } catch (error) {
@@ -136,11 +137,6 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
                 </ErrorMessage>
             );
         }
-    };
-
-    const handleSubmitForm = async (e: React.FormEvent) => {
-        e.preventDefault();
-        await handleSubmit(e);
     };
 
     // Calcula o progresso do formulário para a barra de progresso
@@ -160,100 +156,100 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         }
     };
 
+    const handleSubmitForm = () => {
+        handleSubmit(new Event('submit') as unknown as React.FormEvent);
+    };
+
     return (
-        <ModalContainer>
-            <ModalContent size='sm' >
-                <ModalHeader>
-                    <h3>{evaluation ? 'Editar Avaliação' : 'Nova Avaliação'}</h3>
-                    <CloseButton onClick={handleCloseModal} aria-label="Fechar modal">
-                        <FaTimes />
-                    </CloseButton>
-                </ModalHeader>
+        <Modal
+            isOpen={!!evaluation}
+            title={evaluation ? 'Editar Avaliação' : 'Nova Avaliação'}
+            size="sm"
+            onSubmit={handleSubmitForm}
+            onClose={handleCloseModal} >
+            <FormProgress aria-label="Progresso do formulário">
+                <FormProgressIndicator progress={progressPercentage} />
+            </FormProgress>
 
-                <FormProgress aria-label="Progresso do formulário">
-                    <FormProgressIndicator progress={progressPercentage} />
-                </FormProgress>
+            <form>
+                <ModalBody>
+                    {/* Mensagens de Feedback */}
+                    {feedback.errorMessage && (
+                        <ErrorMessage role="alert">
+                            <FaExclamationTriangle />
+                            {feedback.errorMessage}
+                        </ErrorMessage>
+                    )}
+                    {feedback.successMessage && (
+                        <SuccessMessage role="status">
+                            <FaCheck />
+                            {feedback.successMessage}
+                        </SuccessMessage>
+                    )}
 
-                <form onSubmit={handleSubmitForm}>
-                    <ModalBody>
-                        {/* Mensagens de Feedback */}
-                        {feedback.errorMessage && (
-                            <ErrorMessage role="alert">
-                                <FaExclamationTriangle />
-                                {feedback.errorMessage}
-                            </ErrorMessage>
-                        )}
-                        {feedback.successMessage && (
-                            <SuccessMessage role="status">
-                                <FaCheck />
-                                {feedback.successMessage}
-                            </SuccessMessage>
-                        )}
-
-                        {/* Navegação de seções aprimorada */}
-                        <FormStepsNav>
-                            {Object.values(FormSectionOptions).map((section, index) => (
-                                <React.Fragment key={section}>
-                                    {index > 0 && <FormStepDivider />}
-                                    <FormStepButton 
-                                        type="button"
-                                        $isActive={currentSection === section}
-                                        $isValid={getSectionValidationState(section)}
-                                        onClick={() => setCurrentSection(section)}
-                                        aria-label={`Ir para seção ${section}`}
-                                        title={sectionDescriptions[section]}
-                                    >
-                                        <span className="step-icon">{sectionIcons[section]}</span>
-                                        <span className="step-text">{section}</span>
-                                        {getSectionValidationState(section) && (
-                                            <span className="status-indicator">✓</span>
-                                        )}
-                                    </FormStepButton>
-                                </React.Fragment>
-                            ))}
-                        </FormStepsNav>
-
-                        {/* Conteúdo da seção atual */}
-                        {renderCurrentSection()}
-                    </ModalBody>
-                    
-                    <ModalFooter>
-                        {/* Botões de navegação e envio */}
-                        <div className="navigation-buttons">
-                            {currentSection !== FormSectionOptions.BASIC_INFO && (
-                                <Button
+                    {/* Navegação de seções aprimorada */}
+                    <FormStepsNav>
+                        {Object.values(FormSectionOptions).map((section, index) => (
+                            <React.Fragment key={section}>
+                                {index > 0 && <FormStepDivider />}
+                                <FormStepButton
                                     type="button"
-                                    onClick={goToPreviousSection}
-                                    className="secondary"
+                                    $isActive={currentSection === section}
+                                    $isValid={getSectionValidationState(section)}
+                                    onClick={() => setCurrentSection(section)}
+                                    aria-label={`Ir para seção ${section}`}
+                                    title={sectionDescriptions[section]}
                                 >
-                                    Anterior
-                                </Button>
-                            )}
+                                    <span className="step-icon">{sectionIcons[section]}</span>
+                                    <span className="step-text">{section}</span>
+                                    {getSectionValidationState(section) && (
+                                        <span className="status-indicator">✓</span>
+                                    )}
+                                </FormStepButton>
+                            </React.Fragment>
+                        ))}
+                    </FormStepsNav>
 
-                            {currentSection !== FormSectionOptions.CALCULATION ? (
-                                <Button
-                                    type="button"
-                                    onClick={goToNextSection}
-                                    className="primary"
-                                    disabled={!getSectionValidationState(currentSection)}
-                                    title={!getSectionValidationState(currentSection) ? "Preencha todos os campos obrigatórios antes de continuar" : ""}
-                                >
-                                    Próximo
-                                </Button>
-                            ) : (
-                                <Button
-                                    type="submit"
-                                    className="primary save-button"
-                                    disabled={isSubmitting || !isFormValid()}
-                                >
-                                    {isSubmitting ? 'Salvando...' : 'Salvar Avaliação'}
-                                </Button>
-                            )}
-                        </div>
-                    </ModalFooter>
-                </form>
-            </ModalContent>
-        </ModalContainer>
+                    {/* Conteúdo da seção atual */}
+                    {renderCurrentSection()}
+                </ModalBody>
+
+                <ModalFooter>
+                    {/* Botões de navegação e envio */}
+                    <div className="navigation-buttons">
+                        {currentSection !== FormSectionOptions.BASIC_INFO && (
+                            <Button
+                                type="button"
+                                onClick={goToPreviousSection}
+                                className="secondary"
+                            >
+                                Anterior
+                            </Button>
+                        )}
+
+                        {currentSection !== FormSectionOptions.CALCULATION ? (
+                            <Button
+                                type="button"
+                                onClick={goToNextSection}
+                                className="primary"
+                                disabled={!getSectionValidationState(currentSection)}
+                                title={!getSectionValidationState(currentSection) ? "Preencha todos os campos obrigatórios antes de continuar" : ""}
+                            >
+                                Próximo
+                            </Button>
+                        ) : (
+                            <Button
+                                type="submit"
+                                className="primary save-button"
+                                disabled={isSubmitting || !isFormValid()}
+                            >
+                                {isSubmitting ? 'Salvando...' : 'Salvar Avaliação'}
+                            </Button>
+                        )}
+                    </div>
+                </ModalFooter>
+            </form>
+        </Modal>
     );
 };
 

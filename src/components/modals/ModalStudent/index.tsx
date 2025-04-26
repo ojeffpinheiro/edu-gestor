@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { FaDownload, FaTimes } from 'react-icons/fa';
+import { FaTimes } from 'react-icons/fa';
 
 import { useExportData } from '../../../hooks/useExportData';
 import { useToast } from '../../../hooks/useToast';
@@ -8,7 +8,7 @@ import Spinner from '../../ui/Spinner';
 import ConfirmationDialog from '../../ui/ConfirmationDialog';
 import CollapsibleSection from '../../ui/CollapsibleSection';
 
-import { Table, TableHeader, TableRow,TableCell, EmptyStateMessage } from '../../../styles/table'
+import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table'
 import { Button, CloseButton } from '../../../styles/buttons'
 
 import { DEFAULT_STUDENT_DATA, SECTION_CONFIG } from '../../../utils/setting'
@@ -19,10 +19,8 @@ import { Assessment } from '../../../utils/types/AssessmentEvaluation';
 import { StudentModalProps } from '../../../utils/types/UIComponent';
 import { StudentData } from '../../../utils/types/BasicUser';
 import { ExportOptions } from '../../../utils/types/ExportReport';
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../../styles/modals';
-
-// Default student data for testing when no real data is available
-
+import { ModalBody, ModalContainer, ModalContent } from '../../../styles/modals';
+import Modal from '../Modal';
 
 /**
  * Calculates the average grade from a list of assessments
@@ -134,7 +132,7 @@ const StudentModal: React.FC<StudentModalProps> = ({
             setStudent(studentData);
         }
     }, [studentData]);
-    
+
     // State for exit confirmation during export
     const [showExitConfirmation, setShowExitConfirmation] = useState(false);
 
@@ -145,12 +143,23 @@ const StudentModal: React.FC<StudentModalProps> = ({
         includeComments: true
     });
 
+    /**
+     * Handles close request during export
+     */
+    const handleCloseRequest = useCallback(() => {
+        if (isExporting) {
+            setShowExitConfirmation(true);
+        } else {
+            onClose();
+        }
+    }, [isExporting, onClose]);
+
     // Handler for clicking outside the modal
     const handleOutsideClick = useCallback((event: MouseEvent) => {
         if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
             handleCloseRequest();
         }
-    }, []);
+    }, [handleCloseRequest]);
 
     // Add event listener for outside clicks
     useEffect(() => {
@@ -207,17 +216,6 @@ const StudentModal: React.FC<StudentModalProps> = ({
     }, [student, exportOptions, exportData, onExport, showToast, hasSelectedSections]);
 
     /**
-     * Handles close request during export
-     */
-    const handleCloseRequest = useCallback(() => {
-        if (isExporting) {
-            setShowExitConfirmation(true);
-        } else {
-            onClose();
-        }
-    }, [isExporting, onClose]);
-
-    /**
      * Confirms modal exit
      */
     const handleConfirmExit = useCallback(() => {
@@ -260,25 +258,19 @@ const StudentModal: React.FC<StudentModalProps> = ({
     }
 
     return (
-        <ModalContainer
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="student-name"
-            onKeyDown={handleKeyDown}
-        >
-            <ModalContent ref={modalRef} size='lg' >
-                <ModalHeader>
-                    <h3 id="student-name">{student.name}</h3>
-                    <CloseButton
-                        onClick={handleCloseRequest}
-                        aria-label="Fechar modal"
-                        title="Fechar"
-                        data-testid="close-modal-btn"
-                    >
-                        <FaTimes />
-                    </CloseButton>
-                </ModalHeader>
-
+        <Modal
+            isOpen
+            title={student.name}
+            size='lg'
+            submitText={isExporting ? 'Exportando dados do aluno' : 'Exportar dados do aluno'}
+            onSubmit={handleExport}
+            onClose={handleCloseRequest} >
+            <ModalContainer
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="student-name"
+                onKeyDown={handleKeyDown}
+            >
                 {showExitConfirmation && (
                     <ConfirmationDialog
                         title="Exportação em andamento"
@@ -335,35 +327,9 @@ const StudentModal: React.FC<StudentModalProps> = ({
                             <CommentsSection comments={student.comments} />
                         </CollapsibleSection>
                     </ModalBody>
-
-                    <ModalFooter>
-                        <Button
-                            variant="primary"
-                            onClick={handleExport}
-                            disabled={isExporting || !hasSelectedSections}
-                            aria-label={isExporting ? 'Exportando dados do aluno' : 'Exportar dados do aluno'}
-                            aria-busy={isExporting}
-                            data-testid="export-button"
-                        >
-                            {isExporting ? (
-                                <>
-                                    <span className="loading-indicator"></span>
-                                    Exportando...
-                                </>
-                            ) : (
-                                <>
-                                    <FaDownload aria-hidden="true" />
-                                    Exportar
-                                </>
-                            )}
-                        </Button>
-                        {!hasSelectedSections && (
-                            <p className="export-hint">Selecione ao menos uma seção para exportar</p>
-                        )}
-                    </ModalFooter>
                 </ErrorBoundary>
-            </ModalContent>
-        </ModalContainer>
+            </ModalContainer>
+        </Modal>
     );
 };
 

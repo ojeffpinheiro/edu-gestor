@@ -1,19 +1,20 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { FaRandom, FaUsers, FaTimes, FaCheckCircle } from "react-icons/fa";
+import React, { useCallback, useEffect } from "react";
+import { FaRandom } from "react-icons/fa";
 
 import { validateFormationParams } from '../../../utils/groupFormationValidators'
 import { createStudentGroups } from '../../../services/groupFormationService'
 import { useFormationState } from '../../../hooks/useFormationState'
 
+import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
+
 import FormationControls from "../../ui/FormationControls";
 import GroupsResultList from "../../ui/GroupsResultList";
+import Modal from "../Modal";
 
-import { Button, CloseButton } from '../../../styles/buttons'
-
-import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
-import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
-import { ControlsContainer, LoadingIndicator, RadioGroup, RadioOption } from "./styles";
+import { Button } from '../../../styles/buttons'
 import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
+
+import { ControlsContainer, LoadingIndicator, RadioGroup, RadioOption } from "./styles";
 
 /**
  * Modal de formação de grupos aleatórios de estudantes
@@ -21,14 +22,13 @@ import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
  * Permite aos usuários formarem grupos baseados no tamanho desejado 
  * ou na quantidade total de grupos necessária
  */
-const GroupFormationModal: React.FC<GroupFormationModalProps> = ({ 
-    students, 
+const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
+    students,
     onClose,
     onSave,
     processingDelay = FORMATION_CONFIG.DEFAULT_PROCESSING_DELAY
 }) => {
-    const modalRef = useRef<HTMLDivElement>(null);
-    
+
     const {
         formationParams,
         feedback,
@@ -44,20 +44,6 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
             updateFeedback({ errorMessage: '', successMessage: '' });
         }
     }, [formationParams, feedback.errorMessage, feedback.successMessage, updateFeedback]);
-
-    /**
-     * Detecta cliques fora do modal para fechá-lo
-     */
-    useEffect(() => {
-        const handleOutsideClick = (event: MouseEvent) => {
-            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-                handleCloseAttempt();
-            }
-        };
-
-        document.addEventListener('mousedown', handleOutsideClick);
-        return () => document.removeEventListener('mousedown', handleOutsideClick);
-    }, [studentGroups]);
 
     /**
      * Verifica se há alterações não salvas antes de fechar o modal
@@ -83,7 +69,7 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
             updateFeedback({ errorMessage: validationResult.errorMessage });
             return;
         }
-        
+
         try {
             updateFeedback({
                 isProcessing: true,
@@ -91,16 +77,16 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
                 successMessage: '',
                 showResults: false
             });
-            
+
             // Simula processamento para melhor UX
             await new Promise(resolve => setTimeout(resolve, processingDelay));
-            
+
             const generatedGroups = createStudentGroups(students, formationParams);
-            
+
             if (generatedGroups.length === 0) {
                 throw new Error('Não foi possível formar os grupos. Verifique os parâmetros.');
             }
-            
+
             setStudentGroups(generatedGroups);
             updateFeedback({
                 successMessage: `${generatedGroups.length} grupos foram formados com sucesso!`,
@@ -141,10 +127,10 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
      */
     const handleGroupSizeChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
-        const validValue = isNaN(value) 
-            ? FORMATION_CONFIG.MIN_GROUP_SIZE 
+        const validValue = isNaN(value)
+            ? FORMATION_CONFIG.MIN_GROUP_SIZE
             : Math.max(FORMATION_CONFIG.MIN_GROUP_SIZE, value);
-            
+
         updateFormationParams({ groupSize: validValue });
     }, [updateFormationParams]);
 
@@ -153,10 +139,10 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
      */
     const handleNumberOfGroupsChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const value = parseInt(e.target.value);
-        const validValue = isNaN(value) 
-            ? FORMATION_CONFIG.MIN_GROUPS 
+        const validValue = isNaN(value)
+            ? FORMATION_CONFIG.MIN_GROUPS
             : Math.max(FORMATION_CONFIG.MIN_GROUPS, value);
-            
+
         updateFormationParams({ numberOfGroups: validValue });
     }, [updateFormationParams]);
 
@@ -169,109 +155,77 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
     }, [updateFormationParams, updateFeedback]);
 
     return (
-        <ModalContainer role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <ModalContent ref={modalRef} size='md' >
-                <ModalHeader>
-                    <h3 id="modal-title">
-                        <FaUsers className="icon-spacing" style={{ marginRight: '8px' }} />
-                        Formação de Grupos
-                    </h3>
-                    <CloseButton 
-                        onClick={handleCloseAttempt} 
-                        aria-label="Fechar modal" 
-                        title="Fechar"
-                        data-testid="close-modal-btn"
-                    >
-                        <FaTimes />
-                    </CloseButton>
-                </ModalHeader>
-                
-                <ModalBody>
-                    <RadioGroup role="radiogroup" aria-labelledby="formation-type-label">
-                        <p id="formation-type-label" className="sr-only">Selecione o tipo de formação de grupos</p>
-                        <RadioOption>
-                            <input
-                                type="radio"
-                                id="bySize"
-                                name="formationType"
-                                checked={formationParams.formationType === GroupFormationType.BY_SIZE}
-                                onChange={() => handleFormTypeChange(GroupFormationType.BY_SIZE)}
-                                data-testid="by-size-radio"
-                            />
-                            <label htmlFor="bySize">Definir tamanho de cada grupo</label>
-                        </RadioOption>
-                        
-                        <RadioOption>
-                            <input
-                                type="radio"
-                                id="byNumber"
-                                name="formationType"
-                                checked={formationParams.formationType === GroupFormationType.BY_NUMBER}
-                                onChange={() => handleFormTypeChange(GroupFormationType.BY_NUMBER)}
-                                data-testid="by-number-radio"
-                            />
-                            <label htmlFor="byNumber">Definir número total de grupos</label>
-                        </RadioOption>
-                    </RadioGroup>
+        <Modal
+            isOpen={!!students}
+            size="sm"
+            onClose={handleCloseAttempt}
+            title='Formação de Grupos'
+            onSubmit={handleSaveGroups}
+            submitText='Salvar Grupos' >
 
-                    <ControlsContainer>
-                        <FormationControls 
-                            formationParams={formationParams}
-                            students={students}
-                            handleGroupSizeChange={handleGroupSizeChange}
-                            handleNumberOfGroupsChange={handleNumberOfGroupsChange}
-                        />
-                    </ControlsContainer>
-
-                    {feedback.errorMessage && (
-                        <ErrorMessage role="alert">{feedback.errorMessage}</ErrorMessage>
-                    )}
-                    
-                    {feedback.successMessage && (
-                        <SuccessMessage role="status">{feedback.successMessage}</SuccessMessage>
-                    )}
-
-                    <Button 
-                        variant="primary" 
-                        onClick={handleFormGroups}
-                        disabled={feedback.isProcessing || students.length === 0}
-                        aria-busy={feedback.isProcessing}
-                        data-testid="form-groups-btn"
-                    >
-                        {feedback.isProcessing ? (
-                            <><LoadingIndicator aria-hidden="true" /> Processando...</>
-                        ) : (
-                            <><FaRandom aria-hidden="true" /> Formar Grupos</>
-                        )}
-                    </Button>
-
-                    <GroupsResultList 
-                        studentGroups={studentGroups}
-                        showResults={feedback.showResults}
+            <RadioGroup role="radiogroup" aria-labelledby="formation-type-label">
+                <p id="formation-type-label" className="sr-only">Selecione o tipo de formação de grupos</p>
+                <RadioOption>
+                    <input
+                        type="radio"
+                        id="bySize"
+                        name="formationType"
+                        checked={formationParams.formationType === GroupFormationType.BY_SIZE}
+                        onChange={() => handleFormTypeChange(GroupFormationType.BY_SIZE)}
+                        data-testid="by-size-radio"
                     />
-                </ModalBody>
-                
-                <ModalFooter>
-                    {feedback.showResults && (
-                        <Button 
-                            variant="primary" 
-                            onClick={handleSaveGroups}
-                            disabled={!feedback.hasUnsavedChanges}
-                            data-testid="save-groups-btn"
-                        >
-                            <FaCheckCircle aria-hidden="true" /> Salvar Grupos
-                        </Button>
-                    )}
-                    <Button 
-                        variant="secondary" 
-                        onClick={handleCloseAttempt}
-                        data-testid="close-btn"
-                    >
-                        Fechar
-                    </Button>
-                </ModalFooter>
-            </ModalContent>
-        </ModalContainer>
+                    <label htmlFor="bySize">Definir tamanho de cada grupo</label>
+                </RadioOption>
+
+                <RadioOption>
+                    <input
+                        type="radio"
+                        id="byNumber"
+                        name="formationType"
+                        checked={formationParams.formationType === GroupFormationType.BY_NUMBER}
+                        onChange={() => handleFormTypeChange(GroupFormationType.BY_NUMBER)}
+                        data-testid="by-number-radio"
+                    />
+                    <label htmlFor="byNumber">Definir número total de grupos</label>
+                </RadioOption>
+            </RadioGroup>
+
+            <ControlsContainer>
+                <FormationControls
+                    formationParams={formationParams}
+                    students={students}
+                    handleGroupSizeChange={handleGroupSizeChange}
+                    handleNumberOfGroupsChange={handleNumberOfGroupsChange}
+                />
+            </ControlsContainer>
+
+            {feedback.errorMessage && (
+                <ErrorMessage role="alert">{feedback.errorMessage}</ErrorMessage>
+            )}
+
+            {feedback.successMessage && (
+                <SuccessMessage role="status">{feedback.successMessage}</SuccessMessage>
+            )}
+
+            <Button
+                variant="primary"
+                onClick={handleFormGroups}
+                disabled={feedback.isProcessing || students.length === 0}
+                aria-busy={feedback.isProcessing}
+                data-testid="form-groups-btn"
+            >
+                {feedback.isProcessing ? (
+                    <><LoadingIndicator aria-hidden="true" /> Processando...</>
+                ) : (
+                    <><FaRandom aria-hidden="true" /> Formar Grupos</>
+                )}
+            </Button>
+
+            <GroupsResultList
+                studentGroups={studentGroups}
+                showResults={feedback.showResults}
+            />
+        </Modal>
     );
 };
 
