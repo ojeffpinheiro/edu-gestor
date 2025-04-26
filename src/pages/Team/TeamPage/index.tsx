@@ -139,7 +139,7 @@ const TeamPage: React.FC = () => {
 
       {isModalOpen && (
         <ModalContainer role='dialog' aria-modal >
-          <ModalContent ref={modalRef}>
+          <ModalContent ref={modalRef} size='sm' >
             {modalMode === 'view' ? (
               // No modo de visualização, podemos reutilizar o EventCreation com props para torná-lo somente leitura
               // ou implementar um componente de EventView específico

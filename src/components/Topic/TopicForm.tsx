@@ -57,7 +57,7 @@ const TopicForm: React.FC<TopicFormProps> = ({
 
   return (
     <ModalContainer role='dialog' aria-modal>
-      <ModalContent ref={modalRef} >
+      <ModalContent ref={modalRef} size='sm' >
         <ModalHeader>
           <h3>{isEditing ? 'Editar Tópico' : 'Adicionar Novo Tópico'}</h3>
           <IconButton onClick={onClose}>

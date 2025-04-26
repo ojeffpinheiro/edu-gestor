@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { fadeIn, slideIn } from "./animations";
+import { modalSizes } from "./modalAnimation";
 
 export const ModalContainer = styled.div`
     position: fixed;
@@ -17,18 +18,26 @@ export const ModalContainer = styled.div`
     transition: all 0.3s ease;
 `;
 
-export const ModalContent = styled.div`
+export const ModalContent = styled.div<{ size: 'sm' | 'md' | 'lg' | 'xl' | 'full' }>`
     background: var(--color-card, #ffffff);
     border-radius: var(--border-radius-lg, 0.75rem);
-    width: 90vw;
-    max-width: 1200px;
-    max-height: 90vh;
+    width: ${props => modalSizes[props.size || 'md'].width};
+    max-height: ${props => props.size === 'full' ? '90vh' : '90vh'};
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-xl, 0 8px 30px rgba(0, 0, 0, 0.25));
     animation: ${fadeIn} 0.3s ease-out;
     overflow: auto;
     border: 1px solid var(--color-border-light);
+    
+    /* Tamanhos específicos baseados na propriedade size */
+    ${props => {
+      const sizeConfig = modalSizes[props.size || 'md'];
+      return `
+        width: ${sizeConfig.width};
+        max-width: ${sizeConfig.width};
+      `;
+    }}
   
     @media (max-width: 576px) {
         max-height: 95vh;

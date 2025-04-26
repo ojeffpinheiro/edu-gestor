@@ -18,6 +18,7 @@ import CalendarModal from '../../../components/modals/CalendarModal';
 import { PageContainer, Title } from './styles';
 import Notification from '../../../components/shared/Notification';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
+import Modal from '../../../components/modals/Modal';
 
 const TeamManagement: React.FC = () => {
     const {
@@ -293,14 +294,23 @@ const TeamManagement: React.FC = () => {
             )}
 
             {showCalendarioModal && (
-                <CalendarModal
-                    events={events}
-                    onClose={handleCloseCalendarioModal}
-                    selectedDate={selectedDate}
-                    onSelectDate={handleDateSelect}
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                />
+                    <Modal 
+                        isOpen={!!events}
+                        title={'Calendário da Turma'}
+                        onClose={handleCloseCalendarioModal}
+                        showFooter
+                        size='sm'
+                    >
+                        <CalendarModal 
+                            events={events.map(event => ({
+                                ...event,
+                                id: String(event.id),
+                                type: event.type === 'activity' ? 'deadline' :
+                                      event.type === 'assessment' ? 'meeting' :
+                                      'default'
+                            }))} selectedDate={selectedDate} onSelectDate={handleDateSelect}
+                            activeTab={activeTab} onTabChange={handleTabChange} />
+                    </Modal>
             )}
 
             {/* Notification component */}

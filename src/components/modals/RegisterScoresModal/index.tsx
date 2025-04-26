@@ -3,8 +3,8 @@ import { FaTimes } from "react-icons/fa";
 
 import { CloseButton, Button } from "../../../styles/buttons";
 import { Table, TableCell, TableHeader, TableRow } from '../../../styles/table'
-import { ModalContainer, ModalContent, ModalHeader, ModalBody, ModalFooter, } from "./styles";
 import { EvaluationPart, StudentScore } from "../../../utils/types/AssessmentEvaluation";
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
 
 interface RegisterScoresModalProps {
     students: { id: number; name: string }[];
@@ -51,7 +51,7 @@ const RegisterScoresModal: React.FC<RegisterScoresModalProps> = ({ students, eva
 
     return (
         <ModalContainer role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <ModalContent ref={modalRef}>
+            <ModalContent ref={modalRef} size='md' >
                 <ModalHeader>
                     <h3>Registrar notas</h3>
                     <CloseButton

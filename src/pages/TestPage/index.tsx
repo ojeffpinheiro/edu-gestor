@@ -113,7 +113,7 @@ const TestPage: React.FC = () => {
       
       {isModalOpen && (
         <Modal>
-          <ModalContent>
+          <ModalContent size='sm' >
             {modalMode === 'view' ? (
               // No modo de visualização, podemos reutilizar o EventCreation com props para torná-lo somente leitura
               // ou implementar um componente de EventView específico

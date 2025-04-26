@@ -201,7 +201,7 @@ const ConversionRelationModal: React.FC<ConversionRelationModalProps> = ({
 
   return (
     <ModalContainer role="dialog" aria-modal="true">
-      <ModalContent ref={modalRef} >
+      <ModalContent ref={modalRef} size='sm' >
         <ModalHeader>
           <h2>{title}</h2>
           <CloseButton onClick={onClose}>

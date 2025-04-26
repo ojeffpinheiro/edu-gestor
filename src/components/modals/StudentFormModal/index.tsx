@@ -8,10 +8,10 @@ import { InfoBox, ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHea
 import { CancelButton, CloseButton, PrimaryActionButton } from "../../../styles/buttons";
 import { Grid } from "../../../styles/layoutUtils";
 import { FormCard } from "../../../styles/containers";
-import { Select, InlineErrorMessage } from "./styles"; // Importando o Select do arquivo de estilos
+import { Select, InlineErrorMessage } from "./styles"; 
 
 interface StudentFormModalProps {
-  onSave: () => boolean; // Now returns a boolean to indicate success/failure
+  onSave: () => boolean;
   onClose: () => void;
   defaultClass?: string;
 }
@@ -34,7 +34,7 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
       setFeedback(prev => ({ ...prev, hasChanges: false }));
     }
   }, [defaultClass, setFormData, formData.className]);
-
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
@@ -135,7 +135,7 @@ const StudentFormModal: React.FC<StudentFormModalProps> = ({ onSave, onClose, de
 
   return (
     <ModalContainer>
-      <ModalContent>
+      <ModalContent size='sm' >
         <ModalHeader>
           <h3>Cadastro de Aluno</h3>
           <CloseButton onClick={handleCloseModal}>

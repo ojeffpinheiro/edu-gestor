@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Exam } from '../../utils/types/Assessment';
-
 import { Button } from '../../styles/buttons';
 
 import {
@@ -14,6 +13,8 @@ import {
   StatValue,
   StatLabel
 } from './styles'
+import { formatDate } from '../../utils/dateFormatter';
+import { FaShieldAlt } from 'react-icons/fa';
 
 interface ExamCardProps {
   exam: Exam;
@@ -22,60 +23,66 @@ interface ExamCardProps {
 }
 
 /**
- * Componente que renderiza um cartão individual de exame
+ * ExamCard - Componente de cartão para exibir informações de um exame
+ * 
+ * Exibe detalhes do exame e fornece ações para gerenciamento como:
+ * - Configurar segurança
+ * - Gerar variantes
  */
 const ExamCardComponent: React.FC<ExamCardProps> = ({ 
   exam, 
   onOpenSecuritySettings, 
   onOpenVariantGenerator 
 }) => {
-  // Formata a data de criação do exame
-  const formatCreationDate = (date: Date): string => {
-    try {
-      return date.toLocaleString();
-    } catch (error) {
-      console.error('Erro ao formatar data:', error);
-      return 'Data inválida';
-    }
-  };
 
-  // Obtém o número de questões no exame
+  // Funções seguras para obter dados do exame com validações
   const getQuestionCount = (): number => {
     try {
-      return exam.questions.length;
+      return Array.isArray(exam.questions) ? exam.questions.length : 0;
     } catch (error) {
       console.error('Erro ao contar questões:', error);
       return 0;
     }
   };
 
-  // Obtém o tempo limite do exame
   const getTimeLimit = (): string => {
     try {
-      return exam.timeLimit?.toString() || "-";
+      return exam.timeLimit?.toString() || "N/A";
     } catch (error) {
       console.error('Erro ao obter tempo limite:', error);
-      return "-";
+      return "N/A";
     }
   };
 
-  // Obtém o número de variantes do exame
   const getVariantCount = (): number => {
     try {
-      return exam.variants?.length || 0;
+      return Array.isArray(exam.variants) ? exam.variants.length : 0;
     } catch (error) {
       console.error('Erro ao contar variantes:', error);
       return 0;
     }
   };
 
+  // Verifica se o exame tem configurações de segurança ativas
+  const hasSecurityFeatures = (): boolean => {
+    return Boolean(
+      exam.useQRCode || 
+      exam.useBarCode || 
+      exam.requirePassword
+    );
+  };
+
   return (
-    <ExamCard className="fade-in">
+    <ExamCard 
+      className={`fade-in ${hasSecurityFeatures() ? 'has-security' : ''}`}
+      data-testid={`exam-card-${exam.id}`}
+    >
       <ExamTitle data-testid={`exam-title-${exam.id}`}>
-        {exam.title}
+        {exam.title || 'Exame sem título'}
       </ExamTitle>
+
       <ExamMeta>
-        ID: {exam.id} | Criado em: {formatCreationDate(exam.createdAt)}
+        ID: {exam.id || 'N/A'} | Criado em: {formatDate(exam.createdAt.toISOString())}
       </ExamMeta>
 
       <ExamStatistics>
@@ -97,14 +104,16 @@ const ExamCardComponent: React.FC<ExamCardProps> = ({
         <Button
           variant="secondary"
           onClick={onOpenSecuritySettings}
-          aria-label={`Configurar segurança do exame ${exam.title}`}
+          aria-label={`Configurar segurança do exame ${exam.title || 'sem título'}`}
+          data-testid={`security-button-${exam.id}`}
         >
-          Segurança
+          {hasSecurityFeatures() ? (<><FaShieldAlt /> Segurança</>) : 'Segurança'}
         </Button>
         <Button
           variant="primary"
           onClick={onOpenVariantGenerator}
-          aria-label={`Gerar variantes para o exame ${exam.title}`}
+          aria-label={`Gerar variantes para o exame ${exam.title || 'sem título'}`}
+          data-testid={`variants-button-${exam.id}`}
         >
           Variantes
         </Button>
@@ -113,4 +122,4 @@ const ExamCardComponent: React.FC<ExamCardProps> = ({
   );
 };
 
-export default ExamCardComponent;
+export default React.memo(ExamCardComponent);

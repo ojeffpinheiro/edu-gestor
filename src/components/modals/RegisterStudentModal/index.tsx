@@ -4,8 +4,6 @@ import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { FormSection, FormSectionDescription, FormSectionTitle, Input, Label } from "../../../styles/formControls";
 import { InputGroup } from "../../../styles/inputs";
 
-
-
 interface StudentFormProps {
   onSave: (student: Student) => Promise<void>;
   onClose: () => void;
@@ -174,7 +172,7 @@ const StudentForm: React.FC<StudentFormProps> = ({ onSave, onClose, defaultClass
     <div className="modal-container">
       <div className="modal-content">
         <div className="modal-header">
-          <h3>Cadastro de Aluno</h3>
+          <h3>Cadastro de Alun</h3>
           <button 
             className="close-button" 
             onClick={handleCloseModal} 

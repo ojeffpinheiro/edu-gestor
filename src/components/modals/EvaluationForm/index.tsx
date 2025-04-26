@@ -162,7 +162,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
 
     return (
         <ModalContainer>
-            <ModalContent>
+            <ModalContent size='sm' >
                 <ModalHeader>
                     <h3>{evaluation ? 'Editar Avaliação' : 'Nova Avaliação'}</h3>
                     <CloseButton onClick={handleCloseModal} aria-label="Fechar modal">

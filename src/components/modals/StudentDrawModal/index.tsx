@@ -3,17 +3,9 @@ import { FaRandom, FaTimes } from "react-icons/fa";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
-import {
-    ModalContainer,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Icon,
-    EmptyState,
-    DrawnStudentContainer
-} from "./styles";
 import { StudentAttendance } from "../../../utils/types/BasicUser";
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
+import { DrawnStudentContainer, EmptyState, Icon } from "./styles";
 
 interface StudentDrawModalProps {
     students: StudentAttendance[];
@@ -42,7 +34,7 @@ const StudentDrawModal: React.FC<StudentDrawModalProps> = ({ students, onClose, 
 
     return (
         <ModalContainer role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <ModalContent ref={modalRef}>
+            <ModalContent ref={modalRef} size="lg" >
                 <ModalHeader>
                     <h3>Sorteio de Aluno</h3>
                     <CloseButton onClick={onClose} aria-label="Fechar modal" title="Fechar">

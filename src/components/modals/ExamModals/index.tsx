@@ -1,28 +1,15 @@
 import React from 'react';
-import { FaTimes } from 'react-icons/fa';
 
 import { useAssessment } from '../../../contexts/AssessmentContext';
-import { Exam } from '../../../utils/types/Assessment';
+import { Exam, ExamModalType } from '../../../utils/types/Assessment';
 
 import ExamGenerator from '../../../components/Assessment/ExamGenerator/ExamGenerator';
 import ExamSecurityManager from '../../../components/Assessment/ExamGenerator/ExamSecurityManager';
 import ExamVariantGenerator from '../../../components/Assessment/ExamGenerator/ExamVariantGenerator';
-
-import { Button, CloseButton } from '../../../styles/buttons';
-import { FormContainer } from '../../../styles/containers';
-import {
-  ModalContainer,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from '../../../styles/modals';
-
-
-type ModalType = 'create' | 'security' | 'variants' | null;
+import Modal from '../Modal';
 
 interface ExamModalsProps {
-  modalType: ModalType;
+  modalType: ExamModalType;
   selectedExam: Exam | null;
   onClose: () => void;
   onExamCreated: (exam: Exam) => void;
@@ -31,7 +18,8 @@ interface ExamModalsProps {
 }
 
 /**
- * Componente que gerencia todos os modais do gerenciador de exames
+ * Componente aprimorado que gerencia todos os modais do gerenciador de exames
+ * Utilizando o componente Modal reutilizável
  */
 const ExamModals: React.FC<ExamModalsProps> = ({
   modalType,
@@ -71,7 +59,8 @@ const ExamModals: React.FC<ExamModalsProps> = ({
           createExam={createExam}
           onExamCreated={onExamCreated}
         />
-      )
+      ),
+      hasSubmit: false
     },
     security: {
       title: `Configurações de Segurança: ${selectedExam?.title || ''}`,
@@ -80,7 +69,8 @@ const ExamModals: React.FC<ExamModalsProps> = ({
           exam={selectedExam}
           onUpdate={onExamUpdated}
         />
-      )
+      ),
+      hasSubmit: false
     },
     variants: {
       title: `Gerar Variantes: ${selectedExam?.title || ''}`,
@@ -90,48 +80,23 @@ const ExamModals: React.FC<ExamModalsProps> = ({
           questions={getRelatedQuestions()}
           onVariantsGenerated={onVariantsGenerated}
         />
-      )
+      ),
+      hasSubmit: false
     }
   };
 
-  /**
-   * Manipula o clique fora do modal para fechá-lo
-   */
-  const handleBackdropClick = (event: React.MouseEvent) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
+  const currentConfig = modalConfig[modalType];
 
   return (
-    <ModalContainer onClick={handleBackdropClick} role="dialog" aria-modal="true">
-      <ModalContent>
-        <ModalHeader>
-          <h3>{modalConfig[modalType].title}</h3>
-          <CloseButton onClick={onClose} aria-label="Fechar modal">
-            <FaTimes size={24} />
-          </CloseButton>
-        </ModalHeader>
-
-        <ModalBody>
-          <FormContainer>
-            {modalConfig[modalType].content}
-          </FormContainer>
-        </ModalBody>
-
-        <ModalFooter>
-          <div className="navigation-buttons">
-            <Button 
-              variant="secondary" 
-              onClick={onClose}
-              aria-label="Cancelar ação"
-            >
-              Cancelar
-            </Button>
-          </div>
-        </ModalFooter>
-      </ModalContent>
-    </ModalContainer>
+    <Modal
+      isOpen={!!modalType}
+      title={currentConfig.title}
+      onClose={onClose}
+      showFooter={true}
+      size="sm"
+    >
+      {currentConfig.content}
+    </Modal>
   );
 };
 

@@ -328,7 +328,7 @@ const SequenceForm: React.FC<SequenceFormProps> = ({ initialData, onSubmit, onCa
 
   return (
     <ModalContainer role='dialog' aria-modal='true' >
-      <ModalContent ref={modalRef} >
+      <ModalContent ref={modalRef} size='md' >
         <ModalHeader>
           <h3>{initialData ? 'Editar Sequência' : 'Nova Sequência'}</h3>
           <CloseButton onClick={handleCloseModal} aria-label="Fechar modal">

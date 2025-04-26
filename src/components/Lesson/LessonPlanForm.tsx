@@ -180,7 +180,7 @@ export const LessonPlanForm: React.FC<LessonPlanFormProps> = ({
 
     return (
         <ModalContainer>
-            <ModalContent>
+            <ModalContent size='md' >
                 <ModalHeader>
                     <h3>{initialData ? 'Editar Plano de Aula' : 'Novo Plano de Aula'}</h3>
                     <CloseButton onClick={onCancel}>

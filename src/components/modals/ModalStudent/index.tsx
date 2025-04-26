@@ -13,20 +13,13 @@ import { Button, CloseButton } from '../../../styles/buttons'
 
 import { DEFAULT_STUDENT_DATA, SECTION_CONFIG } from '../../../utils/setting'
 
-import {
-    ModalContainer,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-} from './styles';
-
 import AttendanceTable from '../../ui/AttendanceTable';
 import { ErrorBoundary } from '../../ui/ErrorBoundary';
 import { Assessment } from '../../../utils/types/AssessmentEvaluation';
 import { StudentModalProps } from '../../../utils/types/UIComponent';
 import { StudentData } from '../../../utils/types/BasicUser';
 import { ExportOptions } from '../../../utils/types/ExportReport';
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../../styles/modals';
 
 // Default student data for testing when no real data is available
 
@@ -252,7 +245,7 @@ const StudentModal: React.FC<StudentModalProps> = ({
     if (isLoading) {
         return (
             <ModalContainer role="dialog" aria-modal="true" aria-labelledby="loading-title">
-                <ModalContent>
+                <ModalContent size='lg' >
                     <CloseButton onClick={onClose} aria-label="Fechar modal">
                         <FaTimes />
                     </CloseButton>
@@ -273,7 +266,7 @@ const StudentModal: React.FC<StudentModalProps> = ({
             aria-labelledby="student-name"
             onKeyDown={handleKeyDown}
         >
-            <ModalContent ref={modalRef}>
+            <ModalContent ref={modalRef} size='lg' >
                 <ModalHeader>
                     <h3 id="student-name">{student.name}</h3>
                     <CloseButton

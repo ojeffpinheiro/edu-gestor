@@ -10,20 +10,10 @@ import GroupsResultList from "../../ui/GroupsResultList";
 
 import { Button, CloseButton } from '../../../styles/buttons'
 
-import {
-    ModalContainer,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    ErrorMessage,
-    SuccessMessage,
-    ControlsContainer,
-    RadioGroup,
-    RadioOption,
-    LoadingIndicator
-} from './styles';
 import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
+import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from "../../../styles/modals";
+import { ControlsContainer, LoadingIndicator, RadioGroup, RadioOption } from "./styles";
+import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 
 /**
  * Modal de formação de grupos aleatórios de estudantes
@@ -180,7 +170,7 @@ const GroupFormationModal: React.FC<GroupFormationModalProps> = ({
 
     return (
         <ModalContainer role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <ModalContent ref={modalRef}>
+            <ModalContent ref={modalRef} size='md' >
                 <ModalHeader>
                     <h3 id="modal-title">
                         <FaUsers className="icon-spacing" style={{ marginRight: '8px' }} />

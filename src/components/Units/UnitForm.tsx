@@ -60,7 +60,7 @@ const UnitForm: React.FC<UnitFormProps> = ({
 
     return (
         <ModalContainer role='dialog' aria-modal="true">
-            <ModalContent ref={modalRef} >
+            <ModalContent ref={modalRef} size='sm' >
                 <ModalHeader>
                     <h2>{isEditing ? 'Editar Unidade' : 'Nova Unidade'}</h2>
                     <CloseButton onClick={onCancel}>

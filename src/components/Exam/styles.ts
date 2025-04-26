@@ -4,6 +4,7 @@ import { slideIn } from '../../styles/animations';
 
 import { flexColumn, flexRow, gap } from '../../styles/layoutUtils';
 import { cardHoverTransition } from '../../styles/animations';
+import { Button } from '../../styles/buttons';
 
 export const ExamCard = styled.article`
   ${flexColumn}
@@ -28,6 +29,7 @@ export const ExamTitle = styled.h3`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  max-width: 80%;
 `;
 
 export const ExamMeta = styled.p`
@@ -93,4 +95,89 @@ export const EmptyStateText = styled.p`
   color: var(--color-text-third);
   max-width: 500px;
   line-height: 1.6;
+`;
+
+export const ViewDetailsButton = styled(Button)`
+  margin-left: auto;
+  font-size: var(--font-size-sm);
+  padding: var(--space-xs) var(--space-sm);
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  gap: var(--space-xs);
+  
+  .danger {
+    color: var(--color-error);
+    
+    &:hover {
+      background-color: var(--color-error-light);
+    }
+  }
+`;
+
+export const ExamDetails = styled.div`
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  
+  h4 {
+    margin: var(--space-sm) 0 var(--space-xs);
+    font-size: var(--font-size-md);
+  }
+  
+  ul {
+    margin: 0;
+    padding-left: var(--space-md);
+  }
+`;
+
+export const ExamInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+`;
+
+export const InfoItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-sm);
+`;
+
+export const InfoLabel = styled.span`
+  font-weight: 500;
+  color: var(--color-text-secondary);
+`;
+
+export const InfoValue = styled.span`
+  font-weight: 400;
+`;
+
+export const SecurityIndicators = styled.div`
+  display: flex;
+  gap: var(--space-xs);
+`;
+
+export const SecurityIndicator = styled.span`
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+`;
+
+export const EmptyStateIcon = styled.div`
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--color-background-third);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: ${slideIn} 0.5s ease-out;
+  
+  svg {
+    width: 40px;
+    height: 40px;
+    color: var(--color-text-secondary);
+  }
 `;

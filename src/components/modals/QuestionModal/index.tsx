@@ -285,7 +285,7 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
 
   return (
     <ModalContainer role="dialog" aria-modal="true">
-      <ModalContent ref={modalRef}>
+      <ModalContent ref={modalRef} size='md' >
         <ModalHeader>
           <h2>{isEditMode ? 'Editar Questão' : 'Nova Questão'}</h2>
           <CloseButton onClick={onClose}>

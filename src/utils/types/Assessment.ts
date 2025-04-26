@@ -11,6 +11,8 @@ export interface Question {
     correctAnswer?: string;
 }
 
+export type ExamModalType = 'create' | 'security' | 'variants' | null;
+
 export interface EvaluationRubric {
     id: string;
     title: string;

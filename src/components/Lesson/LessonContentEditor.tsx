@@ -4,12 +4,12 @@ import {
   EditorContainer,
   EditorContent,
   EditorTextArea,
-  TabButton,
   TabHeader,
   Toolbar,
   ToolbarButton,
   ToolbarGroup
 } from './styles'
+import { TabButton } from '../../styles/buttons';
 
 interface LessonContentEditorProps {
   content: string;

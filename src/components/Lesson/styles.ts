@@ -148,17 +148,3 @@ export const TabHeader = styled.div`
   background-color: var(--color-background-third);
   border-bottom: 1px solid var(--color-border);
 `;
-
-export const TabButton = styled.button<{ active: boolean }>`
-  padding: var(--space-sm) var(--space-md);
-  border: none;
-  background-color: ${props => props.active ? 'var(--color-background-secondary)' : 'transparent'};
-  border-bottom: 2px solid ${props => props.active ? 'var(--color-primary)' : 'transparent'};
-  color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-text)'};
-  cursor: pointer;
-  font-weight: ${props => props.active ? '600' : '400'};
-  
-  &:hover {
-    background-color: ${props => !props.active && 'rgba(0, 0, 0, 0.05)'};
-  }
-`;

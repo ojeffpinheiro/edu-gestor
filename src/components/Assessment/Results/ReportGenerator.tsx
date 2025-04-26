@@ -565,7 +565,7 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({
 
         return (
             <ModalContainer>
-                <ModalContent>
+                <ModalContent size='lg' >
                     <ModalHeader>
                         <h3>Prévia do Relatório</h3>
                         <CloseButton onClick={handleClosePreview}>
