@@ -1,75 +1,162 @@
 import React, { useState } from 'react';
-import { FaCalculator, FaChevronDown, FaChevronRight, FaEdit, FaPlus, FaRocket, FaTrash } from 'react-icons/fa';
+import { 
+  FaBook, 
+  FaChevronRight, 
+  FaChevronDown, 
+  FaEdit, 
+  FaTrash, 
+  FaPlus,
+  FaLayerGroup,
+  FaCubes,
+  FaBookOpen,
+  FaAlignLeft
+} from 'react-icons/fa';
+import { 
+  ActionButton, 
+  ActionButtons, 
+  AddButton, 
+  AddCard, 
+  PageContainer, 
+  BreadcrumbItem, 
+  BreadcrumbNav, 
+  CardContent, 
+  CardIcon, 
+  CardTitle, 
+  CardType, 
+  ContentCard, 
+  ContentGrid, 
+  ContentPanel, 
+  ContentSection, 
+  DetailHeader, 
+  DetailsContainer, DetailTitle, EmptyContentMessage, EmptyState, ExpandButton, 
+  ItemIcon, ItemLabel, ItemType, ItemTypeLabel, MainLayout, 
+  ModalContent, ModalOverlay, NavigationPanel, 
+  NavigationTree, NavItem, PageHeader, PageTitle, 
+  PanelHeader, SectionTitle,
+  CancelButton,
+  CloseButton,
+  FormGroup,
+  Input,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  SaveButton,
+  Select
+ } from './styles';
 
-import { Topic } from '../../utils/types/Topic';
+// Tipos
+type HierarchyLevel = 'eixoTematico' | 'unidade' | 'capitulo' | 'titulo' | 'subtitulo';
 
+interface CurriculumItem {
+  id: string;
+  name: string;
+  type: HierarchyLevel;
+  parentId: string | null;
+  children: CurriculumItem[];
+}
 
-import TopicFilter from '../../components/Topic/TopicFilter';
-import TopicForm from '../../components/Topic/TopicForm';
-import { initialTopics, knowledgeAreas } from '../../mocks/topic';
-
-// Estilos específicos da página
-import { EmptyStateMessage } from '../../styles/table';
-import { IconButton, PrimaryActionButton } from '../../styles/buttons';
-import {
-  AreaTag,
-  TopicItem,
-  TopicName,
-  DisciplineTag,
-  TopicActions,
-  PageContainer,
-  PageHeader,
-  PageTitle,
-  TopicTree
-} from './styles'
-import { Card } from '../../styles/card';
+// Dados de exemplo
+const initialData: CurriculumItem[] = [
+  {
+    id: 'eixo1',
+    name: 'Mecânica Clássica',
+    type: 'eixoTematico',
+    parentId: null,
+    children: [
+      {
+        id: 'unidade1',
+        name: 'Cinemática',
+        type: 'unidade',
+        parentId: 'eixo1',
+        children: [
+          {
+            id: 'cap1',
+            name: 'Movimento Retilíneo',
+            type: 'capitulo',
+            parentId: 'unidade1',
+            children: [
+              {
+                id: 'titulo1',
+                name: 'Movimento Uniforme',
+                type: 'titulo',
+                parentId: 'cap1',
+                children: [
+                  {
+                    id: 'sub1',
+                    name: 'Equações do MU',
+                    type: 'subtitulo',
+                    parentId: 'titulo1',
+                    children: []
+                  },
+                  {
+                    id: 'sub2',
+                    name: 'Exercícios Aplicados',
+                    type: 'subtitulo',
+                    parentId: 'titulo1',
+                    children: []
+                  }
+                ]
+              },
+              {
+                id: 'titulo2',
+                name: 'Movimento Uniformemente Variado',
+                type: 'titulo',
+                parentId: 'cap1',
+                children: [
+                  {
+                    id: 'sub3',
+                    name: 'Aceleração',
+                    type: 'subtitulo',
+                    parentId: 'titulo2',
+                    children: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'cap2',
+            name: 'Movimento Circular',
+            type: 'capitulo',
+            parentId: 'unidade1',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 'unidade2',
+        name: 'Dinâmica',
+        type: 'unidade',
+        parentId: 'eixo1',
+        children: []
+      }
+    ]
+  },
+  {
+    id: 'eixo2',
+    name: 'Eletromagnetismo',
+    type: 'eixoTematico',
+    parentId: null,
+    children: []
+  }
+];
 
 // Componente principal
-const TopicManagementPage: React.FC = () => {
-  const [topics, setTopics] = useState<Topic[]>(initialTopics);
-  const [expandedTopics, setExpandedTopics] = useState<Set<string>>(new Set());
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDiscipline, setSelectedDiscipline] = useState<string>('all');
-  const [selectedArea, setSelectedArea] = useState<string>('all');
+const TopicManagementPage = () => {
+  const [data, setData] = useState<CurriculumItem[]>(initialData);
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['eixo1', 'unidade1', 'cap1']));
+  const [selectedItem, setSelectedItem] = useState<CurriculumItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
-  
-  // Estado para o formulário
-  const [formData, setFormData] = useState({
+  const [newItemData, setNewItemData] = useState({
     name: '',
-    discipline: 'physics',
-    knowledgeArea: '',
+    type: 'titulo' as HierarchyLevel,
     parentId: ''
   });
-  
-  // Função para obter todas as áreas de conhecimento dos tópicos
-  const getUniqueAreas = (): string[] => {
-    const areas = new Set<string>();
-    
-    const collectAreas = (topicList: Topic[]) => {
-      topicList.forEach(topic => {
-        areas.add(topic.knowledgeArea);
-        collectAreas(topic.children);
-      });
-    };
-    
-    collectAreas(topics);
-    return Array.from(areas);
-  };
-  
-  // Função para obter todos os tópicos em formato de lista plana
-  const getFlatTopicsList = (topicList: Topic[] = topics, result: Topic[] = []): Topic[] => {
-    topicList.forEach(topic => {
-      result.push(topic);
-      getFlatTopicsList(topic.children, result);
-    });
-    return result;
-  };
-  
-  // Função para alternar a expansão de um tópico
-  const toggleTopic = (id: string) => {
-    setExpandedTopics(prev => {
+
+  // Função para expandir/colapsar um item
+  const toggleExpand = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedItems(prev => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -79,304 +166,342 @@ const TopicManagementPage: React.FC = () => {
       return newSet;
     });
   };
-  
-  // Abrir modal de adição de tópico
-  const openAddTopicModal = () => {
-    setFormData({
-      name: '',
-      discipline: 'physics',
-      knowledgeArea: '',
-      parentId: ''
-    });
-    setShowAddModal(true);
+
+  // Selecionar um item
+  const selectItem = (item: CurriculumItem) => {
+    setSelectedItem(item);
   };
-  
-  // Abrir modal de edição de tópico
-  const openEditTopicModal = (topic: Topic, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedTopic(topic);
-    setFormData({
-      name: topic.title,
-      discipline: topic.discipline,
-      knowledgeArea: topic.knowledgeArea,
-      parentId: topic.parentId || ''
-    });
-    setShowEditModal(true);
+
+  // Gerar ícone conforme o tipo de item
+  const getItemIcon = (type: HierarchyLevel) => {
+    switch (type) {
+      case 'eixoTematico':
+        return <FaLayerGroup size={16} />;
+      case 'unidade':
+        return <FaBook size={16} />;
+      case 'capitulo':
+        return <FaCubes size={16} />;
+      case 'titulo':
+        return <FaBookOpen size={16} />;
+      case 'subtitulo':
+        return <FaAlignLeft size={16} />;
+      default:
+        return <FaBook size={16} />;
+    }
   };
-  
-  // Fechar todos os modais
-  const closeModals = () => {
-    setShowAddModal(false);
-    setShowEditModal(false);
-    setSelectedTopic(null);
-  };
-  
-  // Atualizar dados do formulário
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-  
-  // Gerar ID único
-  const generateId = (): string => {
-    return Math.random().toString(36).substr(2, 9);
-  };
-  
-  // Adicionar tópico
-  const addTopic = () => {
-    const newTopic: Topic = {
-      id: generateId(),
-      title: formData.name,
-      discipline: formData.discipline as 'Física' | 'Matemática',
-      knowledgeArea: formData.knowledgeArea,
-      parentId: formData.parentId || null,
-      level: 0, // será calculado depois
+
+  // Função para adicionar novo item
+  const handleAddItem = () => {
+    const newItem: CurriculumItem = {
+      id: `id-${Date.now()}`,
+      name: newItemData.name,
+      type: newItemData.type,
+      parentId: newItemData.parentId || null,
       children: []
     };
-    
-    // Se não tiver pai, adiciona como tópico raiz
-    if (!formData.parentId) {
-      setTopics(prev => [...prev, newTopic]);
-      closeModals();
-      return;
-    }
-    
-    // Função para adicionar tópico filho recursivamente
-    const addChildTopic = (topicList: Topic[], parentId: string, level: number): Topic[] => {
-      return topicList.map(topic => {
-        if (topic.id === parentId) {
-          // Atualiza o nível do novo tópico
-          newTopic.level = level + 1;
+
+    // Função recursiva para adicionar item ao lugar correto na hierarquia
+    const addItemToHierarchy = (items: CurriculumItem[]): CurriculumItem[] => {
+      return items.map(item => {
+        if (item.id === newItemData.parentId) {
           return {
-            ...topic,
-            children: [...topic.children, newTopic]
+            ...item,
+            children: [...item.children, newItem]
+          };
+        } else if (item.children.length > 0) {
+          return {
+            ...item,
+            children: addItemToHierarchy(item.children)
           };
         }
-        
-        if (topic.children.length > 0) {
-          return {
-            ...topic,
-            children: addChildTopic(topic.children, parentId, topic.level)
-          };
-        }
-        
-        return topic;
+        return item;
       });
     };
-    
-    setTopics(prev => addChildTopic(prev, formData.parentId, 0));
-    closeModals();
-  };
-  
-  // Editar tópico
-  const editTopic = () => {
-    if (!selectedTopic) return;
-    
-    // Função para editar tópico recursivamente
-    const updateTopic = (topicList: Topic[], topicId: string): Topic[] => {
-      return topicList.map(topic => {
-        if (topic.id === topicId) {
-          return {
-            ...topic,
-            title: formData.name,
-            discipline: formData.discipline as 'Física' | 'Matemática',
-            knowledgeArea: formData.knowledgeArea,
-          };
-        }
-        
-        if (topic.children.length > 0) {
-          return {
-            ...topic,
-            children: updateTopic(topic.children, topicId)
-          };
-        }
-        
-        return topic;
-      });
-    };
-    
-    setTopics(prev => updateTopic(prev, selectedTopic.id));
-    closeModals();
-  };
-  
-  // Excluir tópico
-  const deleteTopic = (topicId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!window.confirm("Tem certeza que deseja excluir este tópico? Esta ação excluirá também todos os subtópicos!")) {
-      return;
+
+    // Se não tem parentId, adiciona no nível raiz
+    if (!newItemData.parentId) {
+      setData([...data, newItem]);
+    } else {
+      setData(addItemToHierarchy(data));
     }
-    
-    // Função para remover tópico recursivamente
-    const removeTopic = (topicList: Topic[], id: string): Topic[] => {
-      return topicList.filter(topic => {
-        if (topic.id === id) {
-          return false;
-        }
-        
-        if (topic.children.length > 0) {
-          topic.children = removeTopic(topic.children, id);
-        }
-        
-        return true;
-      });
-    };
-    
-    setTopics(prev => removeTopic(prev, topicId));
+
+    setShowAddModal(false);
+    setNewItemData({
+      name: '',
+      type: 'titulo',
+      parentId: ''
+    });
   };
-  
-  // Filtrar tópicos com base na pesquisa e filtros
-  const filterTopics = (topicList: Topic[]): Topic[] => {
-    // Se não há filtros, retorna a lista original
-    if (searchTerm === '' && selectedDiscipline === 'all' && selectedArea === 'all') {
-      return topicList;
+
+  // Obter lista plana de todos os items
+  const getAllItems = (items: CurriculumItem[] = data, result: CurriculumItem[] = []): CurriculumItem[] => {
+    items.forEach(item => {
+      result.push(item);
+      if (item.children.length > 0) {
+        getAllItems(item.children, result);
+      }
+    });
+    return result;
+  };
+
+  // Renderizar a árvore de navegação
+  const renderNavigationItem = (item: CurriculumItem, level: number = 0) => {
+    const isExpanded = expandedItems.has(item.id);
+    const isSelected = selectedItem?.id === item.id;
+    const showChildren = isExpanded && item.children.length > 0;
+    const isHigherLevel = item.type === 'eixoTematico' || item.type === 'unidade' || item.type === 'capitulo';
+
+    return (
+      <div key={item.id}>
+        <NavItem 
+          level={level} 
+          onClick={() => selectItem(item)}
+          isSelected={isSelected}
+          isHigherLevel={isHigherLevel}
+        >
+          <ItemLabel>
+            {item.children.length > 0 && (
+              <ExpandButton onClick={(e) => toggleExpand(item.id, e)}>
+                {isExpanded ? <FaChevronDown size={12} /> : <FaChevronRight size={12} />}
+              </ExpandButton>
+            )}
+            <ItemIcon>{getItemIcon(item.type)}</ItemIcon>
+            <span>{item.name}</span>
+          </ItemLabel>
+          
+          <ItemType>{getLevelLabel(item.type)}</ItemType>
+        </NavItem>
+
+        {showChildren && (
+          <div>
+            {item.children.map(child => renderNavigationItem(child, level + 1))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Obter label amigável para o tipo de nível
+  const getLevelLabel = (type: HierarchyLevel): string => {
+    switch (type) {
+      case 'eixoTematico': return 'Eixo';
+      case 'unidade': return 'Unidade';
+      case 'capitulo': return 'Capítulo';
+      case 'titulo': return 'Título';
+      case 'subtitulo': return 'Subtítulo';
+      default: return type;
     }
+  };
+
+  // Encontrar o caminho completo de um item até a raiz
+  const findBreadcrumb = (itemId: string): CurriculumItem[] => {
+    const result: CurriculumItem[] = [];
+    const allItems = getAllItems();
     
-    // Filtra recursivamente
-    const filterRecursive = (list: Topic[]): Topic[] => {
-      return list.reduce<Topic[]>((filtered, topic) => {
-        let matches = true;
-        
-        // Filtra por termo de pesquisa
-        if (searchTerm && !topic.title.toLowerCase().includes(searchTerm.toLowerCase())) {
-          matches = false;
-        }
-        
-        // Filtra por disciplina
-        if (selectedDiscipline !== 'all' && topic.discipline !== selectedDiscipline) {
-          matches = false;
-        }
-        
-        // Filtra por área de conhecimento
-        if (selectedArea !== 'all' && topic.knowledgeArea !== selectedArea) {
-          matches = false;
-        }
-        
-        // Processa os filhos
-        const filteredChildren = filterRecursive(topic.children);
-        
-        // Se o tópico corresponde ou tem filhos que correspondem, adiciona-o
-        if (matches || filteredChildren.length > 0) {
-          filtered.push({
-            ...topic,
-            children: filteredChildren
-          });
-        }
-        
-        return filtered;
-      }, []);
+    const findParents = (id: string | null) => {
+      if (!id) return;
+      
+      const item = allItems.find(i => i.id === id);
+      if (item) {
+        result.unshift(item);
+        findParents(item.parentId);
+      }
     };
     
-    return filterRecursive(topicList);
+    findParents(itemId);
+    return result;
   };
-  
-  // Renderizar a árvore de tópicos
-  const renderTopicTree = (topicList: Topic[]) => {
-    const filteredTopics = filterTopics(topicList);
-    
-    if (filteredTopics.length === 0) {
+
+  // Renderizar detalhes do item selecionado
+  const renderItemDetails = () => {
+    if (!selectedItem) {
       return (
-        <EmptyStateMessage>
-          Nenhum tópico encontrado. Tente ajustar os filtros ou adicione um novo tópico.
-        </EmptyStateMessage>
+        <EmptyState>
+          <FaBook size={48} color="#ccc" />
+          <p>Selecione um item para ver detalhes</p>
+        </EmptyState>
       );
     }
+
+    const breadcrumb = findBreadcrumb(selectedItem.id);
     
-    return filteredTopics.map(topic => (
-      <React.Fragment key={topic.id}>
-        <TopicItem 
-          level={topic.level} 
-          isExpanded={expandedTopics.has(topic.id)}
-          onClick={() => toggleTopic(topic.id)}
-        >
-          <TopicName>
-            {topic.children.length > 0 ? (
-              expandedTopics.has(topic.id) ? <FaChevronDown size={14} /> : <FaChevronRight size={14} />
-            ) : <span style={{ width: '14px' }}></span>}
-            
-            {topic.discipline === 'Física' ? (
-              <FaRocket size={16} color="#3498db" />
-            ) : (
-              <FaCalculator size={16} color="#27ae60" />
-            )}
-            
-            {topic.title}
-            
-            <DisciplineTag discipline={topic.discipline}>
-              {topic.discipline === 'Física' ? 'Física' : 'Matemática'}
-            </DisciplineTag>
-            
-            <AreaTag>{topic.knowledgeArea}</AreaTag>
-          </TopicName>
-          
-          <TopicActions>
-            <IconButton onClick={(e) => openEditTopicModal(topic, e)}>
+    return (
+      <DetailsContainer>
+        <BreadcrumbNav>
+          {breadcrumb.map((item, index) => (
+            <span key={item.id}>
+              {index > 0 && <FaChevronRight size={10} style={{ margin: '0 8px' }} />}
+              <BreadcrumbItem onClick={() => selectItem(item)}>
+                {item.name}
+              </BreadcrumbItem>
+            </span>
+          ))}
+        </BreadcrumbNav>
+
+        <DetailHeader>
+          <div>
+            <ItemTypeLabel>{getLevelLabel(selectedItem.type)}</ItemTypeLabel>
+            <DetailTitle>{selectedItem.name}</DetailTitle>
+          </div>
+          <ActionButtons>
+            <ActionButton>
               <FaEdit />
-            </IconButton>
-            <IconButton onClick={(e) => deleteTopic(topic.id, e)}>
+            </ActionButton>
+            <ActionButton>
               <FaTrash />
-            </IconButton>
-          </TopicActions>
-        </TopicItem>
-        
-        {expandedTopics.has(topic.id) && topic.children.length > 0 && renderTopicTree(topic.children)}
-      </React.Fragment>
-    ));
+            </ActionButton>
+          </ActionButtons>
+        </DetailHeader>
+
+        {selectedItem.children.length > 0 ? (
+          <ContentSection>
+            <SectionTitle>Conteúdo</SectionTitle>
+            <ContentGrid>
+              {selectedItem.children.map(child => (
+                <ContentCard key={child.id} onClick={() => selectItem(child)}>
+                  <CardIcon>{getItemIcon(child.type)}</CardIcon>
+                  <CardContent>
+                    <CardTitle>{child.name}</CardTitle>
+                    <CardType>{getLevelLabel(child.type)}</CardType>
+                  </CardContent>
+                </ContentCard>
+              ))}
+              <AddCard onClick={() => {
+                setNewItemData({ 
+                  name: '', 
+                  type: getNextLevelType(selectedItem.type),
+                  parentId: selectedItem.id 
+                });
+                setShowAddModal(true);
+              }}>
+                <FaPlus size={20} />
+                <span>Adicionar {getLevelLabel(getNextLevelType(selectedItem.type))}</span>
+              </AddCard>
+            </ContentGrid>
+          </ContentSection>
+        ) : (
+          <EmptyContentMessage>
+            <p>Este item não possui conteúdos. Adicione um novo item abaixo.</p>
+            <AddButton onClick={() => {
+              setNewItemData({ 
+                name: '', 
+                type: getNextLevelType(selectedItem.type),
+                parentId: selectedItem.id 
+              });
+              setShowAddModal(true);
+            }}>
+              <FaPlus />
+              <span>Adicionar {getLevelLabel(getNextLevelType(selectedItem.type))}</span>
+            </AddButton>
+          </EmptyContentMessage>
+        )}
+      </DetailsContainer>
+    );
   };
-  
+
+  // Determinar o próximo nível na hierarquia
+  const getNextLevelType = (currentType: HierarchyLevel): HierarchyLevel => {
+    switch (currentType) {
+      case 'eixoTematico': return 'unidade';
+      case 'unidade': return 'capitulo';
+      case 'capitulo': return 'titulo';
+      case 'titulo': return 'subtitulo';
+      default: return 'subtitulo';
+    }
+  };
+
   return (
     <PageContainer>
       <PageHeader>
-        <PageTitle>Gerenciamento de Tópicos</PageTitle>
-        <PrimaryActionButton onClick={openAddTopicModal}>
+        <PageTitle>Organização de Sequências Didáticas</PageTitle>
+        <AddButton onClick={() => {
+          setNewItemData({ name: '', type: 'eixoTematico', parentId: '' });
+          setShowAddModal(true);
+        }}>
           <FaPlus />
-          Adicionar Tópico
-        </PrimaryActionButton>
+          <span>Adicionar Eixo Temático</span>
+        </AddButton>
       </PageHeader>
-      
-      <Card>
-        <TopicFilter
-          searchTerm={searchTerm}
-          selectedDiscipline={selectedDiscipline}
-          selectedArea={selectedArea}
-          areas={getUniqueAreas()}
-          onSearchChange={(e) => setSearchTerm(e.target.value)}
-          onDisciplineChange={(e) => setSelectedDiscipline(e.target.value)}
-          onAreaChange={(e) => setSelectedArea(e.target.value)}
-        />
-        
-        <TopicTree>
-          {renderTopicTree(topics)}
-        </TopicTree>
-      </Card>
-      
-      {/* Modal de Adição de Tópico */}
-      <TopicForm
-        showModal={showAddModal}
-        isEditing={false}
-        selectedTopic={null}
-        formData={formData}
-        knowledgeAreas={knowledgeAreas}
-        topicsList={getFlatTopicsList()}
-        onInputChange={handleInputChange}
-        onSave={addTopic}
-        onClose={closeModals}
-      />
-      
-      {/* Modal de Edição de Tópico */}
-      <TopicForm
-        showModal={showEditModal}
-        isEditing={true}
-        selectedTopic={selectedTopic}
-        formData={formData}
-        knowledgeAreas={knowledgeAreas}
-        topicsList={getFlatTopicsList()}
-        onInputChange={handleInputChange}
-        onSave={editTopic}
-        onClose={closeModals}
-      />
+
+      <MainLayout>
+        <NavigationPanel>
+          <PanelHeader>Estrutura do Conteúdo</PanelHeader>
+          <NavigationTree>
+            {data.map(item => renderNavigationItem(item))}
+          </NavigationTree>
+        </NavigationPanel>
+
+        <ContentPanel>
+          {renderItemDetails()}
+        </ContentPanel>
+      </MainLayout>
+
+      {/* Modal para adicionar novo item */}
+      {showAddModal && (
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>
+              <h3>Adicionar {getLevelLabel(newItemData.type)}</h3>
+              <CloseButton onClick={() => setShowAddModal(false)}>×</CloseButton>
+            </ModalHeader>
+            <ModalBody>
+              <FormGroup>
+                <label>Nome</label>
+                <Input
+                  type="text"
+                  value={newItemData.name}
+                  onChange={(e) => setNewItemData({ ...newItemData, name: e.target.value })}
+                  placeholder={`Nome do ${getLevelLabel(newItemData.type).toLowerCase()}`}
+                />
+              </FormGroup>
+
+              <FormGroup>
+                <label>Tipo</label>
+                <Select
+                  value={newItemData.type}
+                  onChange={(e) => setNewItemData({ ...newItemData, type: e.target.value as HierarchyLevel })}
+                >
+                  <option value="eixoTematico">Eixo Temático</option>
+                  <option value="unidade">Unidade</option>
+                  <option value="capitulo">Capítulo</option>
+                  <option value="titulo">Título</option>
+                  <option value="subtitulo">Subtítulo</option>
+                </Select>
+              </FormGroup>
+
+              {newItemData.type !== 'eixoTematico' && (
+                <FormGroup>
+                  <label>Item Pai</label>
+                  <Select
+                    value={newItemData.parentId}
+                    onChange={(e) => setNewItemData({ ...newItemData, parentId: e.target.value })}
+                  >
+                    <option value="">Selecione um item pai</option>
+                    {getAllItems()
+                      .filter(item => {
+                        // Filtrar os itens pai válidos com base na hierarquia
+                        if (newItemData.type === 'unidade') return item.type === 'eixoTematico';
+                        if (newItemData.type === 'capitulo') return item.type === 'unidade';
+                        if (newItemData.type === 'titulo') return item.type === 'capitulo';
+                        if (newItemData.type === 'subtitulo') return item.type === 'titulo';
+                        return false;
+                      })
+                      .map(item => (
+                        <option key={item.id} value={item.id}>
+                          {item.name}
+                        </option>
+                      ))}
+                  </Select>
+                </FormGroup>
+              )}
+            </ModalBody>
+            <ModalFooter>
+              <CancelButton onClick={() => setShowAddModal(false)}>Cancelar</CancelButton>
+              <SaveButton onClick={handleAddItem} disabled={!newItemData.name}>Salvar</SaveButton>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
     </PageContainer>
   );
 };
