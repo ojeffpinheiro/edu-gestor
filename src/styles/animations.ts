@@ -48,6 +48,39 @@ const slideUp = keyframes`
   }
 `;
 
+export const slideDown = keyframes`
+  from { 
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+export const slideLeft = keyframes`
+  from { 
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
+export const slideRight = keyframes`
+  from { 
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+`;
+
 /**
  * Animação de rotação para o spinner de carregamento
  */
@@ -57,5 +90,38 @@ const spin = keyframes`
 `;
 
 const cardHoverTransition = 'transform 0.3s ease, box-shadow 0.3s ease';
+
+export const keyframesAnimations = {
+  fadeIn: keyframes`
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  `,
+
+  fadeInRight: keyframes`
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+  `,
+
+  spin: keyframes`
+    to { transform: rotate(360deg); }
+  `,
+
+  pulse: keyframes`
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  `,
+
+  shake: keyframes`
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+  `,
+
+  shimmer: keyframes`
+    from { transform: translateX(-100%); }
+    to { transform: translateX(100%); }
+  `
+};
 
 export { fadeIn, slideIn, pulse, shake, cardHoverTransition, cardAppear, slideUp, spin };

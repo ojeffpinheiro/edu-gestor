@@ -11,17 +11,15 @@ import { InputGroup, Label, Select, TextArea } from '../../../styles/inputs';
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';
 
 import Modal from '../../modals/Modal';
+import { Tab, TabsContainer } from '../../../styles/tabs';
 
-import {
-    InfoMessage,
-    ReportContainer,
-    SectionContainer,
-    Tab,
-    TabsContainer,
-    TemplateCard,
-    TemplatesGrid
-} from './ReportGeneratorStyle'
-
+import { 
+    InfoMessage, 
+    ReportContainer, 
+    SectionContainer, 
+    TemplateCard, 
+    TemplatesGrid 
+} from './ReportGeneratorStyle';
 
 interface Student {
     id: string;

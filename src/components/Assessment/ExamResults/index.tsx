@@ -4,21 +4,24 @@ import { FaFileExport, FaChartBar, FaUserGraduate, FaFilter } from "react-icons/
 import { useExamResults } from "../../../hooks/useExamResults";
 import { Exam, ExamResult } from "../../../utils/types/Assessment";
 
+import examService from "../../../services/examService";
+import { Select } from "../../../styles/inputs";
+import { Table } from "../../../styles/table";
+import { Container } from "../../../styles/layoutUtils";
+import { Card } from "../../../styles/card";
+import { LoadingMessage, LoadingSpinner } from "../../../styles/feedback";
+import { Title } from "../../../styles/typography";
+
+
 import { 
-    Card, 
-    Container, 
     ExportButton, 
     ExportContainer, 
     FiltersContainer, 
-    LoadingContainer, 
-    Select, 
     SpinnerIcon, 
     SummaryCard, 
-    Table, 
-    Title, 
     VisualizationsContainer
- } from './styles'
-import examService from "../../../services/examService";
+ } from "./styles";
+
 
 const ExamSelector: React.FC<{
     exams: Exam[];
@@ -229,19 +232,19 @@ export const ExamResults: React.FC = () => {
 
     if (loading) {
         return (
-            <LoadingContainer>
+            <LoadingSpinner>
                 <SpinnerIcon />
-                <p>Carregando exames...</p>
-            </LoadingContainer>
+                <LoadingMessage>Carregando exames...</LoadingMessage>
+            </LoadingSpinner>
         );
     }
 
     if (resultsLoading) {
         return (
-            <LoadingContainer>
+            <LoadingSpinner>
                 <SpinnerIcon />
-                <p>Carregando resultados...</p>
-            </LoadingContainer>
+                <LoadingMessage>Carregando resultados...</LoadingMessage>
+            </LoadingSpinner>
         );
     }
 

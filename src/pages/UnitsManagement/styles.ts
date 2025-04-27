@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { fadeIn } from "../../styles/animations";
-import { Card, Flex } from "../../styles/layoutUtils";
+import { Flex } from "../../styles/layoutUtils";
 import { Input } from "../../styles/inputs";
+import { Card } from "../../styles/card";
 
 // Componentes estilizados específicos para esta página
 export const UnitCard = styled(Card)`

@@ -1,11 +1,6 @@
 import { FaSpinner } from "react-icons/fa";
 import styled from "styled-components";
-
-export const Container = styled.div`
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-`;
+import { Card } from "../../../styles/card";
 
 export const Title = styled.h1`
   font-size: 2rem;
@@ -24,14 +19,6 @@ export const FiltersContainer = styled.div`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-export const Select = styled.select`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  flex: 1;
-  min-width: 200px;
-`;
-
 export const VisualizationsContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -43,36 +30,8 @@ export const VisualizationsContainer = styled.div`
   }
 `;
 
-export const Card = styled.div`
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-`;
-
 export const SummaryCard = styled(Card)`
   margin-bottom: 2rem;
-`;
-
-export const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 2rem;
-  
-  th, td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid #eee;
-  }
-  
-  th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-  }
-  
-  tr:hover {
-    background-color: #f9f9f9;
-  }
 `;
 
 export const ExportButton = styled.button`

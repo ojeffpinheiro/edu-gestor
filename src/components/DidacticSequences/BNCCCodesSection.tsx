@@ -5,6 +5,9 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 import { SequenceFormStyle } from './style';
 import { Label } from '../../styles/inputs';
 import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { FormGroup } from '../../styles/formControls';
+import { SectionTitle } from '../../styles/baseComponents';
+import { ErrorMessage } from '../../styles/feedback';
 
 interface BNCCCodesFormProps {
   control: Control<SequenceFormData>;
@@ -12,17 +15,14 @@ interface BNCCCodesFormProps {
   errors: FieldErrors<SequenceFormData>;
 }
 
-const {
-  FormGroup,
-  SectionTitle,
-  ChipContainer,
+const { 
   Chip,
-  ErrorMessage,
+  ChipContainer, 
   ChipDeleteButton,
   AddItemContainer,
   AddItemInput,
   AddItemButton
-} = SequenceFormStyle;
+ } = SequenceFormStyle
 
 const BNCCCodesSection: React.FC<BNCCCodesFormProps> = ({
   control,

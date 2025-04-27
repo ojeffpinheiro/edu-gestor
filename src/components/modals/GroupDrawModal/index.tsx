@@ -12,9 +12,9 @@ import GroupsResultList from "../../ui/GroupsResultList";
 import Modal from "../Modal";
 
 import { Button } from '../../../styles/buttons'
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 
 import { ControlsContainer, LoadingIndicator, RadioGroup, RadioOption } from "./styles";
+import { ErrorMessage, SuccessMessage } from "../../../styles/feedback";
 
 /**
  * Modal de formação de grupos aleatórios de estudantes

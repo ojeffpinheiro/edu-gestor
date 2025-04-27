@@ -1,33 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useMemo } from 'react';
 import { FaChevronDown, FaChevronUp, FaDownload, FaFilter } from 'react-icons/fa';
 
 import { Button, IconButton } from '../../../styles/buttons';
-
-import {
-  ColumnHeader,
-  Container,
-  ControlsWrapper,
-  DropdownContainer,
-  DropdownContent,
-  DropdownItem, 
-  DropdownTrigger,
-  FilterInput, 
-  Header,
-  NoResults,
-  PageButton, 
-  PaginationContainer,
-  PaginationControls, 
-  PaginationInfo,
-  SearchInput, 
-  SortableHeader, 
-  StatusBadge, 
-  StyledTable, 
-  StyledTableCell, 
-  StyledTableHeader, 
-  StyledTableRow, 
-  TableContainer, 
-  Title
-} from './styles';
+import { PageButton } from '../../../styles/baseComponents';
+import { ColumnHeader, ControlsWrapper, DropdownContainer, DropdownContent, DropdownItem, DropdownTrigger, FilterInput, Header, NoResults, SortableHeader, StyledTable, StyledTableCell, StyledTableHeader, StyledTableRow, TableContainer } from './styles';
+import { StatusBadge } from '../../../styles/indicators';
+import { Container } from '../../../styles/layoutUtils';
+import { Title } from '../../../styles/typography';
+import { SearchInput } from '../../../styles/formControls';
+import { PaginationContainer, PaginationControls, PaginationInfo } from '../../../styles/pagination';
+import { StatusType } from '../../../utils/types/UIComponent';
 
 // Define the types for the results data
 interface ResultItem {
@@ -39,7 +22,7 @@ interface ResultItem {
   percentage: number;
   submissionDate: string;
   gradedBy?: string;
-  status: 'completed' | 'pending' | 'in-progress';
+  status: StatusType;
   [key: string]: any; // To allow for custom columns
 }
 

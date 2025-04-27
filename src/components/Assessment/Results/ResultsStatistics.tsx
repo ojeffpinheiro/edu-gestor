@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import {
   BarChart,
@@ -19,8 +20,33 @@ import { FaChartBar, FaChartPie, FaChartLine, FaQuestion, FaSyncAlt } from 'reac
 import { useExamResults } from '../../../hooks/useExamResults';
 import { ExamResult } from '../../../utils/types/Assessment';
 
-import { Card, CardContent, CardGrid, CardHeader, CardTitle, Container, ControlsWrapper, EmptyState, Header, QuartileMean, QuartileSection, QuartilesBar, QuartilesContainer, QuartilesLabel, QuartilesScale, RefreshButton, Select, StatItem, StatLabel, StatValue, StatsGrid, TabButton, TabContent, TabsContainer, TabsList, Title } from './styles'
 import { calculateStatistics } from '../../../utils/calculateStatistics';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../styles/card';
+import { Container } from '../../../styles/layoutUtils';
+import { Select } from '../../modals/StudentFormModal/styles';
+import { TabsContainer } from '../../../styles/tabs';
+import { TabButton } from '../../../styles/buttons';
+
+import { 
+  CardGrid,
+  ControlsWrapper,
+  EmptyState,
+  Header,
+  QuartileMean,
+  QuartilesBar,
+  QuartilesContainer,
+  QuartileSection,
+  QuartilesLabel,
+  QuartilesScale,
+  RefreshButton,
+  StatItem,
+  StatLabel,
+  StatsGrid,
+  StatValue,
+  TabContent,
+  TabsList,
+  Title
+} from './styles';
 
 // Interfaces
 interface ResultsStatisticsProps {
@@ -84,6 +110,7 @@ const ResultsStatistics: React.FC<ResultsStatisticsProps> = ({ assessmentId, cla
     if (assessmentId) {
       loadResults(assessmentId);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assessmentId]);
 
   useEffect(() => {

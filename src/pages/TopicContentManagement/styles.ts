@@ -1,6 +1,5 @@
 import styled from 'styled-components';
-
-import { Card } from '../../styles/containers';
+import { Card } from '../../styles/card';
 
 export const PageContainer = styled.div`
   padding: var(--space-xl);
@@ -57,7 +56,6 @@ export const TopicName = styled.div`
   gap: var(--space-sm);
   flex: 1;
 `;
-
 
 export const TopicActions = styled.div`
   display: flex;

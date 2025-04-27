@@ -93,7 +93,7 @@ const ExamModals: React.FC<ExamModalsProps> = ({
       title={currentConfig.title}
       onClose={onClose}
       showFooter={true}
-      size="sm"
+      size="md"
     >
       {currentConfig.content}
     </Modal>

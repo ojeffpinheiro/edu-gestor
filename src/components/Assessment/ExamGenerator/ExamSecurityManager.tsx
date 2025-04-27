@@ -6,25 +6,23 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 
 import { generatePassword } from '../../../utils/passwordGenerator';
 import { Exam } from '../../../utils/types/Assessment';
-
+import { CardHeader } from '../../../styles/card';
+import { Divider, Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { ErrorMessage } from '../../../styles/feedback';
 import { 
   ButtonsContainer, 
-  CardHeader, 
   DatePickerWrapper, 
-  Divider,
-  ErrorMessage,
-  GeneratePasswordButton,
-  InputField,
-  PasswordInputWrapper,
-  SaveButton,
-  Section,
-  SectionTitle,
-  SecurityCard,
-  StyledSwitch,
-  StyledTextField,
-  SwitchRow,
-  TimeLimitContainer,
- } from './ExamSecurityManagerStyles'
+  GeneratePasswordButton, 
+  InputField, 
+  PasswordInputWrapper, 
+  SaveButton, 
+  SecurityCard, 
+  StyledSwitch, 
+  StyledTextField, 
+  SwitchRow, 
+  TimeLimitContainer
+ } from './ExamSecurityManagerStyles';
 
 interface ExamSecurityManagerProps {
   exam: Exam;

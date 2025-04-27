@@ -5,6 +5,9 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 import { SequenceFormStyle } from './style';
 import { Label } from '../../styles/inputs';
 import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { FormGroup } from '../../styles/formControls';
+import { SectionTitle } from '../../styles/baseComponents';
+import { ErrorMessage } from '../../styles/feedback';
 
 interface ObjectivesFormProps {
   control: Control<SequenceFormData>;
@@ -13,16 +16,13 @@ interface ObjectivesFormProps {
 }
 
 const {
-  FormGroup,
-  SectionTitle,
-  ChipContainer,
   Chip,
-  ErrorMessage,
+  ChipContainer,
   ChipDeleteButton,
   AddItemContainer,
   AddItemInput,
-  AddItemButton
-} = SequenceFormStyle;
+  AddItemButton 
+} = SequenceFormStyle
 
 const ObjectivesSection: React.FC<ObjectivesFormProps> = ({ 
   control, 

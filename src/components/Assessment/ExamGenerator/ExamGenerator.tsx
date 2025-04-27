@@ -1,369 +1,79 @@
 import React, { useState } from 'react';
+import { FaCheck, FaArrowRight, FaLock, FaQrcode, FaBarcode } from 'react-icons/fa';
+import { Exam, Question } from '../../../utils/types/Assessment'
 
-import { Exam, Question } from '../../../utils/types/Assessment';
-import QRCodeService from '../../../utils/qrCodeGenerator';
-import BarCodeGenerator from '../../../utils/barCodeGenerator';
 import ExamSecurityManager from './ExamSecurityManager';
+import ExamConfig from './ExamConfig';
+import QuestionSelector from './QuestionSelector';
 
-import { CancelButton } from '../../../styles/buttons';
-import {
-  MainContainer,
-  StepContainer,
-  FormGroup,
-  ActionContainer,
-  QuestionItem,
-  QuestionList,
-  QuestionsContainer,
-  QuestionSelectionActions,
-  SuccessMessage,
-  RandomSelectButton,
-  AddQuestionButton,
-  RemoveQuestionButton,
-  NextStepButton,
-  GenerateExamButton,
-  StepIndicator,
-  StepTitle,
-  FormSection,
-  StepContent
-} from './ExamGeneratorStyles';
+import useExamSecurity from '../../../hooks/useExamSecurity';
+import useExamGenerator from '../../../hooks/useExamGenerator';
 
-interface ExamConfigProps {
-  config: {
-    title: string;
-    description: string;
-    numQuestions: number;
-    categories: string[];
-    difficulty: string;
-  };
-  availableCategories: string[];
-  onChange: (config: any) => void;
+import { StepIndicator } from '../../../styles/indicators';
+import { 
+  ActionContainer, 
+  ExamPreview, 
+  ExamPreviewItem, 
+  GenerateExamButton, 
+  NextStepButton, 
+  QuestionSelectionActions, 
+  RandomSelectButton, 
+  StepContainer, 
+  StepContent, 
+  StepTitle } from './ExamGeneratorStyles';
+import { SuccessMessage } from '../../../styles/feedback';
+
+interface ExamGeneratorProps {
+  questions: Question[];
+  createExam: (exam: Omit<Exam, 'id' | 'createdAt'>) => Promise<Exam>;
+  onExamCreated: (exam: Exam) => void;
 }
 
-interface QuestionSelectorProps {
-  availableQuestions: Question[];
-  selectedQuestions: Question[];
-  onSelectQuestion: (question: Question) => void;
-  onRemoveQuestion: (questionId: string) => void;
-  numQuestionsNeeded: number;
-}
-
-const ExamConfig: React.FC<ExamConfigProps> = ({
-  config,
-  availableCategories,
-  onChange
+/**
+ * Componente principal para geração de provas
+ * Guia o usuário através de um processo passo-a-passo
+ */
+const ExamGenerator: React.FC<ExamGeneratorProps> = ({ 
+  questions, 
+  createExam, 
+  onExamCreated 
 }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    onChange({ ...config, [name]: value });
-  };
-
-  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedOptions = Array.from(e.target.selectedOptions, option => option.value);
-    onChange({ ...config, categories: selectedOptions });
-  };
-
-  return (
-    <FormSection>
-      <FormGroup>
-        <label htmlFor="title">Título da Prova:</label>
-        <input
-          id="title"
-          name="title"
-          value={config.title}
-          onChange={handleChange}
-          required
-        />
-      </FormGroup>
-
-      <FormGroup>
-        <label htmlFor="numQuestions">Número de Questões:</label>
-        <input
-          type="number"
-          id="numQuestions"
-          name="numQuestions"
-          value={config.numQuestions}
-          onChange={handleChange}
-          min={1}
-          step={1}
-          required
-        />
-      </FormGroup>
-
-      <FormGroup>
-        <label htmlFor="description">Descrição:</label>
-        <textarea
-          id="description"
-          name="description"
-          value={config.description}
-          onChange={handleChange}
-          rows={3}
-        />
-      </FormGroup>
-
-      <FormGroup>
-        <label htmlFor="categories">Categorias:</label>
-        <select
-          id="categories"
-          name="categories"
-          multiple
-          value={config.categories}
-          onChange={handleCategoryChange}
-        >
-          {availableCategories.map(category => (
-            <option key={category} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-        <small>Segure Ctrl para selecionar múltiplas categorias</small>
-      </FormGroup>
-
-      <FormGroup>
-        <label htmlFor="difficulty">Dificuldade:</label>
-        <select
-          id="difficulty"
-          name="difficulty"
-          value={config.difficulty}
-          onChange={handleChange}
-        >
-          <option value="">Todas as dificuldades</option>
-          <option value="easy">Fácil</option>
-          <option value="medium">Médio</option>
-          <option value="hard">Difícil</option>
-        </select>
-      </FormGroup>
-    </FormSection>
-  );
-};
-
-const QuestionSelector: React.FC<QuestionSelectorProps> = ({
-  availableQuestions,
-  selectedQuestions,
-  onSelectQuestion,
-  onRemoveQuestion,
-  numQuestionsNeeded
-}) => {
-  // Filter out questions that are already selected
-  const filteredQuestions = availableQuestions.filter(
-    question => !selectedQuestions.some(sq => sq.id === question.id)
-  );
-
-  return (
-    <QuestionsContainer>
-      <div>
-        <h3>Questões Disponíveis ({filteredQuestions.length})</h3>
-        <QuestionList>
-          {filteredQuestions.map(question => (
-            <QuestionItem key={question.id}>
-              <p>{question.content.substring(0, 100)}...</p>
-              <div className="question-meta">
-                <span>Dificuldade: {question.difficulty}</span>
-                <span>Categorias: {question.categories.join(', ')}</span>
-              </div>
-              <AddQuestionButton onClick={() => onSelectQuestion(question)}>Adicionar</AddQuestionButton>
-            </QuestionItem>
-          ))}
-        </QuestionList>
-      </div>
-
-      <div>
-        <h3>Questões Selecionadas ({selectedQuestions.length}/{numQuestionsNeeded})</h3>
-        <QuestionList>
-          {selectedQuestions.map(question => (
-            <QuestionItem key={question.id}>
-              <p>{question.content.substring(0, 100)}...</p>
-              <div className="question-meta">
-                <span>Dificuldade: {question.difficulty}</span>
-                <span>Categorias: {question.categories.join(', ')}</span>
-              </div>
-              <RemoveQuestionButton onClick={() => onRemoveQuestion(question.id)}>Remover</RemoveQuestionButton>
-            </QuestionItem>
-          ))}
-        </QuestionList>
-      </div>
-    </QuestionsContainer>
-  );
-};
-
-const ExamGenerator: React.FC<{
-  questions: Question[],
-  createExam: (exam: Omit<Exam, 'id' | 'createdAt'>) => Promise<Exam>,
-  onExamCreated: (exam: Exam) => void
-}> = ({ questions, createExam, onExamCreated }) => {
-  const { createQRCodeComponent } = QRCodeService;
-  const { generateExamBarCode } = BarCodeGenerator;
-  
-  // Estado para controlar o passo atual do processo
   const [currentStep, setCurrentStep] = useState(1);
-
-  // Configuração do exame
-  const [examConfig, setExamConfig] = useState({
-    title: '',
-    description: '',
-    numQuestions: 10,
-    questions: [],
-    totalPoints: 10,
-    qrCode: '',
-    barCode: '',
-    password: '',
-    createdAt: new Date(),
-    createdBy: 'current_user_id',
-    questionDistribution: {
-      categories: [] as string[],
-      difficulty: '',
-      count: 0,
-    },
-    useQRCode: false,
-    useBarCode: true,
-    classIds: [] as string[],
-    requirePassword: false,
-    startTime: undefined as Date | undefined,
-    endTime: undefined as Date | undefined,
-    timeLimit: undefined as number | undefined,
+  
+  // Hooks customizados para separar a lógica
+  const {
+    examConfig,
+    selectedQuestions,
+    filteredQuestions,
+    availableCategories,
+    handleConfigChange,
+    handleSelectQuestion,
+    handleRemoveQuestion,
+    handleRandomSelection,
+    resetExamGenerator
+  } = useExamGenerator(questions);
+  
+  const {
+    handlePrepareExam,
+    handleGenerateExam,
+    currentExam,
+    generatedExamId,
+    handleUpdateExam,
+    resetSecurity,
+    error
+  } = useExamSecurity({
+    examConfig,
+    selectedQuestions,
+    createExam,
+    onExamCreated,
+    setCurrentStep
   });
-
-  const [selectedQuestions, setSelectedQuestions] = useState<Question[]>([]);
-  const [generatedExamId, setGeneratedExamId] = useState<string | null>(null);
-  const [currentExam, setCurrentExam] = useState<Exam | null>(null);
-
-  // Get all available categories from questions
-  const availableCategories = Array.from(
-    new Set(questions.flatMap(q => q.categories))
-  );
-
-  // Filter questions based on exam config
-  const filteredQuestions = questions.filter(question => {
-    // Filter by category
-    if (examConfig.questionDistribution.categories.length > 0 &&
-      !question.categories.some(cat => examConfig.questionDistribution.categories.includes(cat))) {
-      return false;
-    }
-
-    // Filter by difficulty
-    if (examConfig.questionDistribution.difficulty && question.difficulty !== examConfig.questionDistribution.difficulty) {
-      return false;
-    }
-
-    return true;
-  });
-
-  const handleConfigChange = (newConfig: any) => {
-    setExamConfig(prev => ({ ...prev, ...newConfig }));
-  };
-
-  const handleSelectQuestion = (question: Question) => {
-    setSelectedQuestions(prev => [...prev, question]);
-  };
-
-  const handleRemoveQuestion = (questionId: string) => {
-    setSelectedQuestions(prev => prev.filter(q => q.id !== questionId));
-  };
-
-  const handleRandomSelection = () => {
-    // Clear current selection
-    setSelectedQuestions([]);
-
-    // Randomly select questions based on exam config
-    const shuffled = [...filteredQuestions].sort(() => 0.5 - Math.random());
-    const selected = shuffled.slice(0, examConfig.numQuestions);
-
-    setSelectedQuestions(selected);
-  };
-
-  const handlePrepareExam = async () => {
-    // Generate QR code and barcode
-    const qrCode = await createQRCodeComponent(`exam_${Date.now()}`);
-    const barCode = await generateExamBarCode(`exam_${Date.now()}`);
-
-    // Generate random password for exam if not specified
-    const password = examConfig.password || Math.random().toString(36).substring(2, 8).toUpperCase();
-
-    // Calculate total points (1 point per question for simplicity)
-    const totalPoints = selectedQuestions.length;
-
-    // Prepare the exam object but don't save it yet
-    const preparedExam: Exam = {
-      id: `temp_${Date.now().toString()}`,
-      title: examConfig.title,
-      description: examConfig.description,
-      questions: selectedQuestions.map(q => q.id),
-      classIds: examConfig.classIds,
-      totalPoints,
-      qrCode,
-      barCode,
-      password,
-      createdBy: 'current_user_id',
-      questionDistribution: [],
-      useBarCode: examConfig.useBarCode,
-      useQRCode: examConfig.useQRCode,
-      requirePassword: examConfig.requirePassword,
-      startTime: examConfig.startTime,
-      endTime: examConfig.endTime,
-      timeLimit: examConfig.timeLimit,
-      createdAt: new Date(),
-      variants: [],
-    };
-
-    setCurrentExam(preparedExam);
-    setCurrentStep(3);
-  };
-
-  const handleUpdateExam = (updatedExam: Exam) => {
-    setCurrentExam(updatedExam);
-  };
-
-  const handleGenerateExam = async () => {
-    try {
-      if (!currentExam) return;
-  
-      // Create exam
-      const newExam = await createExam(currentExam);
-  
-      // Set the generated exam ID for confirmation message
-      setGeneratedExamId(newExam.id ?? null);
-      setCurrentStep(4);
-      
-      // Notificar o componente pai
-      onExamCreated(newExam);
-  
-    } catch (error) {
-      console.error('Error generating exam:', error);
-      // Show error message to user
-    }
-  };
 
   const resetForm = () => {
-    setGeneratedExamId(null);
-    setCurrentExam(null);
-    setSelectedQuestions([]);
-    setCurrentStep(1);
-    setExamConfig({
-      title: '',
-      description: '',
-      numQuestions: 10,
-      questions: [],
-      totalPoints: 10,
-      qrCode: '',
-      barCode: '',
-      password: '',
-      createdAt: new Date(),
-      createdBy: 'current_user_id',
-      questionDistribution: {
-        categories: [],
-        difficulty: '',
-        count: 0,
-      },
-      useQRCode: false,
-      useBarCode: true,
-      classIds: [],
-      requirePassword: false,
-      startTime: undefined,
-      endTime: undefined,
-      timeLimit: undefined,
-    });
-  };
+    resetExamGenerator();
+    resetSecurity();
+  }
 
-  // Renderiza o conteúdo baseado no passo atual
   const renderStepContent = () => {
     switch (currentStep) {
       case 1: // Configurações básicas
@@ -392,7 +102,7 @@ const ExamGenerator: React.FC<{
                   onClick={() => setCurrentStep(2)}
                   disabled={!examConfig.title}
                 >
-                  Próximo: Selecionar Questões
+                  Próximo: Selecionar Questões <FaArrowRight />
                 </NextStepButton>
               </ActionContainer>
             </StepContent>
@@ -404,14 +114,19 @@ const ExamGenerator: React.FC<{
           <StepContainer>
             <StepTitle>
               <StepIndicator>1</StepIndicator>
-              <h2 onClick={() => setCurrentStep(1)} style={{ cursor: 'pointer' }}>Configurações da Prova</h2>
+              <h2 onClick={() => setCurrentStep(1)} style={{ cursor: 'pointer' }}>
+                Configurações da Prova
+              </h2>
               <StepIndicator active>2</StepIndicator>
               <h2>Seleção de Questões</h2>
             </StepTitle>
             
             <StepContent>
               <QuestionSelectionActions>
-                <RandomSelectButton onClick={handleRandomSelection}>
+                <RandomSelectButton 
+                  onClick={handleRandomSelection}
+                  disabled={filteredQuestions.length === 0}
+                >
                   Selecionar {examConfig.numQuestions} Questões Aleatoriamente
                 </RandomSelectButton>
                 <span>ou selecione manualmente abaixo:</span>
@@ -426,14 +141,11 @@ const ExamGenerator: React.FC<{
               />
 
               <ActionContainer>
-                <CancelButton onClick={() => setCurrentStep(1)}>
-                  Voltar
-                </CancelButton>
                 <NextStepButton
                   onClick={handlePrepareExam}
                   disabled={selectedQuestions.length === 0}
                 >
-                  Próximo: Configurações de Segurança
+                  Próximo: Configurações de Segurança <FaArrowRight />
                 </NextStepButton>
               </ActionContainer>
             </StepContent>
@@ -445,25 +157,47 @@ const ExamGenerator: React.FC<{
           <StepContainer>
             <StepTitle>
               <StepIndicator>1</StepIndicator>
-              <h2 onClick={() => setCurrentStep(1)} style={{ cursor: 'pointer' }}>Configurações da Prova</h2>
+              <h2 onClick={() => setCurrentStep(1)} style={{ cursor: 'pointer' }}>
+                Configurações da Prova
+              </h2>
               <StepIndicator>2</StepIndicator>
-              <h2 onClick={() => setCurrentStep(2)} style={{ cursor: 'pointer' }}>Seleção de Questões</h2>
+              <h2 onClick={() => setCurrentStep(2)} style={{ cursor: 'pointer' }}>
+                Seleção de Questões
+              </h2>
               <StepIndicator active>3</StepIndicator>
               <h2>Configurações de Segurança</h2>
             </StepTitle>
             
             <StepContent>
+              {error && (
+                <div className="error-message">
+                  {error}
+                </div>
+              )}
+              
+              <ExamPreview>
+                <ExamPreviewItem>
+                  <strong>Título:</strong> {currentExam.title}
+                </ExamPreviewItem>
+                <ExamPreviewItem>
+                  <strong>Questões:</strong> {currentExam.questions.length}
+                </ExamPreviewItem>
+                <ExamPreviewItem>
+                  <strong>Segurança:</strong>
+                  {currentExam.requirePassword && <span><FaLock /> Com senha</span>}
+                  {currentExam.useQRCode && <span><FaQrcode /> QR Code</span>}
+                  {currentExam.useBarCode && <span><FaBarcode /> Código de Barras</span>}
+                </ExamPreviewItem>
+              </ExamPreview>
+              
               <ExamSecurityManager
                 exam={currentExam}
                 onUpdate={handleUpdateExam}
               />
               
               <ActionContainer>
-                <CancelButton onClick={() => setCurrentStep(2)}>
-                  Voltar
-                </CancelButton>
                 <GenerateExamButton onClick={handleGenerateExam}>
-                  Finalizar e Gerar Prova
+                  Finalizar e Gerar Prova <FaCheck />
                 </GenerateExamButton>
               </ActionContainer>
             </StepContent>
@@ -487,9 +221,9 @@ const ExamGenerator: React.FC<{
   };
 
   return (
-    <MainContainer>
+    <>
       {renderStepContent()}
-    </MainContainer>
+    </>
   );
 };
 

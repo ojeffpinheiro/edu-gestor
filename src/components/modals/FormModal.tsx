@@ -4,9 +4,9 @@ import styled from 'styled-components';
 import useModal from '../../utils/useModal';
 import { ActionButton } from '../../styles/buttons';
 import Modal from './Modal';
-import { ErrorMessage, SuccessMessage } from '../../styles/errorMessages';
 import { FormGroup } from '../../styles/formControls';
 import { Input, Label, Select, TextArea } from '../../styles/inputs';
+import { ErrorMessage, SuccessMessage } from '../../styles/feedback';
 
 interface FormData {
   title: string;

@@ -6,10 +6,10 @@ import { format } from 'date-fns';
 
 import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
 
+import Modal from '../modals/Modal';
 import { Flex, Grid } from '../../styles/layoutUtils';
 import { Input, InputGroup, Label, Select, TextArea } from '../../styles/inputs';
-import { ErrorMessage } from '../../styles/errorMessages';
-import Modal from '../modals/Modal';
+import { ErrorMessage } from '../../styles/feedback';
 
 import { Checkbox, CheckboxContainer } from './EventCreationStyle';
 

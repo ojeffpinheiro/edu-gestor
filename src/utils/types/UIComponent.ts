@@ -2,7 +2,9 @@ import { StudentData } from "./BasicUser";
 import { ExportOptions } from "./ExportReport";
 
 // Button Variants
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
+export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'link';
+
+export type StatusType = "draft" | "active" | "completed" | "pending" | "canceled" | 'in-progress';
 
 // Student Modal Props Interface
 export interface StudentModalProps {

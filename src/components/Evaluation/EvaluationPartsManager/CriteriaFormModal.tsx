@@ -6,8 +6,8 @@ import { ActionButton, CancelButton, CloseButton } from "../../../styles/buttons
 import { FaTimes } from "react-icons/fa";
 import { FormGroup } from "../../../styles/formControls";
 import { Input, Label } from "../../../styles/inputs";
-import { ErrorMessage } from "../../../styles/errorMessages";
 import { ButtonGroup } from "./styles";
+import { ErrorMessage } from "../../../styles/feedback";
 
 export const CriteriaFormModal: React.FC<{ 
   isOpen: boolean;

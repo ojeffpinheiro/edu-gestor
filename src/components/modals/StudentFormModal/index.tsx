@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FaCheck, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { Input, Label } from "../../../styles/formControls";
 import { InputGroup } from "../../../styles/inputs";
 import { useStudents } from "../../../hooks/useStudent";
@@ -10,6 +9,7 @@ import { Grid } from "../../../styles/layoutUtils";
 import { FormCard } from "../../../styles/containers";
 import { Select, InlineErrorMessage } from "./styles";
 import Modal from "../Modal";
+import { ErrorMessage, SuccessMessage } from "../../../styles/feedback";
 
 interface StudentFormModalProps {
   isOpen: boolean;

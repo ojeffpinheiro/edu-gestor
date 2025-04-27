@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { FormSection, FormSectionDescription, FormSectionTitle, Input, Label } from "../../../styles/formControls";
 import { InputGroup } from "../../../styles/inputs";
 import Modal from "../Modal";
+import { ErrorMessage, SuccessMessage } from "../../../styles/feedback";
 
 interface StudentFormProps {
   onSave: (student: Student) => Promise<void>;

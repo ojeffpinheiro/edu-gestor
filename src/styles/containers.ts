@@ -2,16 +2,8 @@
 import styled from "styled-components";
 import { BaseCard } from "./baseComponents";
 import { slideUp } from "./animations";
-
-export const Card = styled(BaseCard)`
-  margin-bottom: 1.5rem;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
-`;
+import { mixins } from "./mixins";
+import { constants } from "../utils/consts";
 
 export const FormContainer = styled(BaseCard)`
   background-color: var(--color-background-secondary);
@@ -31,4 +23,23 @@ export const FormCard = styled.section`
   &:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
+`;
+
+export const ScrollableEventsContainer = styled.div`
+  overflow-y: auto;
+  max-height: calc(100% - 30px);
+  ${mixins.scrollbarStyle}
+`;
+
+export const ViewToggleContainer = styled.div`
+  display: flex;
+  margin-bottom: ${constants.spacing.md};
+`;
+
+export const PageContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+  position: relative;
+  min-height: 500px;
 `;

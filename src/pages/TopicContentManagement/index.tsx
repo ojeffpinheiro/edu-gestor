@@ -10,7 +10,6 @@ import { initialTopics, knowledgeAreas } from '../../mocks/topic';
 
 // Estilos específicos da página
 import { EmptyStateMessage } from '../../styles/table';
-import { Card } from '../../styles/containers';
 import { IconButton, PrimaryActionButton } from '../../styles/buttons';
 import {
   AreaTag,
@@ -23,6 +22,7 @@ import {
   PageTitle,
   TopicTree
 } from './styles'
+import { Card } from '../../styles/card';
 
 // Componente principal
 const TopicManagementPage: React.FC = () => {

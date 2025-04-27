@@ -1,5 +1,5 @@
 // styles/utils.ts
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info';
+import { ButtonVariant } from "./types/UIComponent";
 
 export const getButtonColor = (variant: ButtonVariant) => {
     switch (variant) {

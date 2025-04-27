@@ -8,11 +8,11 @@ import { EditableRow } from "./EditableRow";
 import { CriteriaFormModal } from "./CriteriaFormModal";
 
 import { Table, TableHeader, TableRow, EmptyStateMessage } from "../../../styles/table";
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { SectionHeader } from "../../../styles/modals";
 import { Button } from "../../../styles/buttons";
 
 import { CriteriaSectionContainer, EmptyState, FeedbackContainer } from "./styles";
+import { ErrorMessage, SuccessMessage } from "../../../styles/feedback";
 
 // Componente principal
 const EvaluationCriteriaSection: React.FC<{

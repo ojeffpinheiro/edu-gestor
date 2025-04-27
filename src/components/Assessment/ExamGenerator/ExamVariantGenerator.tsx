@@ -1,33 +1,30 @@
 import React, { useState } from 'react';
-import { FaCopy, FaRandom, FaFileExport, FaPlus } from 'react-icons/fa';
+import { FaCopy, FaRandom, FaFileExport, FaCheck } from 'react-icons/fa';
 
 import { Exam, Question } from '../../../utils/types/Assessment';
 import QRCodeService from '../../../utils/qrCodeGenerator';
 import ExamPdfGenerator from '../../../utils/examPdfGenerator';
 
+import { Divider } from '../../../styles/layoutUtils';
+import { Title } from '../../../styles/typography';
+import { FormContainer } from '../../../styles/containers';
+import { IconWrapper, Tag, TwoColumnGrid } from '../../../styles/baseComponents';
+import { FormGroup, Label } from '../../../styles/formControls';
 import { Button } from '../../../styles/buttons';
-import {
-  Alert,
-  TextInput,
-  NumberInput,
-  FormContainer,
-  FormGroup,
-  Label,
-  Title,
-  Divider,
-  TwoColumnGrid,
-  SwitchContainer,
-  StyledSwitch,
-  IconWrapper,
-  ButtonGroup,
+import { ErrorMessage, SuccessMessage } from '../../../styles/feedback';
+
+import { 
+  NumberInput, 
+  StyledSwitch, 
+  SwitchContainer, 
+  TextInput, 
+  VariantActions, 
   VariantCard,
-  VariantHeader,
-  VariantTitle,
-  VariantDetails,
-  Tag,
-  VariantActions
+  VariantDetails, 
+  VariantHeader, 
+  VariantTitle 
 } from './ExamVariantGeneratorStyles';
-import { Container } from '../../../styles/layoutUtils';
+
 
 interface ExamVariantGeneratorProps {
   baseExam: Exam;
@@ -35,7 +32,9 @@ interface ExamVariantGeneratorProps {
   onVariantsGenerated: (variants: Exam[]) => void;
 }
 
-// Main component
+/**
+ * Componente para gerar variantes de uma prova com questões embaralhadas
+ */
 const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
   baseExam,
   questions,
@@ -45,11 +44,12 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
   const [shuffleQuestions, setShuffleQuestions] = useState<boolean>(true);
   const [shuffleOptions, setShuffleOptions] = useState<boolean>(true);
   const [useSequentialIds, setUseSequentialIds] = useState<boolean>(true);
-  const [variantPrefix, setVariantPrefix] = useState<string>('Variant');
+  const [variantPrefix, setVariantPrefix] = useState<string>('Variante');
   const [generatedVariants, setGeneratedVariants] = useState<Exam[]>([]);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  // Function to shuffle an array (Fisher-Yates algorithm)
   const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -59,7 +59,6 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
     return newArray;
   };
 
-  // Function to generate a random password for exams
   const generatePassword = (): string => {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let password = '';
@@ -69,30 +68,23 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
     return password;
   };
 
-  // Create a variant of the exam with shuffled questions
   const createVariant = async (variantIndex: number): Promise<Exam> => {
-    // Create a copy of the question IDs
-    let questionIds = [...baseExam.questions];
+    if (!baseExam.questions || baseExam.questions.length === 0) {
+      throw new Error('A prova base não contém questões');
+    }
 
-    // Shuffle questions if enabled
+    let questionIds = [...baseExam.questions];
     if (shuffleQuestions) {
       questionIds = shuffleArray(questionIds);
     }
 
-    // Generate unique identifier for this variant
     const variantId = useSequentialIds
       ? `${baseExam.id}-${variantIndex + 1}`
       : `${baseExam.id}-${Date.now()}-${variantIndex}`;
 
-    // Generate QR code and barcode for the variant
-    // Modified to handle the async nature of generateSVG
     const qrCode = await QRCodeService.generateSVG(variantId);
-
-    // Assuming we have a BarCodeGenerator service with this method
-    // This is a placeholder since we don't have the actual implementation
     const barCode = `${variantId}-barcode`;
 
-    // Create the variant
     return {
       ...baseExam,
       id: variantId,
@@ -105,13 +97,17 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
     };
   };
 
-  // Generate variants of the exam
   const generateVariants = async () => {
     setIsGenerating(true);
+    setError(null);
+    setSuccess(null);
 
     try {
-      const variants: Exam[] = [];
+      if (numVariants < 1 || numVariants > 10) {
+        throw new Error('O número de variantes deve estar entre 1 e 10');
+      }
 
+      const variants: Exam[] = [];
       for (let i = 0; i < numVariants; i++) {
         const variant = await createVariant(i);
         variants.push(variant);
@@ -119,59 +115,43 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
 
       setGeneratedVariants(variants);
       onVariantsGenerated(variants);
-    } catch (error) {
-      console.error("Error generating exam variants:", error);
+      setSuccess(`${variants.length} variantes geradas com sucesso!`);
+    } catch (err) {
+      console.error("Error generating exam variants:", err);
+      setError(err instanceof Error ? err.message : 'Erro ao gerar variantes');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Export a single variant as PDF
   const exportVariantAsPdf = (variant: Exam) => {
-    // We need to pass both the variant and the actual questions it contains
-    const variantQuestions = variant.questions
-      .map(qId => questions.find(q => q.id === qId))
-      .filter(Boolean) as Question[];
+    try {
+      const variantQuestions = variant.questions
+        .map(qId => questions.find(q => q.id === qId))
+        .filter(Boolean) as Question[];
 
-    // If we're shuffling options, we need to create a shuffled copy of each question
-    let questionsForExport: Question[] = variantQuestions;
+      if (variantQuestions.length === 0) {
+        throw new Error('Nenhuma questão encontrada para exportação');
+      }
 
-    if (shuffleOptions) {
-      // Here we would typically shuffle the options within each question
-      // For this example, we're assuming questions have options that can be shuffled
-      questionsForExport = variantQuestions.map(q => ({
-        ...q,
-        // In a real implementation, you'd shuffle the options here
-      }));
+      const pdfOptions = ExamPdfGenerator.getDefaultExamPdfOptions();
+      pdfOptions.headerOptions.title = variant.title;
+
+      ExamPdfGenerator.generateExamPdf(variant, variantQuestions, pdfOptions)
+        .then(pdfBuffer => {
+          // Implementar download do PDF
+          console.log("PDF generated successfully");
+        })
+        .catch(error => {
+          console.error("Error generating PDF:", error);
+          setError('Erro ao gerar PDF');
+        });
+    } catch (err) {
+      console.error("Error preparing PDF export:", err);
+      setError(err instanceof Error ? err.message : 'Erro ao preparar exportação');
     }
-
-    // Use default options for PDF generation
-    const pdfOptions = ExamPdfGenerator.getDefaultExamPdfOptions();
-
-    // Update options based on variant settings
-    pdfOptions.headerOptions.title = variant.title;
-    pdfOptions.contentOptions.showPoints = true;
-
-    // Generate the PDF with the appropriate options
-    ExamPdfGenerator.generateExamPdf(variant, questionsForExport, pdfOptions)
-      .then(pdfBuffer => {
-        // In a real implementation, we'd handle the PDF buffer
-        // (e.g., trigger a download or display it)
-        console.log("PDF generated successfully");
-      })
-      .catch(error => {
-        console.error("Error generating PDF:", error);
-      });
   };
 
-  // Export all variants as PDF
-  const exportAllVariantsAsPdf = () => {
-    generatedVariants.forEach(variant => {
-      exportVariantAsPdf(variant);
-    });
-  };
-
-  // Handle number input change
   const handleNumberInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value);
     if (!isNaN(value) && value >= 1 && value <= 10) {
@@ -179,19 +159,25 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
     }
   };
 
-  // Handle copy to clipboard
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        // Feedback visual opcional
+      })
+      .catch(err => {
+        console.error("Failed to copy:", err);
+        setError('Falha ao copiar para a área de transferência');
+      });
   };
 
   return (
-    <Container>
-      <Title>Exam Variant Generator </Title>
+    <div className="variant-generator-container">
+      <Title>Gerador de Variantes de Prova</Title>
 
-      < FormContainer >
+      <FormContainer>
         <TwoColumnGrid>
           <FormGroup>
-            <Label>Número de variantes </Label>
+            <Label>Número de variantes</Label>
             <NumberInput
               min={1}
               max={10}
@@ -200,17 +186,17 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
             />
           </FormGroup>
 
-          < FormGroup >
+          <FormGroup>
             <Label>Prefixo</Label>
-            < TextInput
+            <TextInput
               value={variantPrefix}
               onChange={(e) => setVariantPrefix(e.target.value)}
-              placeholder="Variant"
+              placeholder="Variante"
             />
           </FormGroup>
         </TwoColumnGrid>
 
-        < TwoColumnGrid >
+        <TwoColumnGrid>
           <FormGroup>
             <Label>Embaralhar questões</Label>
             <SwitchContainer>
@@ -222,14 +208,14 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
                 />
                 <span></span>
               </StyledSwitch>
-              <label>{shuffleQuestions ? 'Sim' : 'Não'} </label>
+              <label>{shuffleQuestions ? 'Sim' : 'Não'}</label>
             </SwitchContainer>
           </FormGroup>
 
           <FormGroup>
-            <Label>Embaralhar alternativa (for múltipla escolha)</Label>
+            <Label>Embaralhar alternativas</Label>
             <SwitchContainer>
-            <StyledSwitch>
+              <StyledSwitch>
                 <input
                   type="checkbox"
                   checked={shuffleOptions}
@@ -241,14 +227,15 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
             </SwitchContainer>
           </FormGroup>
 
-          < FormGroup >
-            <Label>Usar sequencia de ID's </Label>
-            < SwitchContainer >
-            <StyledSwitch>
+          <FormGroup>
+            <Label>Usar sequência de IDs</Label>
+            <SwitchContainer>
+              <StyledSwitch>
                 <input
                   type="checkbox"
                   checked={useSequentialIds}
-                  onChange={() => setUseSequentialIds(!useSequentialIds)}/>
+                  onChange={() => setUseSequentialIds(!useSequentialIds)}
+                />
                 <span></span>
               </StyledSwitch>
               <label>{useSequentialIds ? 'Sim' : 'Não'}</label>
@@ -256,74 +243,69 @@ const ExamVariantGenerator: React.FC<ExamVariantGeneratorProps> = ({
           </FormGroup>
         </TwoColumnGrid>
 
-        < Button
+        <Button
           variant="primary"
           onClick={generateVariants}
-          disabled={isGenerating}
+          disabled={isGenerating || !baseExam.questions || baseExam.questions.length === 0}
         >
           <IconWrapper>
             <FaRandom />
           </IconWrapper>
           {isGenerating ? 'Gerando...' : 'Gerar variantes'}
         </Button>
+
+        {error && (
+          <ErrorMessage>
+            {error}
+          </ErrorMessage>
+        )}
+
+        {success && (
+          <SuccessMessage>
+            <FaCheck /> {success}
+          </SuccessMessage>
+        )}
       </FormContainer>
 
-      {
-        generatedVariants.length > 0 && (
-          <>
-            <Divider />
-            < Title > Generated Variants </Title>
+      {generatedVariants.length > 0 && (
+        <>
+          <Divider />
+          <Title>Variantes Geradas</Title>
 
-            < Alert type="success" >
-              {`${generatedVariants.length} variants generated successfully!`
-              }
-            </Alert>
+          {generatedVariants.map((variant) => (
+            <VariantCard key={variant.id}>
+              <VariantHeader>
+                <VariantTitle>{variant.title}</VariantTitle>
+                <VariantActions>
+                  <Button onClick={() => copyToClipboard(variant.id || '')}>
+                    <IconWrapper>
+                      <FaCopy />
+                    </IconWrapper>
+                    Copiar ID
+                  </Button>
+                  <Button onClick={() => exportVariantAsPdf(variant)}>
+                    <IconWrapper>
+                      <FaFileExport />
+                    </IconWrapper>
+                    Exportar PDF
+                  </Button>
+                </VariantActions>
+              </VariantHeader>
 
-            < ButtonGroup >
-              <Button onClick={exportAllVariantsAsPdf}>
-                <IconWrapper>
-                  <FaFileExport />
-                </IconWrapper>
-                Export All Variants
-              </Button>
-            </ButtonGroup>
-
-            {
-              generatedVariants.map((variant) => (
-                <VariantCard key={variant.id} >
-                  <VariantHeader>
-                    <VariantTitle>{variant.title} </VariantTitle>
-                    < VariantActions >
-                      <Button onClick={() => copyToClipboard(variant.id || '')}>
-                        <IconWrapper>
-                          <FaCopy />
-                        </IconWrapper>
-                        Copy ID
-                      </Button>
-                      < Button onClick={() => exportVariantAsPdf(variant)}>
-                        <IconWrapper>
-                          <FaPlus />
-                        </IconWrapper>
-                        Export PDF
-                      </Button>
-                    </VariantActions>
-                  </VariantHeader>
-
-                  < VariantDetails >
-                    <p><strong>ID: </strong> {variant.id}</p >
-                    <p><strong>Password: </strong> {variant.password}</p >
-                    <p>
-                      <strong>Questions: </strong>{' '}
-                      {variant.questions.length} questions
-                      {shuffleQuestions && <Tag color="blue" > Shuffled order </Tag>}
-                      {shuffleOptions && <Tag color="green" > Shuffled options </Tag>}
-                    </p>
-                  </VariantDetails>
-                </VariantCard>
-              ))}
-          </>
-        )}
-    </Container>
+              <VariantDetails>
+                <p><strong>ID:</strong> {variant.id}</p>
+                <p><strong>Senha:</strong> {variant.password}</p>
+                <p>
+                  <strong>Questões:</strong> {variant.questions.length} questões
+                  {shuffleQuestions && <Tag color="blue">Ordem aleatória</Tag>}
+                  {shuffleOptions && <Tag color="green">Alternativas aleatórias</Tag>}
+                </p>
+              </VariantDetails>
+            </VariantCard>
+          ))}
+        </>
+      )}
+    </div>
   );
 };
 

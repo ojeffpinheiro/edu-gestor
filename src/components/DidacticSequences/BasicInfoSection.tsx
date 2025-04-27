@@ -5,16 +5,11 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { Input, Label, Select, TextArea } from '../../styles/inputs';
 import { SequenceFormStyle} from './style';
 import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { FormGroup, FormRow, FormSection } from '../../styles/formControls';
+import { SectionTitle } from '../../styles/baseComponents';
+import { ErrorMessage } from '../../styles/feedback';
 
-const {
-  ErrorMessage,
-  FormColumn,
-  FormGroup,
-  FormRow,
-  FormSection,
-  SectionTitle,
-  ErrorSection
-} = SequenceFormStyle;
+const { FormColumn, ErrorSection } = SequenceFormStyle
 
 const BasicInfoSection: React.FC = () => {
   const { 

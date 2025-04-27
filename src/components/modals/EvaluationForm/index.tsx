@@ -7,7 +7,6 @@ import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
 import { FormSectionOptions } from "../../../utils/types/FormSection";
 
 import { Button } from '../../../styles/buttons';
-import { ErrorMessage, SuccessMessage } from "../../../styles/errorMessages";
 import { ModalBody, ModalFooter } from "../../../styles/modals";
 
 import BasicInfoSection from "../../Evaluation/StepForm/BasicInfoSection";
@@ -25,6 +24,7 @@ import {
     FormProgress,
     FormProgressIndicator,
 } from './styles';
+import { ErrorMessage, SuccessMessage } from "../../../styles/feedback";
 
 interface EvaluationFormProps {
     evaluation: Evaluation | null;

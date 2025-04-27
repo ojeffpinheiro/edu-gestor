@@ -2,7 +2,7 @@
 import React from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { UnitType } from '../../utils/types/Question';
-import { Card, Flex } from '../../styles/layoutUtils';
+import { Flex } from '../../styles/layoutUtils';
 import { IconButton } from '../../styles/buttons';
 import {
     Table,
@@ -10,6 +10,7 @@ import {
     TableRow,
     TableCell
 } from '../../styles/table';
+import { Card } from '../../styles/card';
 
 interface UnitCategoryTableProps {
     category: string;

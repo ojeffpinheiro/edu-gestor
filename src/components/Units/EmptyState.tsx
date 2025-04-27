@@ -1,7 +1,7 @@
 // src/components/common/EmptyState.tsx
 import React from 'react';
-import { Card } from '../../styles/layoutUtils';
 import { EmptyStateMessage } from '../../styles/table';
+import { Card } from '../../styles/card';
 
 interface EmptyStateProps {
     message: string;

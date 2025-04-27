@@ -7,17 +7,16 @@ import { SequenceFormData } from '../../utils/types/DidacticSequence';
 import { Label } from '../../styles/inputs';
 
 import {SequenceFormStyle} from './style';
+import { FormGroup, FormSection } from '../../styles/formControls';
+import { SectionTitle } from '../../styles/baseComponents';
+import { ErrorMessage } from '../../styles/feedback';
 
 
-const { 
-    FormSection, 
-    SectionTitle, 
-    FormGroup, 
+const {
     ChipContainer, 
     Chip, 
     ChipDeleteButton, 
     AddItemContainer, 
-    ErrorMessage, 
     ErrorSection,
     AddItemInput,
     AddItemButton

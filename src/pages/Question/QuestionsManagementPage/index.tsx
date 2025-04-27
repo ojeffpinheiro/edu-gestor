@@ -5,7 +5,7 @@ import { Content, Question, Topic } from '../../../utils/types/Question';
 
 import { Divider, Flex, Section } from '../../../styles/layoutUtils';
 import { ActionButton, Button, IconButton } from '../../../styles/buttons';
-import { Card } from '../../../styles/containers';
+
 import { EmptyStateMessage, Table, TableCell, TableHeader, TableRow } from '../../../styles/table';
 import QuestionModal from '../../../components/modals/QuestionModal';
 
@@ -24,6 +24,7 @@ import {
   QuestionsManagementContainer
 } from './styles'
 import { mockContents, mockQuestions, mockTopics } from '../../../mocks/question';
+import { Card } from '../../../styles/card';
 
 // Componente principal
 const QuestionsManagementPage: React.FC = () => {

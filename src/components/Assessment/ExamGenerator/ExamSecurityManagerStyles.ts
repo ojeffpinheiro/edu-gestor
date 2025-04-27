@@ -1,45 +1,14 @@
 import styled from "styled-components";
 import { ActionButton, LinkButton } from "../../../styles/buttons";
-import { flexColumn, flexRow, spaceBetween } from "../../../styles/layoutUtils";
-import { fadeIn, pulse, slideIn } from "../../../styles/animations";
-import { BaseCard } from "../../../styles/baseComponents";
+import { flexRow } from "../../../styles/layoutUtils";
+import { fadeIn, slideIn } from "../../../styles/animations";
 
 // Styled Components
-export const SecurityCard = styled(BaseCard)`
+export const SecurityCard = styled.div`
   margin-bottom: 1.5rem;
   animation: ${fadeIn} 0.4s ease-out;
+  padding: var(--space-lg);
   transition: all 0.3s ease;
-`;
-
-export const CardHeader = styled.div`
-  ${flexRow}
-  ${spaceBetween}
-  margin-bottom: var(--space-md);
-  
-  h2 {
-    ${flexRow}
-    font-size: var(--font-size-xl);
-    color: var(--color-title-card);
-    
-    svg {
-      margin-right: var(--space-sm);
-      color: var(--color-primary);
-    }
-  }
-`;
-
-export const Divider = styled.hr`
-  border: none;
-  height: 1px;
-  background-color: var(--color-border-light);
-  margin: var(--space-md) 0 var(--space-lg) 0;
-`;
-
-export const SectionTitle = styled.h3`
-  font-size: var(--font-size-lg);
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-md);
-  font-weight: 500;
 `;
 
 export const SwitchRow = styled.div`
@@ -103,11 +72,6 @@ export const StyledSwitch = styled.label`
   }
 `;
 
-export const Section = styled.div`
-  ${flexColumn}
-  margin-bottom: var(--space-xl);
-`;
-
 export const StyledTextField = styled.input`
   width: 100%;
   padding: var(--space-sm) var(--space-md);
@@ -165,19 +129,6 @@ export const TimeLimitContainer = styled.div`
     font-size: var(--font-size-xs);
     margin-top: var(--space-xs);
     display: block;
-  }
-`;
-
-export const ErrorMessage = styled.div`
-  ${flexRow}
-  color: var(--color-error);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
-  margin-left: var(--space-lg);
-  animation: ${pulse} 1s ease-in-out;
-  
-  svg {
-    margin-right: var(--space-xs);
   }
 `;
 
@@ -252,5 +203,28 @@ export const SaveButton = styled(ActionButton)`
   &:disabled {
     background-color: var(--color-button-disabled);
     cursor: not-allowed;
+  }
+`;
+
+export const SecurityFeaturesList = styled.ul`
+  display: flex;
+  gap: 16px;
+  padding: 0;
+  margin: 0 0 16px 0;
+  list-style: none;
+`;
+
+export const SecurityFeature = styled.li<{ active?: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: ${({ active, theme }) => 
+    active ? theme.colors.primary : theme.colors.textSecondary};
+  font-weight: ${({ active }) => active ? '500' : '400'};
+
+  svg {
+    color: ${({ active, theme }) => 
+      active ? theme.colors.primary : theme.colors.textSecondary};
   }
 `;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { cardAppear, fadeIn } from "../../styles/animations";
 import { Input } from "../../styles/inputs";
-import { Card } from "../../styles/layoutUtils";
+import { Card } from "../../styles/card";
 
 export const EquationSelectorContainer = styled.div`
   margin-bottom: var(--space-xl);

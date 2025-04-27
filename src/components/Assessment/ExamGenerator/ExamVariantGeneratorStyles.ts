@@ -16,10 +16,9 @@ export const Title = styled.h2`
   color: var(--color-text);
 `;
 
-export const FormContainer = styled(BaseCard)`
+export const FormContainer = styled.div`
   ${flexColumn}
   background-color: var(--color-background-secondary);
-  border: 1px solid var(--color-border-light);
   margin-bottom: var(--space-xl);
   padding: var(--space-lg);
   animation: ${slideIn} 0.4s ease-out;

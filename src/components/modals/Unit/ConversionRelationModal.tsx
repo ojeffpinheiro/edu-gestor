@@ -7,7 +7,7 @@ import { InfoBox } from '../../../styles/modals';
 import { Input, Label, InputGroup, TextArea, Select } from '../../../styles/inputs';
 import { Grid } from '../../../styles/layoutUtils';
 import Modal from '../Modal';
-import { ErrorMessage } from '../../../styles/errorMessages';
+import { ErrorMessage } from '../../../styles/feedback';
 
 const FormulaPreview = styled.div`
   margin-top: var(--space-xs);

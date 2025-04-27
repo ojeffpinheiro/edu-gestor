@@ -4,10 +4,7 @@ import { flexRow, gap, spaceBetween } from "../../../styles/layoutUtils";
 import { BaseInput } from "../../../styles/baseComponents";
 import { Table, TableCell, TableHeader, TableRow } from "../../../styles/table";
 import { fadeIn } from "../../../styles/animations";
-
-export const Container = styled.div`
-  width: 100%;
-`;
+import { Card } from "../../../styles/card";
 
 export const Header = styled.div`
   display: flex;
@@ -28,33 +25,10 @@ export const ControlsWrapper = styled.div`
   gap: 0.5rem;
 `;
 
-export const TabsContainer = styled.div`
-  width: 100%;
-  margin-bottom: 1.5rem;
-`;
-
 export const TabsList = styled.div`
   display: flex;
   border-bottom: 1px solid var(--color-border);
   margin-bottom: 1.5rem;
-`;
-
-export const TabButton = styled.button<{ active?: boolean }>`
-  padding: 0.5rem 1rem;
-  background: none;
-  border: none;
-  border-bottom: 2px solid ${props => props.active ? 'var(--color-primary)' : 'transparent'};
-  color: ${props => props.active ? 'var(--color-primary)' : 'var(--color-text)'};
-  font-weight: ${props => props.active ? '600' : '400'};
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-
-  &:hover {
-    color: var(--color-primary);
-  }
 `;
 
 export const TabContent = styled.div<{ active: boolean }>`
@@ -70,29 +44,6 @@ export const CardGrid = styled.div`
   @media (min-width: 768px) {
     grid-template-columns: 1fr 1fr;
   }
-`;
-
-export const Card = styled.div`
-  background-color: var(--color-card);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  overflow: hidden;
-  width: 100%;
-`;
-
-export const CardHeader = styled.div`
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--color-border-light);
-`;
-
-export const CardTitle = styled.h3`
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0;
-`;
-
-export const CardContent = styled.div`
-  padding: 1.5rem;
 `;
 
 export const StatsGrid = styled.div`
@@ -169,22 +120,6 @@ export const QuartilesScale = styled.div`
   justify-content: space-between;
   font-size: 0.75rem;
   color: var(--color-text-secondary);
-`;
-
-export const Select = styled.select`
-  background-color: var(--color-input);
-  border: 1px solid var(--color-input-border);
-  border-radius: var(--border-radius-md);
-  padding: 0.5rem;
-  font-family: var(--font-family);
-  color: var(--color-text);
-  width: 140px;
-  outline: none;
-
-  &:focus {
-    border-color: var(--color-primary);
-    box-shadow: var(--shadow-focus);
-  }
 `;
 
 export const RefreshButton = styled.button`

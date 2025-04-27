@@ -420,7 +420,7 @@ export const SequenceFormStyle = {
   // Para os botões de navegação
   NavigationButtons: styled.div`
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     width: 100%;
     
     button {

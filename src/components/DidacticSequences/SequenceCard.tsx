@@ -3,22 +3,10 @@
 import React from 'react';
 
 import { DidacticSequence } from '../../utils/types/DidacticSequence';
-import {
-  Card,
-  CardActions,
-  CardHeader,
-  DeleteButton,
-  EditButton,
-  Discipline,
-  EducationLevel,
-  InfoItem,
-  InfoLabel,
-  Overview,
-  StatusBadge,
-  Tag,
-  TagsContainer,
-  Title
-} from './SequenceCardStyle'
+import { Card, CardHeader } from '../../styles/card';
+import { Title } from '../../styles/typography';
+import { CardActions, DeleteButton, Discipline, EditButton, EducationLevel, InfoItem, InfoLabel, Overview, Tag, TagsContainer } from './SequenceCardStyle';
+import { StatusBadge } from '../../styles/indicators';
 
 interface SequenceCardProps {
   sequence: DidacticSequence;

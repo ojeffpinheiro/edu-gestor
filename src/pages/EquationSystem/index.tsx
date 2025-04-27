@@ -200,85 +200,91 @@ const EquationSystem = () => {
       <Header>
         <Title>Sistema de Equações - Física e Matemática</Title>
 
-        <FilterSection>
-          <SearchInput
-            type="text"
-            placeholder="Buscar equações por nome, descrição ou fórmula..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            aria-label="Buscar equações"
-          />
+        <div style={{ 
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'space-between'
+          }}>
+          <FilterSection>
+            <SearchInput
+              type="text"
+              placeholder="Buscar equações por nome, descrição ou fórmula..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              aria-label="Buscar equações"
+            />
 
-          <FilterContainer>
-            <TagFilter>
-              <details>
-                <summary>
-                  <FaTags /> Tags <span>({filterTags.length ? filterTags.length : 'Todas'})</span>
-                </summary>
-                <div className="filter-options">
-                  {allTags.map(tag => (
-                    <FilterTag
-                      key={tag}
-                      onClick={() => toggleTagFilter(tag)}
-                      isActive={filterTags.includes(tag)}
-                    >
-                      {tag}
-                    </FilterTag>
-                  ))}
-                </div>
-              </details>
-            </TagFilter>
+            <FilterContainer>
+              <TagFilter>
+                <details>
+                  <summary>
+                    <FaTags /> Tags <span>({filterTags.length ? filterTags.length : 'Todas'})</span>
+                  </summary>
+                  <div className="filter-options">
+                    {allTags.map(tag => (
+                      <FilterTag
+                        key={tag}
+                        onClick={() => toggleTagFilter(tag)}
+                        isActive={filterTags.includes(tag)}
+                      >
+                        {tag}
+                      </FilterTag>
+                    ))}
+                  </div>
+                </details>
+              </TagFilter>
 
-            <TagFilter>
-              <details>
-                <summary>
-                  <FaFilter /> Tópicos <span>({filterTopics.length ? filterTopics.length : 'Todos'})</span>
-                </summary>
-                <div className="filter-options">
-                  {allTopics.map(topic => (
-                    <FilterTag
-                      key={topic}
-                      onClick={() => toggleTopicFilter(topic)}
-                      isActive={filterTopics.includes(topic)}
-                    >
-                      {topic}
-                    </FilterTag>
-                  ))}
-                </div>
-              </details>
-            </TagFilter>
-          </FilterContainer>
-        </FilterSection>
+              <TagFilter>
+                <details>
+                  <summary>
+                    <FaFilter /> Tópicos <span>({filterTopics.length ? filterTopics.length : 'Todos'})</span>
+                  </summary>
+                  <div className="filter-options">
+                    {allTopics.map(topic => (
+                      <FilterTag
+                        key={topic}
+                        onClick={() => toggleTopicFilter(topic)}
+                        isActive={filterTopics.includes(topic)}
+                      >
+                        {topic}
+                      </FilterTag>
+                    ))}
+                  </div>
+                </details>
+              </TagFilter>
+            </FilterContainer>
+          </FilterSection>
 
-        <ControlsWrapper>
-          {(filterTags.length > 0 || filterTopics.length > 0 || searchTerm) && (
-            <ActiveFilters>
-              <span>Filtros ativos:</span>
-              {filterTags.map(tag => (
-                <FilterTag key={tag} isActive={true} onClick={() => toggleTagFilter(tag)}>
-                  {tag} ✕
-                </FilterTag>
-              ))}
-              {filterTopics.map(topic => (
-                <FilterTag key={topic} isActive={true} onClick={() => toggleTopicFilter(topic)}>
-                  {topic} ✕
-                </FilterTag>
-              ))}
-              {searchTerm && (
-                <FilterTag isActive={true} onClick={() => setSearchTerm('')}>
-                  "{searchTerm}" ✕
-                </FilterTag>
-              )}
-              <ClearFiltersButton onClick={clearFilters}>
-                Limpar filtros
-              </ClearFiltersButton>
-            </ActiveFilters>
-          )}
+          <ControlsWrapper>
+            {(filterTags.length > 0 || filterTopics.length > 0 || searchTerm) && (
+              <ActiveFilters>
+                <span>Filtros ativos:</span>
+                {filterTags.map(tag => (
+                  <FilterTag key={tag} isActive={true} onClick={() => toggleTagFilter(tag)}>
+                    {tag} ✕
+                  </FilterTag>
+                ))}
+                {filterTopics.map(topic => (
+                  <FilterTag key={topic} isActive={true} onClick={() => toggleTopicFilter(topic)}>
+                    {topic} ✕
+                  </FilterTag>
+                ))}
+                {searchTerm && (
+                  <FilterTag isActive={true} onClick={() => setSearchTerm('')}>
+                    "{searchTerm}" ✕
+                  </FilterTag>
+                )}
+                <ClearFiltersButton onClick={clearFilters}>
+                  Limpar filtros
+                </ClearFiltersButton>
+              </ActiveFilters>
+            )}
 
-          <AddButton onClick={openNewForm}>
-            <FaPlus /> Nova Equação
-          </AddButton>
-        </ControlsWrapper>
+            <AddButton onClick={openNewForm}>
+              <FaPlus /> Nova Equação
+            </AddButton>
+          </ControlsWrapper>
+        </div>
       </Header>
 
       <EquationsGrid>
@@ -337,12 +343,12 @@ const EquationSystem = () => {
 
       {/* Modal de formulário de equação */}
       {showForm && (
-          <EquationForm
-            isOpen={showForm}
-            equation={isEditing ? currentEquation : null}
-            onSave={isEditing ? handleUpdateEquation : handleAddEquation}
-           onClose={ handleCloseEquationSystemModal }
-          />
+        <EquationForm
+          isOpen={showForm}
+          equation={isEditing ? currentEquation : null}
+          onSave={isEditing ? handleUpdateEquation : handleAddEquation}
+          onClose={handleCloseEquationSystemModal}
+        />
       )}
 
       {/* Diálogo de confirmação para exclusão */}
