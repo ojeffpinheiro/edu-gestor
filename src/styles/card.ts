@@ -44,6 +44,7 @@ export const SelectableCard = styled(HoverCard)`
 
 export const Card = styled.div<CardProps>`
   margin-bottom: 1.5rem;
+  gap: var(--space-xs);
   box-shadow: ${props => getShadow(props.elevation || 'medium')};
   transition: transform 0.2s, box-shadow 0.2s;
   background-color: var(--color-card);
@@ -65,13 +66,31 @@ export const Card = styled.div<CardProps>`
         `;
       case 'interactive':
         return `
-          cursor: pointer;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
-          
-          &:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-md);
-          }
+          display: flex;
+          flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  cursor: pointer;
+  transition: 0.3s;
+  text-align: center;
+
+  &:hover {
+    background: var(--color-primary-hover);
+    color: var(--color-text-third);
+  }
+
+  svg {
+    margin-bottom: var(--space-sm);
+  }
+
+  span {
+    font-size: var(--font-size-md);
+    font-weight: bold;
+  }
         `;
       default:
         return `
@@ -104,6 +123,10 @@ export const Card = styled.div<CardProps>`
   &:hover {
     transform: translateY(-4px);
     box-shadow: ${props => props.elevation === "none" ? "none" : constants.shadows.md};
+  }
+
+  span {
+    margin: 1rem;
   }
 `;
 

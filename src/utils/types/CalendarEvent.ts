@@ -1,6 +1,6 @@
 // src/utils/types/CalendarEvent.ts
 
-export type EventType = 'class' | 'meeting' | 'deadline' | 'holiday' | 'other';
+export type EventType = 'class' | 'meeting' | 'deadline' | 'holiday' | 'personal' | 'other';
 
 export interface CalendarEvent {
   id: string;

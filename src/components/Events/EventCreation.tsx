@@ -18,7 +18,7 @@ const eventSchema = z.object({
   title: z.string().min(1, { message: 'Título é obrigatório' }),
   description: z.string().optional(),
   location: z.string().optional(),
-  type: z.enum(['class', 'meeting', 'deadline', 'holiday', 'other'] as const),
+  type: z.enum(['class', 'meeting', 'deadline', 'holiday', 'other', 'personal'] as const),
   isAllDay: z.boolean().default(false),
   start: z.string().min(1, { message: 'Data de início é obrigatória' }),
   end: z.string().min(1, { message: 'Data de término é obrigatória' }),
