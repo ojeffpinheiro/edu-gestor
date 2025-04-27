@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { format, addDays, startOfWeek, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { CalendarEvent } from '../../utils/types/CalendarEvent';
-import { ErrorBoundary } from '../ui/ErrorBoundary';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
 import {
   DayColumn,
   DayHeaderCell,

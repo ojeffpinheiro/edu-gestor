@@ -14,7 +14,7 @@ import {
   ActionsContainer,
   ExamsGrid
 } from './styles';
-import { ErrorBoundary } from '../../components/ui/ErrorBoundary';
+import { ErrorBoundary } from '../../components/shared/ErrorBoundary';
 import LoadingIndicator from '../../components/shared/LoadingIndicator';
 
 /**

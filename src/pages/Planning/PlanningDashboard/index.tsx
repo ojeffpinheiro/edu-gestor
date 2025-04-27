@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from 'react';
+// index.tsx - Dashboard principal refatorado
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FaClock,
@@ -9,6 +10,7 @@ import {
   FaCalendar
 } from 'react-icons/fa';
 
+// Importações de dados mock (simulação de API)
 import {
   notificacoes,
   planejamentoPorSerie,
@@ -18,6 +20,14 @@ import {
   resumoPorTurma
 } from '../../../mocks/planner';
 
+// Importações de componentes
+import { PlanningCard } from '../../../components/Planning/PlanningCard';
+import { DataTable } from '../../../components/Planning/DataTable';
+import { QuickAccessSection } from '../../../components/Planning/QuickAccessSection';
+import { NotificationSection } from '../../../components/Planning/NotificationSection';
+import { UpcomingActivitiesSection } from '../../../components/Planning/UpcomingActivitiesSection';
+
+// Importações de estilos
 import {
   DashboardContainer,
   GridSection,
@@ -25,236 +35,254 @@ import {
   SectionHeader,
   TabButton,
   TabButtons
-} from './styles'
-import { PlanningCard } from '../../../components/Planning/PlanningCard';
-import { DataTable } from '../../../components/Planning/DataTable';
-import { QuickAccessSection } from '../../../components/Planning/QuickAccessSection';
-import { NotificationSection } from '../../../components/Planning/NotificationSection';
-import { UpcomingActivitiesSection } from '../../../components/Planning/UpcomingActivitiesSection';
+} from './styles';
+import {  AccessCard, ActivityType, ClassSummaryType, NotificationType, PlanningItemType, SubjectSummaryType } from '../../../utils/types/planningDashboard';
+import LoadingSpinner from '../../../components/shared/LoadingSpinner';
+import { ErrorAlert } from '../../../components/shared/ErrorAlert';
+import { ErrorBoundary } from '../../../components/shared/ErrorBoundary';
 
-// Types definitions for better type safety
-interface PlanningItem {
-  completo: number;
-  pendente: number;
-  parcial?: number;
-  serie?: string;
-  turma?: string;
-}
+// Definição das cores para os cards de acesso rápido
+const COLORS = {
+  BLUE: '#1e40af',    // Sequência Didática
+  GREEN: '#15803d',   // Planejamento de Aulas
+  PURPLE: '#7e22ce',  // Horário Semanal
+  ORANGE: '#ea580c',  // Atividades e Avaliações
+  RED: '#b91c1c',     // Gestão de Turmas
+  TEAL: '#14b8a6'     // Calendário Acadêmico
+};
 
-// Main Dashboard Component
+/**
+ * Dashboard de Planejamento para Professores
+ * 
+ * Exibe uma visão geral do planejamento escolar, incluindo:
+ * - Acesso rápido a funcionalidades principais
+ * - Progresso de planejamento por série ou turma
+ * - Notificações e próximas atividades
+ * - Resumos por disciplina e turma
+ */
 const PlanningDashboard: React.FC = () => {
+  // Estados do componente
   const [activeTab, setActiveTab] = useState<'series' | 'turma'>('series');
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  /// Define color constants for quick access cards
-  const COLORS = {
-    BLUE: '#1e40af',       // Sequência Didática
-    GREEN: '#15803d',      // Planejamento de Aulas
-    PURPLE: '#7e22ce',     // Horário Semanal
-    ORANGE: '#ea580c',     // Atividades e Avaliações
-    RED: '#b91c1c',        // Gestão de Turmas
-    TEAL: '#14b8a6'        // Calendário Acadêmico
-  };
+  // Cartões de acesso rápido pré-configurados
+  const accessCards: AccessCard[] = useMemo(() => [
+    {
+      id: '1',
+      title: 'Sequência Didática',
+      icon: <FaLayerGroup size={24} />,
+      color: COLORS.BLUE,
+      link: '/didactic-sequences'
+    },
+    {
+      id: '2',
+      title: 'Planejamento de Aulas',
+      icon: <FaFileAlt size={24} />,
+      color: COLORS.GREEN,
+      link: '/planejamento'
+    },
+    {
+      id: '3',
+      title: 'Horário Semanal',
+      icon: <FaClock size={24} />,
+      color: COLORS.PURPLE,
+      link: '/horario'
+    },
+    {
+      id: '4',
+      title: 'Atividades e Avaliações',
+      icon: <FaCheckSquare size={24} />,
+      color: COLORS.ORANGE,
+      link: '/evaluations'
+    },
+    {
+      id: '5',
+      title: 'Gestão de Turmas',
+      icon: <FaUsers size={24} />,
+      color: COLORS.RED,
+      link: '/digital-notebook'
+    },
+    {
+      id: '6',
+      title: 'Calendário Acadêmico',
+      icon: <FaCalendar size={24} />,
+      color: COLORS.TEAL,
+      link: '/calendario'
+    }
+  ], []);
 
-  // Centralized Data Management with updated colors
-  const dashboardData = {
-    accessCards: [
-      {
-        id: 1,
-        titulo: 'Sequência Didática',
-        icon: <FaLayerGroup size={24} />,
-        color: COLORS.BLUE,
-        link: '/didactic-sequences'
-      },
-      {
-        id: 2,
-        titulo: 'Planejamento de Aulas',
-        icon: <FaFileAlt size={24} />,
-        color: COLORS.GREEN,
-        link: '/planejamento'
-      },
-      {
-        id: 3,
-        titulo: 'Horário Semanal',
-        icon: <FaClock size={24} />,
-        color: COLORS.PURPLE,
-        link: '/horario'
-      },
-      {
-        id: 4,
-        titulo: 'Atividades e Avaliações',
-        icon: <FaCheckSquare size={24} />,
-        color: COLORS.ORANGE,
-        link: '/evaluations'
-      },
-      {
-        id: 5,
-        titulo: 'Gestão de Turmas',
-        icon: <FaUsers size={24} />,
-        color: COLORS.RED,
-        link: '/digital-notebook'
-      },
-      {
-        id: 6,
-        titulo: 'Calendário Acadêmico',
-        icon: <FaCalendar size={24} />,
-        color: COLORS.TEAL,
-        link: '/calendario'
-      }
-    ]
-  };
-
-  // Simulate data fetching
+  /**
+   * Simula a obtenção de dados da API
+   * Em um ambiente real, isso seria substituído por chamadas de API reais
+   */
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
-        // In a real application, you would fetch data from an API here
-        // Simulating API call with setTimeout
-        setTimeout(() => {
+        // Simulando tempo de carregamento da API
+        const timeout = setTimeout(() => {
           setIsLoading(false);
         }, 500);
+
+        // Limpeza do timeout em caso de desmontagem do componente
+        return () => clearTimeout(timeout);
       } catch (err) {
-        setError("Não foi possível carregar os dados do dashboard. Por favor, tente novamente.");
+        const errorMessage = err instanceof Error 
+          ? err.message 
+          : "Não foi possível carregar os dados do dashboard. Por favor, tente novamente.";
+        
+        setError(errorMessage);
         setIsLoading(false);
+        
+        // Log para fins de depuração (em ambiente de produção, use um serviço de logging adequado)
+        console.error("Erro ao carregar dados do dashboard:", err);
       }
     };
 
     fetchDashboardData();
   }, []);
 
-  // Memoized Data for Performance - only re-calculates when activeTab changes
-  const currentPlanningData = useMemo<PlanningItem[]>(() =>
+  // Alternância entre os dados de planejamento por série ou turma
+  const currentPlanningData = useMemo<PlanningItemType[]>(() =>
     activeTab === 'series'
       ? planejamentoPorSerie
       : planejamentoPorTurma,
     [activeTab]
   );
 
-  // Navigation handler for quick access cards
-  const handleQuickAccessClick = (link: string) => {
+  /**
+   * Manipulador de navegação para os cards de acesso rápido
+   * Navega para a rota especificada ou exibe erro em caso de falha
+   * 
+   * @param link - URL para navegação
+   */
+  const handleQuickAccessClick = useCallback((link: string) => {
     try {
       navigate(link);
     } catch (error) {
       console.error("Erro ao navegar para a página:", error);
-      // In a real application, you might want to show a toast notification here
+      setError("Ocorreu um erro ao tentar navegar. Por favor, tente novamente.");
+      // Em uma aplicação real, você poderia usar um sistema de notificações como toast
     }
-  };
+  }, [navigate]);
 
-  // Loading state
+  /**
+   * Manipulador para tentar novamente após erro
+   */
+  const handleRetry = useCallback(() => {
+    setError(null);
+    setIsLoading(true);
+    
+    // Simula nova tentativa de buscar dados
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
+  // Renderização condicional para estado de carregamento
   if (isLoading) {
-    return (
-      <DashboardContainer>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
-            <p className="mt-4">Carregando dashboard...</p>
-          </div>
-        </div>
-      </DashboardContainer>
-    );
+    return <LoadingSpinner message="Carregando dashboard..." />;
   }
 
-   // Error state
-   if (error) {
-    return (
-      <DashboardContainer>
-        <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
-          <p className="font-bold">Erro</p>
-          <p>{error}</p>
-          <button 
-            className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded"
-            onClick={() => window.location.reload()}
-          >
-            Tentar novamente
-          </button>
-        </div>
-      </DashboardContainer>
-    );
+  // Renderização condicional para estado de erro
+  if (error) {
+    return <ErrorAlert message={error} onRetry={handleRetry} />;
   }
 
   return (
-    <DashboardContainer>
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold">Dashboard do Professor</h1>
-        <p className="text-gray-600">
-          Bem-vindo(a) de volta! Aqui está seu panorama acadêmico.
-        </p>
-      </header>
+    <ErrorBoundary fallback={<ErrorAlert message="Ocorreu um erro inesperado" onRetry={handleRetry} />}>
+      <DashboardContainer>
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold">Dashboard do Professor</h1>
+          <p className="text-gray-600">
+            Bem-vindo(a) de volta! Aqui está seu panorama acadêmico.
+          </p>
+        </header>
 
-      {/* Quick Access Section */}
-      <QuickAccessSection 
-        accessCards={dashboardData.accessCards} 
-        onCardClick={handleQuickAccessClick} 
-      />
+        {/* Seção de Acesso Rápido */}
+        <QuickAccessSection 
+          accessCards={accessCards} 
+          onCardClick={handleQuickAccessClick} 
+        />
 
-      {/* Planning Overview Section */}
-      <section className="mb-8">
-        <SectionHeader>
-          <h2 className="text-xl font-semibold">Visão Geral do Planejamento</h2>
-          <TabButtons>
-            <TabButton
-              $active={activeTab === 'series'}
-              onClick={() => setActiveTab('series')}
-            >
-              Por Série
-            </TabButton>
-            <TabButton
-              $active={activeTab === 'turma'}
-              onClick={() => setActiveTab('turma')}
-            >
-              Por Turma
-            </TabButton>
-          </TabButtons>
-        </SectionHeader>
+        {/* Seção de Visão Geral do Planejamento */}
+        <section className="mb-8" aria-labelledby="planning-overview">
+          <SectionHeader>
+            <h2 id="planning-overview" className="text-xl font-semibold">Visão Geral do Planejamento</h2>
+            <TabButtons role="tablist">
+              <TabButton
+                role="tab"
+                aria-selected={activeTab === 'series'}
+                $active={activeTab === 'series'}
+                onClick={() => setActiveTab('series')}
+              >
+                Por Série
+              </TabButton>
+              <TabButton
+                role="tab"
+                aria-selected={activeTab === 'turma'}
+                $active={activeTab === 'turma'}
+                onClick={() => setActiveTab('turma')}
+              >
+                Por Turma
+              </TabButton>
+            </TabButtons>
+          </SectionHeader>
 
-        <GridSection>
-          {currentPlanningData.map((item, index) => (
-            <PlanningCard
-              key={index}
-              title={'serie' in item ? item.serie! : item.turma!}
-              completo={item.completo}
-              pendente={item.pendente}
-              parcial={'parcial' in item ? item.parcial : undefined}
-            />
-          ))}
-        </GridSection>
-      </section>
+          <GridSection role="tabpanel">
+            {currentPlanningData.length > 0 ? (
+              currentPlanningData.map((item, index) => (
+                <PlanningCard
+                  key={index}
+                  title={'serie' in item ? item.serie! : item.turma!}
+                  completo={item.completo}
+                  pendente={item.pendente}
+                  parcial={'parcial' in item ? item.parcial : undefined}
+                />
+              ))
+            ) : (
+              <div className="p-4 text-center text-gray-500">
+                Nenhum dado de planejamento disponível
+              </div>
+            )}
+          </GridSection>
+        </section>
 
-      {/* Notifications and Upcoming Activities Section */}
-      <section className="mb-8">
-        <GridSection>
-          <NotificationSection notifications={notificacoes} />
-          <UpcomingActivitiesSection activities={proximasAtividades} />
-        </GridSection>
-      </section>
+        {/* Seção de Notificações e Próximas Atividades */}
+        <section className="mb-8" aria-label="Notificações e Atividades">
+          <GridSection>
+            <NotificationSection notifications={notificacoes as NotificationType[]} />
+            <UpcomingActivitiesSection activities={proximasAtividades as ActivityType[]} />
+          </GridSection>
+        </section>
 
-      {/* Summary by Subject and Class */}
-      <section className="mb-8">
-        <GridSection>
-          <SectionCard>
-            <SectionHeader>
-              <h2 className="text-xl font-semibold">Resumo por Disciplina</h2>
-            </SectionHeader>
-            <DataTable
-              data={resumoPorDisciplina}
-              emptyMessage="Nenhuma disciplina cadastrada"
-            />
-          </SectionCard>
+        {/* Seção de Resumos */}
+        <section className="mb-8" aria-label="Resumos">
+          <GridSection>
+            <SectionCard>
+              <SectionHeader>
+                <h2 className="text-xl font-semibold">Resumo por Disciplina</h2>
+              </SectionHeader>
+              <DataTable
+                data={resumoPorDisciplina as SubjectSummaryType[]}
+                emptyMessage="Nenhuma disciplina cadastrada"
+              />
+            </SectionCard>
 
-          <SectionCard>
-            <SectionHeader>
-              <h2 className="text-xl font-semibold">Resumo por Turma</h2>
-            </SectionHeader>
-            <DataTable
-              data={resumoPorTurma}
-              emptyMessage="Nenhuma turma cadastrada"
-            />
-          </SectionCard>
-        </GridSection>
-      </section>
-    </DashboardContainer>
+            <SectionCard>
+              <SectionHeader>
+                <h2 className="text-xl font-semibold">Resumo por Turma</h2>
+              </SectionHeader>
+              <DataTable
+                data={resumoPorTurma as ClassSummaryType[]}
+                emptyMessage="Nenhuma turma cadastrada"
+              />
+            </SectionCard>
+          </GridSection>
+        </section>
+      </DashboardContainer>
+    </ErrorBoundary>
   );
 };
 

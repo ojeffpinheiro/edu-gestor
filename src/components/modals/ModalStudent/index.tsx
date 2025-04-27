@@ -14,7 +14,7 @@ import { Button, CloseButton } from '../../../styles/buttons'
 import { DEFAULT_STUDENT_DATA, SECTION_CONFIG } from '../../../utils/setting'
 
 import AttendanceTable from '../../ui/AttendanceTable';
-import { ErrorBoundary } from '../../ui/ErrorBoundary';
+import { ErrorBoundary } from '../../shared/ErrorBoundary';
 import { Assessment } from '../../../utils/types/AssessmentEvaluation';
 import { StudentModalProps } from '../../../utils/types/UIComponent';
 import { StudentData } from '../../../utils/types/BasicUser';

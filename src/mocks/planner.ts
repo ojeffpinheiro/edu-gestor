@@ -1,4 +1,5 @@
 import { Event } from "../utils/types/Event";
+import { ClassSummaryType, SubjectSummaryType } from "../utils/types/planningDashboard";
 
 const planejamentoPorSerie = [
     { serie: '6º ano', completo: 85, parcial: 10, pendente: 5 },
@@ -56,16 +57,80 @@ const proximasAtividades = [
     }
 ];
 
-const resumoPorDisciplina = [
-    { Disciplina: 'Matemática', Turmas: 5, Aulas: 20, Planejadas: 18, Pendentes: 2 },
-    { Disciplina: 'Português', Turmas: 4, Aulas: 16, Planejadas: 16, Pendentes: 0 },
-    { Disciplina: 'Ciências', Turmas: 3, Aulas: 12, Planejadas: 10, Pendentes: 2 }
+const resumoPorDisciplina: SubjectSummaryType[] = [
+    {
+        "subject": "Matemática",
+        "classesTaught": 25,
+        "classesPlanned": 30,
+        "evaluations": 3,
+        "progress": "83%"
+    },
+    {
+        "subject": "História",
+        "classesTaught": 18,
+        "classesPlanned": 25,
+        "evaluations": 2,
+        "progress": "72%"
+    },
+    {
+        "subject": "Biologia",
+        "classesTaught": 20,
+        "classesPlanned": 20,
+        "evaluations": 4,
+        "progress": "100%"
+    },
+    {
+        "subject": "Física",
+        "classesTaught": 12,
+        "classesPlanned": 20,
+        "evaluations": 1,
+        "progress": "60%"
+    },
+    {
+        "subject": "Português",
+        "classesTaught": 28,
+        "classesPlanned": 30,
+        "evaluations": 3,
+        "progress": "93%"
+    }
 ];
 
-const resumoPorTurma = [
-    { turma: '9º ano A', disciplinas: 8, aulas: 32, planejadas: 30, pendentes: 2 },
-    { turma: '8º ano B', disciplinas: 8, aulas: 32, planejadas: 29, pendentes: 3 },
-    { turma: '7º ano C', disciplinas: 8, aulas: 32, planejadas: 28, pendentes: 4 }
+const resumoPorTurma: ClassSummaryType[] = [
+    {
+      "className": "Turma A - 1º Ano",
+      "students": 30,
+      "averageAttendance": "85%",
+      "averagePerformance": "78%",
+      "pendingEvaluations": 2
+    },
+    {
+      "className": "Turma B - 2º Ano",
+      "students": 28,
+      "averageAttendance": "90%",
+      "averagePerformance": "82%",
+      "pendingEvaluations": 1
+    },
+    {
+      "className": "Turma C - 3º Ano",
+      "students": 32,
+      "averageAttendance": "76%",
+      "averagePerformance": "69%",
+      "pendingEvaluations": 4
+    },
+    {
+      "className": "Turma D - 1º Ano",
+      "students": 27,
+      "averageAttendance": "92%",
+      "averagePerformance": "88%",
+      "pendingEvaluations": 0
+    },
+    {
+      "className": "Turma E - 2º Ano",
+      "students": 25,
+      "averageAttendance": "81%",
+      "averagePerformance": "73%",
+      "pendingEvaluations": 3
+    }  
 ];
 
 const eventInital: Event[] = [

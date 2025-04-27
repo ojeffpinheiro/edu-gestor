@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import styled from 'styled-components';
 import { fadeIn } from '../../styles/animations';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../utils/types/planningDashboard';
 
 // Styled components for error display
 const ErrorContainer = styled.div`
@@ -47,31 +48,21 @@ const RetryButton = styled.button`
   }
 `;
 
-interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-}
-
-interface State {
-  hasError: boolean;
-  error?: Error;
-}
-
 /**
- * ErrorBoundary Component
- * 
- * Catches JavaScript errors in its child component tree and displays a fallback UI
- * instead of crashing the whole application.
+ * Componente que captura erros em componentes filhos e renderiza um fallback
+ * quando ocorre um erro, evitando que toda a aplicação falhe.
  */
-export class ErrorBoundary extends Component<Props, State> {
-  constructor(props: Props) {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = {
       hasError: false
     };
   }
-
-  static getDerivedStateFromError(error: Error): State {
+  /**
+   * Atualiza o estado quando um erro é capturado
+   */
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     // Update state so the next render will show the fallback UI
     return { hasError: true, error };
   }

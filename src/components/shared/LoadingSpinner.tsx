@@ -1,13 +1,7 @@
 import React from 'react';
-import styled, { keyframes } from 'styled-components';
-
-// Tipos de props para o componente
-interface LoadingSpinnerProps {
-  size?: 'small' | 'medium' | 'large';
-  color?: string;
-  text?: string;
-  fullScreen?: boolean;
-}
+import styled from 'styled-components';
+import { LoadingSpinnerProps } from '../../utils/types/planningDashboard';
+import { spin } from '../../styles/animations';
 
 /**
  * LoadingSpinner - Componente de indicador de carregamento
@@ -18,7 +12,7 @@ interface LoadingSpinnerProps {
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'medium',
   color = 'var(--color-primary)',
-  text,
+  message,
   fullScreen = false
 }) => {
   // Mapeia o tamanho para valores de pixels
@@ -33,17 +27,11 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   return (
     <SpinnerContainer fullScreen={fullScreen} aria-busy="true" role="status">
       <SpinnerElement size={spinnerSize} color={color} />
-      {text && <SpinnerText>{text}</SpinnerText>}
+      {message && <SpinnerText>{message}</SpinnerText>}
       <ScreenReaderText>Carregando...</ScreenReaderText>
     </SpinnerContainer>
   );
 };
-
-// Animação de rotação
-const spin = keyframes`
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-`;
 
 // Container do spinner, pode ser tela cheia ou inline
 const SpinnerContainer = styled.div<{ fullScreen: boolean }>`

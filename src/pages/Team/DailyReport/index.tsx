@@ -11,7 +11,7 @@ import {
 
 import { categorias, studentList } from '../../../mocks/assessmentData';
 
-import { ErrorBoundary } from '../../../components/ui/ErrorBoundary';
+import { ErrorBoundary } from '../../../components/shared/ErrorBoundary';
 
 import { Table, TableHeader, TableRow, Td } from '../../../styles/table';
 
