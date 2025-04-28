@@ -43,107 +43,12 @@ import {
   SaveButton,
   Select
  } from './styles';
-
-// Tipos
-type HierarchyLevel = 'eixoTematico' | 'unidade' | 'capitulo' | 'titulo' | 'subtitulo';
-
-interface CurriculumItem {
-  id: string;
-  name: string;
-  type: HierarchyLevel;
-  parentId: string | null;
-  children: CurriculumItem[];
-}
-
-// Dados de exemplo
-const initialData: CurriculumItem[] = [
-  {
-    id: 'eixo1',
-    name: 'Mecânica Clássica',
-    type: 'eixoTematico',
-    parentId: null,
-    children: [
-      {
-        id: 'unidade1',
-        name: 'Cinemática',
-        type: 'unidade',
-        parentId: 'eixo1',
-        children: [
-          {
-            id: 'cap1',
-            name: 'Movimento Retilíneo',
-            type: 'capitulo',
-            parentId: 'unidade1',
-            children: [
-              {
-                id: 'titulo1',
-                name: 'Movimento Uniforme',
-                type: 'titulo',
-                parentId: 'cap1',
-                children: [
-                  {
-                    id: 'sub1',
-                    name: 'Equações do MU',
-                    type: 'subtitulo',
-                    parentId: 'titulo1',
-                    children: []
-                  },
-                  {
-                    id: 'sub2',
-                    name: 'Exercícios Aplicados',
-                    type: 'subtitulo',
-                    parentId: 'titulo1',
-                    children: []
-                  }
-                ]
-              },
-              {
-                id: 'titulo2',
-                name: 'Movimento Uniformemente Variado',
-                type: 'titulo',
-                parentId: 'cap1',
-                children: [
-                  {
-                    id: 'sub3',
-                    name: 'Aceleração',
-                    type: 'subtitulo',
-                    parentId: 'titulo2',
-                    children: []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            id: 'cap2',
-            name: 'Movimento Circular',
-            type: 'capitulo',
-            parentId: 'unidade1',
-            children: []
-          }
-        ]
-      },
-      {
-        id: 'unidade2',
-        name: 'Dinâmica',
-        type: 'unidade',
-        parentId: 'eixo1',
-        children: []
-      }
-    ]
-  },
-  {
-    id: 'eixo2',
-    name: 'Eletromagnetismo',
-    type: 'eixoTematico',
-    parentId: null,
-    children: []
-  }
-];
+import { CurriculumItem, HierarchyLevel } from '../../utils/types/Topic';
+import { initialCurriculumItem } from '../../mocks/topic';
 
 // Componente principal
 const TopicManagementPage = () => {
-  const [data, setData] = useState<CurriculumItem[]>(initialData);
+  const [data, setData] = useState<CurriculumItem[]>(initialCurriculumItem);
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['eixo1', 'unidade1', 'cap1']));
   const [selectedItem, setSelectedItem] = useState<CurriculumItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);

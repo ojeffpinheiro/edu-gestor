@@ -81,7 +81,7 @@ const PlanningDashboard: React.FC = () => {
       title: 'Planejamento de Aulas',
       icon: <FaFileAlt size={24} />,
       color: COLORS.GREEN,
-      link: '/planejamento'
+      link: '/plannig-page'
     },
     {
       id: '3',

@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // Páginas
 
+import Calendar from '../components/Calendar';
 import DailyReport from '../pages/Team/DailyReport';
 import DidacticSequencesPage from '../pages/Planning/DidacticSequencesPage';
 import DigitalNotebook from '../pages/Planning/DigitalNotebook';
@@ -11,9 +12,11 @@ import EquationSystem from '../pages/EquationSystem';
 import EvaluationManagement from '../pages/Evaluation/EvaluationManagement';
 import ExamManager from '../pages/ExamManager';
 import HomePage from '../pages/Home';
+import HomeTest from '../pages/HomeTest';
 import LoginPage from '../pages/LoginPage/indes';
 import NotFound from '../pages/NotFound';
 import PlanningDashboard from '../pages/Planning/PlanningDashboard';
+import PlanningPage from '../pages/Planning/PlanningPage';
 import QuestionsManagementPage from '../pages/Question/QuestionsManagementPage';
 import ResultsViewer from '../pages/ResultsViewer';
 import TeamManagement from '../pages/Team/TeamManagement';
@@ -21,8 +24,6 @@ import TeamPage from '../pages/Team/TeamPage';
 import TestPage from '../pages/TestPage';
 import TopicContentManagement from '../pages/TopicContentManagement';
 import UnitsManagement from '../pages/UnitsManagement';
-import HomeTest from '../pages/HomeTest';
-import Calendar from '../components/Calendar';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -43,6 +44,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/evaluations" element={<EvaluationManagement />} />
           <Route path="/exams" element={<ExamManager />} />
           <Route path="/planning" element={<PlanningDashboard />} />
+          <Route path='/plannig-page' element={<PlanningPage />} />
           <Route path="/questions" element={<QuestionsManagementPage />} />
           <Route path="/results" element={<ResultsViewer />} />
           <Route path="/team-management" element={<TeamManagement />} />

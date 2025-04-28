@@ -1,4 +1,4 @@
-import { Topic } from "../utils/types/Topic";
+import { CurriculumItem, Topic } from "../utils/types/Topic";
 
 // Mock de dados iniciais
 const initialTopics: Topic[] = [
@@ -94,6 +94,92 @@ const knowledgeAreas = [
   'Geometria',
   'Estatística',
   'Álgebra Linear'
+];
+
+// Dados de exemplo
+export const initialCurriculumItem: CurriculumItem[] = [
+  {
+    id: 'eixo1',
+    name: 'Mecânica Clássica',
+    type: 'eixoTematico',
+    parentId: null,
+    children: [
+      {
+        id: 'unidade1',
+        name: 'Cinemática',
+        type: 'unidade',
+        parentId: 'eixo1',
+        children: [
+          {
+            id: 'cap1',
+            name: 'Movimento Retilíneo',
+            type: 'capitulo',
+            parentId: 'unidade1',
+            children: [
+              {
+                id: 'titulo1',
+                name: 'Movimento Uniforme',
+                type: 'titulo',
+                parentId: 'cap1',
+                children: [
+                  {
+                    id: 'sub1',
+                    name: 'Equações do MU',
+                    type: 'subtitulo',
+                    parentId: 'titulo1',
+                    children: []
+                  },
+                  {
+                    id: 'sub2',
+                    name: 'Exercícios Aplicados',
+                    type: 'subtitulo',
+                    parentId: 'titulo1',
+                    children: []
+                  }
+                ]
+              },
+              {
+                id: 'titulo2',
+                name: 'Movimento Uniformemente Variado',
+                type: 'titulo',
+                parentId: 'cap1',
+                children: [
+                  {
+                    id: 'sub3',
+                    name: 'Aceleração',
+                    type: 'subtitulo',
+                    parentId: 'titulo2',
+                    children: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'cap2',
+            name: 'Movimento Circular',
+            type: 'capitulo',
+            parentId: 'unidade1',
+            children: []
+          }
+        ]
+      },
+      {
+        id: 'unidade2',
+        name: 'Dinâmica',
+        type: 'unidade',
+        parentId: 'eixo1',
+        children: []
+      }
+    ]
+  },
+  {
+    id: 'eixo2',
+    name: 'Eletromagnetismo',
+    type: 'eixoTematico',
+    parentId: null,
+    children: []
+  }
 ];
 
 export { knowledgeAreas, initialTopics };

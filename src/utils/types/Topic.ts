@@ -66,3 +66,14 @@ export interface Variable {
   name: string; 
   unit: string[];
 }
+
+// Tipos
+export type HierarchyLevel = 'eixoTematico' | 'unidade' | 'capitulo' | 'titulo' | 'subtitulo';
+
+export interface CurriculumItem {
+  id: string;
+  name: string;
+  type: HierarchyLevel;
+  parentId: string | null;
+  children: CurriculumItem[];
+}
