@@ -22,6 +22,7 @@ interface ModalProps {
   showFooter?: boolean;
   cancelText?: string;
   children: React.ReactNode;
+  footer?: React.ReactNode;
 }
 
 /**
@@ -40,7 +41,8 @@ const Modal: React.FC<ModalProps> = ({
   closeOnClickOutside = true,
   showFooter = true,
   cancelText = 'Cancelar',
-  children
+  children,
+  footer
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -110,7 +112,7 @@ const Modal: React.FC<ModalProps> = ({
           </FormContainer>
         </ModalBody>
 
-        {showFooter && (
+        {footer ? footer : showFooter && (
           <ModalFooter>
             <div className="navigation-buttons">
               <Button 

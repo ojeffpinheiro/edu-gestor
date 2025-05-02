@@ -37,7 +37,7 @@ export const ViewToggleContainer = styled.div`
 `;
 
 export const PageContainer = styled.div`
-  max-width: 1200px;
+  max-width: 95vw;
   margin: 0 auto;
   padding: var(--space-xl);
   position: relative;

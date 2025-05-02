@@ -4,7 +4,6 @@ import { slideIn } from '../../styles/animations';
 
 import { flexColumn, flexRow, gap } from '../../styles/layoutUtils';
 import { cardHoverTransition } from '../../styles/animations';
-import { Button } from '../../styles/buttons';
 
 export const ExamCard = styled.article`
   ${flexColumn}
@@ -95,12 +94,6 @@ export const EmptyStateText = styled.p`
   color: var(--color-text-third);
   max-width: 500px;
   line-height: 1.6;
-`;
-
-export const ViewDetailsButton = styled(Button)`
-  margin-left: auto;
-  font-size: var(--font-size-sm);
-  padding: var(--space-xs) var(--space-sm);
 `;
 
 export const ActionButtons = styled.div`

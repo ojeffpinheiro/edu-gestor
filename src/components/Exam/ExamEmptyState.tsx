@@ -2,8 +2,8 @@ import React from 'react';
 import { FaPlus } from 'react-icons/fa'; // Adicionar ícone para consistência
 
 import { PrimaryActionButton } from '../../styles/buttons';
-
-import { EmptyState, EmptyStateText, EmptyStateTitle, EmptyStateIcon } from './styles'
+import { EmptyState } from '../../styles/feedback';
+import { EmptyStateIcon, EmptyStateText, EmptyStateTitle } from './styles';
 
 interface ExamEmptyStateProps {
   onCreateExam: () => void;

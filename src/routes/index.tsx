@@ -24,6 +24,7 @@ import TeamPage from '../pages/Team/TeamPage';
 import TestPage from '../pages/TestPage';
 import TopicContentManagement from '../pages/TopicContentManagement';
 import UnitsManagement from '../pages/UnitsManagement';
+import Exams from '../pages/Exam';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -43,6 +44,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/equation-system" element={<EquationSystem />} />
           <Route path="/evaluations" element={<EvaluationManagement />} />
           <Route path="/exams" element={<ExamManager />} />
+          <Route path='/exam' element={<Exams />} />
           <Route path="/planning" element={<PlanningDashboard />} />
           <Route path='/plannig-page' element={<PlanningPage />} />
           <Route path="/questions" element={<QuestionsManagementPage />} />

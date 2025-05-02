@@ -1,14 +1,15 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { auth } from "../services/firebase";
-import { 
-  GoogleAuthProvider, 
-  FacebookAuthProvider, 
-  GithubAuthProvider, 
-  OAuthProvider, 
-  signInWithPopup, 
-  signOut, 
-  User as FirebaseUser 
+import {
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+  GithubAuthProvider,
+  OAuthProvider,
+  signInWithPopup,
+  signOut,
+  User as FirebaseUser
 } from "firebase/auth";
+import { ExamProvider } from "./ExamContext";
 
 type User = {
   id: string;
@@ -112,7 +113,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle, signInWithFacebook, signInWithGithub, signInWithApple, logout }}>
-      {children}
+      <ExamProvider>
+        {children}
+      </ExamProvider>
     </AuthContext.Provider>
   );
 }
