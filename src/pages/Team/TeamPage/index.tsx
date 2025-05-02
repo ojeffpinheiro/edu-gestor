@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { FaClipboardList, FaChartBar, FaUsers, FaUserEdit, FaPlus, FaFilter } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { Calendar } from 'react-big-calendar';
+import moment from 'moment';
+import 'moment/locale/pt-br';
+import 'react-big-calendar/lib/css/react-big-calendar.css';
+import { momentLocalizer, Views } from 'react-big-calendar';
 
 import { CalendarEvent } from '../../../utils/types/CalendarEvent';
 import { generateMockEvents } from '../../../hooks/useCalendar';
 
-
 import EventCreation from '../../../components/Events/EventCreation';
+import Notification from '../../../components/shared/Notification';
+
 import { Container } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/eventsStyles';
+
 import {
   ActionButton,
   CalendarContainer,
@@ -21,17 +29,10 @@ import {
   QuickCardHeader,
   ViewToggleButton
 } from './styles';
-import { Calendar } from 'react-big-calendar';
-import moment from 'moment';
-import 'moment/locale/pt-br';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { momentLocalizer, Views } from 'react-big-calendar';
-import Notification from '../../../components/shared/Notification';
-import { SectionTitle } from '../../../styles/eventsStyles';
+
 
 // Configure moment locale
 moment.locale('pt-br');
-const localizer = momentLocalizer(moment);
 
 /**
  * TeamPage - Componente principal para gestão da turma
@@ -45,20 +46,22 @@ const localizer = momentLocalizer(moment);
 const TeamPage: React.FC = () => {
   const navigate = useNavigate();
 
-  // Estados
   const [events, setEvents] = useState<CalendarEvent[]>(generateMockEvents());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentEvent, setCurrentEvent] = useState<Partial<CalendarEvent> | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const [calendarView, setCalendarView] = useState<string>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
+
+
+  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
+
   const [filters, setFilters] = useState({
     showMeetings: true,
     showDeadlines: true,
     showHolidays: true,
     showPersonal: true
   });
-  const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
   const showNotification = (message: string, type: string) => {
     setNotification({ show: true, message, type });
@@ -68,27 +71,22 @@ const TeamPage: React.FC = () => {
   };
 
   // Navegação
-  const handleTeamManagement = () => {
-    navigate('/team-management');
-  };
+  const handleTeamManagement = () => navigate('/team-management');
+  const handleDailyReport = () => navigate('daily-report');
+  const handleGradeTracking = () => showNotification('Funcionalidade em desenvolvimento', 'info');
+  const handleBehaviorTracking = () => showNotification('Funcionalidade em desenvolvimento', 'info');
 
-  const handleDailyReport = () => {
-    navigate('daily-report');
-  };
-
-  const handleGradeTracking = () => {
-    showNotification('Funcionalidade em desenvolvimento', 'info');
-  };
-
-  const handleBehaviorTracking = () => {
-    showNotification('Funcionalidade em desenvolvimento', 'info');
+  // Manipulador para fechar modal
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
   };
 
   // Manipulador para abrir modal de criação de evento
   const handleAddEvent = () => {
     setCurrentEvent({
       start: new Date(),
-      end: new Date(new Date().getTime() + 60 * 60 * 1000) // 1 hora depois
+      end: new Date(new Date().getTime() + 60 * 60 * 1000),
+      type: 'class',
     });
     setModalMode('create');
     setIsModalOpen(true);
@@ -120,21 +118,16 @@ const TeamPage: React.FC = () => {
       showNotification('Evento atualizado com sucesso!', 'success');
     }
 
-    setIsModalOpen(false);
+    handleCloseModal();
   };
 
   // Manipulador para excluir evento
   const handleDeleteEvent = () => {
     if (currentEvent && currentEvent.id) {
       setEvents(events.filter(event => event.id !== currentEvent.id));
-      setIsModalOpen(false);
+      handleCloseModal();
       showNotification('Evento excluído com sucesso!', 'success');
     }
-  };
-
-  // Manipulador para fechar modal
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
   };
 
   // Manipulador para seleção de slot no calendário
@@ -144,7 +137,7 @@ const TeamPage: React.FC = () => {
       end
     });
     setModalMode('create');
-    setIsModalOpen(true);
+    handleCloseModal();
   };
 
   // Manipulador para navegação no calendário
@@ -209,6 +202,38 @@ const TeamPage: React.FC = () => {
     };
   };
 
+  const quickCardsData = [
+    {
+      onClick: handleDailyReport,
+      color: "#15803d",
+      icon: <FaClipboardList size={28} />,
+      title: "Realizar Chamada",
+      description: "Registre a presença dos alunos em sala de aula",
+    },
+    {
+      onClick: handleGradeTracking,
+      color: "#1e40af",
+      icon: <FaChartBar size={28} />,
+      title: "Acompanhar Notas",
+      description: "Visualize e registre as avaliações dos alunos",
+    },
+    {
+      onClick: handleBehaviorTracking,
+      color: "#ea580c",
+      icon: <FaUsers size={28} />,
+      title: "Comportamento da Turma",
+      description: "Acompanhe e registre observações sobre a turma",
+    },
+    {
+      onClick: handleTeamManagement,
+      color: "#7e22ce",
+      icon: <FaUserEdit size={28} />,
+      title: "Gerenciar Alunos",
+      description: "Adicione, edite ou remova alunos da turma",
+    },
+  ];
+
+  // Event handlers
   return (
     <Container>
       <Header>
@@ -217,54 +242,24 @@ const TeamPage: React.FC = () => {
 
       {/* Cards de acesso rápido */}
       <CardsContainer>
-        <QuickCard
-          onClick={handleDailyReport}
-          color="#15803d">
-          <QuickCardHeader>
-            <FaClipboardList size={28} />
-            <h3>Realizar Chamada</h3>
-          </QuickCardHeader>
-          <p>Registre a presença dos alunos em sala de aula</p>
-        </QuickCard>
-
-        <QuickCard
-          onClick={handleGradeTracking}
-          color="#1e40af">
-          <QuickCardHeader>
-            <FaChartBar size={28} />
-            <h3>Acompanhar Notas</h3>
-          </QuickCardHeader>
-          <p>Visualize e registre as avaliações dos alunos</p>
-        </QuickCard>
-
-        <QuickCard
-          onClick={handleBehaviorTracking}
-          color="#ea580c">
-          <QuickCardHeader>
-            <FaUsers size={28} />
-            <h3>Comportamento da Turma</h3>
-          </QuickCardHeader>
-          <p>Acompanhe e registre observações sobre a turma</p>
-        </QuickCard>
-
-        <QuickCard
-          onClick={handleTeamManagement}
-          color="#7e22ce">
-          <QuickCardHeader>
-            <FaUserEdit size={28} />
-            <h3>Gerenciar Alunos</h3>
-          </QuickCardHeader>
-          <p>Adicione, edite ou remova alunos da turma</p>
-        </QuickCard>
+        {quickCardsData.map((card, index) => (
+          <QuickCard key={index} onClick={card.onClick} color={card.color}>
+            <QuickCardHeader>
+              {card.icon}
+              <h3>{card.title}</h3>
+            </QuickCardHeader>
+            <p>{card.description}</p>
+          </QuickCard>
+        ))}
       </CardsContainer>
+
 
       {/* Seção de Calendário e Eventos */}
       <EventsHeader>
         <SectionTitle>Calendário de Eventos</SectionTitle>
         <div>
           <ActionButton onClick={handleAddEvent}>
-            <FaPlus />
-            Adicionar Evento
+            <FaPlus /> Adicionar Evento
           </ActionButton>
         </div>
       </EventsHeader>
@@ -319,7 +314,7 @@ const TeamPage: React.FC = () => {
       {/* Calendário */}
       <CalendarContainer>
         <Calendar
-          localizer={localizer}
+          localizer={momentLocalizer(moment)}
           events={filteredEvents}
           startAccessor="start"
           endAccessor="end"
@@ -329,7 +324,7 @@ const TeamPage: React.FC = () => {
           onView={handleViewChange as any}
           onNavigate={handleNavigate}
           onSelectSlot={handleSelectSlot}
-          onSelectEvent={handleViewEvent as any}
+          onSelectEvent={handleViewEvent}
           selectable
           popup
           eventPropGetter={eventPropGetter as any}
@@ -360,53 +355,45 @@ const TeamPage: React.FC = () => {
 
       {/* Modal de evento */}
       {isModalOpen && (
-        <>
-          {modalMode === 'view' ? (
-            <div>
-              <EventCreation
-                initialData={currentEvent || undefined}
-                onSubmit={() => { }}
-                onCancel={handleCloseModal}
-              />
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-                <button
-                  onClick={() => setModalMode('edit')}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: 'var(--color-primary)',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 'var(--border-radius-sm)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Editar
-                </button>
-                <button
-                  onClick={handleCloseModal}
-                  style={{
-                    padding: '0.5rem 1rem',
-                    backgroundColor: '#ccc',
-                    border: 'none',
-                    borderRadius: 'var(--border-radius-sm)',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Fechar
-                </button>
-              </div>
-            </div>
-          ) : (
-            <EventCreation
-              initialData={currentEvent || undefined}
-              startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
-              endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
-              onSubmit={handleSaveEvent}
-              onCancel={handleCloseModal}
-              onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined}
-            />
-          )}
-        </>
+        <div>
+        <EventCreation
+          initialData={currentEvent || undefined}
+          startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
+          endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
+          onSubmit={handleSaveEvent}
+          onCancel={() => setIsModalOpen(false)}
+          onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined}
+          mode={modalMode}
+          onModeChange={setModalMode}
+        />
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+          <button
+            onClick={() => setModalMode('edit')}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: 'var(--color-primary)',
+              color: 'white',
+              border: 'none',
+              borderRadius: 'var(--border-radius-sm)',
+              cursor: 'pointer'
+            }}
+          >
+            Editar
+          </button>
+          <button
+            onClick={handleCloseModal}
+            style={{
+              padding: '0.5rem 1rem',
+              backgroundColor: '#ccc',
+              border: 'none',
+              borderRadius: 'var(--border-radius-sm)',
+              cursor: 'pointer'
+            }}
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
       )}
 
       {/* Notificações de feedback */}

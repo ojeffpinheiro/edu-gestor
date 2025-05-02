@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
 
 import Modal from '../modals/Modal';
+
 import { Flex, Grid } from '../../styles/layoutUtils';
 import { Input, InputGroup, Label, Select, TextArea } from '../../styles/inputs';
 import { ErrorMessage } from '../../styles/feedback';
@@ -18,11 +19,17 @@ const eventSchema = z.object({
   title: z.string().min(1, { message: 'Título é obrigatório' }),
   description: z.string().optional(),
   location: z.string().optional(),
-  type: z.enum(['class', 'meeting', 'deadline', 'holiday', 'other', 'personal'] as const),
+  type: z.enum([
+    'class', 'assessment', 'holiday', 'break', 'meeting',
+    'results_delivery', 'training', 'important_date', 'external_assessment',
+    'thematic_week', 'asynchronous_class', 'participatory_council', 'deadline',
+    'saturday_class', 'personal', 'other'
+  ]),
   isAllDay: z.boolean().default(false),
   start: z.string().min(1, { message: 'Data de início é obrigatória' }),
   end: z.string().min(1, { message: 'Data de término é obrigatória' }),
 });
+
 
 type EventFormValues = z.infer<typeof eventSchema>;
 
@@ -33,7 +40,10 @@ interface EventCreationProps {
   onSubmit: (data: Partial<CalendarEvent>) => void;
   onCancel: () => void;
   onDelete?: () => void;
+  mode: 'create' | 'edit' | 'view';
+  onModeChange: (mode: 'create' | 'edit' | 'view') => void;
 }
+
 
 const EventCreation: React.FC<EventCreationProps> = ({
   initialData,
@@ -42,6 +52,8 @@ const EventCreation: React.FC<EventCreationProps> = ({
   onSubmit,
   onCancel,
   onDelete,
+  mode,
+  onModeChange,
 }) => {
   // Initialize form
   const {
@@ -74,8 +86,6 @@ const EventCreation: React.FC<EventCreationProps> = ({
     },
   });
 
-  const isEditing = !!initialData?.id;
-
   const onFormSubmit = (data: EventFormValues) => {
     onSubmit({
       ...data,
@@ -83,15 +93,21 @@ const EventCreation: React.FC<EventCreationProps> = ({
     });
   };
 
+  const isViewMode = mode === 'view';
+
   return (
     <Modal
       isOpen
-      showFooter
-      size='sm'
+      showFooter={!isViewMode}
+      size="sm"
       onSubmit={handleSubmit(onFormSubmit)}
-      submitText='Salvar'
-      title={isEditing ? 'Editar Evento' : 'Novo Evento'}
-      onClose={onCancel} >
+      submitText="Salvar"
+      title={mode === 'create'
+        ? 'Novo Evento'
+        : mode === 'edit'
+          ? 'Editar Evento'
+          : 'Detalhes do Evento'}
+      onClose={onCancel}>
 
       <form>
         <Grid columns={2} gap='md' >
@@ -108,26 +124,37 @@ const EventCreation: React.FC<EventCreationProps> = ({
 
           <InputGroup>
             <Label htmlFor="type">Tipo de Evento</Label>
-            <Select id="type" {...register('type')}>
+            <Select id="type" {...register('type')} disabled={isViewMode}>
               <option value="class">Aula</option>
-              <option value="meeting">Reunião</option>
-              <option value="deadline">Prazo</option>
+              <option value="assessment">Avaliação</option>
               <option value="holiday">Feriado</option>
+              <option value="break">Recesso</option>
+              <option value="meeting">Reunião</option>
+              <option value="results_delivery">Entrega de Resultados</option>
+              <option value="training">Formação</option>
+              <option value="important_date">Data Importante</option>
+              <option value="external_assessment">Avaliação Externa</option>
+              <option value="thematic_week">Semana Temática</option>
+              <option value="asynchronous_class">Aula Assíncrona</option>
+              <option value="participatory_council">Conselho Participativo</option>
+              <option value="deadline">Prazo</option>
+              <option value="saturday_class">Aula de Sábado</option>
+              <option value="personal">Pessoal</option>
               <option value="other">Outro</option>
             </Select>
-            {errors.type && <ErrorMessage>{errors.type.message}</ErrorMessage>}
           </InputGroup>
         </Grid>
 
-        <Flex direction='column' >
+        <Flex direction="column" gap="md" style={{ marginTop: '1rem' }}>
           <span>Período</span>
-          <Grid columns={2} gap='md' >
+          <Grid columns={2} gap="md">
             <InputGroup>
               <Label htmlFor="start">Início</Label>
               <Input
                 type="datetime-local"
                 id="start"
                 {...register('start')}
+                disabled={isViewMode}
               />
               {errors.start && <ErrorMessage>{errors.start.message}</ErrorMessage>}
             </InputGroup>
@@ -138,6 +165,7 @@ const EventCreation: React.FC<EventCreationProps> = ({
                 type="datetime-local"
                 id="end"
                 {...register('end')}
+                disabled={isViewMode}
               />
               {errors.end && <ErrorMessage>{errors.end.message}</ErrorMessage>}
             </InputGroup>
@@ -152,6 +180,7 @@ const EventCreation: React.FC<EventCreationProps> = ({
                   id="isAllDay"
                   checked={field.value}
                   onChange={field.onChange}
+                  disabled={isViewMode}
                 />
               )}
             />

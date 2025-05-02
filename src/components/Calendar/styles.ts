@@ -5,6 +5,7 @@ import { constants } from "../../utils/consts";
 import { BaseCard } from "../../styles/baseComponents";
 import { fadeIn, slideUp } from "../../styles/animations";
 import { mixins } from "../../styles/mixins";
+import { Box } from "@mui/material";
 
 export const CalendarHeader = styled.div`
   display: flex;
@@ -254,7 +255,7 @@ export const MonthGrid = styled.div`
   grid-auto-rows: minmax(100px, 1fr);
 `;
 
-export const DayCell = styled.div<{ isCurrentMonth: boolean; isWeekend: boolean }>`
+export const DayCell = styled(Box)<{ isCurrentMonth: boolean; hasEvent?: boolean; isWeekend: boolean }>`
   border-right: 1px solid var(--color-border-light);
   border-bottom: 1px solid var(--color-border-light);
   padding: var(--space-xs);

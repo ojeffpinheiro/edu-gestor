@@ -1,6 +1,21 @@
 // src/utils/types/CalendarEvent.ts
-
-export type EventType = 'class' | 'meeting' | 'deadline' | 'holiday' | 'personal' | 'other';
+export type EventType = 
+  | 'class' 
+  | 'assessment' 
+  | 'holiday' 
+  | 'break' 
+  | 'meeting'
+  | 'results_delivery'
+  | 'training'
+  | 'important_date'
+  | 'external_assessment'
+  | 'thematic_week'
+  | 'asynchronous_class'
+  | 'participatory_council'
+  | 'deadline'
+  | 'saturday_class'
+  | 'personal'
+  | 'other';
 
 export interface CalendarEvent {
   id: string;
@@ -11,6 +26,7 @@ export interface CalendarEvent {
   type: EventType;
   location?: string;
   isAllDay?: boolean;
+  participants?: string[];
   recurrence?: {
     frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
     interval: number;
@@ -24,4 +40,24 @@ export interface CalendarEvent {
   }[];
   color?: string;
   attachments?: string[];
+  schoolId?: string;
+  classId?: string;
+  gradeId?: string;
+}
+
+export interface AcademicPeriod {
+  id: string;
+  name: string;
+  start: Date;
+  end: Date;
+  type: 'bimester' | 'trimester' | 'semester' | 'year';
+}
+
+export interface SchoolCalendar {
+  academicYear: {
+    start: Date;
+    end: Date;
+  };
+  periods: AcademicPeriod[];
+  events: CalendarEvent[];
 }

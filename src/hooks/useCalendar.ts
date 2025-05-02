@@ -1,28 +1,32 @@
-import { useState, useEffect } from 'react';
-import { CalendarEvent } from '../utils/types/CalendarEvent';
+import { useState, useEffect, useCallback } from 'react';
+import { addDays, isSameDay, isWithinInterval } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
+
+import { useCalendar } from '../contexts/CalendarContext';
+
+import { AcademicPeriod, CalendarEvent } from '../utils/types/CalendarEvent';
+
 import { MOCK_EVENTS } from '../mocks/events';
-
-
 
 interface UpdateEventParams {
   id: string;
   data: Partial<CalendarEvent>;
 }
 
-export const useCalendar = () => {
+export const useCalendarEvents = () => {
+  const { calendar, filterEvents } = useCalendar();
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
   const [filter, setFilter] = useState<string | null>(null);
-
+  
   useEffect(() => {
     const fetchEvents = async () => {
       setIsLoading(true);
       try {
         // Simulate API call with timeout
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // In a real app, this would be an API call
         setEvents(MOCK_EVENTS);
         setError(null);
@@ -35,10 +39,8 @@ export const useCalendar = () => {
 
     fetchEvents();
   }, []);
-
-  const filteredEvents = filter
-    ? events.filter(event => event.type === filter)
-    : events;
+  
+  const filteredEvents = filter ? events.filter(event => event.type === filter) : events;
 
   const createEvent = async (eventData: Partial<CalendarEvent>) => {
     try {
@@ -55,7 +57,7 @@ export const useCalendar = () => {
 
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       setEvents(prevEvents => [...prevEvents, newEvent]);
       return newEvent;
     } catch (err) {
@@ -68,9 +70,9 @@ export const useCalendar = () => {
     try {
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 300));
-      
-      setEvents(prevEvents => 
-        prevEvents.map(event => 
+
+      setEvents(prevEvents =>
+        prevEvents.map(event =>
           event.id === id ? { ...event, ...data } : event
         )
       );
@@ -84,7 +86,7 @@ export const useCalendar = () => {
     try {
       // In a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       setEvents(prevEvents => prevEvents.filter(event => event.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to delete event'));
@@ -96,6 +98,46 @@ export const useCalendar = () => {
     setFilter(type);
   };
 
+  const getEventsForDay = useCallback((day: Date): CalendarEvent[] => {
+    return filterEvents({}).filter(event => 
+      isSameDay(event.start, day) || 
+      (event.isAllDay && isSameDay(event.start, day))
+    );
+  }, [filterEvents]);
+
+  const getEventsForPeriod = useCallback((start: Date, end: Date): CalendarEvent[] => {
+    return filterEvents({}).filter(event => 
+      isWithinInterval(event.start, { start, end }) ||
+      (event.isAllDay && isWithinInterval(event.start, { start, end }))
+    );
+  }, [filterEvents]);
+
+  const getAcademicPeriod = useCallback((date: Date): AcademicPeriod | undefined => {
+    return calendar.periods.find(period => 
+      isWithinInterval(date, { start: period.start, end: period.end })
+    );
+  }, [calendar.periods]);
+
+  const getSchoolDaysCount = useCallback((periodId?: string): number => {
+    const period = periodId 
+      ? calendar.periods.find(p => p.id === periodId) 
+      : null;
+    
+    const start = period?.start || calendar.academicYear.start;
+    const end = period?.end || calendar.academicYear.end;
+    
+    let count = 0;
+    let current = new Date(start);
+    
+    while (current <= end) {
+      // TODO: Adicionar lógica para verificar dias letivos
+      count++;
+      current = addDays(current, 1);
+    }
+    
+    return count;
+  }, [calendar]);
+
   return {
     events: filteredEvents,
     isLoading,
@@ -103,7 +145,11 @@ export const useCalendar = () => {
     createEvent,
     updateEvent,
     deleteEvent,
-    filterByType
+    filterByType,
+    getEventsForDay,
+    getEventsForPeriod,
+    getAcademicPeriod,
+    getSchoolDaysCount
   };
 };
 

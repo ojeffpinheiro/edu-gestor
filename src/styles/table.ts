@@ -27,15 +27,20 @@ export const TableCell = styled.td`
     border: 1px solid var(--color-border);
 `;
 
-export const TableRow = styled.tr`
-    &:nth-child(even) {
-        background-color: var(--color-background-third);
-    }
-
-    &:hover {
-        background-color: var(--color-background-secondary);
-    }
+export const TableHead = styled.thead`
+  background-color: var(--color-border-light);
 `;
+
+export const TableRow = styled.tr`
+  &:nth-child(even) {
+    background-color: var(--color-background-third);
+  }
+
+  &:hover {
+    background-color: var(--color-primary-hover);
+  }
+`;
+
 
 export const EmptyStateMessage = styled.p`
     color: var(--color-text-secondary);

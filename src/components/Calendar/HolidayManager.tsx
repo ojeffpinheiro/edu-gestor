@@ -16,7 +16,6 @@ import {
  } from 'react-icons/fa';
 
 import { CalendarEvent } from '../../utils/types/CalendarEvent';
-import { useCalendar } from '../../hooks/useCalendar';
 
 import { CancelButton, IconButton } from '../../styles/buttons';
 import { FormGroup } from '../../styles/formControls';
@@ -48,6 +47,7 @@ import {
   NoHolidaysMessage,
   RecurringBadge
 } from './HolidayManagerStyles';
+import { useCalendar } from '../../contexts/CalendarContext';
 
 // Schema de validação para o formulário de feriados
 const holidaySchema = z.object({

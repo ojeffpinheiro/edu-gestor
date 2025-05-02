@@ -120,8 +120,10 @@ const TestPage: React.FC = () => {
               <div>
                 <EventCreation
                   initialData={currentEvent || undefined}
-                  onSubmit={() => {}}
-                  onCancel={handleCloseModal}
+                  onSubmit={() => { } }
+                  onCancel={handleCloseModal} mode={'create'} onModeChange={function (mode: 'create' | 'edit' | 'view'): void {
+                    throw new Error('Function not implemented.');
+                  } }                  
                 />
                 <div style={{ textAlign: 'right', marginTop: '1rem' }}>
                   <button 
@@ -144,13 +146,14 @@ const TestPage: React.FC = () => {
               </div>
             ) : (
               <EventCreation
-                initialData={currentEvent || undefined}
-                startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
-                endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
-                onSubmit={handleSaveEvent}
-                onCancel={handleCloseModal}
-                onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined}
-              />
+                  initialData={currentEvent || undefined}
+                  startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
+                  endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
+                  onSubmit={handleSaveEvent}
+                  onCancel={handleCloseModal}
+                  onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined} mode={'create'} onModeChange={function (mode: 'create' | 'edit' | 'view'): void {
+                    throw new Error('Function not implemented.');
+                  } }              />
             )}
           </ModalContent>
         </Modal>

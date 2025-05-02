@@ -495,7 +495,13 @@ export const FilterButton = styled(Button)<{ active?: boolean }>`
   color: ${props => props.active ? constants.colors.text.onPrimary : constants.colors.text.secondary};
   border: 1px solid ${props => props.active ? constants.colors.primary : constants.colors.border.light};
   font-size: ${constants.fontSize.sm};
-  
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: ${constants.borderRadius.full};
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+
   &:hover:not(:disabled) {
     background-color: ${props => props.active ? constants.colors.primary : constants.colors.background.secondary};
   }

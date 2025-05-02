@@ -10,6 +10,8 @@ import {
   User as FirebaseUser
 } from "firebase/auth";
 import { ExamProvider } from "./ExamContext";
+import { CalendarProvider } from "./CalendarContext";
+import { schoolCalendar } from "../mocks/events";
 
 type User = {
   id: string;
@@ -114,7 +116,9 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
   return (
     <AuthContext.Provider value={{ user, signInWithGoogle, signInWithFacebook, signInWithGithub, signInWithApple, logout }}>
       <ExamProvider>
-        {children}
+        <CalendarProvider initialCalendar={schoolCalendar}  >
+          {children}
+        </CalendarProvider>
       </ExamProvider>
     </AuthContext.Provider>
   );

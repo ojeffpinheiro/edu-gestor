@@ -30,6 +30,7 @@ import {
   CalendarFooter,
   TodayButton
 } from './styles';
+import CalendarView from './CalendarView';
 
 // Constantes
 const WEEKDAYS = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
@@ -288,10 +289,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
   return (
     <CalendarContainer className={className}>
-      {renderHeader()}
-      {renderWeekDays()}
-      {renderDays()}
-      {renderFooter()}
+      <CalendarView />
     </CalendarContainer>
   );
 };

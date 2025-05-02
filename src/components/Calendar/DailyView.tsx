@@ -83,8 +83,7 @@ const DailyView: React.FC<DailyViewProps> = ({ date, events, onSelectEvent }) =>
         eventType={event.type}
         onClick={() => onSelectEvent(event)}
         aria-label={`Event: ${event.title}`}
-        title={event.title}
-      >
+        title={event.title}>
         {event.title}
       </EventItem>
     ));

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FaBookOpen, FaClock, FaUsers, FaCalendarAlt } from 'react-icons/fa';
-import TabPlanning from '../../../components/Planning/TabPlanning';
+
 import { Event, Lesson, Task, Team } from '../../../utils/types/Planning';
-import TabHorarios from '../../../components/Planning/TabHorarios';
-import TabTurmas from '../../../components/Planning/TabTurmas';
-import TabCalendario from '../../../components/Planning/TabCalendario';
+
+import TabPlanning from '../../../components/Planning/Tabs/PlanningTab';
+import TabHorarios from '../../../components/Planning/Tabs/ClassScheduleTab';
+import TeamTab from '../../../components/Planning/Tabs/TeamTab';
+import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
 
 // Componentes estilizados
 const AppContainer = styled.div`
@@ -189,9 +191,9 @@ const PlanejadorClasse = () => {
           <TabHorarios lessons={lessons} teams={teams} 
             newLesson={newLesson} setNewLesson={setNewLesson} addLesson={addLesson} />}
         {activeTab === 'turmas' && 
-          <TabTurmas />}
+          <TeamTab />}
         {activeTab === 'calendario' && 
-          <TabCalendario />}
+          <CalendarTab />}
       </MainContent>
     </AppContainer>
   );
