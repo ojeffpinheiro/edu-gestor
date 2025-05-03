@@ -5,7 +5,7 @@ import { FaBookOpen, FaClock, FaUsers, FaCalendarAlt } from 'react-icons/fa';
 import { Event, Lesson, Task, Team } from '../../../utils/types/Planning';
 
 import TabPlanning from '../../../components/Planning/Tabs/PlanningTab';
-import TabHorarios from '../../../components/Planning/Tabs/ClassScheduleTab';
+import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab';
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
 import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
 
@@ -188,7 +188,7 @@ const PlanejadorClasse = () => {
         {activeTab === 'planejamento' && 
           <TabPlanning tasks={tasks} lessons={lessons} toggleTask={toggleTask} />}
         {activeTab === 'horarios' && 
-          <TabHorarios lessons={lessons} teams={teams} 
+          <ClassScheduleTab lessons={lessons} teams={teams} 
             newLesson={newLesson} setNewLesson={setNewLesson} addLesson={addLesson} />}
         {activeTab === 'turmas' && 
           <TeamTab />}

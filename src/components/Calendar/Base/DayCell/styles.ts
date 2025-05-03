@@ -1,39 +1,15 @@
 import styled from "styled-components";
-import { mixins } from "../../../styles/mixins";
-import { constants } from "../../../utils/consts";
-import { Box } from "@mui/material";
+import { mixins } from "../../../../styles/mixins";
+import { constants } from "../../../../utils/consts";
 
-export const MonthViewContainer = styled.div`
-  width: 100%;
-    background-color: var(--color-card);
-    padding: var(--space-md);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-`;
-
-export const MonthGrid = styled.div`
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: minmax(100px, 1fr);
-`;
-
-export const DayCell = styled(Box)<{ isCurrentMonth: boolean; hasEvent?: boolean }>`
-  border-right: 1px solid var(--color-border-light);
-  border-bottom: 1px solid var(--color-border-light);
+export const Content = styled.div<{ isCurrentMonth?: boolean; hasEvent?: boolean }>`
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
   padding: var(--space-xs);
-  background-color: ${props => 
-    !props.isCurrentMonth ? 'var(--color-background-third)' 
-    : 'var(--color-background-secondary)'};
-  color: ${props => !props.isCurrentMonth ? 'var(--color-text-third)' : 'var(--color-text)'};
-  
-  &:nth-child(7n) {
-    border-right: none;
-  }
-  
-  &:nth-last-child(-n+7) {
-    border-bottom: none;
-  }
+  min-height: 3.5rem;
+  background-color: ${props => props.isCurrentMonth ? 'var(--color-background-third)' : 'var(--color-background-secondary)'};
+  color: ${props => props.isCurrentMonth ? 'var(--color-text)' : 'var(--color-text-third)'};
+  ${props => props.hasEvent && 'box-shadow: 0 0 0 1px var(--color-info);'}
 `;
 
 export const DayNumber = styled.div<{ isToday: boolean }>`
@@ -54,15 +30,14 @@ export const EventsContainer = styled.div`
 `;
 
 export const EventItem = styled.div<{ eventType?: string; eventColor?: string }>`
-  margin: ${constants.spacing.xs} 0;
-  padding: ${constants.spacing.xs} ${constants.spacing.sm};
-  border-radius: ${constants.borderRadius.sm};
-  font-size: ${constants.fontSize.sm};
+  font-size: var(--font-size-xs);
+  padding: var(--space-xs) var(--space-xs);
+  border-radius: var(--border-radius-sm);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  cursor: pointer;
-  transition: filter ${constants.transitions.fast};
+  margin-top: var(--space-xs);
+  width: 10vw;
   
   ${({ eventType, eventColor }) => {
     // Se uma cor personalizada foi fornecida, use-a
@@ -73,7 +48,7 @@ export const EventItem = styled.div<{ eventType?: string; eventColor?: string }>
         border-left: 2px solid ${eventColor};
       `;
     }
-    
+
     // Cores padrão para tipos de eventos usando as variáveis do tema
     const typeStyles = {
       class: `
@@ -107,12 +82,14 @@ export const EventItem = styled.div<{ eventType?: string; eventColor?: string }>
         border-left: 2px solid var(--color-info);
       `
     };
-    
+
     // @ts-ignore - Acessando propriedade dinâmica
     return typeStyles[eventType] || typeStyles.default;
   }}
 
    ${props => mixins.getEventStyles(props.eventType, props.eventColor)}
+  cursor: pointer;
+  transition: filter ${constants.transitions.fast};
   
   &:hover {
     filter: brightness(0.95);
@@ -129,12 +106,4 @@ export const MoreEventsLabel = styled.div`
   &:hover {
     text-decoration: underline;
   }
-`;
-
-export const EmptyDayMessage = styled.div`
-  font-size: var(--font-size-xs);
-  color: var(--color-text-third);
-  text-align: center;
-  margin-top: var(--space-md);
-  font-style: italic;
 `;

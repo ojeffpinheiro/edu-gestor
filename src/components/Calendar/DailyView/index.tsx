@@ -1,10 +1,11 @@
-// DailyView.tsx
 import React from 'react';
 import { format, addHours, startOfDay, isSameHour } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
+import { useCalendar } from '../../../contexts/CalendarContext';
+
 import { CalendarBase } from '../Base/CalendarBase';
-import EventItem from '../EventItem';
+import EventItem from '../Base/EventItem';
 
 import { 
   DayContainer, 
@@ -13,7 +14,6 @@ import {
   HourLabel, 
   EventsContainer
  } from './styles';
-import { useCalendar } from '../../../contexts/CalendarContext';
 
 const DailyView: React.FC = () => {
   const { currentDate, filterEvents, prevDay, nextDay, onToday } = useCalendar();
@@ -42,7 +42,7 @@ const DailyView: React.FC = () => {
               </HourLabel>
               <EventsContainer>
                 {hourEvents.map(event => (
-                  <EventItem key={event.id} event={event} />
+                  <EventItem key={event.id} event={event} size='lg' />
                 ))}
                 {hourEvents.length === 0 && (
                   <EmptyHourMessage>Nenhum evento</EmptyHourMessage>

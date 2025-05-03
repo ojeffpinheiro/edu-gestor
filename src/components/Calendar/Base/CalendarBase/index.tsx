@@ -10,6 +10,7 @@ import {
   CalendarContent,
   ViewControlsWrapper
 } from './styles';
+import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
 
 interface CalendarBaseProps {
   title: string;
@@ -35,7 +36,7 @@ export const CalendarBase: React.FC<CalendarBaseProps> = ({
         <CalendarControls>
           {viewControls && <ViewControlsWrapper>{viewControls}</ViewControlsWrapper>}
           <NavButton onClick={onPrev} aria-label="Período anterior">
-            <ChevronLeft />
+            <FaAngleLeft />
           </NavButton>
           {onToday && (
             <TodayButton onClick={onToday}>
@@ -43,7 +44,7 @@ export const CalendarBase: React.FC<CalendarBaseProps> = ({
             </TodayButton>
           )}
           <NavButton onClick={onNext} aria-label="Próximo período">
-            <ChevronRight />
+            <FaAngleRight />
           </NavButton>
         </CalendarControls>
       </CalendarHeader>
@@ -53,16 +54,3 @@ export const CalendarBase: React.FC<CalendarBaseProps> = ({
     </CalendarContainer>
   );
 };
-
-// Componentes de ícone (simplificados)
-const ChevronLeft = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-  </svg>
-);
-
-const ChevronRight = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-  </svg>
-);

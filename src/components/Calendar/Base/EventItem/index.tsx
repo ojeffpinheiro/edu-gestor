@@ -1,28 +1,28 @@
 import React from 'react';
+import { format } from 'date-fns';
+import { EventContainer } from './styles';
 import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
-import { EventContainer, EventTitle } from './styles';
-import { TimeLabel } from '../../styles';
 
 interface EventItemProps {
   event: CalendarEvent;
-  onClick?: () => void;
-  compact?: boolean;
+  onSelectEventClick?: (event: CalendarEvent) => void;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  children?: React.ReactNode;
 }
 
-export const EventItem: React.FC<EventItemProps> = ({ event, onClick, compact = false }) => {
+const EventItem: React.FC<EventItemProps> = ({ event, onSelectEventClick, size }) => {
   return (
     <EventContainer 
-      type={event.type} 
-      onClick={onClick}
-      compact={compact}
-      title={`${event.title} - ${new Date(event.start).toLocaleTimeString()}`}
-    >
-      {!compact && (
-        <TimeLabel>
-          {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </TimeLabel>
-      )}
-      <EventTitle>{event.title}</EventTitle>
+      eventType={event.type}  
+      title={event.title}
+      eventColor={event.color}
+      size={size}
+      onClick={() => onSelectEventClick && onSelectEventClick(event)}
+      aria-label={`${event.title} - ${format(new Date(event.start), 'HH:mm')}`}>
+        {!event.isAllDay && `${format(event.start, 'HH:mm')} `}
+        {event.title}
     </EventContainer>
   );
 };
+
+export default EventItem;

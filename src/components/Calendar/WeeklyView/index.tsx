@@ -1,20 +1,25 @@
 import React from 'react';
-import { format, startOfWeek, endOfWeek, addDays, isSameDay } from 'date-fns';
+import { format, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useCalendar } from '../../../contexts/CalendarContext';
+import { CalendarEvent } from '../../../utils/types/CalendarEvent';
 import { CalendarBase } from '../Base/CalendarBase';
+import EventItem from '../Base/EventItem';
+
 import {
   WeekContainer,
   WeekHeader,
-  DayColumn,
   WeekdayHeader,
   DayNumber,
   WeekGrid,
-  EmptyDayMessage
+  DayColumn
 } from './styles';
-import EventItem from '../EventItem';
 
-const WeeklyView: React.FC = () => {
+interface WeeklyViewProps {
+  onSelectEvent: (event: CalendarEvent) => void;
+}
+
+const WeeklyView: React.FC<WeeklyViewProps> = ({ onSelectEvent }) => {
   const { currentDate, filterEvents, onPrevWeek, onNextWeek, onToday } = useCalendar();
   const weekStart = startOfWeek(currentDate, { locale: ptBR });
 
@@ -23,7 +28,7 @@ const WeeklyView: React.FC = () => {
 
   return (
     <CalendarBase
-      title={`Semana de ${format(startOfWeek(currentDate), 'dd/MM/yyyy')} a ${format(endOfWeek(currentDate), 'dd/MM/yyyy')}`}
+      title=''
       onPrev={onPrevWeek}
       onNext={onNextWeek}
       onToday={onToday}
@@ -33,7 +38,9 @@ const WeeklyView: React.FC = () => {
           {days.map(day => (
             <WeekdayHeader key={day.toString()} isWeekend={[0, 6].includes(day.getDay())}>
               {format(day, 'EEE')}
-              <DayNumber>{format(day, 'd')}</DayNumber>
+              <DayNumber isToday={isSameDay(day, new Date())}>
+                {format(day, 'd')}
+              </DayNumber>
             </WeekdayHeader>
           ))}
         </WeekHeader>
@@ -49,11 +56,11 @@ const WeeklyView: React.FC = () => {
             return (
               <DayColumn key={day.toString()} isWeekend={isWeekend}>
                 {dayEvents.map(event => (
-                  <EventItem key={event.id} event={event} />
+                  <EventItem 
+                    key={event.id} 
+                    event={event}
+                    onSelectEventClick={onSelectEvent} />
                 ))}
-                {dayEvents.length === 0 && (
-                  <EmptyDayMessage>Nenhum evento</EmptyDayMessage>
-                )}
               </DayColumn>
             );
           })}

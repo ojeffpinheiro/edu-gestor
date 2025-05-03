@@ -1,8 +1,9 @@
 import React from 'react';
 import { useCalendar } from '../../contexts/CalendarContext';
-import DailyView from './DailyView';
+
 import WeeklyView from './WeeklyView';
 import MonthlyView from './MonthlyView';
+import DailyView from './DailyView';
 import { ViewToggle } from './Base/ViewToggle';
 
 const CalendarView: React.FC = () => {
@@ -29,23 +30,15 @@ const CalendarView: React.FC = () => {
       />
       
       {view === 'day' && (
-        <DailyView 
-          date={currentDate}
-          events={events}
-          onSelectEvent={onSelectEvent}
-        />
+        <DailyView />
       )}
       {view === 'week' && (
         <WeeklyView
-          date={currentDate}
-          events={events}
           onSelectEvent={onSelectEvent}
         />
       )}
       {view === 'month' && (
         <MonthlyView
-          date={currentDate}
-          events={events}
           onSelectEvent={onSelectEvent}
         />
       )}

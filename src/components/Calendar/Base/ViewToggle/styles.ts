@@ -9,13 +9,17 @@ export const ToggleContainer = styled.div`
 export const ToggleButton = styled.button<{ active: boolean }>`
   padding: 0.5rem 1rem;
   background-color: ${props => props.active ? '#3182ce' : 'transparent'};
-  color: ${props => props.active ? 'white' : '#4a5568'};
-  border: 1px solid ${props => props.active ? '#3182ce' : '#e2e8f0'};
+  color: ${props => props.active ? 'var(--color-text-on-primary)' : 'var(--color-title-card)'};
+  border: 1px solid ${props => props.active ? 'var(--color-info-hover)' : 'var(--color-border-light)'};
+  1px solid 
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.2s;
+  animation: all 0.2s;
+
+  ${props => props.active && `font-weight: bold;`}
   
   &:hover {
-    background-color: ${props => props.active ? '#2b6cb0' : '#edf2f7'};
+    opacity: 0.8;
   }
 `;
