@@ -5,9 +5,9 @@ import { MonthGrid } from './MonthGrid';
 import { CalendarEvent } from '../../../utils/types/CalendarEvent';
 import { MonthViewContainer } from './styles';
 import { format, formatDate } from 'date-fns';
-import { CalendarBase } from '../Base/CalendarBase';
 import { ptBR } from 'date-fns/locale';
 import { useCalendar } from '../../../contexts/CalendarContext';
+import CalendarBase from '../Base/CalendarBase';
 
 interface MonthlyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;

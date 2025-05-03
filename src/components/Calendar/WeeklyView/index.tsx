@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { format, startOfWeek, addDays, isSameDay, getHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { useCalendar } from '../../../contexts/CalendarContext';
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
-import { CalendarBase } from '../Base/CalendarBase';
-import EventItem from '../Base/EventItem';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
+
+import { useCalendar } from '../../../contexts/CalendarContext';
+
+import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+
+import EventItem from '../Base/EventItem';
+import CalendarBase from '../Base/CalendarBase';
+import EventDetails from '../Base/EventDetails';
 
 import {
   WeekContainer,
@@ -25,8 +29,7 @@ import {
   TimeSlotEventCounter,
   MultipleEventsContainer
 } from './styles';
-import Modal from '../../modals/Modal';
-import { EventDetails } from '../Base/EventDetails';
+
 
 interface WeeklyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;
@@ -195,21 +198,16 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ onSelectEvent }) => {
         </WeekGrid>
       </WeekContainer>
 
-      {selectedDay && (
-        <Modal 
-          title={`Eventos do dia ${format(selectedDay, 'd MMM', { locale: ptBR })}`}
-          size='sm'
-          isOpen={isModalOpen} 
-          onClose={handleCloseModal}
-        >
-          <EventDetails 
+      {selectedDay && isModalOpen && (
+          <EventDetails
+            day={selectedDay}
+            onClose={handleCloseModal}
             events={events.filter(event => isSameDay(new Date(event.start), selectedDay))}
             onSelectEvent={(event) => {
               onSelectEvent(event);
               handleCloseModal();
             }}
           />
-        </Modal>
       )}
     </CalendarBase>
   );

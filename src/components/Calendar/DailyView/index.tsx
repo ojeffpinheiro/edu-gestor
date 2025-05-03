@@ -4,7 +4,6 @@ import { ptBR } from 'date-fns/locale';
 
 import { useCalendar } from '../../../contexts/CalendarContext';
 
-import { CalendarBase } from '../Base/CalendarBase';
 import EventItem from '../Base/EventItem';
 
 import { 
@@ -14,6 +13,7 @@ import {
   HourLabel, 
   EventsContainer
  } from './styles';
+import CalendarBase from '../Base/CalendarBase';
 
 const DailyView: React.FC = () => {
   const { currentDate, filterEvents, prevDay, nextDay, onToday } = useCalendar();

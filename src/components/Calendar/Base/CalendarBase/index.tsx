@@ -21,7 +21,7 @@ interface CalendarBaseProps {
   viewControls?: React.ReactNode;
 }
 
-export const CalendarBase: React.FC<CalendarBaseProps> = ({
+const CalendarBase: React.FC<CalendarBaseProps> = ({
   title,
   onPrev,
   onNext,
@@ -54,3 +54,5 @@ export const CalendarBase: React.FC<CalendarBaseProps> = ({
     </CalendarContainer>
   );
 };
+
+export default CalendarBase;
