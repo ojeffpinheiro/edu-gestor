@@ -1,140 +1,119 @@
 import styled from "styled-components";
-import { mixins } from "../../../styles/mixins";
-import { constants } from "../../../utils/consts";
-import { Box } from "@mui/material";
 
-export const MonthViewContainer = styled.div`
-  width: 100%;
-    background-color: var(--color-card);
-    padding: var(--space-md);
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
-`;
-
-export const MonthGrid = styled.div`
-  flex: 1;
+export const MonthGridContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: minmax(100px, 1fr);
+  grid-auto-rows: minmax(120px, 1fr);
+  gap: var(--space-xs);
 `;
 
-export const DayCell = styled(Box)<{ isCurrentMonth: boolean; hasEvent?: boolean }>`
-  border-right: 1px solid var(--color-border-light);
-  border-bottom: 1px solid var(--color-border-light);
+export const DayCell = styled.div<{ isCurrentMonth: boolean }>`
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--border-radius-sm);
   padding: var(--space-xs);
   background-color: ${props => 
-    !props.isCurrentMonth ? 'var(--color-background-third)' 
-    : 'var(--color-background-secondary)'};
-  color: ${props => !props.isCurrentMonth ? 'var(--color-text-third)' : 'var(--color-text)'};
-  
-  &:nth-child(7n) {
-    border-right: none;
-  }
-  
-  &:nth-last-child(-n+7) {
-    border-bottom: none;
+    props.isCurrentMonth 
+      ? 'var(--color-background)' 
+      : 'var(--color-background-secondary)'};
+  color: ${props => 
+    props.isCurrentMonth 
+      ? 'var(--color-text)' 
+      : 'var(--color-text-secondary)'};
+  cursor: pointer;
+  transition: all 0.3s ease;
+
+  &:hover {
+    opacity: 0.8;
   }
 `;
 
 export const DayNumber = styled.div<{ isToday: boolean }>`
   display: inline-block;
-  width: 25px;
-  height: 25px;
-  line-height: 25px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
   text-align: center;
   font-weight: ${props => props.isToday ? 'bold' : 'normal'};
   border-radius: var(--border-radius-full);
-  background-color: ${props => props.isToday ? 'var(--color-primary)' : 'transparent'};
-  color: ${props => props.isToday ? 'var(--color-text-on-primary)' : 'inherit'};
+  background-color: ${props => props.isToday ? 'var(--color-accent)' : 'transparent'};
+  color: ${props => props.isToday ? 'var(--color-text-on-accent)' : 'inherit'};
   margin-bottom: var(--space-xs);
 `;
 
 export const EventsContainer = styled.div`
-  max-height: calc(100% - 30px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-height: calc(100% - 40px);
+  overflow: hidden;
 `;
 
-export const EventItem = styled.div<{ eventType?: string; eventColor?: string }>`
-  margin: ${constants.spacing.xs} 0;
-  padding: ${constants.spacing.xs} ${constants.spacing.sm};
-  border-radius: ${constants.borderRadius.sm};
-  font-size: ${constants.fontSize.sm};
+export const AllDayEventsContainer = styled.div`
+  margin-bottom: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+`;
+
+export const AllDayEventItem = styled.div`
+  padding: var(--space-xs) var(--space-xs);
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   cursor: pointer;
-  transition: filter ${constants.transitions.fast};
-  
-  ${({ eventType, eventColor }) => {
-    // Se uma cor personalizada foi fornecida, use-a
-    if (eventColor) {
-      return `
-        background-color: ${eventColor}20;
-        color: ${eventColor};
-        border-left: 2px solid ${eventColor};
-      `;
-    }
-    
-    // Cores padrão para tipos de eventos usando as variáveis do tema
-    const typeStyles = {
-      class: `
-        background-color: var(--color-success)20;
-        color: var(--color-success);
-        border-left: 2px solid var(--color-success);
-      `,
-      meeting: `
-        background-color: var(--color-info)20;
-        color: var(--color-info);
-        border-left: 2px solid var(--color-info);
-      `,
-      deadline: `
-        background-color: var(--color-error)20;
-        color: var(--color-error);
-        border-left: 2px solid var(--color-error);
-      `,
-      holiday: `
-        background-color: var(--color-primary)20;
-        color: var(--color-primary);
-        border-left: 2px solid var(--color-primary);
-      `,
-      personal: `
-        background-color: var(--color-warning)20;
-        color: var(--color-warning);
-        border-left: 2px solid var(--color-warning);
-      `,
-      default: `
-        background-color: var(--color-info)20;
-        color: var(--color-info);
-        border-left: 2px solid var(--color-info);
-      `
-    };
-    
-    // @ts-ignore - Acessando propriedade dinâmica
-    return typeStyles[eventType] || typeStyles.default;
-  }}
+  transition: opacity 0.2s;
+  max-width: 13vw;
 
-   ${props => mixins.getEventStyles(props.eventType, props.eventColor)}
-  
   &:hover {
-    filter: brightness(0.95);
+    opacity: 0.9;
   }
 `;
 
-export const MoreEventsLabel = styled.div`
-  font-size: var(--font-size-xs);
+export const ExpandButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-xs);
+  background: none;
+  border: none;
   color: var(--color-primary);
+  font-size: var(--font-size-xs);
   cursor: pointer;
-  text-align: center;
-  margin-top: var(--space-xs);
-  
+  transition: color 0.2s;
+
   &:hover {
-    text-decoration: underline;
+    opacity: 0.8;
   }
 `;
 
-export const EmptyDayMessage = styled.div`
+export const MultipleEventsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+`;
+
+export const AllDayExpandButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  width: 100%;
+  padding: var(--space-xs);
+  background: none;
+  border: none;
+  color: var(--color-primary);
   font-size: var(--font-size-xs);
-  color: var(--color-text-third);
-  text-align: center;
-  margin-top: var(--space-md);
-  font-style: italic;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: var(--space-xs);
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;

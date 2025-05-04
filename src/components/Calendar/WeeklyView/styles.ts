@@ -48,8 +48,8 @@ export const DayNumber = styled.div<{ isToday: boolean }>`
   cursor: pointer;
   font-weight: ${props => props.isToday ? 'bold' : 'normal'};
   border-radius: var(--border-radius-full);
-  background-color: ${props => props.isToday ? 'var(--color-accent)' : 'transparent'};
-  color: ${props => props.isToday ? 'var(--color-text-on-accent)' : 'inherit'};
+  background-color: ${props => props.isToday ? 'var(--color-primary)' : 'transparent'};
+  color: ${props => props.isToday ? 'var(--color-text-on-primary)' : 'inherit'};
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 
   &:hover {
@@ -67,6 +67,10 @@ export const WeekGrid = styled.div`
 export const TimeColumn = styled.div`
   position: relative;
   background-color: var(--color-background);
+  
+  :first-child {
+    padding-top: var(--space-sm);
+  }
 `;
 
 export const DayColumn = styled.div<{ isWeekend: boolean }>`
@@ -97,10 +101,32 @@ export const TimeLabel = styled.div`
 export const AllDayEventsContainer = styled.div`
   grid-column: 2 / span 7;
   display: grid;
-  grid-template-columns: 3rem repeat(7, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   border-bottom: 1px solid var(--color-border-light);
   padding: var(--space-xs) 0;
   min-height: 40px;
+`;
+
+export const AllDayEventsCounter = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--border-radius-sm);
+  background-color: var(--color-primary-light);
+  color: var(--color-text-on-primary);
+  font-size: var(--font-size-xs);
+  margin-left: var(--space-xs);
+  cursor: pointer;
+`;
+
+export const AllDayExpandButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: var(--space-sm);
+  height: 40px;
 `;
 
 export const AllDayEventItem = styled.div`
@@ -115,6 +141,7 @@ export const AllDayEventItem = styled.div`
   background-color: var(--color-primary);
   color: var(--color-text-on-primary);
   transition: opacity 0.3s ease-in-out;
+  max-width: 12vw;
   
   &:hover {
     opacity: 0.8;

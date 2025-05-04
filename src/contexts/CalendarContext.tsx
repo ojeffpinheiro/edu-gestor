@@ -1,7 +1,12 @@
 // contexts/CalendarContext.tsx
 import React, { createContext, useState, useCallback, useContext } from 'react';
 import {
-  addMonths, subMonths, addDays, subDays, addWeeks, subWeeks
+  addMonths,
+  subMonths,
+  addDays,
+  subDays,
+  addWeeks,
+  subWeeks
 } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -187,7 +192,7 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
             events: prev.events.filter(event => event.id !== id)
           }));
         },
-        onToday: goToToday, // alias para goToToday
+        onToday: goToToday,
         addEvent,
         moveEvent,
         setCurrentPeriod: setPeriod,

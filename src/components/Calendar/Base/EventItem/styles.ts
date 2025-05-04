@@ -85,9 +85,9 @@ export const EventContainer = styled.div<{ eventType?: string; eventColor?: stri
     return typeStyles[eventType] || typeStyles.default;
   }}
   
-     ${props => mixins.getEventStyles(props.eventType, props.eventColor)}
-    cursor: pointer;
-    transition: filter ${constants.transitions.fast};
+  ${props => mixins.getEventStyles(props.eventType, props.eventColor)}
+  cursor: pointer;
+  transition: filter ${constants.transitions.fast};
     
     &:hover {
       filter: brightness(0.95);
