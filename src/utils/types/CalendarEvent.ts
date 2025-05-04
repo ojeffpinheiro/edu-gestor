@@ -45,7 +45,7 @@ export interface CalendarEvent {
   gradeId?: string;
 }
 
-export type CalendarViewType = 'month' | 'week' | 'day' | 'year';
+export type CalendarViewType = 'month' | 'week' | 'day' | 'semester' | 'year';
 
 export interface AcademicPeriod {
   id: string;
