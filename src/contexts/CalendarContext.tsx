@@ -6,7 +6,9 @@ import {
   addDays,
   subDays,
   addWeeks,
-  subWeeks
+  subWeeks,
+  addYears,
+  subYears
 } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -15,11 +17,12 @@ import {
   SchoolCalendar,
   CalendarEvent,
   EventType,
+  CalendarViewType,
 } from '../utils/types/CalendarEvent';
 
 interface CalendarContextData {
   currentDate: Date;
-  view: 'month' | 'week' | 'day';
+  view: CalendarViewType;
   calendar: SchoolCalendar;
   currentPeriod: AcademicPeriod | null;
   selectedEvent: CalendarEvent | null;
@@ -31,13 +34,15 @@ interface CalendarContextData {
   deleteEvent: (id: string) => Promise<void>;
   onToday: () => void;
   isEventSelected: (event: CalendarEvent) => boolean;
-  setView: (view: 'month' | 'week' | 'day') => void;
+  setView: (view: CalendarViewType) => void;
   nextDay: () => void;
   prevDay: () => void;
   onNextWeek: () => void;
   onPrevWeek: () => void;
   onNextMonth: () => void;
   onPrevMonth: () => void;
+  onNextYear: () => void;
+  onPrevYear: () => void;
   onSelectEvent: (event: CalendarEvent) => void;
   addEvent: (event: CalendarEvent) => void;
   moveEvent: (eventId: string, newStart: Date, newEnd: Date) => void;
@@ -57,7 +62,7 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
   initialCalendar
 }) => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [view, setView] = useState<'month' | 'week' | 'day'>('month');
+  const [view, setView] = useState<CalendarViewType>('month');
   const [calendar, setCalendar] = useState<SchoolCalendar>(initialCalendar);
   const [currentPeriod, setCurrentPeriod] = useState<AcademicPeriod | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
@@ -156,6 +161,14 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
     setCurrentDate(subWeeks(currentDate, 1));
   }, [currentDate]);
 
+  const onNextYear = useCallback(() => {
+    setCurrentDate(addYears(currentDate, 1));
+  }, [currentDate]);
+  
+  const onPrevYear = useCallback(() => {
+    setCurrentDate(subYears(currentDate, 1));
+  }, [currentDate]);
+
   return (
     <CalendarContext.Provider
       value={{
@@ -170,6 +183,8 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
         prevDay,
         onNextWeek,
         onPrevWeek,
+        onNextYear,
+        onPrevYear,
         events: calendar.events,
         isLoading: false,
         error: null,

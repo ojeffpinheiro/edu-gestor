@@ -2,10 +2,10 @@ import React, { useRef, useState } from 'react';
 import { format, addHours, startOfDay, isSameHour, parseISO, isSameDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
-import { useCalendar } from '../../../contexts/CalendarContext';
-import EventItem from '../Base/EventItem';
-import CalendarBase from '../Base/CalendarBase';
-import EventPopup from '../Base/EventPopup';
+import { useCalendar } from '../../../../contexts/CalendarContext';
+import EventItem from '../../Base/EventItem';
+import CalendarBase from '../../Base/CalendarBase';
+import EventPopup from '../../Base/EventPopup';
 
 import { 
   DayContainer,
@@ -16,7 +16,7 @@ import {
   AllDayEventItem,
   EmptyHourMessage
 } from './styles';
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
 import { FaAngleDown } from 'react-icons/fa';
 
 const DailyView: React.FC = () => {

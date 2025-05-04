@@ -2,16 +2,16 @@ import React, { useMemo } from 'react';
 import { ptBR } from 'date-fns/locale';
 import { format, formatDate } from 'date-fns';
 
-import { useCalendar } from '../../../contexts/CalendarContext';
+import { useCalendar } from '../../../../contexts/CalendarContext';
 
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
 
-import CalendarBase from '../Base/CalendarBase';
+import CalendarBase from '../../Base/CalendarBase';
 import { WeekdayHeader } from './WeekdayHeader';
 import { MonthGrid } from './MonthGrid';
-import { ErrorBoundary } from '../../shared/ErrorBoundary';
+import { ErrorBoundary } from '../../../shared/ErrorBoundary';
 
-import { MonthViewContainer } from '../styles';
+import { MonthViewContainer } from '../../styles';
 
 interface MonthlyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;

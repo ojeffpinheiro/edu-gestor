@@ -1,10 +1,11 @@
 import React from 'react';
 import { ToggleButton, ToggleContainer } from './styles';
+import { CalendarViewType } from '../../../../utils/types/CalendarEvent';
 
 interface ViewToggleProps {
-  views: { key: 'month' | 'week' | 'day'; label: string }[];
-  activeView: 'month' | 'week' | 'day';
-  onChange: (view: 'month' | 'week' | 'day') => void;
+  views: Array<{ key: CalendarViewType; label: string }>
+  activeView: CalendarViewType
+  onChange: (view: CalendarViewType) => void;
 }
 
 export const ViewToggle: React.FC<ViewToggleProps> = ({ views, activeView, onChange }) => {

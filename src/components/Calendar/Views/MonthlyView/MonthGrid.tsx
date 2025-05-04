@@ -9,8 +9,8 @@ import {
   isSameDay,
   format
 } from 'date-fns';
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
-import EventItem from '../Base/EventItem';
+import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import EventItem from '../../Base/EventItem';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 import {
@@ -23,7 +23,7 @@ import {
   ExpandButton,
   AllDayExpandButton
 } from './styles';
-import EventPopup from '../Base/EventPopup';
+import EventPopup from '../../Base/EventPopup';
 
 interface MonthGridProps {
   date: Date;

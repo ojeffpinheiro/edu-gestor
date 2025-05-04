@@ -3,12 +3,12 @@ import { format, startOfWeek, addDays, isSameDay, getHours } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
-import { useCalendar } from '../../../contexts/CalendarContext';
+import { useCalendar } from '../../../../contexts/CalendarContext';
 
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
 
-import EventItem from '../Base/EventItem';
-import CalendarBase from '../Base/CalendarBase';
+import EventItem from '../../Base/EventItem';
+import CalendarBase from '../../Base/CalendarBase';
 
 import {
   WeekContainer,
@@ -30,8 +30,8 @@ import {
   AllDayEventsCounter,
   AllDayExpandButtonContainer
 } from './styles';
-import { ExpandAllDayButton, ExpandedDayView } from '../Base/EventPopup/styles';
-import EventPopup from '../Base/EventPopup';
+import { ExpandAllDayButton, ExpandedDayView } from '../../Base/EventPopup/styles';
+import EventPopup from '../../Base/EventPopup';
 
 interface WeeklyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;
