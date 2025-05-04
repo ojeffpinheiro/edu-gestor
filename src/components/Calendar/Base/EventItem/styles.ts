@@ -103,3 +103,75 @@ export const TimeLabel = styled.span`
 export const EventTitle = styled.span`
   font-weight: 500;
 `;
+
+export const EventLocation = styled.div`
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+export const EventSchool = styled.div`
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+export const ExpandedEventContainer = styled.div<{ eventType?: string; eventColor?: string }>`
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: ${({ theme }) => theme.card.background};
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  
+  ${({ eventType, eventColor }) => {
+    if (eventColor) {
+      return `
+        border-left: 3px solid ${eventColor};
+      `;
+    }
+
+    const typeBorders = {
+      class: 'var(--color-success)',
+      meeting: 'var(--color-info)',
+      deadline: 'var(--color-error)',
+      holiday: 'var(--color-primary)',
+      personal: 'var(--color-warning)',
+      default: 'var(--color-info)'
+    };
+
+    return `border-left: 3px solid ${typeBorders[eventType as keyof typeof typeBorders] || typeBorders.default}`;
+  }}
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+export const ParticipantBadge = styled.span<{ isTeacher?: boolean }>`
+  font-size: 0.7rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background-color: ${({ isTeacher }) => 
+    isTeacher ? 'var(--color-info-soft)' : 'var(--color-success-soft)'};
+  color: ${({ isTeacher }) => 
+    isTeacher ? 'var(--color-info)' : 'var(--color-success)'};
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+`;
+
+export const ParticipantsContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+`;

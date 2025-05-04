@@ -24,6 +24,7 @@ import TopicContentManagement from '../pages/TopicContentManagement';
 import UnitsManagement from '../pages/UnitsManagement';
 import Exams from '../pages/Exam';
 import CalendarView from '../components/Calendar/CalendarView';
+import ScheduleView from '../components/Calendar/ScheduleView';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -35,6 +36,7 @@ const AppRoutes: React.FC = () => {
         {/* Rotas protegidas */}
           <Route path='/' index element={<HomeTest />} />
           <Route path="/calendar" element={<CalendarView />} />
+          <Route path="/schedule" element={<ScheduleView />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/units" element={<UnitsManagement />} />
           <Route path="/daily-report" element={<DailyReport />} />

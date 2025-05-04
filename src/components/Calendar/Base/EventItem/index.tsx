@@ -4,15 +4,15 @@ import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
 import { EventContainer, EventTitle, TimeLabel } from './styles';
 import { format } from 'date-fns';
 
-
 interface EventItemProps {
   event: CalendarEvent;
   onClick?: (e: React.MouseEvent) => void;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   ref?: React.Ref<HTMLDivElement>;
+  more?: boolean;
 }
 
-const EventItem: React.FC<EventItemProps> = React.forwardRef(({ event, onClick, size = 'md' }, ref) => {
+const EventItem: React.FC<EventItemProps> = React.forwardRef(({ event, onClick, size = 'md', more = false }, ref) => {
   return (
     <EventContainer
       ref={ref}
