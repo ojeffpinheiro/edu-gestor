@@ -7,17 +7,21 @@ import EventItem from '../../Base/EventItem';
 import CalendarBase from '../../Base/CalendarBase';
 import EventPopup from '../../Base/EventPopup';
 
-import { 
+import {
   DayContainer,
   HourRow,
   HourLabel,
   EventsContainer,
-  AllDayEventsContainer,
   AllDayEventItem,
-  EmptyHourMessage
+  EmptyHourMessage,
+  AllDayHeader,
+  AllDayTitle,
+  AllDayExpandButton,
+  AllDayEventsRow,
+  AllDayEventsCounter
 } from './styles';
 import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
-import { FaAngleDown } from 'react-icons/fa';
+import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 const DailyView: React.FC = () => {
   const { currentDate, filterEvents, prevDay, nextDay, onToday } = useCalendar();
@@ -25,6 +29,8 @@ const DailyView: React.FC = () => {
   const [popupEvent, setPopupEvent] = useState<CalendarEvent | null>(null);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
   const eventRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  const [expandedAllDay, setExpandedAllDay] = useState(false);
 
   const hours = Array.from({ length: 24 }, (_, i) => addHours(dayStart, i));
   const events = filterEvents({});
@@ -56,6 +62,8 @@ const DailyView: React.FC = () => {
     return !event.isAllDay && isSameDay(eventDate, currentDate);
   });
 
+  const shouldShowExpand = allDayEvents.length > 2;
+
   // Corrigindo a filtragem por hora
   const getHourEvents = (hour: Date) => {
     return timedEvents.filter(event => {
@@ -72,27 +80,38 @@ const DailyView: React.FC = () => {
       onToday={onToday}
     >
       <DayContainer>
-        {/* Seção para eventos All Day */}
-          <HourRow>
-            <FaAngleDown />
-            <HourLabel></HourLabel>
-            <AllDayEventsContainer>
-              {allDayEvents.map(event => (
-                <AllDayEventItem
-                  key={event.id}
-                  ref={(el: HTMLDivElement | null) => { eventRefs.current[event.id] = el; }}
-                  onClick={(e) => handleEventClick(event, e)}
-                >
-                  {event.title}
-                </AllDayEventItem>
-              ))}
-            </AllDayEventsContainer>
-          </HourRow>
+        {/* Seção para eventos All Day - Agora com cabeçalho */}
+        <AllDayHeader>
+          <AllDayTitle>Dia Inteiro</AllDayTitle>
+          {shouldShowExpand && (
+            <AllDayExpandButton onClick={() => setExpandedAllDay(!expandedAllDay)}>
+              {expandedAllDay ? <FaAngleUp /> : <FaAngleDown />}
+            </AllDayExpandButton>
+          )}
+        </AllDayHeader>
+
+        <AllDayEventsRow>
+          {allDayEvents.slice(0, expandedAllDay ? allDayEvents.length : 2).map(event => (
+            <AllDayEventItem
+              key={event.id}
+              ref={(el: HTMLDivElement | null) => { eventRefs.current[event.id] = el; }}
+              onClick={(e) => handleEventClick(event, e)}
+            >
+              {event.title}
+            </AllDayEventItem>
+          ))}
+
+          {!expandedAllDay && allDayEvents.length > 2 && (
+            <AllDayEventsCounter onClick={() => setExpandedAllDay(true)}>
+              +{allDayEvents.length - 2}
+            </AllDayEventsCounter>
+          )}
+        </AllDayEventsRow>
 
         {/* Seção para eventos por hora */}
         {hours.map(hour => {
-          const hourEvents = getHourEvents(hour); // Usa a função corrigida
-          
+          const hourEvents = getHourEvents(hour);
+
           return (
             <HourRow key={hour.toString()}>
               <HourLabel>
@@ -122,10 +141,10 @@ const DailyView: React.FC = () => {
       {popupEvent && (
         <EventPopup
           event={popupEvent}
-          onEdit={() => {}}
+          onEdit={() => { }}
           onClose={closePopup}
-          onDuplicate={() => {}}
-          onDelete={() => {}}
+          onDuplicate={() => { }}
+          onDelete={() => { }}
           style={{
             position: 'absolute',
             top: `${popupPosition.top}px`,
