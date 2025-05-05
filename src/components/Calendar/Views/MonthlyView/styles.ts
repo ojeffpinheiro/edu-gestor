@@ -1,30 +1,28 @@
 import styled from "styled-components";
+import { CalendarGridBase, DayCellBase } from "../../calendarStyles";
+import { constants } from "../../../../utils/consts";
 
-export const MonthGridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-auto-rows: minmax(120px, 1fr);
-  gap: var(--space-xs);
+export const MonthViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 `;
 
-export const DayCell = styled.div<{ isCurrentMonth: boolean }>`
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--border-radius-sm);
-  padding: var(--space-xs);
-  background-color: ${props => 
-    props.isCurrentMonth 
-      ? 'var(--color-background)' 
-      : 'var(--color-background-secondary)'};
-  color: ${props => 
-    props.isCurrentMonth 
-      ? 'var(--color-text)' 
-      : 'var(--color-text-secondary)'};
-  cursor: pointer;
-  transition: all 0.3s ease;
+export const DayCellContainer = styled(DayCellBase)<{ 
+  hasEvents?: boolean;
+  isToday?: boolean;
+  eventColor?: string;
+}>`
+  position: relative;
+  min-height: 100px;
+  
+  ${({ hasEvents, eventColor }) => hasEvents && `
+    border-left: 3px solid ${eventColor || constants.colors.primary};
+  `}
 
-  &:hover {
-    opacity: 0.8;
-  }
+  ${({ isToday }) => isToday && `
+    border: 2px solid ${constants.colors.border.main};
+  `}
 `;
 
 export const DayNumber = styled.div<{ isToday: boolean }>`
@@ -92,28 +90,11 @@ export const ExpandButton = styled.button`
   }
 `;
 
-export const MultipleEventsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
+export const AllDayExpandButton = styled(ExpandButton)`
+  margin-top: var(--space-xs);
 `;
 
-export const AllDayExpandButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  width: 100%;
-  padding: var(--space-xs);
-  background: none;
-  border: none;
-  color: var(--color-primary);
-  font-size: var(--font-size-xs);
-  cursor: pointer;
-  transition: color 0.2s;
-  margin-top: var(--space-xs);
-
-  &:hover {
-    opacity: 0.8;
-  }
+export const MonthGridContainer = styled(CalendarGridBase)`
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(120px, 1fr);
 `;

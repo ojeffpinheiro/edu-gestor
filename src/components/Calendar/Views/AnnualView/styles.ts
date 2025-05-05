@@ -96,7 +96,6 @@ export const EventItem = styled.div`
   margin-bottom: ${constants.spacing.xs};
   border-radius: ${constants.borderRadius.sm};
   background-color: ${constants.colors.background.secondary};
-  cursor: pointer;
   transition: all ${constants.transitions.fast};
   
   &:hover {
@@ -121,13 +120,10 @@ export const PopupContainer = styled.div<{ visible: boolean }>`
 `;
 
 export const FiltersContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${constants.spacing.sm};
-  margin-bottom: ${constants.spacing.lg};
-  padding: ${constants.spacing.sm};
   background-color: ${constants.colors.background.secondary};
   border-radius: ${constants.borderRadius.md};
+  padding: ${constants.spacing.md};
+  margin-bottom: ${constants.spacing.lg};
 `;
 
 export const FilterButton = styled.button<{ 
@@ -147,6 +143,8 @@ export const FilterButton = styled.button<{
   font-size: ${constants.fontSize.sm};
   font-weight: ${props => props.isActive ? 'bold' : 'normal'};
   opacity: ${props => props.isActive ? activeFilterOpacity : inactiveFilterOpacity};
+  max-height: 2rem;
+  min-width: 10vw;
 
   &:hover {
     background-color: ${props => `${props.color}10`};
@@ -195,4 +193,109 @@ export const PopupTitle = styled.h3`
   margin: 0;
   color: ${constants.colors.text.main};
   font-size: ${constants.fontSize.md};
+`;
+
+export const EventActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${constants.spacing.sm};
+`;
+
+export const ActionButton = styled.button<{ color?: string }>`
+  display: flex;
+  align-items: center;
+  gap: ${constants.spacing.xs};
+  padding: ${constants.spacing.xs} ${constants.spacing.sm};
+  background-color: transparent;
+  color: ${({ color }) => color || constants.colors.text.secondary};
+  border: 1px solid constants.colors.border.light;
+  border-radius: ${constants.borderRadius.sm};
+  cursor: pointer;
+  transition: all ${constants.transitions.fast};
+  font-size: ${constants.fontSize.xs};
+
+  &:hover {
+    background-color: ${({ color }) => color ? `${color}20` : constants.colors.background.secondary};
+  }
+`;
+
+export const FilterCategory = styled.div`
+  margin-bottom: ${constants.spacing.md};
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+export const CategoryHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${constants.spacing.xs} 0;
+`;
+
+export const CategoryToggle = styled.button`
+  background: none;
+  border: none;
+  padding: ${constants.spacing.xs};
+  border-radius: ${constants.borderRadius.sm};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: ${constants.colors.text.secondary};
+  transition: all ${constants.transitions.fast};
+
+  &:hover {
+    background-color: ${constants.colors.background.secondary};
+    color: ${constants.colors.text.main};
+  }
+`;
+
+export const FilterGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(59vh, 1fr));
+  gap: ${constants.spacing.sm};
+  margin-top: ${constants.spacing.sm};
+`;
+
+export const FilterSection = styled.div`
+  margin-bottom: ${constants.spacing.md};
+  border: 1px solid ${constants.colors.border.light};
+  border-radius: ${constants.borderRadius.md};
+  overflow: hidden;
+`;
+
+export const FilterSectionHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: ${constants.spacing.sm};
+  background-color: ${constants.colors.background.third};
+  cursor: pointer;
+  user-select: none;
+`;
+
+export const FilterContent = styled.div`
+  padding: ${constants.spacing.sm};
+  background-color: ${constants.colors.background.main};
+`;
+
+export const FilterList = styled.div`
+  max-height: 200px;
+  overflow-y: auto;
+  margin-top: ${constants.spacing.sm};
+`;
+
+export const FilterItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${constants.spacing.sm};
+  padding: ${constants.spacing.xs} 0;
+`;
+
+export const DateRangeContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${constants.spacing.sm};
+  margin-top: ${constants.spacing.sm};
 `;
