@@ -67,39 +67,98 @@ export const ExamProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setExamParamsState(prev => ({ ...prev, ...params }));
   };
 
-  const generateRandomExams = async () => {
+  const generateRandomExams = async (): Promise<Exam[]> => {
     setIsLoading(true);
     setError(null);
-    
-    try {
-      // Verifica se há questões selecionadas OU tópicos selecionados
-      const hasSelectedQuestions = examParams.selectedQuestionIds.length > 0;
-      const hasSelectedTopics = examParams.selectedTopics.length > 0;
-
-      if (!hasSelectedQuestions && !hasSelectedTopics) {
-        console.log(`tem ${examParams.selectedQuestionIds.length} questões selecionadas` )
-      throw new Error('Selecione pelo menos um tópico na aba "Filtrar por Tópico" OU marque questões específicas na lista');
-    }
-
-    // Se há questões selecionadas, ignora os tópicos
-    const paramsToUse = hasSelectedQuestions
-      ? { ...examParams, topics: [], selectedTopics: [] }
-      : examParams;
   
-      const newExams = await examService.generateRandomExams(paramsToUse);
-    setExams(prev => [...prev, ...newExams]);
-    setCurrentExam(newExams[0] || null);
-    return newExams;
-  } catch (error) {
-    const errorMessage = error instanceof Error 
-      ? error.message 
-      : 'Ocorreu um erro ao gerar as provas';
-    
-    setError(errorMessage);
-    throw error;
-  } finally {
-    setIsLoading(false);
-  }
+    try {
+      // 1. Validação inicial - Verifica se há critérios de seleção
+      if (examParams.selectedQuestionIds.length === 0 && examParams.selectedTopics.length === 0) {
+        throw new Error(
+          'Selecione pelo menos um tópico na aba "Filtrar por Tópico" OU marque questões específicas na lista'
+        );
+      }
+  
+      // 2. Preparação dos parâmetros
+      const paramsToUse = examParams.selectedQuestionIds.length > 0
+        ? { 
+            ...examParams, 
+            topics: [], // Ignora tópicos se há questões selecionadas
+            selectedTopics: [],
+            questionsPerExam: examParams.selectedQuestionIds.length // Ajusta para o número de questões selecionadas
+          }
+        : examParams;
+  
+      // 3. Filtragem das questões
+      let availableQuestions = questions;
+  
+      // Filtra por tópicos (se aplicável)
+      if (paramsToUse.selectedTopics.length > 0) {
+        availableQuestions = availableQuestions.filter(q => 
+          (q.categories || []).some(cat => paramsToUse.selectedTopics.includes(cat))
+        );
+      }
+  
+      // Filtra por dificuldade (se não for "all")
+      if (paramsToUse.difficulty !== 'all') {
+        availableQuestions = availableQuestions.filter(
+          q => q.difficulty === paramsToUse.difficulty
+        );
+      }
+  
+      // 4. Verificação de questões disponíveis
+      if (availableQuestions.length === 0) {
+        throw new Error(
+          'Nenhuma questão encontrada com os critérios selecionados. ' +
+          'Tente ajustar os filtros de tópicos ou dificuldade.'
+        );
+      }
+  
+      // 5. Geração das provas
+      const newExams: Exam[] = [];
+      
+      for (let i = 0; i < paramsToUse.numberOfExams; i++) {
+        const selectedQuestions = paramsToUse.selectedQuestionIds.length > 0
+          ? // Usa as questões selecionadas diretamente
+            questions.filter(q => paramsToUse.selectedQuestionIds.includes(q.id))
+          : // Seleção aleatória
+            [...availableQuestions]
+              .sort(() => Math.random() - 0.5)
+              .slice(0, paramsToUse.questionsPerExam);
+  
+        const newExam: Exam = {
+          id: `exam-${Date.now()}-${i}`,
+          title: `${paramsToUse.title} ${i + 1}`,
+          questions: selectedQuestions,
+          questionDistribution: [{
+            categories: paramsToUse.selectedTopics,
+            difficulty: paramsToUse.difficulty,
+            count: selectedQuestions.length
+          }],
+          createdAt: new Date(),
+          // ... outros campos necessários
+        };
+  
+        newExams.push(newExam);
+      }
+  
+      // 6. Atualização do estado
+      setExams(prev => [...prev, ...newExams]);
+      setCurrentExam(newExams[0]);
+      return newExams;
+  
+    } catch (error) {
+      // Tratamento de erros com feedback específico
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Ocorreu um erro ao gerar as provas';
+      
+      setError(errorMessage);
+      throw error; // Rejeita a Promise para tratamento no componente
+  
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const generateSpecificExam = async (title: string, password?: string) => {

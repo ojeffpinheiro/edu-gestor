@@ -13,3 +13,5 @@ export interface EventFilter {
     startDate?: Date;
     endDate?: Date;
 }
+
+export type TimeframeFilter = 'day' | 'week' | 'month' | 'semester' | 'year';

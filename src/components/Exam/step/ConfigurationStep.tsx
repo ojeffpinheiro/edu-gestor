@@ -2,7 +2,7 @@ import React from 'react';
 import { ExamGenerationParams } from '../../../services/examsService';
 import { Grid2Columns } from '../../../styles/modals';
 import { Input, Label } from '../../../styles/inputs';
-import { FormGroup } from '../../../pages/Exam/styles';
+import { FormGroup } from '../../../styles/formControls';
 
 interface ConfigurationStepProps {
   formData: ExamGenerationParams;

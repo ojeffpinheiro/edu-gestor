@@ -43,7 +43,8 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     imageUrl: '',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-    id: question?.id || Date.now().toString()
+    id: question?.id || Date.now().toString(),
+    discipline: ''
   });
 
   const [selectedTopicId, setSelectedTopicId] = useState<string>('');
@@ -77,7 +78,8 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         imageUrl: '',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        id: Date.now().toString()
+        id: Date.now().toString(),
+        discipline: ''
       });
       setSelectedTopicId('');
       setFilteredContents([]);

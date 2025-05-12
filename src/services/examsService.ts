@@ -14,6 +14,7 @@ export interface Question {
   correctAnswer: number;
   topic: string;
   difficulty: QuestionDifficulty;
+  categories?: string[];
 }
 
 export interface Exam {
@@ -24,6 +25,13 @@ export interface Exam {
   qrCode?: string;
   barcode?: string;
   createdAt: Date;
+  isEncrypted?: boolean;
+  encryptionKey?: string;
+  questionDistribution: {
+    categories: string[];
+    difficulty: string;
+    count: number;
+  }[];
 }
 
 interface DifficultyDistribution {
@@ -47,18 +55,29 @@ interface DifficultyDistribution {
  * @property {string} [titlePrefix] - Prefixo para títulos de variantes
  */
 export interface ExamGenerationParams {
-  numberOfExams: number;
-  questionsPerExam: number;
-  topics: string[];
-  selectedTopics: string[];
-  difficulty: 'all' | QuestionDifficulty;
-  title: string;
-  password?: string;
-  selectedQuestionIds: string[];
-  difficultyDistribution?: DifficultyDistribution;
-  shuffleQuestions?: boolean;
-  shuffleOptions?: boolean;
+  // Configurações básicas
+  numberOfExams: number;          // Quantidade de provas a serem geradas
+  questionsPerExam: number;       // Questões por prova (ignorado se houver selectedQuestionIds)
+  title: string;                  // Título base para as provas (será incrementado com números)
+
+  // Filtros por conteúdo
+  selectedTopics: string[];       // Tópicos selecionados para filtrar questões
+  topics: string[];               // Todos os tópicos disponíveis (para exibição na UI)
+  
+  difficulty: 'all' | 'easy' | 'medium' | 'hard'; // Nível de dificuldade
   titlePrefix?: string;
+  password?: string;
+
+  // Modo de seleção manual
+  difficultyDistribution?: DifficultyDistribution;
+  selectedQuestionIds: string[];  // IDs de questões selecionadas manualmente (prioritário sobre tópicos)
+
+  // Configurações avançadas (opcionais)
+  shuffleOptions?: boolean;
+  allowDuplicateQuestions?: boolean; // Permite repetição de questões entre provas
+  shuffleQuestions?: boolean;       // Embaralha questões
+  requirePassword?: boolean;        // Exige senha para acesso
+  timeLimitMinutes?: number;        // Limite de tempo em minutos
 }
 
 export class ExamService {
@@ -111,7 +130,8 @@ export class ExamService {
       title,
       questions: selectedQuestions,
       password,
-      createdAt: new Date()
+      createdAt: new Date(),
+      questionDistribution: []
     };
     
     this.exams.push(newExam);
@@ -260,70 +280,33 @@ export class ExamService {
     return exam.password === password;
   }
 
-  public async generateRandomExams(params: ExamGenerationParams): Promise<Exam[]> {
-    await this.loadQuestions();
-  
-    if (!params.difficultyDistribution) {
-      throw new Error('Distribuição de dificuldade não definida');
+  /**
+   * Lógica pura de geração de provas - Sem estado, apenas processamento
+   * @param params Parâmetros de geração
+   * @param allQuestions Banco completo de questões
+   * @returns Promise<Exam[]> Provas geradas
+   * @throws Error com mensagem amigável se falhar
+   */
+  async generateRandomExamsCore(
+    params: ExamGenerationParams,
+    allQuestions: Question[]
+  ): Promise<Exam[]> {
+    // 1. Validação mínima (pode lançar erros)
+    if (allQuestions.length === 0) {
+      throw new Error("Nenhuma questão disponível no banco de dados");
     }
-  
-    const { easy, medium, hard } = params.difficultyDistribution;
-    const totalQuestions = easy + medium + hard;
-  
-    if (totalQuestions !== params.questionsPerExam) {
-      throw new Error(`O total de questões por dificuldade (${totalQuestions}) não corresponde ao número de questões por prova (${params.questionsPerExam})`);
-    }
-  
-    // Filtrar por tópicos se especificado
-    let filteredQuestions = params.selectedTopics?.length > 0
-      ? this.questions.filter(q => params.selectedTopics.includes(q.topic))
-      : [...this.questions];
-  
-    // Verificar questões disponíveis uma única vez
-    const easyQuestions = filteredQuestions.filter(q => q.difficulty === 'easy');
-    const mediumQuestions = filteredQuestions.filter(q => q.difficulty === 'medium');
-    const hardQuestions = filteredQuestions.filter(q => q.difficulty === 'hard');
-  
-    if (easyQuestions.length < easy || mediumQuestions.length < medium || hardQuestions.length < hard) {
-      throw new Error(`Não há questões suficientes com os filtros atuais. 
-        Disponíveis: Fácil(${easyQuestions.length}), Média(${mediumQuestions.length}), Difícil(${hardQuestions.length})
-        Solicitadas: Fácil(${easy}), Média(${medium}), Difícil(${hard})`);
-    }
-  
-    const newExams: Exam[] = [];
-  
-    for (let i = 0; i < params.numberOfExams; i++) {
-      const selectedQuestions = [
-        ...this.selectRandomQuestions(easyQuestions, easy, params.shuffleQuestions),
-        ...this.selectRandomQuestions(mediumQuestions, medium, params.shuffleQuestions),
-        ...this.selectRandomQuestions(hardQuestions, hard, params.shuffleQuestions),
-      ];
-  
-      if (params.shuffleOptions) {
-        selectedQuestions.forEach(q => {
-          const { options, correctAnswer } = this.shuffleOptions(q.options, q.correctAnswer);
-          q.options = options;
-          q.correctAnswer = correctAnswer;
-        });
-      }
-  
-      const examTitle = params.numberOfExams > 1 
-        ? `${params.titlePrefix || ''} ${params.title} ${i + 1}`.trim()
-        : params.title;
-  
-      const newExam: Exam = {
-        id: `exam-${Date.now()}-${i}`,
-        title: examTitle,
-        questions: selectedQuestions,
-        password: params.password,
-        createdAt: new Date()
-      };
-  
-      newExams.push(newExam);
-      this.exams.push(newExam);
-    }
-  
-    return newExams;
+
+    // 2. Filtragem (lógica reutilizável)
+    const filteredQuestions = this.filterQuestions(params, allQuestions);
+
+    // 3. Geração das provas
+    return Array.from({ length: params.numberOfExams }, (_, i) => ({
+      id: `exam-${Date.now()}-${i}`,
+      title: `${params.title} ${i + 1}`,
+      questions: this.selectQuestions(params, filteredQuestions),
+      createdAt: new Date(),
+      questionDistribution: []
+    }));
   }
 
   public static simpleHash(str: string): string {
@@ -366,5 +349,61 @@ export class ExamService {
       options: shuffledOptions,
       correctAnswer: newCorrectIndex,
     };
+  }
+
+  private selectQuestions(params: ExamGenerationParams, questions: Question[]) {
+    return params.selectedQuestionIds.length > 0
+      ? questions.filter(q => params.selectedQuestionIds.includes(q.id))
+      : [...questions].sort(() => Math.random() - 0.5)
+          .slice(0, params.questionsPerExam);
+  }
+  /**
+   * Filtra questões com base nos parâmetros de geração
+   * @param params Parâmetros de geração da prova
+   * @param allQuestions Lista completa de questões disponíveis
+   * @returns Question[] Lista filtrada de questões
+   */
+  filterQuestions(
+    params: ExamGenerationParams,
+    allQuestions: Question[]
+  ): Question[] {
+    // 1. Primeiro filtro: por questões selecionadas manualmente (prioritário)
+    if (params.selectedQuestionIds.length > 0) {
+      const selected = allQuestions.filter(q => 
+        params.selectedQuestionIds.includes(q.id)
+      );
+      
+      if (selected.length !== params.selectedQuestionIds.length) {
+        console.warn(
+          `Atenção: ${params.selectedQuestionIds.length - selected.length} ` +
+          `questões selecionadas não foram encontradas no banco.`
+        );
+      }
+      
+      return selected;
+    }
+
+    // 2. Filtro por tópicos selecionados
+    let filtered = allQuestions;
+    if (params.selectedTopics.length > 0) {
+      filtered = filtered.filter(q =>
+        q.categories?.some(cat => params.selectedTopics.includes(cat)) ?? false
+      );
+    }
+
+    // 3. Filtro por dificuldade (se não for 'all')
+    if (params.difficulty !== 'all') {
+      filtered = filtered.filter(q => q.difficulty === params.difficulty);
+    }
+
+    // 4. Validação final
+    if (filtered.length === 0) {
+      throw new Error(
+        'Nenhuma questão encontrada com os filtros aplicados. ' +
+        'Tente ajustar os parâmetros de seleção.'
+      );
+    }
+
+    return filtered;
   }
 }

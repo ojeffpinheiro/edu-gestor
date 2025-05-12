@@ -15,18 +15,33 @@ export interface Alternative {
   isCorrect: boolean;
 }
 
+export type QuestionType = 'multiple_choice' | 'true_false' | 'essay' | 'fill_in_the_blank' | 'all';
+
+export type DifficultyLevelType = 'easy' | 'medium' | 'hard';
+
+export type QuestionStatus = 'draft' | 'active' | 'inactive';
+
+export interface Alternative {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+}
+
 export interface Question {
-  id?: string;
+  id?: number;
   contentId: string;
   statement: string;
-  questionType: 'multiple_choice' | 'true_false' | 'essay';
-  difficultyLevel: 'easy' | 'medium' | 'hard';
+  questionType: QuestionType;
+  difficultyLevel: DifficultyLevelType;
+  discipline: string;
   alternatives: Alternative[];
+  correctAnswer?: string;
   explanation: string;
   createdAt: string;
   updatedAt: string;
-  status: 'active' | 'inactive';
+  status: QuestionStatus;
   imageUrl?: string;
+  tags?: string[];
 }
 
 // Interface para as props dos componentes de passo
@@ -79,3 +94,5 @@ export interface ConversionRelation {
   formula?: string;
   description?: string;
 }
+
+export type DisciplineType = 'Matemática' | 'Português' | 'Ciências' | 'História' | 'Geografia';

@@ -2,7 +2,7 @@
 import { useState, useCallback, useMemo } from 'react';
 import { useAssessment } from '../contexts/AssessmentContext';
 
-interface QuestionFilters {
+export interface QuestionFilters {
   category?: string;
   difficulty?: 'easy' | 'medium' | 'hard' | '';
   searchTerm?: string;

@@ -125,3 +125,39 @@ export const Select = styled.select`
     box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
   }
 `;
+
+export const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: var(--border-radius-sm); 
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: var(--color-input);
+`;
+
+export const Checkbox = styled.div<{ checked: boolean }>`
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: var(--border-radius-sm);
+  margin-right: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.checked
+    ? 'var(--color-primary, #4a6fa5)'
+    : 'transparent'};
+  border: 1px solid ${props => props.checked
+    ? 'var(--color-primary, #4a6fa5)'
+    : 'var(--color-border, #ccc)'};
+`;
+
+export const CheckboxLabel = styled.span<{ checked: boolean }>`
+  font-size: 0.9375rem;
+  text-decoration: ${props => props.checked ? 'line-through' : 'none'};
+  color: ${props => props.checked ? 'var(--color-text-secondary, #888)' : 'var(--color-text, #333)'};
+  transition: all 0.2s ease-in-out;
+`;

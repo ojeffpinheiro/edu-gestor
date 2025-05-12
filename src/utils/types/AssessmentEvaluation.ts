@@ -1,7 +1,12 @@
+import { Question } from "./Question";
 import { Resource } from "./Resource";
 
 // Assessment Interface
 export interface Assessment {
+    id: string;
+    title: string;
+    subject: string;
+    questions: Question[];
     instrument: string;
     grade: number;
 }
