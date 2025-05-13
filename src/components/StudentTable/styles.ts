@@ -9,7 +9,7 @@ export const TableContainer = styled.div`
 `;
 
 export const IconButton = styled.button<{ variant?: "error" | "primary" | 'info' }>`
-    background: ${(props) => (props.variant === 'error' ? 'var(--color-info)' : 'var(--color-error)')};
+    background: ${(props) => (props.variant === 'error' ? 'var(--color-info)' : '')};
     color: var(--color-text-on-primary);
     border: none;
     padding: 8px;

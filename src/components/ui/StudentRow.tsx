@@ -2,9 +2,9 @@ import React, { useCallback } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 import { TableCell, TableRow } from "../../styles/table";
-import { IconButton } from "../StudentTable/styles";
 import { AttendanceGrade } from "../StudentsTable/styles";
 import { StudentAttendance } from "../../utils/types/BasicUser";
+import { IconButton } from "../../styles/buttons";
 
 interface StudentRowProps {
     studentData: StudentAttendance,
@@ -24,13 +24,21 @@ const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }
             <TableCell>{studentData.name}</TableCell>
             <TableCell>{studentData.email}</TableCell>
             <TableCell>
-                <AttendanceGrade grade={studentData.attendance} />
+                <AttendanceGrade grade={studentData.attendance}>{studentData.attendance}</AttendanceGrade>
             </TableCell>
             <TableCell>
-                <IconButton onClick={() => onEdit(studentData)} title="Editar aluno">
+                <IconButton
+                    onClick={() => onEdit(studentData)}
+                    title="Editar aluno"
+                    className="edit"
+                    aria-label={`editar aluno ${studentData.name}`} >
                     <FaEdit />
                 </IconButton>
-                <IconButton onClick={handleDelete} title="Excluir aluno" variant="error">
+                <IconButton
+                    title="Excluir aluno"
+                    className="delete"
+                    aria-label={`deletar aluno ${studentData.name}`}
+                    onClick={handleDelete}>
                     <FaTrashAlt />
                 </IconButton>
             </TableCell>

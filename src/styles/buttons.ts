@@ -40,48 +40,26 @@ const buttonVariants = {
     background-color: ${constants.colors.primary};
     color: ${constants.colors.text.onPrimary};
     border: 1px solid ${constants.colors.primary};
-    
-    &:hover:not(:disabled) {
-      background-color: ${constants.colors.primary};
-      border-color: ${constants.colors.border.main};
-    }
   `,
   secondary: css`
     background-color: transparent;
     color: ${constants.colors.primary};
     border: 1px solid ${constants.colors.primary};
-    
-    &:hover:not(:disabled) {
-      background-color: ${constants.colors.background.secondary};
-    }
   `,
   third: css`
     background-color: ${constants.colors.background.third};
     color: ${constants.colors.text};
     border: 1px solid ${constants.colors.border.light};
-    
-    &:hover:not(:disabled) {
-      background-color: ${constants.colors.background.secondary};
-    }
   `,
   info: css`
     background-color: transparent;
     color: ${constants.colors.text};
     border: none;
-    
-    &:hover:not(:disabled) {
-      background-color: ${constants.colors.background.third};
-    }
   `,
   warning: css`
     background-color: ${constants.colors.status.error};
     color: white;
     border: 1px solid ${constants.colors.status.error};
-    
-    &:hover:not(:disabled) {
-      background-color: ${constants.colors.status.errorBg};
-      color: ${constants.colors.status.error};
-    }
   `,
   success: css``,
   error: css``,
@@ -124,16 +102,8 @@ export const Button = styled(BaseButton) <ButtonProps>`
     variant ? 'var(--color-text-on-primary)' : 'var(--color-text)'};
   
   &:hover:not(:disabled) {
-    background-color: ${({ variant }) => {
-    switch (variant) {
-      case 'primary': return 'var(--color-primary-hover)';
-      case 'success': return 'var(--color-success-hover)';
-      case 'error': return 'var(--color-error-hover)';
-      case 'warning': return 'var(--color-warning-hover)';
-      case 'info': return 'var(--color-info-hover)';
-      default: return 'var(--color-border)';
-    }
-  }};
+    opacity: 0.8;
+  };
   
   ${props => {
     switch (props.variant) {
@@ -142,46 +112,26 @@ export const Button = styled(BaseButton) <ButtonProps>`
           background-color: var(--color-background-third);
           color: var(--color-text);
           border: 1px solid var(--color-border);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-secondary-hover);
-          }
         `;
       case 'success':
         return `
           background-color: var(--color-success);
           color: var(--color-text-on-primary);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-success-hover);
-          }
         `;
       case 'error':
         return `
           background-color: var(--color-error);
           color: var(--color-text-on-primary);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-error-hover);
-          }
         `;
       case 'info':
         return `
           background-color: var(--color-info);
           color: var(--color-text-on-primary);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-info-hover);
-          }
         `;
       case 'warning':
         return `
           background-color: var(--color-warning);
           color: var(--color-text-on-primary);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-warning-hover);
-          }
         `;
       case 'link':
         return `
@@ -197,10 +147,6 @@ export const Button = styled(BaseButton) <ButtonProps>`
         return `
           background-color: var(--color-primary);
           color: var(--color-text-on-primary);
-          
-          &:hover:not(:disabled) {
-            background-color: var(--color-primary-hover);
-          }
         `;
     }
   }}
@@ -265,11 +211,8 @@ export const IconButton = styled(Button)`
   &.view { color: ${constants.colors.status.success}; }
   
   &:hover {
-        background-color: var(--color-button);
-    }
-  &:focus-visible {
-        outline: none;
-        box-shadow: var(--shadow-focus);
+      opacity: 0.8;
+      box-shadow: none;
     }
 `;
 
@@ -290,7 +233,6 @@ export const LinkButton = styled.button`
 
   &:hover {
     text-decoration: underline;
-    color: var(--color-primary-hover);
   }
 
   &:focus-visible {
@@ -340,10 +282,6 @@ export const ActionButton = styled(BaseButton)`
   gap: var(--space-sm);
   white-space: nowrap;
 
-  &:hover:not(:disabled) {
-    background-color: ${constants.colors.primaryHover};
-  }
-
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -353,10 +291,6 @@ export const ActionButton = styled(BaseButton)`
 export const CancelButton = styled(ActionButton)`
     background-color: var(--color-secondary);
     color: var(--color-text-button);
-    
-    &:hover:not(:disabled) {
-        background-color: var(--color-secondary-hover);
-    }
 `;
 
 // Novo botão para ações em destaque
@@ -368,8 +302,6 @@ export const PrimaryActionButton = styled(ActionButton)`
     border: none;
   
   &:hover:not(:disabled) {
-    box-shadow: var(--shadow-md);
-    background-color: var(--color-primary-hover);
     transform: translateY(-2px);
   }
   
@@ -383,12 +315,6 @@ export const SecondaryButton = styled(ActionButton)`
   background-color: transparent;
   color: var(--color-text);
   border: 1px solid var(--color-border);
-  
-  &:hover:not(:disabled) {
-    background-color: var(--color-background-secondary);
-    border-color: var(--color-primary);
-    color: var(--color-primary);
-  }
 `;
 
 // Botão com indicador de carregamento
@@ -466,10 +392,6 @@ export const TabButton = styled.button<TabButtonProps>`
         }
         ${props => props.active && `
             background-color: var(--color-info);
-            &:hover {
-                background-color: var(--color-info-hover);
-                color: var(--color-text-on-primary);
-            }
         `}
     }
 `;

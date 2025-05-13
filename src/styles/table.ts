@@ -35,10 +35,6 @@ export const TableRow = styled.tr`
   &:nth-child(even) {
     background-color: var(--color-background-third);
   }
-
-  &:hover {
-    background-color: var(--color-primary-hover);
-  }
 `;
 
 

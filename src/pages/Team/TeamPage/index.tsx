@@ -12,6 +12,7 @@ import { generateMockEvents } from '../../../hooks/useCalendar';
 
 import EventCreation from '../../../components/Events/EventCreation';
 import Notification from '../../../components/shared/Notification';
+import GroupDrawModal from '../../../components/modals/GroupDrawModal';
 
 import { Container } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/eventsStyles';
@@ -29,6 +30,10 @@ import {
   QuickCardHeader,
   ViewToggleButton
 } from './styles';
+import ActionsContainer from '../../../components/Team/ActionsContainer';
+import { useStudents } from '../../../hooks/useStudent';
+import { StudentAttendance } from '../../../utils/types/BasicUser';
+import StudentDrawModal from '../../../components/modals/StudentDrawModal';
 
 
 // Configure moment locale
@@ -52,16 +57,18 @@ const TeamPage: React.FC = () => {
   const [modalMode, setModalMode] = useState<'create' | 'edit' | 'view'>('create');
   const [calendarView, setCalendarView] = useState<string>(Views.MONTH);
   const [date, setDate] = useState<Date>(new Date());
-
-
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
-
+  const [showSortGroupModal, setShowSortGroupModal] = useState<boolean>(false);
+  const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
+  const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
   const [filters, setFilters] = useState({
     showMeetings: true,
     showDeadlines: true,
     showHolidays: true,
     showPersonal: true
   });
+
+  const { studentList } = useStudents();
 
   const showNotification = (message: string, type: string) => {
     setNotification({ show: true, message, type });
@@ -202,6 +209,59 @@ const TeamPage: React.FC = () => {
     };
   };
 
+  const handleOpenSortGroupModal = () => {
+    if (studentList.length < 2) {
+      showNotification('São necessários pelo menos 2 alunos para formar grupos', 'warning');
+      return;
+    }
+    setShowSortGroupModal(true);
+  };
+
+  const handleCloseSorteioGrupoModal = () => {
+    setShowSortGroupModal(false);
+  };
+
+  // Student draw functions with error handling
+  const handleShowStudentDraw = () => {
+    try {
+      if (studentList.length === 0) {
+        showNotification('Não há alunos para sortear', 'warning');
+        return;
+      }
+
+      setShowStudentDrawModal(true);
+      handleSortGroups();
+    } catch (error) {
+      console.error('Erro ao sortear aluno:', error);
+      showNotification('Erro ao sortear aluno. Tente novamente.', 'error');
+    }
+  };
+
+  const handleSortGroups = () => {
+    try {
+      if (studentList.length > 0) {
+        const randomIndex = Math.floor(Math.random() * studentList.length);
+        const selectedStudent = studentList[randomIndex];
+        if (selectedStudent.id !== undefined) {
+          setDrawnStudent({
+            ...selectedStudent,
+            id: selectedStudent.id
+          } as StudentAttendance);
+        }
+      } else {
+        showNotification('Não há alunos para sortear', 'warning');
+      }
+    } catch (error) {
+      console.error('Erro ao sortear grupos:', error);
+      showNotification('Erro ao sortear grupos. Tente novamente.', 'error');
+    }
+  };
+
+  const handleCloseStudentDraw = () => {
+    setShowStudentDrawModal(false);
+    setDrawnStudent(null);
+};
+
   const quickCardsData = [
     {
       onClick: handleDailyReport,
@@ -239,6 +299,10 @@ const TeamPage: React.FC = () => {
       <Header>
         <h1>Gestão da Turma</h1>
       </Header>
+
+      <ActionsContainer
+        onSortGroups={handleOpenSortGroupModal}
+        onSortStudent={handleShowStudentDraw} />
 
       {/* Cards de acesso rápido */}
       <CardsContainer>
@@ -356,44 +420,64 @@ const TeamPage: React.FC = () => {
       {/* Modal de evento */}
       {isModalOpen && (
         <div>
-        <EventCreation
-          initialData={currentEvent || undefined}
-          startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
-          endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
-          onSubmit={handleSaveEvent}
-          onCancel={() => setIsModalOpen(false)}
-          onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined}
-          mode={modalMode}
-          onModeChange={setModalMode}
-        />
-        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
-          <button
-            onClick={() => setModalMode('edit')}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: 'var(--color-primary)',
-              color: 'white',
-              border: 'none',
-              borderRadius: 'var(--border-radius-sm)',
-              cursor: 'pointer'
-            }}
-          >
-            Editar
-          </button>
-          <button
-            onClick={handleCloseModal}
-            style={{
-              padding: '0.5rem 1rem',
-              backgroundColor: '#ccc',
-              border: 'none',
-              borderRadius: 'var(--border-radius-sm)',
-              cursor: 'pointer'
-            }}
-          >
-            Fechar
-          </button>
+          <EventCreation
+            initialData={currentEvent || undefined}
+            startDate={currentEvent?.start instanceof Date ? currentEvent.start : undefined}
+            endDate={currentEvent?.end instanceof Date ? currentEvent.end : undefined}
+            onSubmit={handleSaveEvent}
+            onCancel={() => setIsModalOpen(false)}
+            onDelete={modalMode === 'edit' ? handleDeleteEvent : undefined}
+            mode={modalMode}
+            onModeChange={setModalMode}
+          />
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', marginTop: '1rem' }}>
+            <button
+              onClick={() => setModalMode('edit')}
+              style={{
+                padding: '0.5rem 1rem',
+                backgroundColor: 'var(--color-primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer'
+              }}
+            >
+              Editar
+            </button>
+            <button
+              onClick={handleCloseModal}
+              style={{
+                padding: '0.5rem 1rem',
+                backgroundColor: '#ccc',
+                border: 'none',
+                borderRadius: 'var(--border-radius-sm)',
+                cursor: 'pointer'
+              }}
+            >
+              Fechar
+            </button>
+          </div>
         </div>
-      </div>
+      )}
+
+      {showSortGroupModal && (
+        <GroupDrawModal
+          students={studentList.filter((student): student is StudentAttendance =>
+            typeof student.id === 'number'
+          )}
+          onClose={handleCloseSorteioGrupoModal}
+        />
+      )}
+
+      {showStudentDrawModal && (
+        <StudentDrawModal
+          students={studentList.filter((student): student is StudentAttendance =>
+            typeof student.id === 'number'
+          )}
+          onClose={handleCloseStudentDraw}
+          onDraw={handleSortGroups}
+          drawnStudent={drawnStudent}
+        />
       )}
 
       {/* Notificações de feedback */}

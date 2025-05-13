@@ -163,11 +163,6 @@ const StyledButton = styled.button<{
     opacity: 0.7;
   }
   
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
-  }
-  
   &:active:not(:disabled) {
     transform: translateY(0);
   }

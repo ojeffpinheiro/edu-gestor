@@ -1,23 +1,18 @@
 import React, { useState } from 'react';
 
 import { StudentAttendance } from '../../../utils/types/BasicUser';
-import { Event } from '../../../utils/types/Event';
-import { eventInital } from '../../../mocks/planner';
 
 import { useStudents, StudentFormData } from '../../../hooks/useStudent';
 
 import ActionsContainer from '../../../components/Team/ActionsContainer';
 import StudentTable from '../../../components/StudentTable';
-
 import StudentModal from '../../../components/modals/ModalStudent';
-import GroupDrawModal from '../../../components/modals/GroupDrawModal';
 import StudentFormModal from '../../../components/modals/StudentFormModal';
 import StudentDrawModal from '../../../components/modals/StudentDrawModal';
-import CalendarModal from '../../../components/modals/CalendarModal';
-
-import { PageContainer, Title } from './styles';
 import Notification from '../../../components/shared/Notification';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
+
+import { PageContainer, Title } from './styles';
 
 const TeamManagement: React.FC = () => {
     const {
@@ -31,13 +26,7 @@ const TeamManagement: React.FC = () => {
     // Modal visibility states
     const [showModalStudent, setShowModalStudent] = useState<boolean>(false);
     const [showForm, setShowForm] = useState<boolean>(false);
-    const [showSortGroupModal, setShowSortGroupModal] = useState<boolean>(false);
-    const [showCalendarioModal, setShowCalendarioModal] = useState<boolean>(false);
     const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
-
-    // Calendar states
-    const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [activeTab, setActiveTab] = useState<string>('todos');
 
     // Drawn student state
     const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
@@ -67,9 +56,6 @@ const TeamManagement: React.FC = () => {
         onConfirm: () => { },
         type: 'warning'
     });
-
-    // Eventos de exemplo para o calendário
-    const events: Event[] = eventInital;
 
     // Show notification helper function
     const showNotification = (message: string, type: string = 'info', duration: number = 3000) => {
@@ -149,22 +135,6 @@ const TeamManagement: React.FC = () => {
         });
     };
 
-    // Student draw functions with error handling
-    const handleShowStudentDraw = () => {
-        try {
-            if (studentList.length === 0) {
-                showNotification('Não há alunos para sortear', 'warning');
-                return;
-            }
-
-            setShowStudentDrawModal(true);
-            handleSortGroups();
-        } catch (error) {
-            console.error('Erro ao sortear aluno:', error);
-            showNotification('Erro ao sortear aluno. Tente novamente.', 'error');
-        }
-    };
-
     const handleSortGroups = () => {
         try {
             if (studentList.length > 0) {
@@ -212,34 +182,6 @@ const TeamManagement: React.FC = () => {
         setDrawnStudent(null);
     };
 
-    const handleOpenSortGroupModal = () => {
-        if (studentList.length < 2) {
-            showNotification('São necessários pelo menos 2 alunos para formar grupos', 'warning');
-            return;
-        }
-        setShowSortGroupModal(true);
-    };
-
-    const handleCloseSorteioGrupoModal = () => {
-        setShowSortGroupModal(false);
-    };
-
-    const handleShowCalendario = () => {
-        setShowCalendarioModal(true);
-    };
-
-    const handleCloseCalendarioModal = () => {
-        setShowCalendarioModal(false);
-    };
-
-    const handleDateSelect = (date: Date) => {
-        setSelectedDate(date);
-    };
-
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-    };
-
     return (
         <>
             <PageContainer>
@@ -247,9 +189,6 @@ const TeamManagement: React.FC = () => {
 
                 <ActionsContainer
                     onAddStudent={handleOpenAddStudentForm}
-                    onSortGroups={handleOpenSortGroupModal}
-                    onSortStudent={handleShowStudentDraw}
-                    onShowCalendar={handleShowCalendario}
                 />
 
                 <StudentTable
@@ -273,15 +212,6 @@ const TeamManagement: React.FC = () => {
 
             {showModalStudent && <StudentModal onClose={handleCloseSortGroupModal} />}
 
-            {showSortGroupModal && (
-                <GroupDrawModal
-                    students={studentList.filter((student): student is StudentAttendance =>
-                        typeof student.id === 'number'
-                    )}
-                    onClose={handleCloseSorteioGrupoModal}
-                />
-            )}
-
             {showStudentDrawModal && (
                 <StudentDrawModal
                     students={studentList.filter((student): student is StudentAttendance =>
@@ -291,20 +221,6 @@ const TeamManagement: React.FC = () => {
                     onDraw={handleSortGroups}
                     drawnStudent={drawnStudent}
                 />
-            )}
-
-            {showCalendarioModal && (
-                <CalendarModal
-                    events={events.map(event => ({
-                        ...event,
-                        id: String(event.id),
-                        type: event.type === 'activity' ? 'deadline' :
-                            event.type === 'assessment' ? 'meeting' :
-                                'default'
-                    }))} selectedDate={selectedDate} onSelectDate={handleDateSelect}
-                    activeTab={activeTab}
-                    onTabChange={handleTabChange}
-                    onClose={handleCloseCalendarioModal} />
             )}
 
             {/* Notification component */}
