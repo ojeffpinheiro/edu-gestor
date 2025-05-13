@@ -1,7 +1,7 @@
 import React from 'react'
 import { ButtonGroup, ExamForm, FormSection, ResponsiveWrapper, SectionTitle } from "./styles";
 import { FiArrowLeft, FiArrowRight, FiLock } from 'react-icons/fi';
-import { InputGroup, Label, Select } from '../../../../styles/inputs';
+import { InputGroup, Label, Select, Switch, SwitchRow } from '../../../../styles/inputs';
 import { Exam } from '../../../../utils/types/Exam';
 
 interface SecurityStepProps {
@@ -56,17 +56,20 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
                     <FiLock />
                     <h3>Segurança</h3>
                 </SectionTitle>
+
                 <ResponsiveWrapper>
-                    <InputGroup className="checkbox-group">
-                        <label>
+                    <SwitchRow>
+                        <Switch>
                             <input
+                                id="require-password"
                                 type="checkbox"
                                 checked={examData.requirePassword}
                                 onChange={(e) => setExamData({ ...examData, requirePassword: e.target.checked })}
                             />
-                            Proteger com senha
-                        </label>
-                    </InputGroup>
+                            <span></span>
+                        </Switch>
+                        <Label>Proteger com senha</Label>
+                    </SwitchRow>
                 </ResponsiveWrapper>
 
                 {examData.requirePassword && (
@@ -85,16 +88,18 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
                 )}
 
                 <ResponsiveWrapper>
-                    <InputGroup className="checkbox-group">
-                        <label>
+                    <SwitchRow>
+                        <Switch>
                             <input
+                                id="is-public"
                                 type="checkbox"
                                 checked={examData.isPublic}
                                 onChange={(e) => setExamData({ ...examData, isPublic: e.target.checked })}
                             />
-                            Disponibilizar publicamente
-                        </label>
-                    </InputGroup>
+                            <span></span>
+                        </Switch>
+                        <Label>Disponibilizar publicamente</Label>
+                    </SwitchRow>
                 </ResponsiveWrapper>
 
                 {examData.isPublic && (

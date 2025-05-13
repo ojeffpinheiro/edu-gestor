@@ -154,7 +154,7 @@ const FilterBar: React.FC<FilterBarProps> = ({ onFilterChange }) => {
   // Estado inicial dos filtros
   const [filters, setFilters] = useState<FilterValues>({
     discipline: '',
-    difficulty: '', // Começamos sem filtro de dificuldade
+    difficulty: 'easy',
     type: '',
     status: '',
     dateStart: '',

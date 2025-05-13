@@ -2,18 +2,17 @@ import React from 'react';
 import { FiArrowLeft, FiCheck } from 'react-icons/fi';
 
 import { useExamCreator } from '../../../../hooks/useExamCreator';
-import { mockQuestions } from '../../../../mocks/question';
 
 import ProgressIndicator from '../../../../components/Exam/ExamCreator/ProgressIndicator';
 import ExamPreview from '../../../../components/Exam/ExamCreator/ExamPreview';
 import ExamSettingsForm from '../../../../components/Exam/ExamCreator/ExamSettingsForm';
 import QuestionSelectionStep from '../../../../components/Exam/ExamCreator/QuestionSelectionStep';
+import SecurityStep from '../../../../components/Exam/ExamCreator/SecurityStep';
 
 import {
   ExamGeneratorContainer,
   ButtonGroup,
 } from './styles';
-import SecurityStep from '../../../../components/Exam/ExamCreator/SecurityStep';
 
 const ExamGenerator = () => {
   // Usando o hook centralizado que criamos
@@ -29,7 +28,7 @@ const ExamGenerator = () => {
     handleTotalQuestionsChange,
     handleDifficultyChange,
     handleSubmitExam
-  } = useExamCreator(mockQuestions);
+  } = useExamCreator();
 
   return (
     <ExamGeneratorContainer>

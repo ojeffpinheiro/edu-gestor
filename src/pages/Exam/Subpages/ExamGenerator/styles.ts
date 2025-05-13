@@ -45,7 +45,6 @@ export const ButtonGroup = styled.div`
 export const ExamGeneratorContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: 100vh;
   max-width: 90vw;
   padding: var(--space-md);
   margin: 0 auto;

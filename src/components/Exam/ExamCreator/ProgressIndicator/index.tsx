@@ -10,7 +10,7 @@ interface ProgressIndicatorProps {
 const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep }) => {
   const steps = [
     { id: 1, icon: <FiSettings />, label: 'Configurações' },
-    { id: 2, icon: <FiList />, label: 'Seleção de Questões' },
+    { id: 2, icon: <FiList />, label: 'Questões' },
     { id: 3, icon: <FiLock />, label: 'Segurança' },
     { id: 4, icon: <FiEye />, label: 'Pré-visualização' }
   ];

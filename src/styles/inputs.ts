@@ -1,5 +1,7 @@
 import styled from "styled-components";
 import { BaseInput } from "./baseComponents";
+import { flexRow } from "./layoutUtils";
+import { slideIn } from "./animations";
 
 export const Input = styled(BaseInput)`
   font-size: var(--font-size-md);
@@ -160,4 +162,66 @@ export const CheckboxLabel = styled.span<{ checked: boolean }>`
   text-decoration: ${props => props.checked ? 'line-through' : 'none'};
   color: ${props => props.checked ? 'var(--color-text-secondary, #888)' : 'var(--color-text, #333)'};
   transition: all 0.2s ease-in-out;
+`;
+
+export const SwitchRow = styled.div`
+  ${flexRow}
+  margin-bottom: var(--space-md);
+  animation: ${slideIn} 0.3s ease-out;
+  
+  label {
+    margin-left: var(--space-sm);
+    color: var(--color-text);
+    cursor: pointer;
+    user-select: none;
+  }
+`;
+
+export const Switch = styled.label`
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 26px;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  span {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-border);
+    transition: .4s;
+    border-radius: 34px;
+    
+    &:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+  }
+  
+  input:checked + span {
+    background-color: var(--color-primary);
+    
+    &:before {
+      transform: translateX(26px);
+    }
+  }
+  
+  input:focus + span {
+    box-shadow: var(--shadow-focus);
+  }
 `;

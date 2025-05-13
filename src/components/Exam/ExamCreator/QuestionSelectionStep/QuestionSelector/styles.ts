@@ -239,6 +239,7 @@ export const ResponsiveWrapper = styled.div`
   gap: var(--space-md);
   margin-bottom: var(--space-md);
   flex-wrap: wrap;
+  flex-direction: column;
 
   & > * {
     flex: 1;

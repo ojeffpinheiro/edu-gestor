@@ -1,5 +1,5 @@
 // components/Exam/ExamCreator/QuestionSelector/index.tsx
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaEdit, FaEye, FaTimes } from 'react-icons/fa';
 import { FiRefreshCw, FiTrash2 } from 'react-icons/fi';
 import { DIFFICULTY_LABELS } from './types';
@@ -91,6 +91,14 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
       ...newFilters,
     }));
   };
+
+  useEffect(() => {
+    // Filtrar questões por disciplina
+    setFilters(prev => ({
+      ...prev,
+      discipline: examData.discipline
+    }));
+  }, [examData.discipline, setFilters])
 
   return (
     <Container>

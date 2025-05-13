@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Exam } from '../utils/types/Exam';
 import { DifficultyLevelType, Question } from '../utils/types/Question';
 
-export const useExamCreator = (initialQuestions: Question[] = []) => {
+export const useExamCreator = () => {
   // Inicializa os dados da prova com valores padrão
   const initializeExamData = (): Exam => {
     return {
@@ -57,9 +57,10 @@ export const useExamCreator = (initialQuestions: Question[] = []) => {
       withGradeSpace: false,
       shuffleAlternatives: false,
       shuffleQuestions: false,
+      headerStyle: 'simplified'
     };
   };
-  
+  const [editMode, setEditMode] = useState(true);
   const [previewMode, setPreviewMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -197,6 +198,8 @@ export const useExamCreator = (initialQuestions: Question[] = []) => {
     isReadyForPreview,
     isSaving,
     previewMode,
+    editMode,
+    toggleEditMode: () => setEditMode(prev => !prev),
     saveExam,
     printExam,
     togglePreviewMode,

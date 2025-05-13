@@ -93,6 +93,7 @@ export interface Exam {
     // Configurações visuais do cabeçalho
     schoolName: string;
     schoolSubtitle: string;
+    headerStyle: 'standard' | 'simplified' | 'custom';
     headerTitle: string;
     headerSubtitle: string;
     institutionLogo: File | null;
