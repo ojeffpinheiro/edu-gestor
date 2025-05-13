@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaClipboardList, FaChartBar, FaUsers, FaUserEdit, FaPlus, FaFilter } from 'react-icons/fa';
+import { FaClipboardList, FaChartBar, FaUsers, FaUserEdit, FaPlus, FaFilter, FaChair } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { Calendar } from 'react-big-calendar';
 import moment from 'moment';
@@ -80,6 +80,7 @@ const TeamPage: React.FC = () => {
   // Navegação
   const handleTeamManagement = () => navigate('/team-management');
   const handleDailyReport = () => navigate('daily-report');
+  const handleClassroomMapping = () => navigate('/classroom-mapping');
   const handleGradeTracking = () => showNotification('Funcionalidade em desenvolvimento', 'info');
   const handleBehaviorTracking = () => showNotification('Funcionalidade em desenvolvimento', 'info');
 
@@ -262,36 +263,43 @@ const TeamPage: React.FC = () => {
     setDrawnStudent(null);
 };
 
-  const quickCardsData = [
-    {
-      onClick: handleDailyReport,
-      color: "#15803d",
-      icon: <FaClipboardList size={28} />,
-      title: "Realizar Chamada",
-      description: "Registre a presença dos alunos em sala de aula",
-    },
-    {
-      onClick: handleGradeTracking,
-      color: "#1e40af",
-      icon: <FaChartBar size={28} />,
-      title: "Acompanhar Notas",
-      description: "Visualize e registre as avaliações dos alunos",
-    },
-    {
-      onClick: handleBehaviorTracking,
-      color: "#ea580c",
-      icon: <FaUsers size={28} />,
-      title: "Comportamento da Turma",
-      description: "Acompanhe e registre observações sobre a turma",
-    },
-    {
-      onClick: handleTeamManagement,
-      color: "#7e22ce",
-      icon: <FaUserEdit size={28} />,
-      title: "Gerenciar Alunos",
-      description: "Adicione, edite ou remova alunos da turma",
-    },
-  ];
+const quickCardsData = [
+  {
+    onClick: handleDailyReport,
+    color: "#15803d",
+    icon: <FaClipboardList size={28} />,
+    title: "Realizar Chamada",
+    description: "Registre a presença dos alunos em sala de aula",
+  },
+  {
+    onClick: handleGradeTracking,
+    color: "#1e40af",
+    icon: <FaChartBar size={28} />,
+    title: "Acompanhar Notas",
+    description: "Visualize e registre as avaliações dos alunos",
+  },
+  {
+    onClick: handleBehaviorTracking,
+    color: "#ea580c",
+    icon: <FaUsers size={28} />,
+    title: "Comportamento da Turma",
+    description: "Acompanhe e registre observações sobre a turma",
+  },
+  {
+    onClick: handleTeamManagement,
+    color: "#7e22ce",
+    icon: <FaUserEdit size={28} />,
+    title: "Gerenciar Alunos",
+    description: "Adicione, edite ou remova alunos da turma",
+  },
+  {
+    onClick: handleClassroomMapping,
+    color: "#0891b2",
+    icon: <FaChair size={28} />,
+    title: "Mapeamento de Sala",
+    description: "Organize e visualize os alunos no layout da sala",
+  },
+];
 
   // Event handlers
   return (

@@ -25,6 +25,7 @@ import UnitsManagement from '../pages/UnitsManagement';
 import Exams from '../pages/Exam';
 import CalendarView from '../components/Calendar/CalendarView';
 import ScheduleView from '../components/Calendar/ScheduleView';
+import ClassroomLayoutPage from '../pages/Team/ClassroomLayoutPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -51,6 +52,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/questions" element={<QuestionsManagementPage />} />
           <Route path="/results" element={<ResultsViewer />} />
           <Route path="/team-management" element={<TeamManagement />} />
+          <Route path="/classroom-mapping" element={<ClassroomLayoutPage />} />
           <Route path="/team" element={<TeamPage />} />
           <Route path="/team/daily-report" element={<DailyReport />} />
           <Route path="/test" element={<TestPage />} />
