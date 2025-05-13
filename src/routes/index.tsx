@@ -26,6 +26,7 @@ import Exams from '../pages/Exam';
 import CalendarView from '../components/Calendar/CalendarView';
 import ScheduleView from '../components/Calendar/ScheduleView';
 import ClassroomLayoutPage from '../pages/Team/ClassroomLayoutPage';
+import DashboardPlanning from '../pages/Planning/DashboardPlanning';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -48,6 +49,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/exams" element={<ExamManager />} />
           <Route path='/exam' element={<Exams />} />
           <Route path="/planning" element={<PlanningDashboard />} />
+          <Route path="/planning-new" element={<DashboardPlanning />} />
           <Route path='/plannig-page' element={<PlanningPage />} />
           <Route path="/questions" element={<QuestionsManagementPage />} />
           <Route path="/results" element={<ResultsViewer />} />
