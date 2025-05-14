@@ -71,21 +71,6 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
 
         <ResponsiveWrapper>
           <InputGroup>
-            <label htmlFor="headerStyle">Tipo de Cabeçalho</label>
-            <select
-              id="headerStyle"
-              value={examData.headerStyle}
-              onChange={(e) => handleInputChange('headerStyle', e.target.value)}
-              required
-            >
-              <option value="">Selecione uma tipo</option>
-              <option value="standard">Simplificado</option>
-              <option value="simplified">Padrão</option>
-              <option value="custom">Personalizado</option>
-            </select>
-          </InputGroup>
-
-          <InputGroup>
             <label htmlFor="teacher-name">Nome do Professor</label>
             <input
               id="teacher-name"
@@ -97,61 +82,8 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
           </InputGroup>
         </ResponsiveWrapper>
 
-        {examData.headerStyle === 'custom' && (
-          <InputGroup>
-            <label htmlFor="school-logo">Logotipo da Escola (Recomendado: 300x100px)</label>
-            <input
-              id="school-logo"
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                if (e.target.files && e.target.files[0]) {
-                  handleInputChange('institutionLogo', e.target.files[0]);
-                }
-              }}
-            />
-          </InputGroup>
-        )}
-
-        <ResponsiveWrapper>
-          <InputGroup>
-            <label htmlFor="school-name">Nome da Escola</label>
-            <input
-              id="school-name"
-              type="text"
-              value={examData.schoolName}
-              onChange={(e) => handleInputChange('schoolName', e.target.value)}
-              placeholder="Nome da instituição"
-            />
-          </InputGroup>
-
-          <InputGroup>
-            <label htmlFor="school-subtitle">Informação Adicional</label>
-            <input
-              id="school-subtitle"
-              type="text"
-              value={examData.schoolSubtitle}
-              onChange={(e) => handleInputChange('schoolSubtitle', e.target.value)}
-              placeholder="Ex: Ensino Médio"
-            />
-          </InputGroup>
-        </ResponsiveWrapper>
-
         <ResponsiveWrapper>
           <SwitchRow>
-            <Switch>
-              <input
-                id="with-grade-space"
-                type="checkbox"
-                checked={examData.withGradeSpace}
-                onChange={(e) => handleInputChange('withGradeSpace', e.target.checked)}
-              />
-              <span></span>
-            </Switch>
-            <Label>Incluir espaço para nota</Label>
-          </SwitchRow>
-          <SwitchRow>
-
             <Switch>
               <input
                 id="show-answerGrid"
@@ -210,17 +142,6 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
         </InputGroup>
 
         <ResponsiveWrapper>
-          <InputGroup>
-            <label htmlFor="exam-date">Data de Aplicação</label>
-            <input
-              id="exam-date"
-              type="date"
-              value={examData.applicationDate.toISOString().split('T')[0]}
-              onChange={(e) => handleInputChange('applicationDate', new Date(e.target.value))}
-              required
-            />
-          </InputGroup>
-
           <InputGroup>
             <label htmlFor="exam-questions">Total de Questões</label>
             <input

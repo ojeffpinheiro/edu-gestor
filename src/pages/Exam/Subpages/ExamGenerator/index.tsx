@@ -1,5 +1,4 @@
 import React from 'react';
-import { FiArrowLeft, FiCheck } from 'react-icons/fi';
 
 import { useExamCreator } from '../../../../hooks/useExamCreator';
 
@@ -8,10 +7,10 @@ import ExamPreview from '../../../../components/Exam/ExamCreator/ExamPreview';
 import ExamSettingsForm from '../../../../components/Exam/ExamCreator/ExamSettingsForm';
 import QuestionSelectionStep from '../../../../components/Exam/ExamCreator/QuestionSelectionStep';
 import SecurityStep from '../../../../components/Exam/ExamCreator/SecurityStep';
+import HeaderSection from '../../../../components/Exam/ExamCreator/HeaderSection';
 
 import {
   ExamGeneratorContainer,
-  ButtonGroup,
 } from './styles';
 
 const ExamGenerator = () => {
@@ -37,6 +36,7 @@ const ExamGenerator = () => {
 
       <ProgressIndicator currentStep={currentStep} />
 
+      {/**CONFIGURAÇÕES */}
       {currentStep === 1 && (
         <ExamSettingsForm
           examData={examData}
@@ -47,45 +47,43 @@ const ExamGenerator = () => {
         />
       )}
 
-      {currentStep === 2 &&
+      {/* CABEÇALHO */}
+      {currentStep === 2 && 
+        <HeaderSection 
+          examData={examData} 
+          onDataChange={setExamData}
+          onBack={() => navigateToStep(1)}
+          onNext={() => navigateToStep(3)} />}
+
+      {/* SELEÇÃO DE PREGUNTAS */}
+      {currentStep === 3 &&
         <QuestionSelectionStep
           examData={examData}
           selectedQuestions={selectedQuestions}
           onQuestionsSelected={setSelectedQuestions}
           onDifficultyChange={handleDifficultyChange}
           onTotalQuestionsChange={handleTotalQuestionsChange}
-          onBack={() => navigateToStep(1)}
-          onNext={() => navigateToStep(3)}
+          onBack={() => navigateToStep(2)}
+          onNext={() => navigateToStep(4)}
           isReadyForPreview={isReadyForPreview} />
       }
 
-      {currentStep === 3 && 
+      {/* SEGURANÇA */}
+      {currentStep === 4 && 
       <SecurityStep 
         examData={examData} 
         setExamData={setExamData} 
-        onBack={() => navigateToStep(2)}
-        onNext={() => navigateToStep(4)}/>}
+        onBack={() => navigateToStep(3)}
+        onNext={() => navigateToStep(5)}/>}
 
-      {currentStep === 4 && (
+      {/* PRE-VISUALIZAÇÃO */}
+      {currentStep === 5 && (
         <>
           <ExamPreview
             examData={examData}
-            onBack={() => navigateToStep(3)}
+            onBack={() => navigateToStep(4)}
             onComplete={handleSubmitExam}
           />
-
-          <ButtonGroup>
-            <button type="button" onClick={() => navigateToStep(3)} className="secondary">
-              <FiArrowLeft /> Voltar
-            </button>
-            <button
-              type="button"
-              onClick={handleSubmitExam}
-              className="primary"
-            >
-              <FiCheck /> Finalizar
-            </button>
-          </ButtonGroup>
         </>
       )}
     </ExamGeneratorContainer>

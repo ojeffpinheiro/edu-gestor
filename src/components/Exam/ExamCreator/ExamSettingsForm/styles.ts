@@ -103,6 +103,23 @@ export const InputGroup = styled.div`
     resize: vertical;
     min-height: 80px;
   }
+
+  button {
+
+  }
+
+  .instructions-list{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .instruction-item {
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+
+  }
 `;
 
 export const ResponsiveWrapper = styled.div`
