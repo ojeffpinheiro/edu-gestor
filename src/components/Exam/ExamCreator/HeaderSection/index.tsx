@@ -4,7 +4,8 @@ import {
   SectionTitle,
   FormSection,
   InputGroup,
-  ResponsiveWrapper
+  ResponsiveWrapper,
+  SchoolInfoItem
 } from '../ExamSettingsForm/styles';
 import { Exam } from '../../../../utils/types/Exam';
 import { Label, Switch, SwitchRow } from '../../../../styles/inputs';
@@ -74,6 +75,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ examData, onDataChange, o
 
       {examData.headerStyle === 'standard' && (
         <>
+          {/* Logo Upload */}
           <ResponsiveWrapper>
             <InputGroup>
               <div className="file-upload">
@@ -100,6 +102,69 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ examData, onDataChange, o
               </div>
             </InputGroup>
           </ResponsiveWrapper>
+
+          {/* Seção de informações da escola com controle dinâmico */}
+          <InputGroup>
+            <label>Informações da Escola</label>
+            <div className="school-info-fields">
+              {(examData.schoolInfos?.length ? examData.schoolInfos : [
+                'ESTADO DO RIO GRANDE DO SUL',
+                '2ª COORDENADORIA',
+                'EEEM 9 DE OUTUBRO'
+              ]).map((info, index) => (
+                <SchoolInfoItem key={index}>
+                  <input
+                    type="text"
+                    value={info}
+                    onChange={(e) => {
+                      const newInfos = [...(examData.schoolInfos || [
+                        'ESTADO DO RIO GRANDE DO SUL',
+                        '2ª COORDENADORIA',
+                        'EEEM 9 DE OUTUBRO'
+                      ])];
+                      newInfos[index] = e.target.value;
+                      handleInputChange('schoolInfos', newInfos);
+                    }}
+                    placeholder={`Informação da linha ${index + 1}`}
+                    className="school-info-input"
+                  />
+                  <button
+                    type="button"
+                    className="remove-btn"
+                    onClick={() => {
+                      const newInfos = [...(examData.schoolInfos || [
+                        'ESTADO DO RIO GRANDE DO SUL',
+                        '2ª COORDENADORIA',
+                        'EEEM 9 DE OUTUBRO'
+                      ])];
+                      newInfos.splice(index, 1);
+                      handleInputChange('schoolInfos', newInfos.length ? newInfos : undefined);
+                    }}
+                  >
+                    <FaTimes />
+                  </button>
+                </SchoolInfoItem>
+              ))}
+              <button
+                type="button"
+                className="add-btn"
+                onClick={() => {
+                  handleInputChange('schoolInfos', [
+                    ...(examData.schoolInfos || [
+                      'ESTADO DO RIO GRANDE DO SUL',
+                      '2ª COORDENADORIA',
+                      'EEEM 9 DE OUTUBRO'
+                    ]),
+                    ''
+                  ]);
+                }}
+              >
+                + Adicionar Linha
+              </button>
+            </div>
+          </InputGroup>
+
+          {/* Restante do formulário mantido igual */}
           <ResponsiveWrapper>
             <InputGroup>
               <label htmlFor="school-name">Nome da Instituição</label>
@@ -108,18 +173,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ examData, onDataChange, o
                 type="text"
                 value={examData.schoolName}
                 onChange={(e) => handleInputChange('schoolName', e.target.value)}
-                placeholder="Ex: ESCOLA ESTADUAL DE ENSINO MÉDIO"
-              />
-            </InputGroup>
-
-            <InputGroup>
-              <label htmlFor="school-subtitle">Informação Adicional da Instituição</label>
-              <input
-                id="school-subtitle"
-                type="text"
-                value={examData.schoolSubtitle}
-                onChange={(e) => handleInputChange('schoolSubtitle', e.target.value)}
-                placeholder="Ex: Secretaria da Educação - 2ª CRE"
+                placeholder="Nome oficial registrado no sistema"
               />
             </InputGroup>
           </ResponsiveWrapper>

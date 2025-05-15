@@ -56,25 +56,6 @@ export  const ExamContainer = styled.div`
     width: 100%;
   `;
   
-export  const ExamHeader = styled.div`
-    text-align: center;
-    margin-bottom: 30px;
-    border-bottom: 1px solid ${colors.border};
-    padding-bottom: 20px;
-  `;
-  
-export  const ExamTitle = styled.h1`
-    font-size: 24px;
-    margin-bottom: 10px;
-    color: ${colors.text};
-  `;
-  
-export  const ExamSubtitle = styled.div`
-    font-size: 16px;
-    color: ${colors.textLight};
-    margin-bottom: 5px;
-  `;
-  
 export  const ExamContent = styled.div`
     font-size: 16px;
     line-height: 1.6;
@@ -136,12 +117,6 @@ export  const ActionButton = styled.button<ActionButtonProps>`
       opacity: 0.5;
       cursor: not-allowed;
     }
-  `;
-  
-export  const QuestionNumber = styled.div`
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: ${colors.text};
   `;
   
 export  const QuestionText = styled.div`
@@ -209,37 +184,6 @@ export  const ToggleButton = styled.button<{ active?: boolean }>`
       background-color: ${props => props.active ? colors.primaryHover : '#f1f3f5'};
     }
   `;
-
-  export const ExamHeaderInstitution = styled.div`
-  text-align: center;
-  margin-bottom: 20px;
-  line-height: 1.5;
-`;
-
-export const ExamHeaderInfo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-  gap: 10px;
-  
-  & > div {
-    min-width: 30%;
-  }
-`;
-
-export const ExamInstructions = styled.div`
-  margin: 25px 0;
-  padding: 15px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  font-size: 14px;
-`;
-
-export const ExamInstructionsItem = styled.div`
-  margin-bottom: 8px;
-  line-height: 1.4;
-`;
 
 export const ExamQuestionNumber = styled.div`
   font-weight: bold;

@@ -9,64 +9,6 @@ const PreviewContainer = styled.div`
   font-family: Arial, sans-serif;
 `;
 
-const HeaderContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-`;
-
-const LogoContainer = styled.div`
-  width: 80px;
-  height: 80px;
-  background-color: red;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-
-  img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-  }
-`;
-
-const SchoolInfo = styled.div`
-  flex: 1;
-  margin: 0 20px;
-  text-align: center;
-  line-height: 1.4;
-`;
-
-const SchoolLine = styled.div`
-  font-weight: bold;
-  font-size: 16px;
-  text-transform: uppercase;
-`;
-
-const GradeContainer = styled.div`
-  border: 3px solid #000;
-  width: 7rem;
-  height: 5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
-const GradeLabel = styled.div`
-  font-weight: bold;
-  margin-bottom: 5px;
-  padding: 5px;
-`;
-
-const GradeInput = styled.div`
-  width: 80px;
-  height: 30px;
-  padding: 5px;
-`;
-
 /* Sistema de Grid Principal */
 const HeaderGrid = styled.div`
   display: grid;
@@ -118,7 +60,7 @@ const Row1 = styled.div`
 const Row2 = styled.div<{ hasStudentId: boolean }>`
   grid-area: row2;
   display: grid;
-  grid-template-columns: ${props => props.hasStudentId ? '1fr .2fr 1fr' : '1fr 1fr'};
+  grid-template-columns: ${props => props.hasStudentId ? '1fr .3fr 1fr' : '1fr 1fr'};
   gap: 20px;
 `;
 
@@ -234,6 +176,73 @@ const InstructionsTitle = styled.h3`
   margin-bottom: 10px;
 `;
 
+const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  width: 100%;
+`;
+
+const LogoContainer = styled.div`
+  width: 80px;
+  height: 80px;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  flex-shrink: 0;
+
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+`;
+
+const SchoolInfo = styled.div`
+  text-align: center;
+  flex-grow: 1;
+`;
+
+const SchoolLine = styled.div`
+  font-weight: bold;
+  font-size: 16px;
+  text-transform: uppercase;
+  line-height: 1.3;
+`;
+
+const GradeContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 20px;
+`;
+
+const GradeBox = styled.div`
+  border: 3px solid #000;
+  width: 7rem;
+  height: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 5px;
+`;
+
+
+const GradeLabel = styled.div`
+  font-weight: bold;
+  margin-bottom: 5px;
+  height: .75rem;
+`;
+
+const GradeInput = styled.div`
+  border-bottom: 3px solid #000;
+  width: 7rem;
+  height: 20px;
+`;
+
 interface HeaderPreviewProps {
   examData: Exam;
 }
@@ -241,14 +250,17 @@ interface HeaderPreviewProps {
 const HeaderPreview: React.FC<HeaderPreviewProps> = ({ examData }) => {
   const {
     schoolName,
-    schoolSubtitle,
-    headerTitle,
-    headerSubtitle,
+    showStudentName,
     institutionLogo,
     withGradeSpace,
-    showStudentName,
     showStudentId,
-    instructions
+    instructions,
+    showDate,
+    schoolInfos = [
+      'ESTADO DO RIO GRANDE DO SUL',
+      'SECRETARIA DA EDUCAÇÃO – 2ª CRE',
+      schoolName || 'NOME DA ESCOLA'
+    ]
   } = examData;
 
   const logoUrl = institutionLogo instanceof File
@@ -263,15 +275,17 @@ const HeaderPreview: React.FC<HeaderPreviewProps> = ({ examData }) => {
         </LogoContainer>
 
         <SchoolInfo>
-          <SchoolLine>ESTADO DO RIO GRANDE DO SUL</SchoolLine>
-          <SchoolLine>SECRETARIA DA EDUCAÇÃO – 2ª CRE</SchoolLine>
-          <SchoolLine>{schoolName}</SchoolLine>
+          {schoolInfos.map((line, index) => (
+            <SchoolLine key={index}>{line}</SchoolLine>
+          ))}
         </SchoolInfo>
 
         {withGradeSpace && (
           <GradeContainer>
-            <GradeLabel>NOTA:</GradeLabel>
-            <GradeInput />
+            <GradeBox>
+              <GradeLabel>NOTA:</GradeLabel>
+              <GradeInput />
+            </GradeBox>
           </GradeContainer>
         )}
       </HeaderContainer>
@@ -295,10 +309,12 @@ const HeaderPreview: React.FC<HeaderPreviewProps> = ({ examData }) => {
 
       {/* Linha 4: Nome + Nº + Turma */}
       <Row2 hasStudentId={showStudentId}>
-        <FieldContainer>
-          <BoldLabel>NOME:</BoldLabel>
-          <LongField hasValue={false} />
+        {showStudentName && (
+          <FieldContainer>
+            <BoldLabel>NOME:</BoldLabel>
+            <LongField hasValue={showStudentName} />
         </FieldContainer>
+        )}
 
         {showStudentId && (
           <FieldContainer>
@@ -315,10 +331,10 @@ const HeaderPreview: React.FC<HeaderPreviewProps> = ({ examData }) => {
 
       {/* Linha 5: Data + Trimestre */}
       <Row3>
-        <FieldContainer>
+        {showDate && <FieldContainer>
           <BoldLabel>DATA:</BoldLabel>
           <UnderlineField style={{ minWidth: '100px' }} hasValue={false} />
-        </FieldContainer>
+        </FieldContainer> }
 
         <FieldContainer>
           <BoldLabel>TRIMESTRE:</BoldLabel>
@@ -333,10 +349,9 @@ const HeaderPreview: React.FC<HeaderPreviewProps> = ({ examData }) => {
         </FieldContainer>
       </Row3>
 
-      {/* Título da Avaliação */}
       <TitleArea>
-        <ExamTitle>{headerTitle || 'TÍTULO DA AVALIAÇÃO'}</ExamTitle>
-        {headerSubtitle && <ExamSubtitle>{headerSubtitle}</ExamSubtitle>}
+        <ExamTitle>{examData.title}</ExamTitle>
+        {examData.headerSubtitle && <ExamSubtitle>{examData.headerSubtitle}</ExamSubtitle>}
       </TitleArea>
 
       {/* Instruções */}
