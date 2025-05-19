@@ -1,6 +1,6 @@
 // utils/examHelpers.ts
 import { v4 as uuidv4 } from 'uuid';
-import { Exam, ExamTypes } from '../types/Exam';
+import { Exam, ExamTypes } from './types/Exam';
 
 /**
  * Inicializa os dados do exame com valores padrão
@@ -10,7 +10,7 @@ export const initializeExamData = (): Exam => {
   const today = new Date();
   return {
     id: 0,
-    uuid: uuidv4(), // ID único para cada exame
+    uuid: uuidv4(),
     title: '',
     description: '',
     discipline: '',
@@ -18,7 +18,7 @@ export const initializeExamData = (): Exam => {
     totalQuestions: 6,
     questions: [],
     selectionMode: 'manual',
-    accessCode: '',
+    accessCode: generateAccessCode(6),
     applicationDate: today,
     classIds: [],
     createdAt: today,
@@ -46,7 +46,8 @@ export const initializeExamData = (): Exam => {
     headerSubtitle: '',
     headerTitle: '',
     schoolName: 'ESCOLA ESTADUAL',
-    schoolSubtitle: 'Ensino Médio',
+    headerStyle: 'standard',
+    schoolInfos: ['ESTADO DO RIO GRANDE DO SUL', 'SECRETARIA DA EDUCAÇÃO - 2ª CRE'],
     institutionLogo: null,
     showAnswerGrid: true,
     showDate: true,
@@ -56,6 +57,7 @@ export const initializeExamData = (): Exam => {
     withGradeSpace: true,
     shuffleQuestions: false,
     shuffleAlternatives: false,
+    customHeaderImage: null
   };
 };
 
@@ -91,25 +93,6 @@ export const generateAccessCode = (length: number = 6): string => {
   }
   
   return result;
-};
-
-/**
- * Calcula o tempo estimado para realização do exame
- * @param questions Array de questões
- * @returns Tempo estimado em minutos
- */
-export const calculateEstimatedTime = (exam: Exam): number => {
-  // Tempo base por questão (em minutos)
-  const baseTimePerQuestion = {
-    easy: 3,
-    medium: 5,
-    hard: 8
-  };
-  
-  // Soma o tempo estimado baseado na dificuldade de cada questão
-  return exam.questions.reduce((total, question) => {
-    return total + (baseTimePerQuestion[question.difficultyLevel] || 5);
-  }, 0);
 };
 
 /**

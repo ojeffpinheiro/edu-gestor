@@ -45,10 +45,6 @@ export const ExamForm = styled.form`
   }
 `;
 
-export const FormSection = styled.div`
-  margin-bottom: 2rem;
-`;
-
 export const SectionTitle = styled.div`
   display: flex;
   align-items: center;
@@ -147,3 +143,167 @@ flex-direction: row;
 gap: 2rem;
 `
 
+export const FormContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+export const FormSection = styled.section`
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+
+  h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 1rem;
+  }
+`;
+
+export const FormGroup = styled.div`
+  margin-bottom: 1.5rem;
+  width: 100%;
+`;
+
+export const FormRow = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0;
+  }
+`;
+
+export const Label = styled.label`
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+`;
+
+export const TextArea = styled.textarea`
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  resize: vertical;
+  
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+`;
+
+export const Select = styled.select`
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #ddd;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  background-color: white;
+  
+  &:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  }
+`;
+
+export const RadioGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+export const RadioOption = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 1rem;
+  border: 1px solid #eaeaea;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: #f9f9f9;
+  }
+  
+  input[type="radio"] {
+    margin-top: 0.3rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    
+    &:checked + label {
+      color: #4a90e2;
+    }
+  }
+  
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    cursor: pointer;
+    width: 100%;
+    
+    strong {
+      font-weight: 500;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+`;
+
+export const ActionButtons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 2rem;
+`;
+
+export const NextButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.5rem;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  &:hover {
+    background-color: #3a7bc8;
+  }
+  
+  &:disabled {
+    background-color: #c5c5c5;
+    cursor: not-allowed;
+  }
+`;

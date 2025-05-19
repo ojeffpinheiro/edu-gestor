@@ -1,217 +1,290 @@
-// hooks/useExamCreator.ts
-import { useState, useEffect, useCallback } from 'react';
-import { Exam } from '../utils/types/Exam';
-import { DifficultyLevelType, Question } from '../utils/types/Question';
+// hooks/useExamCreator.ts corrigido
+import { useState, useCallback, useMemo, useEffect } from 'react';
+import { Exam, ExamTypes } from '../utils/types/Exam';
+import { Question, DifficultyLevelType } from '../utils/types/Question';
+import { generateAccessCode } from '../utils/examHelpers';
 
 export const useExamCreator = () => {
-  // Inicializa os dados da prova com valores padrão
-  const initializeExamData = (): Exam => {
-    return {
-      id: 0,
-      title: '',
-      description: '',
-      discipline: '',
-      topicId: '',
-      totalQuestions: 6,
-      questions: [],
-      selectionMode: 'manual',
-      accessCode: '',
-      applicationDate: new Date(),
-      classIds: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      createdBy: '',
-      updatedBy: '',
-      grade: 0,
-      isPublic: false,
-      password: '',
-      requirePassword: false,
-      status: '',
-      totalPoints: 10,
-      useBarCode: false,
-      variants: [],
-      correctionType: 'automatic',
-      identificationMethod: 'barcode',
-      questionDistribution: [
-        { difficulty: 'easy', count: 0, selected: 0 },
-        { difficulty: 'medium', count: 0, selected: 0 },
-        { difficulty: 'hard', count: 0, selected: 0 }
-      ],
-      instructions: [
-      'A avaliação é individual',
-      'Leia os enunciados com atenção',
-      'Não é permitido o uso de aparelhos eletrônicos',
+  const inittialExamData: Exam = {
+    id: 0,
+    title: 'Exame 1',
+    description: 'Descrição padrão',
+    discipline: '',
+    topicId: '',
+    documentType: ExamTypes.Exam,
+    totalQuestions: 6,
+    totalPoints: 10,
+    questions: [],
+    questionDistribution: [
+      { difficulty: 'easy', count: 4, selected: 0 },
+      { difficulty: 'medium', count: 4, selected: 0 },
+      { difficulty: 'hard', count: 2, selected: 0 },
     ],
-      questionLayout: 'grid',
-      documentType: 'exam',
-      headerSubtitle: '',
-      headerTitle: '',
-      schoolName: 'ESCOLA ESTADUAL',
-      schoolSubtitle: 'Ensino Médio',
-      institutionLogo: null,
-      showAnswerGrid: false,
-      showDate: false,
-      showGrade: false,
-      showStudentId: false,
-      showStudentName: true,
-      withGradeSpace: false,
-      shuffleAlternatives: false,
-      shuffleQuestions: false,
-      headerStyle: 'simplified'
-    };
-  };
-  const [editMode, setEditMode] = useState(true);
-  const [previewMode, setPreviewMode] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [currentStep, setCurrentStep] = useState(1);
-  const [examData, setExamData] = useState<Exam>(initializeExamData());
+    selectionMode: 'manual',
+    instructions: [
+      'A avaliação é individual;',
+      'Faça com tranquilidade e empenho para ter um bom resultado;',
+      'Leia os enunciados com atenção, a interpretação faz parte da avaliação;',
+      'É permitido o uso de calculadora (não é válido em formato digital);',
+      'Não é permitido nenhum outro tipo de consulta externa (cola), celulares ou qualquer aparelho eletrônico;',
+      'Preencha o cabeçalho de forma correta. Letra ilegível ou informações faltantes impedem a correção.',
+      'Marque apenas uma das opções que lhe são apresentadas em cada questão.',
+      'Marque suas respostas na grade de respostas utilizando apenas caneta esferográfica azul ou preta conforme o exemplo.',
+      'Somente será considerado como marcação válida na grade de respostas a questão que apresentar apenas uma marcação conforme o exemplo.',
+      'Se a questão não apresentar resolução completa e devidamente identificada, será considerada como errada, mesmo que a resposta assinalada corretamente no cartão resposta.',
+      'Não é permitido rasurar ou alterar a marcação feita na grade de respostas.',
+      'Para efeito de correção, serão consideradas 10 questões, então, se preferir, escolha 2 questões para não responder ou anular.'
+    ],
+    questionLayout: 'list',
+    shuffleQuestions: false,
+    shuffleAlternatives: false,
+    schoolName: 'ESCOLA ESTADUAL DE ENSINO MÉDIO 9 DE OUTUBRO',
+    headerStyle: 'standard',
+    headerTitle: '',
+    headerSubtitle: '',
+    institutionLogo: null,
+    showAnswerGrid: true,
+    showStudentName: true,
+    showStudentId: true,
+    showDate: true,
+    showGrade: true,
+    withGradeSpace: true,
+    isPublic: false,
+    requirePassword: false,
+    password: '',
+    accessCode: generateAccessCode(6),
+    useBarCode: false,
+    correctionType: 'manual',
+    identificationMethod: 'manual',
+    applicationDate: new Date(),
+    classIds: [],
+    grade: 0,
+    variants: [],
+    status: 'draft',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    createdBy: 'João Leivas',
+    updatedBy: '',
+    customHeaderImage: '',
+    preventCopying: false,
+    schoolInfos: ['ESTADO DO RIO GRANDE DO SUL', 'SECRETARIA DA EDUCAÇÃO – 2ª CRE'],
+  }
+  // Step atual do processo de criação
+  const [currentStep, setCurrentStep] = useState<number>(1);
+
+  // Dados do exame sendo criado
+  const [examData, setExamData] = useState<Exam>(inittialExamData);
+
+  // Questões selecionadas
   const [selectedQuestions, setSelectedQuestions] = useState<Question[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
 
-  // Atualiza a distribuição de questões quando o total muda
+  const questions = examData.questions;
+
+   // Validações
+   // Verificar se o formulário tem dados mínimos válidos
+   const isFormValid = useMemo(() => (
+    examData.title.trim() !== '' &&
+    examData.discipline.trim() !== '' &&
+    examData.totalQuestions > 0
+  ), [examData.title, examData.discipline, examData.totalQuestions]);
+
+  const isDistributionValid = useMemo(() => {
+    const totalFromDistribution = examData.questionDistribution.reduce(
+      (sum, dist) => sum + dist.count, 0
+    );
+    return totalFromDistribution === examData.totalQuestions;
+  }, [examData.questionDistribution, examData.totalQuestions]);
+
+  // Verificar se já pode pré-visualizar o exame
+  const isReadyForPreview = useMemo(() => (
+    selectedQuestions.length === examData.totalQuestions &&
+    (examData.selectionMode === 'manual' || isDistributionValid)
+  ), [selectedQuestions.length, examData.totalQuestions, examData.selectionMode, isDistributionValid]);
+
+  // Filtra questões baseado na disciplina selecionada
+  const filteredQuestions = useMemo(() => {
+    return examData.discipline 
+      ? examData.questions.filter(q => q.discipline === examData.discipline)
+      : examData.questions;
+  }, [examData.discipline, examData.questions]);
+
+  // Atualiza a distribuição de dificuldade quando as questões selecionadas mudam
   useEffect(() => {
-    if (examData.totalQuestions > 0) {
-      const easyCount = Math.round(examData.totalQuestions * 0.4);
-      const mediumCount = Math.round(examData.totalQuestions * 0.4);
-      const hardCount = examData.totalQuestions - easyCount - mediumCount;
-
-      setExamData(prev => ({
-        ...prev,
-        questionDistribution: [
-          { difficulty: 'easy', count: easyCount, selected: 0 },
-          { difficulty: 'medium', count: mediumCount, selected: 0 },
-          { difficulty: 'hard', count: hardCount, selected: 0 }
-        ]
-      }));
-    }
-  }, [examData.totalQuestions]);
-
-  // Atualiza as contagens de questões selecionadas por dificuldade
-  useEffect(() => {
-    const difficultyCounts = selectedQuestions.reduce((acc, question) => {
-      acc[question.difficultyLevel] = (acc[question.difficultyLevel] || 0) + 1;
-      return acc;
-    }, { easy: 0, medium: 0, hard: 0 } as Record<DifficultyLevelType, number>);
-
+    const updatedDistribution = examData.questionDistribution.map(dist => ({
+      ...dist,
+      selected: selectedQuestions.filter(q => q.difficultyLevel === dist.difficulty).length
+    }));
+    
     setExamData(prev => ({
       ...prev,
-      questions: selectedQuestions,
-      questionDistribution: prev.questionDistribution.map(dist => ({
-        ...dist,
-        selected: difficultyCounts[dist.difficulty as DifficultyLevelType] || 0
-      }))
+      questionDistribution: updatedDistribution,
+      questions: selectedQuestions
     }));
   }, [selectedQuestions]);
 
-  // Funções de gerenciamento de seleção de questões
-  const toggleSelectAll = useCallback((questions: Question[]) => {
-    if (selectAll) {
-      setSelectedQuestions([]);
-    } else {
-      setSelectedQuestions([...questions]);
-    }
-    setSelectAll(!selectAll);
-  }, [selectAll]);
-
-  const toggleQuestionSelection = useCallback((question: Question) => {
-    setSelectedQuestions(prev => {
-      const isSelected = prev.some(q => q.id === question.id);
-      if (isSelected) {
-        return prev.filter(q => q.id !== question.id);
-      }
-      return [...prev, question];
-    });
-    setSelectAll(false);
+  // Funções de manipulação do exame
+  const updateExamConfig = useCallback((newConfig: Partial<Exam>) => {
+    setExamData(prev => ({ ...prev, ...newConfig }));
   }, []);
 
-  const clearSelection = useCallback(() => {
-    setSelectedQuestions([]);
-    setSelectAll(false);
-  }, []);
-
-  const handleTotalQuestionsChange = useCallback((value: number): void => {
-    const parsedValue = parseInt(value.toString()) || 0;
-    setExamData(prev => ({ ...prev, totalQuestions: parsedValue }));
-  }, []);
-
-  const handleDifficultyChange = useCallback((difficulty: DifficultyLevelType, value: number) => {
-    const newDistribution = examData.questionDistribution.map(dist =>
-      dist.difficulty === difficulty ? { ...dist, count: value } : dist
-    );
-
-    setExamData(prev => ({
-      ...prev,
-      questionDistribution: newDistribution
-    }));
-  }, [examData.questionDistribution]);
-
+  // Navegação
+  // Função para navegar entre os passos
   const navigateToStep = useCallback((step: number) => {
-    setCurrentStep(Math.max(1, Math.min(step, 5)));
-  }, []);
+    // Validação para evitar passos inválidos
+    if (step < 1 || step > 5) return;
 
-  const togglePreviewMode = () => {
-    setPreviewMode(!previewMode);
-  };
-
-  const saveExam = async () => {
-    setIsSaving(true);
-    try {
-      // Simula uma requisição de salvamento
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('Prova salva:', { ...examData, questions: selectedQuestions });
-      // Aqui você pode adicionar a lógica real de salvamento
-    } catch (error) {
-      console.error('Erro ao salvar prova:', error);
-    } finally {
-      setIsSaving(false);
+    // Validação específica para certos passos
+    if (step === 4 && !isFormValid) {
+      alert('Preencha todos os campos obrigatórios antes de continuar.');
+      return;
     }
-  };
+    setCurrentStep(step);
+  }, [isFormValid]);
 
-  const printExam = () => {
-    // Esta função será chamada quando o usuário clicar em "Imprimir"
-    if (typeof window !== 'undefined') {
-      window.print();
-    }
-  };
-
-  const isFormValid = Boolean(examData.title) && Boolean(examData.discipline);
-  const isReadyForPreview = selectedQuestions.length === examData.totalQuestions;
-
-  const handleSubmitExam = useCallback(() => {
-    // Aqui você implementaria a lógica para enviar a prova para o backend
-    alert('Prova criada com sucesso!');
-  }, []);
-
-  const updateExamData = useCallback((newData: Partial<Exam>) => {
+  // Função para alterar o total de questões
+  const handleTotalQuestionsChange = useCallback((value: number) => {
+    // Não permitir valor menor que 1
+    if (value < 1) value = 1;
+    
     setExamData(prev => ({
       ...prev,
-      ...newData
+      totalQuestions: value
     }));
   }, []);
+
+  // Função para alterar a distribuição de dificuldade
+  const handleDifficultyChange = useCallback((difficulty: DifficultyLevelType, value: number) => {
+    // Não permitir valor negativo
+    if (value < 0) value = 0;
+    
+    setExamData(prev => {
+      const updatedDistribution = prev.questionDistribution.map(dist => {
+        if (dist.difficulty === difficulty) {
+          return { ...dist, count: value };
+        }
+        return dist;
+      });
+      
+      return {
+        ...prev,
+        questionDistribution: updatedDistribution
+      };
+    });
+  }, []);
+
+  // Função para regenerar o código de acesso
+  const regenerateAccessCode = useCallback(() => {
+    const newCode = generateAccessCode();
+    setExamData(prev => ({
+      ...prev,
+      accessCode: newCode
+    }));
+    return newCode;
+  }, []);
+
+  // Função para validar o código de acesso
+  const validateAccessCode = useCallback((code: string) => {
+    // Códigos devem ter 6 caracteres alfanuméricos maiúsculos
+    const validFormat = /^[A-Z0-9]{6}$/.test(code);
+    if (!validFormat) {
+      return {
+        valid: false,
+        message: 'O código deve ter 6 caracteres alfanuméricos maiúsculos'
+      };
+    }
+    
+    // Simular validação de unicidade (em produção seria uma chamada à API)
+    return { valid: true, message: 'Código válido' };
+  }, []);
+
+  // Função para enviar o exame
+  const handleSubmitExam = useCallback(() => {
+    // Atualiza as questões do exame com as selecionadas
+    const finalExam = {
+      ...examData,
+      questions: selectedQuestions,
+      updatedAt: new Date(),
+    };
+    
+    console.log('Exame finalizado:', finalExam);
+    // Aqui você implementaria a lógica para salvar o exame no backend
+    alert('Exame criado com sucesso!');
+    // Redirecionar para a lista de exames, por exemplo
+  }, [examData, selectedQuestions]);
+
+  // Verificar se a distribuição de dificuldade está correta
+  const isDifficultyDistributionValid = useMemo(() => {
+    const totalFromDistribution = examData.questionDistribution.reduce(
+      (sum, dist) => sum + dist.count, 0
+    );
+    
+    return totalFromDistribution === examData.totalQuestions;
+  }, [examData.questionDistribution, examData.totalQuestions]);
+
+  // Altera o modo de seleção de questões
+  const setSelectionMode = useCallback((mode: 'manual' | 'random') => {
+    setExamData(prev => ({
+      ...prev,
+      selectionMode: mode
+    }));
+    
+    // Limpa as questões selecionadas quando muda o modo
+    setSelectedQuestions([]);
+  }, []);
+
+  const handleSelectQuestion = useCallback((questions: Question | Question[]) => {
+    setSelectedQuestions(prev => {
+      const newQuestions = Array.isArray(questions) ? questions : [questions];
+      const questionIds = newQuestions.map(q => q.id);
+      
+      // Remove as questões que estão sendo adicionadas (caso já existam)
+      const filteredPrev = prev.filter(q => !questionIds.includes(q.id));
+      
+      // Adiciona as novas questões (se não estiverem todas presentes)
+      const shouldAdd = newQuestions.some(q => !prev.some(p => p.id === q.id));
+      return shouldAdd ? [...filteredPrev, ...newQuestions] : filteredPrev;
+    });
+  }, []);
+
+  const availableQuestions = useMemo(() => {
+    return examData.discipline 
+      ? questions.filter(q => q.discipline === examData.discipline)
+      : questions;
+  }, [examData.discipline, questions]);
+
+  const handleRandomSelection = useCallback(() => {
+    const { questionDistribution } = examData;
+    const newSelectedQuestions: Question[] = [];
+
+    questionDistribution.forEach(dist => {
+      const questionsOfDifficulty = filteredQuestions
+        .filter(q => q.difficultyLevel === dist.difficulty)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, dist.count);
+      
+      newSelectedQuestions.push(...questionsOfDifficulty);
+    });
+
+    setSelectedQuestions(newSelectedQuestions);
+  }, [examData.questionDistribution, filteredQuestions]);
 
   return {
-    currentStep,
     examData,
+    currentStep,
     selectedQuestions,
-    selectAll,
+    filteredQuestions,
     isFormValid,
     isReadyForPreview,
-    isSaving,
-    previewMode,
-    editMode,
-    toggleEditMode: () => setEditMode(prev => !prev),
-    saveExam,
-    printExam,
-    togglePreviewMode,
-    navigateToStep,
-    setExamData: updateExamData,
-    setSelectedQuestions,
-    toggleSelectAll,
-    toggleQuestionSelection,
-    clearSelection,
+    availableQuestions,
+    isDistributionValid,
+    setExamData,
+    updateExamConfig,
     handleTotalQuestionsChange,
     handleDifficultyChange,
+    handleSelectQuestion,
+    handleRandomSelection,
+    navigateToStep,
+    setSelectedQuestions, 
     handleSubmitExam
   };
 };
-

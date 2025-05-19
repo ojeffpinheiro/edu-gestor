@@ -254,8 +254,6 @@ export const Title = styled.h2`
   margin: 0;
 `;
 
-// ... (mantive os outros estilos existentes, mas adicionei media queries para responsividade)
-
 export const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -270,4 +268,24 @@ export const StyledTable = styled.table`
   }
 `;
 
-// ... (outros estilos permanecem similares, mas com melhorias de responsividade)
+export const RandomSelectionControls = styled.div`
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const AccessCodeSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: #f0f8ff;
+  border-radius: 6px;
+
+  input {
+    margin: 0 0.5rem;
+    padding: 0.25rem;
+  }
+`;

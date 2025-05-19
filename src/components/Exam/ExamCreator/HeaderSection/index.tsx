@@ -25,7 +25,7 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ examData, onDataChange, o
   const [showPreview, setShowPreview] = useState(false);
 
   const handleInputChange = (field: keyof Exam, value: any) => {
-    onDataChange({ [field]: value });
+    onDataChange({ ...examData, [field]: value });
   };
 
   const handleInstructionChange = (index: number, value: string) => {
@@ -163,20 +163,6 @@ const HeaderSection: React.FC<HeaderSectionProps> = ({ examData, onDataChange, o
               </button>
             </div>
           </InputGroup>
-
-          {/* Restante do formulário mantido igual */}
-          <ResponsiveWrapper>
-            <InputGroup>
-              <label htmlFor="school-name">Nome da Instituição</label>
-              <input
-                id="school-name"
-                type="text"
-                value={examData.schoolName}
-                onChange={(e) => handleInputChange('schoolName', e.target.value)}
-                placeholder="Nome oficial registrado no sistema"
-              />
-            </InputGroup>
-          </ResponsiveWrapper>
 
           <ResponsiveWrapper>
             <SwitchRow>

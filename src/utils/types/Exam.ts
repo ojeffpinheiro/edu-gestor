@@ -91,11 +91,12 @@ export interface Exam {
     shuffleAlternatives: boolean;
 
     // Configurações visuais do cabeçalho
-    schoolInfos?: ['ESTADO DO RIO GRANDE DO SUL', 'SECRETARIA DA EDUCAÇÃO - 2ª CRE'];
+    schoolInfos?: string[];
     schoolName: string;
     headerStyle: 'standard' | 'simplified' | 'custom';
     headerTitle: string;
     headerSubtitle: string;
+    customHeaderImage: File | string | null;
     institutionLogo: File | null;
 
     // Visibilidade de elementos
@@ -130,4 +131,6 @@ export interface Exam {
     updatedAt: Date;
     createdBy: string;
     updatedBy: string;
+
+    preventCopying?: boolean;
 }

@@ -33,16 +33,20 @@ import { Button } from '../../../../styles/buttons';
 import QRCodeGenerator from '../../QRCodeGenerator';
 import { Exam } from '../../../../utils/types/Exam';
 import HeaderPreview from '../HeaderSection/HeaderPreview';
+import { ButtonGroup } from '../QuestionSelectionStep/QuestionSelectionStep.styles';
+import { FiArrowLeft } from 'react-icons/fi';
 
 interface ExamPreviewProps {
   examData: Exam;
   onBack: () => void;
   onComplete: (data: Exam) => void;
+  onReset: () => void;
 }
 
 function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
   const [showQRModal, setShowQRModal] = useState(false);
   const [showAnswers, setShowAnswers] = useState(false);
+
   const [questions, setQuestions] = useState(examData.questions);
 
   const moveQuestion = (id: number | undefined, direction: 'up' | 'down') => {
@@ -60,10 +64,19 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
       [updatedQuestions[newIndex], updatedQuestions[index]];
 
     setQuestions(updatedQuestions);
+
+    onComplete({
+      ...examData,
+      questions: updatedQuestions
+    });
   };
 
   const removeQuestion = (id: number) => {
-    setQuestions(prev => prev.filter(q => q.id !== id));
+    const updatedQuestions = questions.filter(q => q.id !== id);
+    onComplete({
+      ...examData,
+      questions: updatedQuestions
+    });
   };
 
   const toggleAnswers = () => {
@@ -104,7 +117,7 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
 
       <ExamContainer>
         <HeaderPreview examData={examData} />
-        
+
         <ExamContent>
           {questions.map((question, index) => (
             <QuestionItem key={question.id}>
@@ -180,6 +193,12 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
           </Button>
         </ButtonsContainer>
       </ExamContainer>
+
+      <ButtonGroup>
+        <button type="button" onClick={onBack} className="secondary">
+          <FiArrowLeft /> Voltar
+        </button>
+      </ButtonGroup>
 
       {showQRModal && (
         <QRCodeGenerator
