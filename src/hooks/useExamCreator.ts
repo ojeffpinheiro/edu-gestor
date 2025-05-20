@@ -27,6 +27,7 @@ export const useExamCreator = () => {
       'Leia os enunciados com atenção, a interpretação faz parte da avaliação;',
       'É permitido o uso de calculadora (não é válido em formato digital);',
       'Não é permitido nenhum outro tipo de consulta externa (cola), celulares ou qualquer aparelho eletrônico;',
+      'Reserve tempo suficiente para preencher a grade de respostas',
       'Preencha o cabeçalho de forma correta. Letra ilegível ou informações faltantes impedem a correção.',
       'Marque apenas uma das opções que lhe são apresentadas em cada questão.',
       'Marque suas respostas na grade de respostas utilizando apenas caneta esferográfica azul ou preta conforme o exemplo.',
@@ -68,6 +69,12 @@ export const useExamCreator = () => {
     customHeaderImage: '',
     preventCopying: false,
     schoolInfos: ['ESTADO DO RIO GRANDE DO SUL', 'SECRETARIA DA EDUCAÇÃO – 2ª CRE'],
+    columns: 1,
+    compactMode: false,
+    fontFamily: 'serif',
+    fontSize: 'medium',
+    showQuestionNumber: true,
+    showQuestionTypeIndicator: true,
   }
   // Step atual do processo de criação
   const [currentStep, setCurrentStep] = useState<number>(1);

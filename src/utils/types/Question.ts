@@ -41,7 +41,9 @@ export interface Question {
   updatedAt: string;
   status: QuestionStatus;
   imageUrl?: string;
-  tags?: string[];
+  tags?: string[];source?: string;
+  accessDate?: string;
+  optionsLayout?: 'one-column' | 'two-columns' | 'three-columns';
 }
 
 // Interface para as props dos componentes de passo

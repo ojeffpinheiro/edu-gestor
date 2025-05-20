@@ -2,7 +2,6 @@
 import styled from 'styled-components';
 
 export const PreviewContainer = styled.div`
-  border: 1px solid #ddd;
   padding: 20px;
   background-color: white;
   font-family: Arial, sans-serif;
