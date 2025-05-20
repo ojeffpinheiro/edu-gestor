@@ -62,39 +62,47 @@ export const Controls = styled.div`
 
 // Conteúdo das questões
 export const ExamContent = styled.div<{ isGrid: boolean; columns: number; compact: boolean }>`
-font-size: 16px;
-    line-height: 1.6;  
-display: ${props => props.isGrid ? 'grid' : 'block'};
+  font-size: 16px;
+  line-height: 1.6;
+  display: ${props => props.isGrid ? 'grid' : 'block'};
   grid-template-columns: ${props => props.isGrid ? `repeat(${props.columns}, 1fr)` : 'none'};
   gap: ${props => props.compact ? '12px' : '24px'};
   margin-top: 20px;
+  padding-left: 20px;
   
   @media print {
     gap: ${props => props.compact ? '8px' : '16px'};
   }
 `;
 
+export const QuestionHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: ${colors.examBlue}; // Usando a cor azul do ENEM
+  font-size: 1.1rem;
+
+  &::after {
+    content: "";
+    flex: 1;
+    height: .35rem;
+    background: ${colors.examBlue};
+    margin-left: .2rem;
+    border-radius: 2rem;
+  }
+`;
+
 // Item de questão
-export const QuestionItem = styled.div<{ isGrid: boolean; questionNumber?: number }>`
-  margin-bottom: 30px;
+export const QuestionItem = styled.div`
   position: relative;
   page-break-inside: avoid;
   break-inside: avoid;
   padding: 15px 0;
-  border-top: 1px solid ${examColors.border};
-  border-bottom: 1px solid ${examColors.border};
   background: white;
   border-radius: 4px;
   transition: all 0.2s ease;
-
-  &:before {
-    content: ${props => props.questionNumber ? `"QUESTÃO ${props.questionNumber}"` : '""'};
-    display: block;
-    font-weight: bold;
-    font-size: 1.1rem;
-    margin-bottom: 10px;
-    color: ${examColors.primary};
-  }
 `;
 
 export const QuestionActions = styled.div`
@@ -111,36 +119,6 @@ export const QuestionActions = styled.div`
     }
   `;
 
-interface ActionButtonProps {
-  color?: string;
-  hoverColor?: string;
-}
-
-export const ActionButton = styled.button<ActionButtonProps>`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    border: none;
-    background-color: ${colors.background};
-    color: ${colors.textLight};
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background-color: ${props => props.color || '#f1f3f5'};
-      color: ${props => props.hoverColor || colors.text};
-    }
-  
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  `;
-
 export const QuestionText = styled.div`
     margin-bottom: 15px;
     color: ${colors.text};
@@ -149,7 +127,7 @@ export const QuestionText = styled.div`
 export const Options = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 1rem;
   `;
 
 export const Option = styled.div`
@@ -455,7 +433,7 @@ export const TypeIndicator = styled.div<TypeIndicatorProps>`
 
   /* Cores baseadas no tipo de questão */
   background-color: ${props => {
-    switch(props.type) {
+    switch (props.type) {
       case 'multiple_choice': return '#e3f2fd';
       case 'true_false': return '#e8f5e9';
       case 'essay': return '#fff8e1';
@@ -465,7 +443,7 @@ export const TypeIndicator = styled.div<TypeIndicatorProps>`
   }};
   
   color: ${props => {
-    switch(props.type) {
+    switch (props.type) {
       case 'multiple_choice': return '#0d47a1';
       case 'true_false': return '#1b5e20';
       case 'essay': return '#e65100';
@@ -491,14 +469,14 @@ export const TypeIndicator = styled.div<TypeIndicatorProps>`
   position: relative;
   &:hover::after {
     content: "${props => {
-      switch(props.type) {
-        case 'multiple_choice': return 'Questão de múltipla escolha';
-        case 'true_false': return 'Verdadeiro ou Falso';
-        case 'essay': return 'Questão dissertativa';
-        case 'fill_the_blanks': return 'Preenchimento de lacunas';
-        default: return 'Tipo de questão';
-      }
-    }}";
+    switch (props.type) {
+      case 'multiple_choice': return 'Questão de múltipla escolha';
+      case 'true_false': return 'Verdadeiro ou Falso';
+      case 'essay': return 'Questão dissertativa';
+      case 'fill_the_blanks': return 'Preenchimento de lacunas';
+      default: return 'Tipo de questão';
+    }
+  }}";
     position: absolute;
     bottom: 100%;
     left: 50%;
@@ -526,7 +504,7 @@ export const OptionsContainer = styled.div<{ columns: number }>`
   display: grid;
   grid-template-columns: ${props => `repeat(${props.columns}, 1fr)`};
   gap: 15px;
-  margin-top: 15px;
+  margin: 15px;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;

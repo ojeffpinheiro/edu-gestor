@@ -4,7 +4,6 @@ import styled from 'styled-components';
 export const PreviewContainer = styled.div`
   padding: 20px;
   background-color: white;
-  font-family: Arial, sans-serif;
 `;
 
 /* Sistema de Grid Principal */
@@ -65,7 +64,7 @@ export const Row2 = styled.div<{ hasStudentId: boolean }>`
 export const Row3 = styled.div`
   grid-area: row3;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: .73fr 1fr;
   gap: 20px;
 `;
 
@@ -77,7 +76,7 @@ export const TitleArea = styled.div`
 
 export const InstructionsArea = styled.div`
   grid-area: instructions;
-  border: 3px solid #000;
+  border: 3px solid var(--color-border);
   padding-block: 1rem;
   padding: 1rem;
 `;
@@ -101,6 +100,7 @@ export const ExamTitle = styled.h2`
   margin: 0;
   font-weight: bold;
   text-transform: uppercase;
+  color: #000;
 `;
 
 export const ExamSubtitle = styled.h3`
@@ -172,6 +172,7 @@ export const InstructionsTitle = styled.h3`
   text-align: center;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #000;
 `;
 
 export const HeaderContainer = styled.div`

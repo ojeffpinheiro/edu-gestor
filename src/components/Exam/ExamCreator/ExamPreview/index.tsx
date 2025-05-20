@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import {
   FaEye,
   FaEyeSlash,
-  FaArrowUp,
-  FaArrowDown,
-  FaTrash,
   FaQrcode,
   FaFileExport,
   FaCheckCircle,
@@ -14,7 +11,6 @@ import {
 } from 'react-icons/fa';
 
 import {
-  ActionButton,
   Answer,
   ButtonsContainer,
   Container,
@@ -44,7 +40,8 @@ import {
   TypeIndicator,
   SourceText,
   OptionsContainer,
-  OptionCircle
+  OptionCircle,
+  QuestionHeader
 } from './styles'
 import { Button } from '../../../../styles/buttons';
 import QRCodeGenerator from '../../QRCodeGenerator';
@@ -115,11 +112,10 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
             ) : (
               <QuestionsList>
                 {questions.map((question, index) => (
-                  <QuestionItem
-                    key={question.id}
-                    questionNumber={index + 1}
-                    isGrid={isGridLayout}
-                  >
+                  <QuestionItem key={question.id}>
+                    <QuestionHeader>
+                      QUESTÃO {(index + 1).toString().padStart(2, '0')}
+                    </QuestionHeader>
                     <QuestionBody>
                       <QuestionText>{question.statement}</QuestionText>
 
