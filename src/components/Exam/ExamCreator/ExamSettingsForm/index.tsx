@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiArrowRight, FiSettings } from 'react-icons/fi';
+import { FiArrowRight, FiGrid, FiList, FiMinimize2, FiSettings, FiType } from 'react-icons/fi';
 import { Exam } from '../../../../utils/types/Exam';
 
 import {
@@ -31,7 +31,7 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
-    
+
     onDataChange({
       [name]: type === 'checkbox' ? checked : value
     });
@@ -55,7 +55,7 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
 
       <ResponsiveWrapper>
         <InputGroup>
-        <label htmlFor="title">Nome da Prova *</label>
+          <label htmlFor="title">Nome da Prova *</label>
           <input
             id="title"
             name="title"
@@ -122,71 +122,85 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
       </ResponsiveWrapper>
 
       <FormSection>
-        <h3>Modo de Seleção de Questões</h3>
-        <p>Escolha como deseja selecionar as questões para esta prova</p>
+        <h3>Layout da Prova</h3>
+        <p>Configure como as questões serão organizadas no documento</p>
+
+        <InputGroup>
+          <label>Layout das Questões</label>
+          <RadioGroup>
+            <RadioOption>
+              <input
+                type="radio"
+                id="layout-list"
+                name="questionLayout"
+                value="list"
+                checked={examData.questionLayout === "list"}
+                onChange={handleInputChange}
+              />
+              <label htmlFor="layout-list">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FiList size={20} />
+                  <div>
+                    <strong>Lista Vertical</strong>
+                    <span>Questões em uma única coluna</span>
+                  </div>
+                </div>
+              </label>
+            </RadioOption>
+
+            <RadioOption>
+              <input
+                type="radio"
+                id="layout-grid"
+                name="questionLayout"
+                value="grid"
+                checked={examData.questionLayout === "grid"}
+                onChange={handleInputChange}
+              />
+              <label htmlFor="layout-grid">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FiGrid size={20} />
+                  <div>
+                    <strong>Grade</strong>
+                    <span>Questões distribuídas em colunas</span>
+                  </div>
+                </div>
+              </label>
+            </RadioOption>
+          </RadioGroup>
+        </InputGroup>
 
         <ResponsiveWrapper>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <InputGroup>
+            <label htmlFor="compactMode">Modo Compacto</label>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
-                checked={examData.shuffleQuestions}
+                id="compactMode"
+                name="compactMode"
+                checked={examData.compactMode}
                 onChange={handleInputChange}
               />
-              Embaralhar questões
+              <FiMinimize2 size={16} />
+              Reduzir espaçamento entre questões
             </label>
+          </InputGroup>
 
+          <InputGroup>
+            <label htmlFor="showQuestionNumber">Mostrar números das questões</label>
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
-                checked={examData.shuffleAlternatives}
+                id="showQuestionNumber"
+                name="showQuestionNumber"
+                checked={examData.showQuestionNumber}
                 onChange={handleInputChange}
               />
-              Embaralhar alternativas
+              <FiType size={16} />
+              Exibir numeração automática
             </label>
-
-            <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <input
-                type="checkbox"
-                checked={examData.showAnswerGrid}
-                onChange={handleInputChange}
-              />
-              Incluir grade de respostas
-            </label>
-          </div>
+          </InputGroup>
         </ResponsiveWrapper>
-
-        <RadioGroup>
-          <RadioOption>
-            <input
-              type="radio"
-              id="selection-manual"
-              name="selectionMode"
-              value="manual"
-              checked={examData.selectionMode === "manual"}
-              onChange={handleSelectionModeChange}
-            />
-            <label htmlFor="selection-manual">
-              <strong>Seleção Manual</strong>
-              <span>Você escolherá cada questão individualmente</span>
-            </label>
-          </RadioOption>
-
-          <RadioOption>
-            <input
-              type="radio"
-              id="selection-random"
-              name="selectionMode"
-              value="random"
-              checked={examData.selectionMode === "random"}
-              onChange={handleSelectionModeChange}
-            />
-            <label htmlFor="selection-random">
-              <strong>Seleção Aleatória</strong>
-              <span>O sistema selecionará questões aleatoriamente baseadas nos seus critérios</span>
-            </label>
-          </RadioOption>
-        </RadioGroup>
       </FormSection>
 
       <ActionButtons>

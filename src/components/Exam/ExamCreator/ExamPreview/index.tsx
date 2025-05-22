@@ -9,7 +9,16 @@ import {
   FaEdit,
   FaQuestion
 } from 'react-icons/fa';
+import { FiArrowLeft } from 'react-icons/fi';
 
+import { Exam } from '../../../../utils/types/Exam';
+
+import HeaderPreview from '../HeaderSection/HeaderPreview';
+import AnswerSheet from '../../AnswerSheet';
+import QRCodeGenerator from '../../QRCodeGenerator';
+
+import { Button } from '../../../../styles/buttons';
+import { ButtonGroup } from '../QuestionSelectionStep/QuestionSelectionStep.styles';
 import {
   Answer,
   ButtonsContainer,
@@ -43,12 +52,6 @@ import {
   OptionCircle,
   QuestionHeader
 } from './styles'
-import { Button } from '../../../../styles/buttons';
-import QRCodeGenerator from '../../QRCodeGenerator';
-import { Exam } from '../../../../utils/types/Exam';
-import HeaderPreview from '../HeaderSection/HeaderPreview';
-import { ButtonGroup } from '../QuestionSelectionStep/QuestionSelectionStep.styles';
-import { FiArrowLeft } from 'react-icons/fi';
 
 interface ExamPreviewProps {
   examData: Exam;
@@ -62,10 +65,7 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
   const [showAnswers, setShowAnswers] = useState(false);
   let mode = 'edit';
 
-
-  const isGridLayout = true;
-
-  const [questions, setQuestions] = useState(examData.questions);
+  const { questions } = examData;
 
   const toggleAnswers = () => {
     setShowAnswers(!showAnswers);
@@ -102,8 +102,7 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
           <HeaderPreview examData={examData} />
 
           <ExamContent
-            isGrid={isGridLayout}
-            columns={2}
+            questionLayout={examData.questionLayout}
             compact={examData.compactMode}
             className="enem-style"
           >
@@ -112,7 +111,7 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
             ) : (
               <QuestionsList>
                 {questions.map((question, index) => (
-                  <QuestionItem key={question.id}>
+                  <QuestionItem key={question.id} data-layout={examData.questionLayout}>
                     <QuestionHeader>
                       QUESTÃO {(index + 1).toString().padStart(2, '0')}
                     </QuestionHeader>
@@ -152,6 +151,10 @@ function ExamPreview({ examData, onBack, onComplete }: ExamPreviewProps) {
               <div className="school-info">{examData.schoolName}</div>
             )}
           </ExamFooter>
+
+          <AnswerSheet
+            questionsCount={questions.length}
+            questionLayout={examData.questionLayout} />
 
           {mode === 'edit' && (
             <ButtonsContainer>

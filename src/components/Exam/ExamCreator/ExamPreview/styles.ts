@@ -60,18 +60,24 @@ export const Controls = styled.div`
     flex-wrap: wrap;
   `;
 
-// Conteúdo das questões
-export const ExamContent = styled.div<{ isGrid: boolean; columns: number; compact: boolean }>`
+export const ExamContent = styled.div<{ 
+  questionLayout: 'grid' | 'list';
+  compact: boolean;
+}>`
   font-size: 16px;
   line-height: 1.6;
-  display: ${props => props.isGrid ? 'grid' : 'block'};
-  grid-template-columns: ${props => props.isGrid ? `repeat(${props.columns}, 1fr)` : 'none'};
+  display: grid;
+  grid-template-columns: ${props => props.questionLayout === 'grid' ? 'repeat(auto-fill, minmax(300px, 1fr))' : '1fr'};
   gap: ${props => props.compact ? '12px' : '24px'};
   margin-top: 20px;
   padding-left: 20px;
   
   @media print {
     gap: ${props => props.compact ? '8px' : '16px'};
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
   }
 `;
 
@@ -99,10 +105,19 @@ export const QuestionItem = styled.div`
   position: relative;
   page-break-inside: avoid;
   break-inside: avoid;
-  padding: 15px 0;
+  padding: 15px;
   background: white;
   border-radius: 4px;
   transition: all 0.2s ease;
+  border: 1px solid ${colors.border};
+
+  &[data-layout="grid"] {
+    min-height: 200px; /* Altura mínima para alinhamento */
+  }
+
+  &[data-layout="list"] {
+    width: 100%;
+  }
 `;
 
 export const QuestionActions = styled.div`
@@ -198,7 +213,7 @@ export const EmptyState = styled.div`
 `;
 
 export const QuestionsList = styled.div`
-  display: flex;
+  display: contents;
   flex-direction: column;
   gap: 20px;
 `;

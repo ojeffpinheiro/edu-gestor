@@ -69,7 +69,6 @@ export const useExamCreator = () => {
     customHeaderImage: '',
     preventCopying: false,
     schoolInfos: ['ESTADO DO RIO GRANDE DO SUL', 'SECRETARIA DA EDUCAÇÃO – 2ª CRE'],
-    columns: 1,
     compactMode: false,
     fontFamily: 'serif',
     fontSize: 'medium',

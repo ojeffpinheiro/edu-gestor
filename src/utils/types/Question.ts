@@ -9,12 +9,6 @@ export interface Content {
   name: string;
 }
 
-export interface Alternative {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-}
-
 export type QuestionType = 'multiple_choice' | 'true_false' | 'essay' | 'fill_in_the_blank' | 'all';
 
 export type DifficultyLevelType = 'easy' | 'medium' | 'hard';
