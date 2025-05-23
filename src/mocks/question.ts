@@ -13,7 +13,7 @@ export const mockContents: Content[] = [
 
 export const mockQuestions: Question[] = [
   {
-    id: 1,
+    id: '1',
     contentId: 'content-001',
     statement: 'Qual é a capital da França?',
     questionType: 'multiple_choice',
@@ -36,7 +36,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 2,
+    id: '2',
     contentId: 'content-002',
     statement: 'A água ferve a 100 graus Celsius ao nível do mar.',
     questionType: 'true_false',
@@ -54,7 +54,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 3,
+    id: '3',
     contentId: 'content-003',
     statement: 'Descreva o impacto da Revolução Francesa na sociedade moderna.',
     questionType: 'essay',
@@ -70,7 +70,7 @@ export const mockQuestions: Question[] = [
     accessDate: '2025-03-15',
   },
   {
-    id: 4,
+    id: '4',
     contentId: 'content-004',
     statement: 'A fórmula da água é ____.',
     questionType: 'fill_in_the_blank',
@@ -86,7 +86,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 5,
+    id: '5',
     contentId: 'content-005',
     statement: 'Qual desses animais é um mamífero?',
     questionType: 'multiple_choice',
@@ -106,7 +106,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 6,
+    id: '6',
     contentId: 'content-006',
     statement: 'A soma dos ângulos internos de um triângulo é igual a 180 graus.',
     questionType: 'true_false',
@@ -124,7 +124,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 7,
+    id: '7',
     contentId: 'content-007',
     statement: 'Explique como ocorre a fotossíntese nas plantas.',
     questionType: 'essay',
@@ -140,7 +140,7 @@ export const mockQuestions: Question[] = [
     accessDate: '2025-03-20',
   },
   {
-    id: 8,
+    id: '8',
     contentId: 'content-008',
     statement: 'O elemento químico representado pelo símbolo "Na" é o ____.',
     questionType: 'fill_in_the_blank',
@@ -156,7 +156,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 9,
+    id: '9',
     contentId: 'content-009',
     statement: 'Marque a alternativa que completa corretamente a frase: "O sol nasce no ____".',
     questionType: 'multiple_choice',
@@ -177,7 +177,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 10,
+    id: '10',
     contentId: 'content-010',
     statement: 'Resolva a equação: 2x + 3 = 7. O valor de x é ____.',
     questionType: 'fill_in_the_blank',
@@ -193,7 +193,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 11,
+    id: '11',
     contentId: 'content-011',
     statement: 'A Segunda Guerra Mundial terminou em 1945.',
     questionType: 'true_false',
@@ -212,7 +212,7 @@ export const mockQuestions: Question[] = [
     accessDate: '2025-04-10',
   },
   {
-    id: 12,
+    id: '12',
     contentId: 'content-012',
     statement: 'Explique a diferença entre um vírus e uma bactéria.',
     questionType: 'essay',
@@ -227,7 +227,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 13,
+    id: '13',
     contentId: 'content-013',
     statement: 'Qual destas palavras é um advérbio?',
     questionType: 'multiple_choice',
@@ -247,7 +247,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 14,
+    id: '14',
     contentId: 'content-014',
     statement: 'Complete a frase: "O livro está ____ da mesa."',
     questionType: 'fill_in_the_blank',
@@ -262,7 +262,7 @@ export const mockQuestions: Question[] = [
     tags: ['português', 'preposições'],
   },
   {
-    id: 15,
+    id: '15',
     contentId: 'content-015',
     statement: 'Qual a fórmula da área de um triângulo?',
     questionType: 'multiple_choice',
@@ -282,7 +282,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 16,
+    id: '16',
     contentId: 'content-016',
     statement: 'O que representa a sigla ONU?',
     questionType: 'multiple_choice',
@@ -302,7 +302,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 17,
+    id: '17',
     contentId: 'content-017',
     statement: 'Complete com a forma verbal correta: "Se eu ____ tempo, viajaria mais."',
     questionType: 'fill_in_the_blank',
@@ -317,7 +317,7 @@ export const mockQuestions: Question[] = [
     tags: ['português', 'verbo'],
   },
   {
-    id: 18,
+    id: '18',
     contentId: 'content-018',
     statement: 'Explique os principais fatores da urbanização no Brasil.',
     questionType: 'essay',
@@ -333,7 +333,7 @@ export const mockQuestions: Question[] = [
     accessDate: '2025-04-12',
   },
   {
-    id: 19,
+    id: '19',
     contentId: 'content-019',
     statement: 'A fotossíntese ocorre nas mitocôndrias das células vegetais.',
     questionType: 'true_false',
@@ -351,7 +351,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'one-column',
   },
   {
-    id: 20,
+    id: '20',
     contentId: 'content-020',
     statement: 'Qual é o valor de π (pi) aproximado até duas casas decimais?',
     questionType: 'multiple_choice',
@@ -371,7 +371,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'two-columns',
   },
   {
-    id: 21,
+    id: '21',
     contentId: 'content-021',
     statement: 'Analise criticamente os impactos da globalização nas economias em desenvolvimento.',
     questionType: 'essay',
@@ -386,7 +386,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'three-columns',
   },
   {
-    id: 22,
+    id: '22',
     contentId: 'content-022',
     statement: 'Explique a importância da ética na pesquisa científica e os riscos da sua negligência.',
     questionType: 'essay',
@@ -401,7 +401,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'three-columns',
   },
   {
-    id: 23,
+    id: '23',
     contentId: 'content-023',
     statement: 'Disserte sobre o papel da arte como ferramenta de transformação social.',
     questionType: 'essay',
@@ -416,7 +416,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'three-columns',
   },
   {
-    id: 24,
+    id: '24',
     contentId: 'content-024',
     statement: 'Avalie os efeitos da revolução digital nas relações interpessoais no século XXI.',
     questionType: 'essay',
@@ -431,7 +431,7 @@ export const mockQuestions: Question[] = [
     optionsLayout: 'three-columns',
   },
   {
-    id: 25,
+    id: '25',
     contentId: 'content-025',
     statement: 'Comente sobre a crise climática atual e os desafios para a sustentabilidade global.',
     questionType: 'essay',

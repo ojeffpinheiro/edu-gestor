@@ -1,17 +1,5 @@
 import { useState } from "react";
-
-// Definição completa do tipo StudentAttendance com todos os campos necessários
-export interface StudentFormData {
-    id?: number;
-    name: string;
-    email: string;
-    attendance?: number;
-    birthDate?: string;
-    className?: string;
-    rollNumber?: number;
-    status?: string;
-    gender?: string;
-}
+import { StudentFormData } from "../utils/types/BasicUser";
 
 export const useStudents = () => {
     const [studentList, setStudentList] = useState<StudentFormData[]>([

@@ -1,11 +1,11 @@
 import React from 'react';
 import { AttendanceIndicator, EmptySeatLabel, SeatContainer, StudentName } from "../../../pages/Team/ClassroomLayoutPage/styles";
-import { StudentAttendance } from "../../../utils/types/BasicUser";
+import { StudentFormData } from '../../../utils/types/BasicUser';
 import { SeatType } from "../../../utils/types/Team";
 
 interface SeatProps {
     seat: SeatType;
-    studentList: StudentAttendance[];
+    studentList: StudentFormData[];
     selectedSeat: SeatType | null;
     verifyMode: boolean;
     getStudentAttendance: (id: number) => number;

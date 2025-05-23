@@ -32,8 +32,8 @@ import {
 } from './styles';
 import ActionsContainer from '../../../components/Team/ActionsContainer';
 import { useStudents } from '../../../hooks/useStudent';
-import { StudentAttendance } from '../../../utils/types/BasicUser';
 import StudentDrawModal from '../../../components/modals/StudentDrawModal';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 
 
 // Configure moment locale
@@ -60,7 +60,7 @@ const TeamPage: React.FC = () => {
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });
   const [showSortGroupModal, setShowSortGroupModal] = useState<boolean>(false);
   const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
-  const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
+  const [drawnStudent, setDrawnStudent] = useState<StudentFormData | null>(null);
   const [filters, setFilters] = useState({
     showMeetings: true,
     showDeadlines: true,
@@ -247,7 +247,7 @@ const TeamPage: React.FC = () => {
           setDrawnStudent({
             ...selectedStudent,
             id: selectedStudent.id
-          } as StudentAttendance);
+          } as StudentFormData);
         }
       } else {
         showNotification('Não há alunos para sortear', 'warning');
@@ -470,7 +470,7 @@ const quickCardsData = [
 
       {showSortGroupModal && (
         <GroupDrawModal
-          students={studentList.filter((student): student is StudentAttendance =>
+          students={studentList.filter((student): student is StudentFormData =>
             typeof student.id === 'number'
           )}
           onClose={handleCloseSorteioGrupoModal}
@@ -479,7 +479,7 @@ const quickCardsData = [
 
       {showStudentDrawModal && (
         <StudentDrawModal
-          students={studentList.filter((student): student is StudentAttendance =>
+          students={studentList.filter((student): student is StudentFormData =>
             typeof student.id === 'number'
           )}
           onClose={handleCloseStudentDraw}

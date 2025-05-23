@@ -2,16 +2,15 @@ import React from "react";
 import { Table, TableHeader, TableRow, Td } from "../../styles/table";
 
 import { AttendanceGrade } from './styles'
-import { StudentAttendance } from "../../utils/types/BasicUser";
-
+import { StudentFormData } from "../../utils/types/BasicUser";
 
 interface StudentsTableProps {
-    students: StudentAttendance[];
+    students: StudentFormData[];
     calculateAttendanceGrade: (attendance: number) => number;
 }
 
-const StudentsTable: React.FC<StudentsTableProps> = ({ students, calculateAttendanceGrade}) => {
-    return(
+const StudentsTable: React.FC<StudentsTableProps> = ({ students, calculateAttendanceGrade }) => {
+    return (
         <Table>
             <thead>
                 <TableRow>
@@ -26,9 +25,10 @@ const StudentsTable: React.FC<StudentsTableProps> = ({ students, calculateAttend
                         <Td>{student.name}</Td>
                         <Td>{student.attendance}%</Td>
                         <Td>
-                            <AttendanceGrade grade={calculateAttendanceGrade(student.attendance)}>
-                                {calculateAttendanceGrade(student.attendance).toFixed(1)}
+                            <AttendanceGrade grade={student.attendance !== undefined ? calculateAttendanceGrade(student.attendance) : 0}>
+                                {student.attendance !== undefined ? calculateAttendanceGrade(student.attendance).toFixed(1) : '0.0'}
                             </AttendanceGrade>
+
                         </Td>
                     </tr>
                 ))}

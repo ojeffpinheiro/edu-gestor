@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag } from "react-dnd";
-import { StudentFormData } from '../../../hooks/useStudent';
 import { StudentItem } from '../../../pages/Team/ClassroomLayoutPage/styles';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 
 interface DraggableStudentProps {
     student: StudentFormData;
@@ -24,7 +24,6 @@ const DraggableStudent: React.FC<DraggableStudentProps> = ({
 
     return (
         <StudentItem
-            ref={drag}
             isDragging={isDragging}
             onClick={() => setSelectedStudent(student)}
             isSelected={isSelected}

@@ -7,12 +7,12 @@ import {
     EmptyState
 } from "./styles";
 import StudentRow from "../ui/StudentRow";
-import { StudentAttendance } from "../../utils/types/BasicUser";
+import { StudentFormData } from "../../utils/types/BasicUser";
 
 
 interface StudentTableProps {
-    students: StudentAttendance[];
-    onEdit: (studentData: StudentAttendance) => void;
+    students: StudentFormData[];
+    onEdit: (studentData: StudentFormData) => void;
     onDelete: (id: number) => void;
 }
 

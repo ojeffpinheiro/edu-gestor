@@ -3,20 +3,21 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 
 import { TableCell, TableRow } from "../../styles/table";
 import { AttendanceGrade } from "../StudentsTable/styles";
-import { StudentAttendance } from "../../utils/types/BasicUser";
 import { IconButton } from "../../styles/buttons";
+import { StudentFormData } from "../../utils/types/BasicUser";
 
 interface StudentRowProps {
-    studentData: StudentAttendance,
-    onEdit: (s: StudentAttendance) => void;
+    studentData: StudentFormData,
+    onEdit: (s: StudentFormData) => void;
     onDelete: (id: number) => void
 }
 
 const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }) => {
     const handleDelete = useCallback(() => {
-        if (window.confirm(`Tem certeza que deseja excluir ${studentData.name}?`)) {
+        if (studentData.id !== undefined && window.confirm(`Tem certeza que deseja excluir ${studentData.name}?`)) {
             onDelete(studentData.id);
         }
+
     }, [studentData, onDelete]);
 
     return (
@@ -24,7 +25,11 @@ const StudentRow: React.FC<StudentRowProps> = ({ studentData, onEdit, onDelete }
             <TableCell>{studentData.name}</TableCell>
             <TableCell>{studentData.email}</TableCell>
             <TableCell>
-                <AttendanceGrade grade={studentData.attendance}>{studentData.attendance}</AttendanceGrade>
+                {studentData.attendance !== undefined && (
+                    <AttendanceGrade grade={studentData.attendance}>
+                        {studentData.attendance.toFixed(1)}
+                    </AttendanceGrade>
+                )}
             </TableCell>
             <TableCell>
                 <IconButton

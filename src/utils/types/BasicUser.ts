@@ -18,10 +18,14 @@ export interface StudentData {
     comments: string;
 }
 
-// Student Attendance Interface
-export interface StudentAttendance {
-    id: number;
+export interface StudentFormData {
+    id?: number;
     name: string;
     email: string;
-    attendance: number;
+    attendance?: number;
+    birthDate?: string;
+    className?: string;
+    rollNumber?: number;
+    status?: string;
+    gender?: string;
 }

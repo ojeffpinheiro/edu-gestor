@@ -4,7 +4,7 @@ import { FaTable, FaThLarge, FaExchangeAlt, FaCheck, FaExclamationTriangle } fro
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 
-import { StudentFormData, useStudents } from '../../../hooks/useStudent';
+import { useStudents } from '../../../hooks/useStudent';
 
 import Notification from '../../../components/shared/Notification';
 import { Container } from '../../../styles/layoutUtils';
@@ -43,6 +43,7 @@ import {
     TeacherDesk,
     Header,
 } from './styles';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 // Componente principal da página
 const ClassroomLayoutPage: React.FC = () => {
     // Estado para o layout da sala

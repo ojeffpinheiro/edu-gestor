@@ -30,8 +30,13 @@ const DEFAULT_STUDENT_DATA: StudentData = {
     name: 'Ana Souza',
     email: 'ana@exemplo.com',
     assessments: [
-        { instrument: 'Prova Final', grade: 8.5 },
-        { instrument: 'Trabalho', grade: 9 },
+        {
+          instrument: 'Prova Final', grade: 8.5,
+          id: "",
+          title: "",
+          subject: "",
+          questions: []
+        },
     ],
     attendance: [
         { date: '2025-03-01', status: 'Presente' },

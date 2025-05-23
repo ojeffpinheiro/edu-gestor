@@ -2,10 +2,10 @@ import React from 'react';
 import { FaUsers } from "react-icons/fa";
 
 import styled from 'styled-components';
-import { StudentAttendance } from '../../utils/types/BasicUser';
+import { StudentFormData } from '../../utils/types/BasicUser';
 
 interface GroupsResultListProps {
-    studentGroups: StudentAttendance[][];
+    studentGroups: StudentFormData[][];
     showResults: boolean;
 }
 

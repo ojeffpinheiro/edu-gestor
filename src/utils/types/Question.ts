@@ -22,7 +22,7 @@ export interface Alternative {
 }
 
 export interface Question {
-  id?: number;
+  id?: string;
   contentId: string;
   statement: string;
   questionType: QuestionType;

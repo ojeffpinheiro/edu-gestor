@@ -1,7 +1,7 @@
 import React from "react";
 import { FaRandom } from "react-icons/fa";
 
-import { StudentAttendance } from "../../../utils/types/BasicUser";
+import { StudentFormData } from '../../../utils/types/BasicUser'
 
 import Modal from "../Modal";
 
@@ -9,10 +9,10 @@ import { Button } from '../../../styles/buttons'
 import { DrawnStudentContainer, EmptyState, Icon } from "./styles";
 
 interface StudentDrawModalProps {
-    students: StudentAttendance[];
+    students: StudentFormData[];
     onClose: () => void;
     onDraw: () => void;
-    drawnStudent: StudentAttendance | null;
+    drawnStudent: StudentFormData | null;
 }
 
 const StudentDrawModal: React.FC<StudentDrawModalProps> = ({ students, onClose, onDraw, drawnStudent }) => {

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 
-import { StudentAttendance } from '../../../utils/types/BasicUser';
-
-import { useStudents, StudentFormData } from '../../../hooks/useStudent';
+import { useStudents } from '../../../hooks/useStudent';
 
 import ActionsContainer from '../../../components/Team/ActionsContainer';
 import StudentTable from '../../../components/StudentTable';
@@ -13,6 +11,7 @@ import Notification from '../../../components/shared/Notification';
 import ConfirmDialog from '../../../components/shared/ConfirmDialog';
 
 import { PageContainer, Title } from './styles';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 
 const TeamManagement: React.FC = () => {
     const {
@@ -29,7 +28,7 @@ const TeamManagement: React.FC = () => {
     const [showStudentDrawModal, setShowStudentDrawModal] = useState<boolean>(false);
 
     // Drawn student state
-    const [drawnStudent, setDrawnStudent] = useState<StudentAttendance | null>(null);
+    const [drawnStudent, setDrawnStudent] = useState<StudentFormData | null>(null);
 
     const [currentClass] = useState("3º Ano - Turma A");
 
@@ -144,7 +143,7 @@ const TeamManagement: React.FC = () => {
                     setDrawnStudent({
                         ...selectedStudent,
                         id: selectedStudent.id
-                    } as StudentAttendance);
+                    } as StudentFormData);
                 }
             } else {
                 showNotification('Não há alunos para sortear', 'warning');
@@ -192,7 +191,7 @@ const TeamManagement: React.FC = () => {
                 />
 
                 <StudentTable
-                    students={studentList.filter((student): student is StudentAttendance =>
+                    students={studentList.filter((student): student is StudentFormData =>
                         typeof student.id === 'number'
                     )}
                     onEdit={handleStudentEdit}
@@ -214,7 +213,7 @@ const TeamManagement: React.FC = () => {
 
             {showStudentDrawModal && (
                 <StudentDrawModal
-                    students={studentList.filter((student): student is StudentAttendance =>
+                    students={studentList.filter((student): student is StudentFormData =>
                         typeof student.id === 'number'
                     )}
                     onClose={handleCloseStudentDraw}

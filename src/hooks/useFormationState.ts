@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
-import { StudentAttendance } from '../utils/types/BasicUser';
 import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../utils/types/GroupFormation';
 import { FeedbackState } from '../utils/types/FeedbackState';
+import { StudentFormData } from '../utils/types/BasicUser';
 
 /**
  * Hook personalizado para gerenciar o estado de formação de grupos
  */
-export const useFormationState = (students: StudentAttendance[]) => {
+export const useFormationState = (students: StudentFormData[]) => {
     // Estado para os parâmetros de formação de grupos
     const [formationParams, setFormationParams] = useState<GroupFormationState>({
         groupSize: FORMATION_CONFIG.MIN_GROUP_SIZE,
@@ -27,7 +27,7 @@ export const useFormationState = (students: StudentAttendance[]) => {
     });
     
     // Estado para os grupos formados
-    const [studentGroups, setStudentGroups] = useState<StudentAttendance[][]>([]);
+    const [studentGroups, setStudentGroups] = useState<StudentFormData[][]>([]);
 
     /**
      * Atualiza parcialmente o estado de feedback

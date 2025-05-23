@@ -171,16 +171,6 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     return isValid;
   };
 
-  const handleNextStep = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
-    }
-  };
-
-  const handlePreviousStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

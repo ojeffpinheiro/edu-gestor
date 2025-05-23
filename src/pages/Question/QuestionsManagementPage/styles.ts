@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Container, Flex } from "../../../styles/layoutUtils";
+import { QuestionType } from "../../../utils/types/Question";
 
 export const QuestionsManagementContainer = styled(Container)`
   max-width: 95vw;
@@ -116,7 +117,7 @@ export const DifficultyBadge = styled.span<{ level: 'easy' | 'medium' | 'hard' }
   }}
 `;
 
-export const TypeBadge = styled.span<{ type: 'multiple_choice' | 'true_false' | 'essay' }>`
+export const TypeBadge = styled.span<{ type: QuestionType }>`
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--border-radius-sm);
   font-size: var(--font-size-xs);

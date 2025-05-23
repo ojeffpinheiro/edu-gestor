@@ -3,14 +3,14 @@ import { useDrop } from 'react-dnd';
 import { LayoutConfig, SeatType } from '../../../utils/types/Team';
 import Seat from '../Seat';
 import { DropHighlight } from '../../../pages/Team/ClassroomLayoutPage/styles';
-import { StudentAttendance } from '../../../utils/types/BasicUser';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 
 interface DroppableSeatProps {
     seat: SeatType;
     layout: LayoutConfig;
     setLayout: React.Dispatch<React.SetStateAction<LayoutConfig>>;
     handleSeatClick: (seat: SeatType) => void;
-    studentList: StudentAttendance[];
+    studentList: StudentFormData[];
     selectedSeat: SeatType | null;
     verifyMode: boolean;
     getStudentAttendance: (id: number) => number;
@@ -48,7 +48,7 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
     });
 
     return (
-        <div ref={drop} style={{ position: 'relative' }}>
+        <div style={{ position: 'relative' }}>
             <Seat
                 seat={seat}
                 studentList={studentList}

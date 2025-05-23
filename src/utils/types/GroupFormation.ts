@@ -1,4 +1,4 @@
-import { Student, StudentAttendance } from "./BasicUser";
+import { StudentFormData } from "./BasicUser";
 
 // Group Formation Types Enum
 export enum GroupFormationType {
@@ -15,9 +15,9 @@ export const FORMATION_CONFIG = {
 
 // Group Formation Modal Props Interface
 export interface GroupFormationModalProps {
-    students: StudentAttendance[]; // List of available students
+    students: StudentFormData[]; // List of available students
     onClose: () => void; // Callback when the modal is closed
-    onSave?: (groups: Student[][]) => void; // Optional save function for formed groups
+    onSave?: (groups: StudentFormData[][]) => void; // Optional save function for formed groups
     processingDelay?: number; // Simulation processing time in ms
 }
 
