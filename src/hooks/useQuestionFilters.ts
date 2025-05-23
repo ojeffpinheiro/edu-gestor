@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Question } from '../utils/types/Question';
-import { FilterValues } from '../components/Exam/ExamCreator/QuestionSelectionStep/QuestionSelector/types';
+import { FilterValues } from '../components/Exam/ExamCreator/step/QuestionSelectionStep/QuestionSelector/types';
 
 export const useQuestionFilters = (questions: Question[], initialFilters: Partial<FilterValues>) => {
   const [searchTerm, setSearchTerm] = useState('');

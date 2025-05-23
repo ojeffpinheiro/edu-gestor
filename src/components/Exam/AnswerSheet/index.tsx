@@ -1,5 +1,5 @@
 import React from 'react';
-import { 
+import {
   AnswerSheetContainer,
   Instructions,
   AnswerGrid,
@@ -19,10 +19,13 @@ import {
   CodeDigits,
   CodeDigit,
   IdentificationHeader,
-  CapturePointsContainer
+  CapturePointsContainer,
+  ExampleImage,
+  InstructionsContent
 } from './styles';
 
-import img from '../../../assets/exampleI-answer.png'
+import img from '../../../assets/exampleI-answer.png';
+import { QRCodeCanvas, QRCodeSVG } from 'qrcode.react';
 
 interface AnswerSheetProps {
   questionsCount: number;
@@ -37,14 +40,20 @@ const AnswerSheet: React.FC<AnswerSheetProps> = ({
   questionLayout = 'list',
   examId = 'EXAM001'
 }) => {
+
+  let format = 'png';
+  const size = 180;
+
+  const qrValue = `https://exam.example.com/${examId}`;
+
   // Define o número ideal de colunas baseado na quantidade de questões
   let columns = 6;
-  
+
   if (questionsCount <= 8) columns = 3;
   else if (questionsCount <= 10) columns = 5;
   else if (questionsCount <= 120) columns = 6;
   else columns = Math.min(8, Math.ceil(questionsCount / 20));
-  
+
   const adjustedQuestionsPerColumn = Math.ceil(questionsCount / columns);
 
   // Gera código manual de 8 dígitos baseado no examId
@@ -69,35 +78,43 @@ const AnswerSheet: React.FC<AnswerSheetProps> = ({
       </CapturePointsContainer>
 
       <Header>QUADRO DE RESPOSTAS</Header>
-      
+
       {/* Seção de Identificação da Prova */}
       <IdentificationSection>
         <IdentificationHeader>IDENTIFICAÇÃO DA PROVA</IdentificationHeader>
-        
+
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
           {/* QR Code */}
           <QRCodeArea>
-            <div className="qr-placeholder">
-              <div className="qr-pattern">
-                {Array.from({ length: 25 }).map((_, i) => (
-                  <div key={i} className={`qr-cell ${Math.random() > 0.5 ? 'filled' : ''}`} />
-                ))}
-              </div>
-            </div>
+            {format === 'svg' ? (
+              <QRCodeSVG
+                value={qrValue}
+                size={size}
+                level="H"
+                includeMargin={true}
+              />
+            ) : (
+              <QRCodeCanvas
+                value={qrValue}
+                size={size}
+                level="H"
+                includeMargin={true}
+              />
+            )}
           </QRCodeArea>
 
           {/* Código de Barras */}
           <BarcodeArea>
             <div className="barcode-placeholder">
               {Array.from({ length: 30 }).map((_, i) => (
-                <div 
-                  key={i} 
-                  className="bar" 
-                  style={{ 
+                <div
+                  key={i}
+                  className="bar"
+                  style={{
                     width: Math.random() > 0.5 ? '2px' : '1px',
                     height: '30px',
                     backgroundColor: '#000'
-                  }} 
+                  }}
                 />
               ))}
             </div>
@@ -112,11 +129,14 @@ const AnswerSheet: React.FC<AnswerSheetProps> = ({
         </div>
       </IdentificationSection>
 
-      <Instructions>
-        Para todas as marcações neste <strong>CARTÃO-RESPOSTA</strong>, preencha os círculos completamente e com nitidez, 
-        utilizando <strong>caneta esferográfica de tinta azul ou preta</strong>, conforme na ilustração.
-        <img src={img} alt="Ilustração" />
-      </Instructions>
+      <InstructionsContent>
+        <Instructions>
+          Para todas as marcações neste <strong>CARTÃO-RESPOSTA</strong>, preencha os círculos completamente e com nitidez,
+          utilizando <strong>caneta esferográfica de tinta azul ou preta</strong>, conforme na ilustração.
+          <br /><br />
+        </Instructions>
+        <ExampleImage src={img} alt="Ilustração de exemplo de preenchimento" />
+      </InstructionsContent>
 
       <SectionDivider />
 
@@ -135,15 +155,15 @@ const AnswerSheet: React.FC<AnswerSheetProps> = ({
             (colIndex + 1) * adjustedQuestionsPerColumn,
             questionsCount
           );
-          
+
           return (
             <AnswerColumn key={colIndex}>
               <ColumnHeader>QUESTÃO/RESPOSTA</ColumnHeader>
-              
+
               {Array.from({ length: endQuestion - startQuestion + 1 }).map((_, rowIndex) => {
                 const questionNumber = startQuestion + rowIndex;
                 const isEven = questionNumber % 2 === 0;
-                
+
                 return (
                   <QuestionRow key={questionNumber} isEven={isEven}>
                     <QuestionNumber>

@@ -1,4 +1,4 @@
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 
 const colors = {
   primary: '#4a90e2',
@@ -24,41 +24,6 @@ const examColors = {
   border: '#E0E0E0',
   optionCircle: '#000000',
 };
-
-// Componentes estilizados
-export const Container = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-height: 100vh;
-    background-color: ${colors.secondary};
-    padding: 20px;
-    box-sizing: border-box;
-    color: ${colors.examText};
-    line-height: 1.5;
-  `;
-
-export const Header = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
-    gap: 15px;
-  `;
-
-export const Title = styled.h2`
-    font-size: 24px;
-    color: ${colors.text};
-    margin: 0;
-  `;
-
-export const Controls = styled.div`
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  `;
 
 export const ExamContent = styled.div<{ 
   questionLayout: 'grid' | 'list';
@@ -165,36 +130,11 @@ export const Answer = styled.div`
     font-style: italic;
   `;
 
-export const ButtonsContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 30px;
-    flex-wrap: wrap;
-    gap: 15px;
-  `;
 
 export const LeftButtons = styled.div`
     display: flex;
     gap: 12px;
     flex-wrap: wrap;
-  `;
-
-export const ToggleButton = styled.button<{ active?: boolean }>`
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background-color: ${props => props.active ? colors.primary : colors.background};
-    color: ${props => props.active ? 'white' : colors.text};
-    border: 1px solid ${props => props.active ? colors.primary : colors.border};
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s ease;
-    
-    &:hover {
-      background-color: ${props => props.active ? colors.primaryHover : '#f1f3f5'};
-    }
   `;
 
 export const ExamQuestionNumber = styled.div`
@@ -332,34 +272,6 @@ export const CorrectAnswer = styled.div`
   border-top: 1px dashed ${colors.border};
   color: ${colors.success};
   font-weight: bold;
-`;
-
-export const PrintStyles = createGlobalStyle`
-  @media print {
-    body {
-      background: white !important;
-      color: black !important;
-    }
-    
-    .exam-preview {
-      padding: 0 !important;
-      margin: 0 !important;
-    }
-    
-    ${ExamContainer} {
-      box-shadow: none !important;
-      padding: 0 !important;
-      width: auto !important;
-    }
-    
-    ${QuestionActions} {
-      display: none !important;
-    }
-    
-    .no-print {
-      display: none !important;
-    }
-  }
 `;
 
 export const QuestionBody = styled.div`

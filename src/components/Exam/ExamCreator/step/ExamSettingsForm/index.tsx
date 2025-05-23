@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiArrowRight, FiGrid, FiList, FiMinimize2, FiSettings, FiType } from 'react-icons/fi';
-import { Exam } from '../../../../utils/types/Exam';
+import { Exam } from '../../../../../utils/types/Exam';
 
 import {
   ActionButtons,
@@ -34,12 +34,6 @@ const ExamSettingsForm: React.FC<ExamSettingsFormProps> = ({
 
     onDataChange({
       [name]: type === 'checkbox' ? checked : value
-    });
-  };
-
-  const handleSelectionModeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onDataChange({
-      selectionMode: e.target.value as 'manual' | 'random'
     });
   };
 

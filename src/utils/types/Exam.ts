@@ -65,6 +65,13 @@ export interface ValidationResult {
     errors: ValidationItem[];
 }
 
+export interface ExamVariant {
+    id: string;
+    name: string; // Ex: "Variante A", "Variante B"
+    questions: Question[];
+    answerKey: Record<number, string>; // Mapeia número da questão para resposta correta
+}
+
 /**
  * Interface principal para o tipo Exam
  */
@@ -124,7 +131,10 @@ export interface Exam {
     grade: number; // Série escolar (ex: 6, 7, 9).
 
     // Variantes
-    variants: string[]; // Gera diferentes versões da prova (ex: A, B, C).
+    variantsEnabled: boolean; // Se as variantes estão habilitadas
+    variantsCount: number; // Número de variantes a serem geradas
+    variantsGenerationMethod: 'shuffle' | 'questionBank'; // Método de geração
+    variants: ExamVariant[];
 
     // Metadados
     createdAt: Date; // Data de criação do exame.

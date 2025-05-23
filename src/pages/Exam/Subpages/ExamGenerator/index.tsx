@@ -3,13 +3,15 @@ import { useExamCreator } from '../../../../hooks/useExamCreator';
 import { mockQuestions } from '../../../../mocks/question';
 
 import ProgressIndicator from '../../../../components/Exam/ExamCreator/ProgressIndicator';
-import ExamPreview from '../../../../components/Exam/ExamCreator/ExamPreview';
-import ExamSettingsForm from '../../../../components/Exam/ExamCreator/ExamSettingsForm';
-import QuestionSelectionStep from '../../../../components/Exam/ExamCreator/QuestionSelectionStep';
-import SecurityStep from '../../../../components/Exam/ExamCreator/SecurityStep';
-import HeaderSection from '../../../../components/Exam/ExamCreator/HeaderSection';
+
+import ExamSettingsForm from '../../../../components/Exam/ExamCreator/step/ExamSettingsForm';
+import HeaderSection from '../../../../components/Exam/ExamCreator/step/HeaderSection';
+import QuestionSelectionStep from '../../../../components/Exam/ExamCreator/step/QuestionSelectionStep';
+import CorrectionForm from '../../../../components/Exam/ExamCreator/step/CorrectionForm';
 
 import { ExamGeneratorContainer } from './styles';
+import VariantGeneratorStep from '../../../../components/Exam/ExamCreator/step/VariantGeneratorStep';
+import VariantPreview from '../../../../components/Exam/ExamCreator/VariantPreview';
 
 const ExamGenerator = () => {
   const {
@@ -25,8 +27,16 @@ const ExamGenerator = () => {
     handleSelectQuestion,
     handleRandomSelection,
     navigateToStep,
+    generateExamVariants,
+    handlePrintVariant,
+    handleDownloadVariant,
     handleSubmitExam
   } = useExamCreator();
+
+  const handleGenerateVariants = () => {
+    const updatedExam = generateExamVariants(examData);
+    updateExamConfig(updatedExam);
+  };
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -66,7 +76,7 @@ const ExamGenerator = () => {
         );
       case 4:
         return (
-          <SecurityStep
+          <CorrectionForm
             examData={examData}
             setExamData={updateExamConfig}
             onBack={() => navigateToStep(3)}
@@ -75,17 +85,30 @@ const ExamGenerator = () => {
         );
       case 5:
         return (
-          <ExamPreview
+          <VariantGeneratorStep
             examData={examData}
+            setExamData={updateExamConfig}
             onBack={() => navigateToStep(4)}
+            onNext={() => navigateToStep(6)}
+            onGenerateVariants={handleGenerateVariants}
+          />
+        );
+      case 6:
+        return (
+          <VariantPreview
+            examData={examData}
+            onBack={() => navigateToStep(5)}
             onComplete={handleSubmitExam}
-            onReset={() => {}}
+            onPrint={handlePrintVariant}
+            onDownload={handleDownloadVariant}
           />
         );
       default:
         return null;
     }
   };
+
+
 
   return (
     <ExamGeneratorContainer>
@@ -95,7 +118,7 @@ const ExamGenerator = () => {
       </header>
 
       <ProgressIndicator currentStep={currentStep} />
-      
+
       {renderStepContent()}
     </ExamGeneratorContainer>
   );

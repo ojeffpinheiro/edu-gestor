@@ -1,5 +1,5 @@
 import React from 'react';
-import { Exam } from '../../../../utils/types/Exam';
+import { Exam } from '../../../../../utils/types/Exam';
 
 import { 
   BoldLabel,

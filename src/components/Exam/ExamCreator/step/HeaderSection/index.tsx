@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaTimes } from 'react-icons/fa';
 import { FiInfo, FiUpload, FiEye, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 import {
   SectionTitle,
@@ -7,12 +8,12 @@ import {
   ResponsiveWrapper,
   SchoolInfoItem
 } from '../ExamSettingsForm/styles';
-import { Exam } from '../../../../utils/types/Exam';
-import { Label, Switch, SwitchRow } from '../../../../styles/inputs';
+import { Exam } from '../../../../../utils/types/Exam';
+import { Label, Switch, SwitchRow } from '../../../../../styles/inputs';
 import HeaderPreview from './HeaderPreview';
-import { FaTimes } from 'react-icons/fa';
-import { SecondaryButton } from '../../../../styles/buttons';
-import { ButtonGroup } from '../SecurityStep/styles';
+
+import { SecondaryButton } from '../../../../../styles/buttons';
+import { ButtonGroup } from '../QuestionSelectionStep/styles';
 
 interface HeaderSectionProps {
   examData: Exam;

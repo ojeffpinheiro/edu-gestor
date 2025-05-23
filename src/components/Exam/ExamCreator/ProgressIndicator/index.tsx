@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiSettings, FiList, FiLock, FiEye, FiAlignJustify } from 'react-icons/fi';
+import { FiSettings, FiList, FiEye, FiAlignJustify, FiCheckCircle, FiLayers } from 'react-icons/fi';
 
 import { ProgressSteps, Step } from './styles'
 
@@ -11,8 +11,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep }) =>
   { id: 1, icon: <FiSettings />, label: 'Configurações' },
   { id: 2, icon: <FiAlignJustify />, label: 'Cabeçalho' },
   { id: 3, icon: <FiList />, label: 'Questões' },
-  { id: 4, icon: <FiLock />, label: 'Segurança' },
-  { id: 5, icon: <FiEye />, label: 'Pré-visualização' },
+  { id: 4, icon: <FiCheckCircle />, label: 'Correção' },
+  { id: 5, icon: <FiLayers />, label: 'Variantes' },
+  { id: 6, icon: <FiEye />, label: 'Pré-visualização' },
 ];
 
   return (

@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 
-import { useQuestionFilters } from '../../../../../hooks/useQuestionFilters';
-import { Exam } from '../../../../../utils/types/Exam';
-import { Question } from '../../../../../utils/types/Question';
-import SearchInput from '../../../../shared/SearchInput';
-import FilterBar from '../../../../shared/FilterBar';
+import { useQuestionFilters } from '../../../../../../hooks/useQuestionFilters';
+import { Exam } from '../../../../../../utils/types/Exam';
+import { Question } from '../../../../../../utils/types/Question';
+import SearchInput from '../../../../../shared/SearchInput';
+import FilterBar from '../../../../../shared/FilterBar';
 
 import SelectedQuestionsList from './SelectedQuestionsList';
 import QuestionsTable from './QuestionsTable';
@@ -20,7 +20,7 @@ import {
   SelectionControls,
   ResponsiveWrapper,
 } from './styles';
-import { useQuestionSelection } from '../../../../../hooks/useQuestionSelection';
+import { useQuestionSelection } from '../../../../../../hooks/useQuestionSelection';
 
 interface QuestionSelectorProps {
   examData: Exam;

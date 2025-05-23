@@ -1,6 +1,6 @@
 // hooks/useExamCreator.ts corrigido
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Exam, ExamTypes } from '../utils/types/Exam';
+import { Exam, ExamTypes, ExamVariant } from '../utils/types/Exam';
 import { Question, DifficultyLevelType } from '../utils/types/Question';
 import { generateAccessCode } from '../utils/examHelpers';
 
@@ -74,6 +74,9 @@ export const useExamCreator = () => {
     fontSize: 'medium',
     showQuestionNumber: true,
     showQuestionTypeIndicator: true,
+    variantsCount: 0,
+    variantsEnabled: false,
+    variantsGenerationMethod: 'questionBank',
   }
   // Step atual do processo de criação
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -86,9 +89,9 @@ export const useExamCreator = () => {
 
   const questions = examData.questions;
 
-   // Validações
-   // Verificar se o formulário tem dados mínimos válidos
-   const isFormValid = useMemo(() => (
+  // Validações
+  // Verificar se o formulário tem dados mínimos válidos
+  const isFormValid = useMemo(() => (
     examData.title.trim() !== '' &&
     examData.discipline.trim() !== '' &&
     examData.totalQuestions > 0
@@ -109,7 +112,7 @@ export const useExamCreator = () => {
 
   // Filtra questões baseado na disciplina selecionada
   const filteredQuestions = useMemo(() => {
-    return examData.discipline 
+    return examData.discipline
       ? examData.questions.filter(q => q.discipline === examData.discipline)
       : examData.questions;
   }, [examData.discipline, examData.questions]);
@@ -120,7 +123,7 @@ export const useExamCreator = () => {
       ...dist,
       selected: selectedQuestions.filter(q => q.difficultyLevel === dist.difficulty).length
     }));
-    
+
     setExamData(prev => ({
       ...prev,
       questionDistribution: updatedDistribution,
@@ -137,7 +140,7 @@ export const useExamCreator = () => {
   // Função para navegar entre os passos
   const navigateToStep = useCallback((step: number) => {
     // Validação para evitar passos inválidos
-    if (step < 1 || step > 5) return;
+    if (step < 1 || step > 6) return;
 
     // Validação específica para certos passos
     if (step === 4 && !isFormValid) {
@@ -151,7 +154,7 @@ export const useExamCreator = () => {
   const handleTotalQuestionsChange = useCallback((value: number) => {
     // Não permitir valor menor que 1
     if (value < 1) value = 1;
-    
+
     setExamData(prev => ({
       ...prev,
       totalQuestions: value
@@ -162,7 +165,7 @@ export const useExamCreator = () => {
   const handleDifficultyChange = useCallback((difficulty: DifficultyLevelType, value: number) => {
     // Não permitir valor negativo
     if (value < 0) value = 0;
-    
+
     setExamData(prev => {
       const updatedDistribution = prev.questionDistribution.map(dist => {
         if (dist.difficulty === difficulty) {
@@ -170,7 +173,7 @@ export const useExamCreator = () => {
         }
         return dist;
       });
-      
+
       return {
         ...prev,
         questionDistribution: updatedDistribution
@@ -198,7 +201,7 @@ export const useExamCreator = () => {
         message: 'O código deve ter 6 caracteres alfanuméricos maiúsculos'
       };
     }
-    
+
     // Simular validação de unicidade (em produção seria uma chamada à API)
     return { valid: true, message: 'Código válido' };
   }, []);
@@ -211,7 +214,7 @@ export const useExamCreator = () => {
       questions: selectedQuestions,
       updatedAt: new Date(),
     };
-    
+
     console.log('Exame finalizado:', finalExam);
     // Aqui você implementaria a lógica para salvar o exame no backend
     alert('Exame criado com sucesso!');
@@ -223,7 +226,7 @@ export const useExamCreator = () => {
     const totalFromDistribution = examData.questionDistribution.reduce(
       (sum, dist) => sum + dist.count, 0
     );
-    
+
     return totalFromDistribution === examData.totalQuestions;
   }, [examData.questionDistribution, examData.totalQuestions]);
 
@@ -233,7 +236,7 @@ export const useExamCreator = () => {
       ...prev,
       selectionMode: mode
     }));
-    
+
     // Limpa as questões selecionadas quando muda o modo
     setSelectedQuestions([]);
   }, []);
@@ -242,10 +245,10 @@ export const useExamCreator = () => {
     setSelectedQuestions(prev => {
       const newQuestions = Array.isArray(questions) ? questions : [questions];
       const questionIds = newQuestions.map(q => q.id);
-      
+
       // Remove as questões que estão sendo adicionadas (caso já existam)
       const filteredPrev = prev.filter(q => !questionIds.includes(q.id));
-      
+
       // Adiciona as novas questões (se não estiverem todas presentes)
       const shouldAdd = newQuestions.some(q => !prev.some(p => p.id === q.id));
       return shouldAdd ? [...filteredPrev, ...newQuestions] : filteredPrev;
@@ -253,7 +256,7 @@ export const useExamCreator = () => {
   }, []);
 
   const availableQuestions = useMemo(() => {
-    return examData.discipline 
+    return examData.discipline
       ? questions.filter(q => q.discipline === examData.discipline)
       : questions;
   }, [examData.discipline, questions]);
@@ -267,12 +270,90 @@ export const useExamCreator = () => {
         .filter(q => q.difficultyLevel === dist.difficulty)
         .sort(() => Math.random() - 0.5)
         .slice(0, dist.count);
-      
+
       newSelectedQuestions.push(...questionsOfDifficulty);
     });
 
     setSelectedQuestions(newSelectedQuestions);
   }, [examData.questionDistribution, filteredQuestions]);
+
+  const handlePrintVariant = (variantId: string) => {
+    const variant = examData.variants.find(v => v.id === variantId);
+    if (!variant) return;
+
+    // Implemente a lógica de impressão aqui
+    // Pode usar bibliotecas como react-to-print
+    console.log(`Imprimindo ${variant.name}`);
+  };
+
+  const handleDownloadVariant = (variantId: string) => {
+    const variant = examData.variants.find(v => v.id === variantId);
+    if (!variant) return;
+
+    // Implemente a lógica de download aqui
+    // Pode gerar PDF com bibliotecas como jspdf ou html2pdf
+    console.log(`Baixando ${variant.name}`);
+  };
+
+  const generateExamVariants = (exam: Exam): Exam => {
+    if (!exam.variantsEnabled || exam.variantsCount < 1) {
+      return { ...exam, variants: [] };
+    }
+
+    const variants: ExamVariant[] = [];
+    const baseQuestions = [...exam.questions];
+
+    for (let i = 0; i < exam.variantsCount; i++) {
+      const variantLetter = String.fromCharCode(65 + i); // A, B, C, ...
+      const variantName = `Variante ${variantLetter}`;
+
+      // Clone as questões para não modificar a original
+      let questions = JSON.parse(JSON.stringify(baseQuestions));
+
+      // Embaralhar questões se configurado
+      if (exam.shuffleQuestions) {
+        questions = shuffleArray(questions);
+      }
+
+      // Embaralhar alternativas se configurado
+      if (exam.shuffleAlternatives) {
+        questions = questions.map((q: Question) => ({
+          ...q,
+          alternatives: q.questionType === 'multiple_choice' ?
+            shuffleArray(q.alternatives) :
+            q.alternatives,
+        }));
+      }
+
+      // Gerar gabarito
+      const answerKey: Record<number, string> = {};
+      questions.forEach((q: Question, index: number) => {
+        if (q.questionType === 'multiple_choice') {
+          const correctIndex = q.alternatives.findIndex(alt => alt.isCorrect);
+          answerKey[index + 1] = String.fromCharCode(65 + correctIndex); // A, B, C, ...
+        }
+      });
+
+      variants.push({
+        id: `variant-${i}`,
+        name: variantName,
+        questions,
+        answerKey,
+      });
+    }
+
+    return { ...exam, variants };
+  };
+
+  // Função auxiliar para embaralhar arrays
+  const shuffleArray = <T,>(array: T[]): T[] => {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
+  };
 
   return {
     examData,
@@ -290,7 +371,10 @@ export const useExamCreator = () => {
     handleSelectQuestion,
     handleRandomSelection,
     navigateToStep,
-    setSelectedQuestions, 
-    handleSubmitExam
+    setSelectedQuestions,
+    handleSubmitExam,
+    handlePrintVariant,
+    handleDownloadVariant,
+    generateExamVariants
   };
 };

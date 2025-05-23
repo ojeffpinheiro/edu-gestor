@@ -1,11 +1,25 @@
 import React from 'react';
 import { FiArrowLeft, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
-import styled from 'styled-components';
-import { Exam } from '../../../../utils/types/Exam';
-import { ButtonGroup } from '../../../../pages/Exam/Subpages/ExamGenerator/styles';
-import AccessCodeGenerator from '../AccessCodeGenerator';
+import { Exam } from '../../../../../utils/types/Exam';
+import { ButtonGroup } from '../../../../../pages/Exam/Subpages/ExamGenerator/styles';
+import AccessCodeGenerator from '../../AccessCodeGenerator';
 
-interface SecurityStepProps {
+import {
+  SecurityContainer,
+  Section,
+  FormControl,
+  PasswordContainer,
+  PasswordInputWrapper,
+  TogglePasswordButton,
+  HelpText,
+  RadioGroup,
+  RadioOption,
+  SecurityGrid,
+  SecurityOption,
+  ResponsiveWrapper,
+} from './styles'
+
+interface CorrectionFormProps {
   examData: Exam;
   setExamData: (data: Partial<Exam>) => void;
   onBack: () => void;
@@ -14,7 +28,7 @@ interface SecurityStepProps {
   validateAccessCode?: (code: string) => { valid: boolean; message: string };
 }
 
-const SecurityStep: React.FC<SecurityStepProps> = ({
+const CorrectionForm: React.FC<CorrectionFormProps> = ({
   examData,
   setExamData,
   onBack,
@@ -36,6 +50,14 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
     setExamData({ ...examData, accessCode: code });
   };
 
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      setExamData({ ...examData, [name]: numValue });
+    }
+  };
+
   const handleClick = () => {
     onNext();
     console.log(examData);
@@ -44,21 +66,6 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
     <SecurityContainer>
       <h2>Segurança e Acesso</h2>
       <p>Configure as opções de segurança e acesso para sua prova</p>
-
-      <Section>
-        <h3>Visibilidade</h3>
-        <FormControl>
-          <label>
-            <input
-              type="checkbox"
-              name="isPublic"
-              checked={examData.isPublic}
-              onChange={handleChange}
-            />
-            Tornar esta prova pública (visível para todos os professores da instituição)
-          </label>
-        </FormControl>
-      </Section>
 
       <Section>
         <h3>Proteção de Acesso</h3>
@@ -99,30 +106,30 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
       </Section>
 
       <Section>
+        <ResponsiveWrapper>
+              <FormControl>
+                <label htmlFor="variantsCount">Número de variantes:</label>
+                <input
+                  id="variantsCount"
+                  name="variantsCount"
+                  type="number"
+                  min="1"
+                  max="10"
+                  value={examData.variantsCount || 1}
+                  onChange={handleNumberChange}
+                />
+                <HelpText>Máximo de 10 variantes</HelpText>
+              </FormControl>
+            </ResponsiveWrapper>
+      </Section>
+
+      <Section>
         <AccessCodeGenerator
           accessCode={examData.accessCode}
           onRegenerate={regenerateAccessCode}
           onValidate={validateAccessCode}
           onChange={handleAccessCodeChange}
         />
-      </Section>
-
-      <Section>
-        <h3>Identificação por Código de Barras</h3>
-        <FormControl>
-          <label>
-            <input
-              type="checkbox"
-              name="useBarCode"
-              checked={examData.useBarCode}
-              onChange={handleChange}
-            />
-            Incluir código de barras para identificação da folha de resposta
-          </label>
-          <HelpText>
-            Códigos de barras facilitam a identificação automática de folhas durante a correção
-          </HelpText>
-        </FormControl>
       </Section>
 
       <Section>
@@ -239,166 +246,4 @@ const SecurityStep: React.FC<SecurityStepProps> = ({
   );
 };
 
-// Estilos
-const SecurityContainer = styled.div`
-  max-width: 800px;
-  margin: 0 auto;
-`;
-
-const Section = styled.section`
-  margin-bottom: 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eaeaea;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  h3 {
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 1rem;
-  }
-`;
-
-const FormControl = styled.div`
-  margin-bottom: 1rem;
-
-  label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-  }
-
-  input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-`;
-
-const HelpText = styled.p`
-  margin-top: 0.5rem;
-  margin-left: 1.8rem;
-  font-size: 0.9rem;
-  color: #666;
-`;
-
-const PasswordContainer = styled.div`
-  margin-top: 1rem;
-  margin-left: 1.8rem;
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-  }
-`;
-
-const PasswordInputWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  
-  input {
-    flex: 1;
-    padding: 0.7rem 2.5rem 0.7rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 0.3rem;
-    font-size: 1rem;
-    
-    &:focus {
-      outline: none;
-      border-color: #4a90e2;
-      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
-    }
-  }
-`;
-
-const TogglePasswordButton = styled.button`
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #777;
-  padding: 0.5rem;
-  
-  &:hover {
-    color: #333;
-  }
-`;
-
-const RadioGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const RadioOption = styled.div`
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  
-  input[type="radio"] {
-    margin-top: 0.3rem;
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-  }
-  
-  label {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-    cursor: pointer;
-    
-    strong {
-      font-weight: 500;
-    }
-    
-    span {
-      font-size: 0.9rem;
-      color: #666;
-    }
-  }
-`;
-
-const SecurityGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-`;
-
-const SecurityOption = styled.div`
-  label {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.5rem;
-    cursor: pointer;
-    
-    input[type="checkbox"] {
-      margin-top: 0.3rem;
-      width: 18px;
-      height: 18px;
-    }
-    
-    div {
-      display: flex;
-      flex-direction: column;
-      gap: 0.2rem;
-      
-      strong {
-        font-weight: 500;
-      }
-      
-      span {
-        font-size: 0.9rem;
-        color: #666;
-      }
-    }
-  }
-`;
-
-export default SecurityStep;
+export default CorrectionForm;

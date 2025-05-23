@@ -136,3 +136,165 @@ export const ButtonGroup = styled.div`
     }
   }
 `;
+
+// Estilos
+export const SecurityContainer = styled.div`
+  max-width: 800px;
+  margin: 0 auto;
+`;
+
+export const Section = styled.section`
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+`;
+
+export const FormControl = styled.div`
+  margin-bottom: 1rem;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+`;
+
+export const HelpText = styled.p`
+  margin-top: 0.5rem;
+  margin-left: 1.8rem;
+  font-size: 0.9rem;
+  color: #666;
+`;
+
+export const PasswordContainer = styled.div`
+  margin-top: 1rem;
+  margin-left: 1.8rem;
+  
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+`;
+
+export const PasswordInputWrapper = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  
+  input {
+    flex: 1;
+    padding: 0.7rem 2.5rem 0.7rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+    
+    &:focus {
+      outline: none;
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+    }
+  }
+`;
+
+export const TogglePasswordButton = styled.button`
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #777;
+  padding: 0.5rem;
+  
+  &:hover {
+    color: #333;
+  }
+`;
+
+export const RadioGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+export const RadioOption = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  
+  input[type="radio"] {
+    margin-top: 0.3rem;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+  
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    cursor: pointer;
+    
+    strong {
+      font-weight: 500;
+    }
+    
+    span {
+      font-size: 0.9rem;
+      color: #666;
+    }
+  }
+`;
+
+export const SecurityGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+`;
+
+export const SecurityOption = styled.div`
+  label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    
+    input[type="checkbox"] {
+      margin-top: 0.3rem;
+      width: 18px;
+      height: 18px;
+    }
+    
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      
+      strong {
+        font-weight: 500;
+      }
+      
+      span {
+        font-size: 0.9rem;
+        color: #666;
+      }
+    }
+  }
+`;

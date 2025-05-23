@@ -1,29 +1,30 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { FiAlertCircle, FiArrowLeft, FiArrowRight, FiRefreshCw } from 'react-icons/fi';
-import { Exam } from '../../../../utils/types/Exam';
-import { DifficultyLevelType, Question } from '../../../../utils/types/Question';
+import { Exam } from '../../../../../utils/types/Exam';
+import { DifficultyLevelType, Question } from '../../../../../utils/types/Question';
+
+import QuestionSelector from './QuestionSelector';
+import DifficultyDistribution from './DifficultyDistribution';
 import { DIFFICULTY_LABELS } from './QuestionSelector/types';
 
-import DifficultyDistribution from './DifficultyDistribution';
-import QuestionSelector from './QuestionSelector';
-import {
-  Container,
-  ButtonGroup,
-  SelectionModeContainer,
-  SelectionModeToggle,
-  ToggleButton,
-  SectionHeader,
-  RefreshButton,
-  RandomSelectionSummary,
-  SummaryTable,
-  QuestionCardGrid,
-  QuestionCard,
-  QuestionTitle,
-  QuestionMeta,
-  TotalRow,
-  InfoMessage,
-  LoadingIndicator
-} from './QuestionSelectionStep.styles';
+import { 
+    Container,
+    SelectionModeContainer,
+    SectionHeader,
+    SelectionModeToggle,
+    ToggleButton,
+    RefreshButton,
+    RandomSelectionSummary,
+    LoadingIndicator,
+    InfoMessage,
+    SummaryTable,
+    TotalRow,
+    QuestionCardGrid,
+    QuestionCard,
+    QuestionTitle,
+    QuestionMeta,
+    ButtonGroup
+ } from './styles';
 
 interface QuestionSelectionStepProps {
   examData: Exam;
