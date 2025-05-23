@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { FaExclamationTriangle, FaGripLines, FaPlus, FaPuzzlePiece, FaSortDown, FaSortUp, FaTrashAlt } from "react-icons/fa";
 import { StepProps } from "../../../utils/types/Question";
 import { AlternativeActions, AlternativeContent, AlternativeItem, AlternativesContainer, CorrectBadge, DragHandle, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
@@ -15,14 +15,14 @@ const AlternativesStep: React.FC<StepProps> = ({
     setValidationErrors
 }) => {
 
-    const handleAddAlternative = () => {
+    const handleAddAlternative = useCallback(() => {
         updateFormData({
             alternatives: [
                 ...formData.alternatives,
                 { id: Date.now().toString(), text: '', isCorrect: false }
             ]
         });
-    };
+    }, [formData.alternatives, updateFormData]);
 
     const handleRemoveAlternative = (id: string) => {
         // Não permitir remover todas as alternativas para questões de múltipla escolha
@@ -147,9 +147,9 @@ const AlternativesStep: React.FC<StepProps> = ({
                             <AlternativeActions>
                                 {formData.questionType === 'multiple_choice' && (
                                     <Button
+                                        aria-label={`Marcar alternativa como correta`}
                                         title="Marcar como correta"
-                                        onClick={() => handleCorrectChange(alternative.id)
-                                        }
+                                        onClick={() => handleCorrectChange(alternative.id)}
                                     >
                                         {alternative.isCorrect ? (
                                             <CorrectBadge>Correta </CorrectBadge>
@@ -162,6 +162,7 @@ const AlternativesStep: React.FC<StepProps> = ({
 
                                 <Button
                                     title="Mover para cima"
+                                    aria-label={`Mover para cima`}
                                     onClick={() => handleMoveAlternative(index, 'up')}
                                     disabled={index === 0}
                                 >
@@ -170,6 +171,7 @@ const AlternativesStep: React.FC<StepProps> = ({
 
                                 < Button
                                     title="Mover para baixo"
+                                    aria-label={`Mover para baixo`}
                                     onClick={() => handleMoveAlternative(index, 'down')}
                                     disabled={index === formData.alternatives.length - 1}
                                 >
@@ -178,6 +180,7 @@ const AlternativesStep: React.FC<StepProps> = ({
 
                                 < Button
                                     title="Remover alternativa"
+                                    aria-label={`Remover alternativa`}
                                     onClick={() => handleRemoveAlternative(alternative.id)}
                                     disabled={formData.questionType === 'multiple_choice' && formData.alternatives.length <= 1}
                                 >
@@ -189,7 +192,9 @@ const AlternativesStep: React.FC<StepProps> = ({
                 </AlternativesContainer>
 
                 <Flex justify="end" style={{ margin: '1rem 0 0 0' }}>
-                    <Button onClick={handleAddAlternative}>
+                    <Button
+                        aria-label={`Adicionar alternativa`}
+                        onClick={handleAddAlternative}>
                         <FaPlus /> Adicionar Alternativa
                     </Button>
                 </Flex>

@@ -92,3 +92,15 @@ export interface ConversionRelation {
 }
 
 export type DisciplineType = 'Matemática' | 'Português' | 'Ciências' | 'História' | 'Geografia';
+
+export interface Filters {
+  contentId: string;
+  difficulty: DifficultyLevelType | '';
+}
+
+export interface QuestionFilters {
+  contentId: string;
+  difficulty: DifficultyLevelType;
+  questionType?: 'multiple_choice' | 'true_false' | 'essay' | '';
+  status?: 'active' | 'inactive' | '';
+}

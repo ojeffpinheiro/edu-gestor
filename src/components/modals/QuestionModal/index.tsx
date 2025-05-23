@@ -122,13 +122,11 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
           errors.contentId = 'Selecione um conteúdo';
         }
         break;
-
       case 1: // Validação do passo 2: Enunciado
         if (!formData.statement.trim()) {
           errors.statement = 'O enunciado da questão é obrigatório';
         }
         break;
-
       case 2: // Validação do passo 3: Alternativas
         if (formData.questionType !== 'essay') {
           const hasEmptyAlternative = formData.alternatives.some(alt => !alt.text.trim());
@@ -147,8 +145,9 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
           }
         }
         break;
-
-      // O passo 4 (Recursos) não tem validações obrigatórias
+      case 3:// Validação do passo 4: Recursos
+        // O passo 4 (Recursos) não tem validações obrigatórias
+        break;
     }
 
     setValidationErrors(errors);
@@ -174,6 +173,18 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validação específica do passo atual
+    if (!validateStep(currentStep)) {
+      return;
+    }
+
+    // Se não for o último passo, avance para o próximo
+    if (currentStep < steps.length - 1) {
+      setCurrentStep(prev => prev + 1);
+      return;
+    }
+
+    // Se for o último passo, valide todo o formulário e salve
     if (!validateForm()) {
       return;
     }
@@ -181,7 +192,6 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     setIsSubmitting(true);
 
     try {
-      // Atualizar a data de modificação
       const updatedQuestion = {
         ...formData,
         updatedAt: new Date().toISOString()
@@ -266,7 +276,15 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
       size='md'
       showFooter
       onSubmit={() => handleSubmit(new Event('submit') as unknown as React.FormEvent)}
-      submitText={isSubmitting ? 'Salvando...' : isEditMode ? 'Atualizar' : 'Salvar'}
+      submitText={
+        isSubmitting
+          ? 'Salvando...'
+          : currentStep < steps.length - 1
+            ? 'Próximo'
+            : isEditMode
+              ? 'Atualizar'
+              : 'Salvar'
+      }
       onClose={onClose} >
       {/* Navegação entre passos */}
       <Flex justify="center" style={{ marginBottom: '2rem' }}>

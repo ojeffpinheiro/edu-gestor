@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { FaPlus, FaEdit, FaTrashAlt, FaEye, FaSort, FaChevronLeft, FaChevronRight, FaSearch, FaFilter } from 'react-icons/fa';
 
-import { Content, Question, Topic } from '../../../utils/types/Question';
+import { Content, Filters, Question, Topic } from '../../../utils/types/Question';
 
 import { Divider, Flex, Section } from '../../../styles/layoutUtils';
 import { ActionButton, Button, IconButton } from '../../../styles/buttons';
@@ -25,6 +25,7 @@ import {
 } from './styles'
 import { mockContents, mockQuestions, mockTopics } from '../../../mocks/question';
 import { Card } from '../../../styles/card';
+import FiltersPanel from '../../../components/Question/FiltersPanel';
 
 // Componente principal
 const QuestionsManagementPage: React.FC = () => {
@@ -36,14 +37,17 @@ const QuestionsManagementPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState<Question | undefined>(undefined);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeFilters, setActiveFilters] = useState<Filters>({
+    contentId: '',
+    difficulty: ''
+  });
+  const [showFilters, setShowFilters] = useState(false);
   const itemsPerPage = 10;
 
   // Mock data para demonstração
   useEffect(() => {
     // Simulando carregamento de dados da API
     setTimeout(() => {
-      
-
       setTopics(mockTopics);
       setContents(mockContents);
       setQuestions(mockQuestions);
@@ -52,14 +56,32 @@ const QuestionsManagementPage: React.FC = () => {
   }, []);
 
   // Função para filtragem das questões
-  const filteredQuestions = questions.filter(question => 
-    question.statement.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getContentName(question.contentId).toLowerCase().includes(searchTerm.toLowerCase()) ||
-    getTopicForContent(question.contentId).toLowerCase().includes(searchTerm.toLowerCase())
+  // Usar useMemo para questões filtradas e cálculos de paginação
+  const filteredQuestions = useMemo(() =>
+    questions.filter(question => {
+      const matchesSearch =
+        question.statement.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getContentName(question.contentId).toLowerCase().includes(searchTerm.toLowerCase()) ||
+        getTopicForContent(question.contentId).toLowerCase().includes(searchTerm.toLowerCase());
+
+      const matchesContent =
+        !activeFilters.contentId || question.contentId === activeFilters.contentId;
+
+      const matchesDifficulty =
+        !activeFilters.difficulty || question.difficultyLevel === activeFilters.difficulty;
+
+      return matchesSearch && matchesContent && matchesDifficulty;
+    }),
+    [questions, searchTerm, activeFilters]
   );
 
+  const handleApplyFilters = (newFilters: Filters) => {
+    setActiveFilters(newFilters);
+  };
+
+  const totalPages = useMemo(() => Math.ceil(filteredQuestions.length / itemsPerPage), [filteredQuestions]);
+
   // Lógica para paginação
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentQuestions = filteredQuestions.slice(startIndex, endIndex);
@@ -100,11 +122,11 @@ const QuestionsManagementPage: React.FC = () => {
 
   const handleSaveQuestion = (questionData: Omit<Question, 'id' | 'createdAt' | 'updatedAt'> & { id?: string }) => {
     const now = new Date().toISOString();
-    
+
     if (questionData.id) {
       // Atualizar questão existente
-      setQuestions(questions.map(q => 
-        q.id === questionData.id 
+      setQuestions(questions.map(q =>
+        q.id === questionData.id
           ? { ...questionData, updatedAt: now } as Question
           : q
       ));
@@ -116,7 +138,7 @@ const QuestionsManagementPage: React.FC = () => {
         createdAt: now,
         updatedAt: now,
       } as Question;
-      
+
       setQuestions([...questions, newQuestion]);
     }
   };
@@ -163,11 +185,20 @@ const QuestionsManagementPage: React.FC = () => {
                 />
                 <FaSearch size={16} />
               </SearchBar>
-              <Button>
+              <Button onClick={() => setShowFilters(!showFilters)}>
                 <FaFilter size={14} />
                 Filtros
               </Button>
             </Flex>
+
+            {showFilters && (
+              <Card style={{ marginTop: '1rem' }}>
+                <FiltersPanel
+                  contents={contents}
+                  onApply={handleApplyFilters}
+                />
+              </Card>
+            )}
 
             <Divider />
 
@@ -175,7 +206,7 @@ const QuestionsManagementPage: React.FC = () => {
               <p>Carregando questões...</p>
             ) : (
               <>
-                <Table>
+                <Table role="grid" aria-label="Lista de questões">
                   <thead>
                     <tr>
                       <TableHeader>ID</TableHeader>
@@ -240,13 +271,14 @@ const QuestionsManagementPage: React.FC = () => {
                           </TableCell>
                           <TableCell>
                             <ActionColumn>
-                              <IconButton 
+                              <IconButton
                                 title="Visualizar"
+                                aria-label={`Visualizar questão ${question.id}`}
                                 onClick={() => question.id && handleViewQuestion(question.id)}
                               >
                                 <FaEye size={14} />
                               </IconButton>
-                              <IconButton 
+                              <IconButton
                                 title="Editar"
                                 onClick={() => question.id && handleEditQuestion(question.id)}
                               >

@@ -14,6 +14,7 @@ const StatementStep: React.FC<StepProps> = ({
     validationErrors,
     setValidationErrors
 }) => {
+    const MAX_STATEMENT_LENGTH = 1000;
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -27,6 +28,13 @@ const StatementStep: React.FC<StepProps> = ({
                 delete newErrors[name];
                 return newErrors;
             });
+        }
+
+        if (value.length > MAX_STATEMENT_LENGTH) {
+            setValidationErrors({
+                statement: `O enunciado não pode exceder ${MAX_STATEMENT_LENGTH} caracteres`
+            });
+            return;
         }
     };
 
@@ -49,10 +57,10 @@ const StatementStep: React.FC<StepProps> = ({
                         placeholder="Digite o enunciado da questão aqui..."
                     />
                     {validationErrors.statement && (
-                            <ValidationError>
-                                <FaExclamationTriangle /> {validationErrors.statement}
-                            </ValidationError>
-                        )}
+                        <ValidationError>
+                            <FaExclamationTriangle /> {validationErrors.statement}
+                        </ValidationError>
+                    )}
                 </FormGroup>
 
                 < FormGroup >
