@@ -5,17 +5,30 @@ interface NavButtonProps {
 }
 
 export const Container = styled.div`
+  display: grid;
+  grid-template-columns: 250px 1fr;
+  gap: 24px;
   padding: var(--space-lg);
+  min-height: 100vh;
   background-color: var(--color-background-secondary);
   border-radius: var(--border-radius-md);
   box-shadow: var(--shadow-md);
-  display: grid;
   grid-template-areas:
     "header header"
     "sidebar main";
-  grid-template-columns: 250px 1fr;
+  
   grid-template-rows: auto 1fr;
-  min-height: 100vh;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const CardGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 `;
 
 export const SideBar = styled.nav`
@@ -50,27 +63,6 @@ export const MainContent = styled.main`
   overflow-y: auto;
 `;
 
-export const Section = styled.section`
-  background-color: var(--color-background-secondary);
-  border-radius: var(--border-radius-md);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-  margin-bottom: var(--space-lg);
-`;
-
-export const SectionHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--space-md);
-`;
-
-export const SectionTitle = styled.h2`
-  color: var(--color-title-card);
-  font-size: var(--font-size-lg);
-  margin-bottom: var(--space-md);
-`;
-
 export const ActionButton = styled.button`
   background-color: var(--color-primary);
   color: var(--color-text-on-primary);
@@ -82,31 +74,6 @@ export const ActionButton = styled.button`
   
   &:hover {
     background-color: var(--color-primary-hover);
-  }
-`;
-
-export const FilterContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-`;
-
-export const FilterLabel = styled.label`
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
-`;
-
-export const FilterSelect = styled.select`
-  padding: var(--space-xs) var(--space-sm);
-  border-radius: var(--border-radius-sm);
-  border: 1px solid var(--color-border);
-  background-color: var(--color-input);
-  color: var(--color-text);
-  
-  &:focus {
-    border-color: var(--color-input-focus);
-    outline: none;
-    box-shadow: var(--shadow-focus);
   }
 `;
 

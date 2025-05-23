@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 import useEvaluationForm from '../../../hooks/useEvaluationForm';
@@ -60,6 +60,8 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         getSectionValidationState,
         getFormProgress
     } = useEvaluationForm(evaluation, onSave);
+
+    const [draft, setDraft] = useState<boolean>(false);
 
     // Ícones para cada seção do formulário
     const sectionIcons = useMemo(() => ({
@@ -156,6 +158,12 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         }
     };
 
+    const handleSaveDraft = () => {
+        // Lógica para salvar rascunho
+        setDraft(true);
+        onSave({ ...evaluationData, status: 'rascunho' });
+    };
+
     const handleSubmitForm = () => {
         handleSubmit(new Event('submit') as unknown as React.FormEvent);
     };
@@ -164,7 +172,7 @@ const EvaluationForm: React.FC<EvaluationFormProps> = ({ evaluation, onSave, onC
         <Modal
             isOpen={!!evaluation}
             title={evaluation ? 'Editar Avaliação' : 'Nova Avaliação'}
-            size="sm"
+            size="md"
             onSubmit={handleSubmitForm}
             onClose={handleCloseModal} >
             <FormProgress aria-label="Progresso do formulário">

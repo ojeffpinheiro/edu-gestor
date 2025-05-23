@@ -90,3 +90,18 @@ export interface FormFeedback {
     successMessage?: string;
     hasChanges: boolean;
 }
+
+export interface RecoveryActivity {
+    id: number;
+    class: string;
+    name: string;
+    description: string;
+    date: string;
+    status: 'pending' | 'completed' | 'graded';
+    targetStudents: number[]; // student IDs
+    evaluationParts: {
+        id: string;
+        name: string;
+        maxScore: number;
+    }[];
+}

@@ -226,25 +226,4 @@ export const FormProgressIndicator = styled.div<{ progress: number }>`
     width: ${props => props.progress}%;
     background-color: var(--color-primary);
     transition: width 0.3s ease;
-    
-    &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(
-            90deg,
-            transparent 0%,
-            rgba(255, 255, 255, 0.15) 50%,
-            transparent 100%
-        );
-        animation: shimmer 2s infinite;
-    }
-    
-    @keyframes shimmer {
-        from { transform: translateX(-100%); }
-        to { transform: translateX(100%); }
-    }
 `;

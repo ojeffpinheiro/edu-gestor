@@ -136,6 +136,11 @@ export const CardHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  h3 {
+        margin: 0;
+        font-size: 1.1rem;
+    }
 `;
 
 export const CardTitle = styled.h3`
@@ -159,4 +164,11 @@ export const CardFooter = styled.div`
   margin-top: ${constants.spacing.md};
   padding-top: ${constants.spacing.sm};
   border-top: 1px solid ${constants.colors.border.light};
+`;
+
+export const CardBody = styled.div`
+    p {
+        margin: var(--space-xs) 0;
+        color: var(--color-text-secondary);
+    }
 `;
