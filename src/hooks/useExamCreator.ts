@@ -1,11 +1,28 @@
-// hooks/useExamCreator.ts corrigido
+// hooks/useExamCreator.ts - Versão melhorada com geração automática inteligente
 import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Exam, ExamTypes, ExamVariant } from '../utils/types/Exam';
 import { Question, DifficultyLevelType } from '../utils/types/Question';
 import { generateAccessCode } from '../utils/examHelpers';
 
+interface QuestionDistributionAnalysis {
+  difficulty: DifficultyLevelType;
+  required: number;
+  available: number;
+  selected: number;
+  canFulfill: boolean;
+  shortage: number;
+}
+
+interface AutoSelectionResult {
+  success: boolean;
+  selectedQuestions: Question[];
+  analysis: QuestionDistributionAnalysis[];
+  warnings: string[];
+  errors: string[];
+}
+
 export const useExamCreator = () => {
-  const inittialExamData: Exam = {
+  const initialExamData: Exam = {
     id: 0,
     title: 'Exame 1',
     description: 'Descrição padrão',
@@ -16,9 +33,9 @@ export const useExamCreator = () => {
     totalPoints: 10,
     questions: [],
     questionDistribution: [
-      { difficulty: 'easy', count: 4, selected: 0 },
-      { difficulty: 'medium', count: 4, selected: 0 },
-      { difficulty: 'hard', count: 2, selected: 0 },
+      { difficulty: 'easy', count: 2, selected: 0 },
+      { difficulty: 'medium', count: 3, selected: 0 },
+      { difficulty: 'hard', count: 1, selected: 0 },
     ],
     selectionMode: 'manual',
     instructions: [
@@ -77,20 +94,49 @@ export const useExamCreator = () => {
     variantsCount: 0,
     variantsEnabled: false,
     variantsGenerationMethod: 'questionBank',
-  }
-  // Step atual do processo de criação
+  };
+
   const [currentStep, setCurrentStep] = useState<number>(1);
-
-  // Dados do exame sendo criado
-  const [examData, setExamData] = useState<Exam>(inittialExamData);
-
-  // Questões selecionadas
+  const [examData, setExamData] = useState<Exam>(initialExamData);
   const [selectedQuestions, setSelectedQuestions] = useState<Question[]>([]);
+  const [lastAutoSelectionResult, setLastAutoSelectionResult] = useState<AutoSelectionResult | null>(null);
 
   const questions = examData.questions;
 
-  // Validações
-  // Verificar se o formulário tem dados mínimos válidos
+  // Análise da distribuição de dificuldade
+  const distributionAnalysis = useMemo((): QuestionDistributionAnalysis[] => {
+    const availableByDifficulty = questions.reduce((acc, question) => {
+      if (examData.discipline && question.discipline !== examData.discipline) {
+        return acc;
+      }
+      acc[question.difficultyLevel] = (acc[question.difficultyLevel] || 0) + 1;
+      return acc;
+    }, {} as Record<DifficultyLevelType, number>);
+
+    const selectedByDifficulty = selectedQuestions.reduce((acc, question) => {
+      acc[question.difficultyLevel] = (acc[question.difficultyLevel] || 0) + 1;
+      return acc;
+    }, {} as Record<DifficultyLevelType, number>);
+
+    return examData.questionDistribution.map(dist => {
+      const difficulty = dist.difficulty as DifficultyLevelType;
+      const available = availableByDifficulty[difficulty] || 0;
+      const selected = selectedByDifficulty[difficulty] || 0;
+      const required = dist.count;
+      const shortage = Math.max(0, required - available);
+
+      return {
+        difficulty,
+        required,
+        available,
+        selected,
+        canFulfill: available >= required,
+        shortage
+      };
+    });
+  }, [examData.questionDistribution, examData.discipline, questions, selectedQuestions]);
+
+  // Validações melhoradas
   const isFormValid = useMemo(() => (
     examData.title.trim() !== '' &&
     examData.discipline.trim() !== '' &&
@@ -104,25 +150,108 @@ export const useExamCreator = () => {
     return totalFromDistribution === examData.totalQuestions;
   }, [examData.questionDistribution, examData.totalQuestions]);
 
-  // Verificar se já pode pré-visualizar o exame
+  const canGenerateAutomatically = useMemo(() => {
+    return distributionAnalysis.every(analysis => analysis.canFulfill) && isDistributionValid;
+  }, [distributionAnalysis, isDistributionValid]);
+
   const isReadyForPreview = useMemo(() => (
     selectedQuestions.length === examData.totalQuestions &&
     (examData.selectionMode === 'manual' || isDistributionValid)
   ), [selectedQuestions.length, examData.totalQuestions, examData.selectionMode, isDistributionValid]);
 
-  // Filtra questões baseado na disciplina selecionada
-  const filteredQuestions = useMemo(() => {
+  const availableQuestions = useMemo(() => {
     return examData.discipline
-      ? examData.questions.filter(q => q.discipline === examData.discipline)
-      : examData.questions;
-  }, [examData.discipline, examData.questions]);
+      ? questions.filter(q => q.discipline === examData.discipline)
+      : questions;
+  }, [examData.discipline, questions]);
 
-  // Atualiza a distribuição de dificuldade quando as questões selecionadas mudam
+  // Função melhorada para geração automática
+  const generateAutomaticSelection = useCallback((): AutoSelectionResult => {
+    const result: AutoSelectionResult = {
+      success: false,
+      selectedQuestions: [],
+      analysis: distributionAnalysis,
+      warnings: [],
+      errors: []
+    };
+
+    // Verificar se a distribuição é válida
+    if (!isDistributionValid) {
+      result.errors.push('A soma das questões por dificuldade não corresponde ao total de questões.');
+      return result;
+    }
+
+    // Verificar se há questões suficientes para cada dificuldade
+    const insufficientDifficulties = distributionAnalysis.filter(analysis => !analysis.canFulfill);
+
+    if (insufficientDifficulties.length > 0) {
+      insufficientDifficulties.forEach(analysis => {
+        result.errors.push(
+          `Questões ${analysis.difficulty}: necessárias ${analysis.required}, disponíveis ${analysis.available} (faltam ${analysis.shortage})`
+        );
+      });
+      return result;
+    }
+
+    // Gerar seleção automática
+    const newSelectedQuestions: Question[] = [];
+    const usedQuestionIds = new Set<number>();
+
+    try {
+      for (const dist of examData.questionDistribution) {
+        const difficulty = dist.difficulty as DifficultyLevelType;
+        const questionsOfDifficulty = availableQuestions
+          .filter(q =>
+            q.difficultyLevel === difficulty &&
+            (q.id !== undefined && !usedQuestionIds.has(Number(q.id)))
+          )
+
+        if (questionsOfDifficulty.length < dist.count) {
+          result.errors.push(`Não foi possível selecionar ${dist.count} questões de dificuldade ${difficulty}`);
+          return result;
+        }
+
+        // Embaralhar e selecionar as questões necessárias
+        const shuffledQuestions = [...questionsOfDifficulty]
+          .sort(() => Math.random() - 0.5)
+          .slice(0, dist.count);
+
+        shuffledQuestions.forEach(q => {
+          newSelectedQuestions.push(q);
+          usedQuestionIds.add(Number(q.id));
+        });
+
+        // Adicionar aviso se há poucas questões disponíveis
+        if (questionsOfDifficulty.length <= dist.count * 1.5) {
+          result.warnings.push(
+            `Poucas questões disponíveis para dificuldade ${difficulty} (${questionsOfDifficulty.length} disponíveis, ${dist.count} selecionadas)`
+          );
+        }
+      }
+
+      result.selectedQuestions = newSelectedQuestions;
+      result.success = true;
+
+      // Atualizar análise com a nova seleção
+      result.analysis = distributionAnalysis.map(analysis => ({
+        ...analysis,
+        selected: newSelectedQuestions.filter(q => q.difficultyLevel === analysis.difficulty).length
+      }));
+
+    } catch (error) {
+      result.errors.push('Erro interno durante a geração automática');
+    }
+
+    return result;
+  }, [examData.questionDistribution, availableQuestions, distributionAnalysis, isDistributionValid]);
+
+  // Atualização automática da distribuição quando questões selecionadas mudam
   useEffect(() => {
-    const updatedDistribution = examData.questionDistribution.map(dist => ({
-      ...dist,
-      selected: selectedQuestions.filter(q => q.difficultyLevel === dist.difficulty).length
-    }));
+    const updatedDistribution = examData.questionDistribution.map(dist => {
+      const difficulty = dist.difficulty as DifficultyLevelType;
+      const selected = selectedQuestions.filter(q => q.difficultyLevel === difficulty).length;
+      return { ...dist, selected };
+    });
 
     setExamData(prev => ({
       ...prev,
@@ -131,18 +260,14 @@ export const useExamCreator = () => {
     }));
   }, [selectedQuestions]);
 
-  // Funções de manipulação do exame
+  // Funções de manipulação
   const updateExamConfig = useCallback((newConfig: Partial<Exam>) => {
     setExamData(prev => ({ ...prev, ...newConfig }));
   }, []);
 
-  // Navegação
-  // Função para navegar entre os passos
   const navigateToStep = useCallback((step: number) => {
-    // Validação para evitar passos inválidos
     if (step < 1 || step > 6) return;
 
-    // Validação específica para certos passos
     if (step === 4 && !isFormValid) {
       alert('Preencha todos os campos obrigatórios antes de continuar.');
       return;
@@ -150,20 +275,21 @@ export const useExamCreator = () => {
     setCurrentStep(step);
   }, [isFormValid]);
 
-  // Função para alterar o total de questões
   const handleTotalQuestionsChange = useCallback((value: number) => {
-    // Não permitir valor menor que 1
     if (value < 1) value = 1;
 
     setExamData(prev => ({
       ...prev,
       totalQuestions: value
     }));
-  }, []);
 
-  // Função para alterar a distribuição de dificuldade
+    // Limpar seleção se o total mudou significativamente
+    if (selectedQuestions.length > value) {
+      setSelectedQuestions(selectedQuestions.slice(0, value));
+    }
+  }, [selectedQuestions]);
+
   const handleDifficultyChange = useCallback((difficulty: DifficultyLevelType, value: number) => {
-    // Não permitir valor negativo
     if (value < 0) value = 0;
 
     setExamData(prev => {
@@ -179,9 +305,118 @@ export const useExamCreator = () => {
         questionDistribution: updatedDistribution
       };
     });
+
+    // Se estamos em modo automático, regerar a seleção
+    if (examData.selectionMode === 'random') {
+      // Aguardar um tick para que a distribuição seja atualizada
+      setTimeout(() => {
+        const result = generateAutomaticSelection();
+        if (result.success) {
+          setSelectedQuestions(result.selectedQuestions);
+          setLastAutoSelectionResult(result);
+        }
+      }, 0);
+    }
+  }, [examData.selectionMode, generateAutomaticSelection]);
+
+  const handleSelectQuestion = useCallback((questions: Question | Question[]) => {
+    setSelectedQuestions(prev => {
+      const newQuestions = Array.isArray(questions) ? questions : [questions];
+      const questionIds = newQuestions.map(q => q.id);
+
+      // Se estamos substituindo toda a seleção (modo automático)
+      if (Array.isArray(questions) && questions.length > 1) {
+        return newQuestions;
+      }
+
+      // Modo manual: toggle individual
+      const filteredPrev = prev.filter(q => !questionIds.includes(q.id));
+      const shouldAdd = newQuestions.some(q => !prev.some(p => p.id === q.id));
+      return shouldAdd ? [...filteredPrev, ...newQuestions] : filteredPrev;
+    });
   }, []);
 
-  // Função para regenerar o código de acesso
+  const handleRandomSelection = useCallback(() => {
+    const result = generateAutomaticSelection();
+
+    if (result.success) {
+      setSelectedQuestions(result.selectedQuestions);
+      setLastAutoSelectionResult(result);
+
+      // Mostrar avisos se houver
+      if (result.warnings.length > 0) {
+        console.warn('Avisos na seleção automática:', result.warnings);
+      }
+    } else {
+      // Mostrar erros
+      const errorMessage = result.errors.join('\n');
+      alert(`Não foi possível gerar a seleção automática:\n${errorMessage}`);
+      setSelectedQuestions([]);
+      setLastAutoSelectionResult(result);
+    }
+  }, [generateAutomaticSelection]);
+
+  // Função para validar e ajustar a distribuição automaticamente
+  const autoAdjustDistribution = useCallback(() => {
+    const totalQuestions = examData.totalQuestions;
+    const availableByDifficulty = availableQuestions.reduce((acc, q) => {
+      acc[q.difficultyLevel] = (acc[q.difficultyLevel] || 0) + 1;
+      return acc;
+    }, {} as Record<DifficultyLevelType, number>);
+
+    // Distribuição proporcional baseada na disponibilidade
+    const difficulties: DifficultyLevelType[] = ['easy', 'medium', 'hard'];
+    const totalAvailable = Object.values(availableByDifficulty).reduce((sum, count) => sum + count, 0);
+
+    if (totalAvailable === 0) return;
+
+    const newDistribution = difficulties.map(difficulty => {
+      const available = availableByDifficulty[difficulty] || 0;
+      const proportion = available / totalAvailable;
+      const idealCount = Math.round(proportion * totalQuestions);
+      const maxPossible = Math.min(idealCount, available);
+
+      return {
+        difficulty,
+        count: maxPossible,
+        selected: 0
+      };
+    });
+
+    // Ajustar para garantir que a soma seja exata
+    const currentSum = newDistribution.reduce((sum, dist) => sum + dist.count, 0);
+    const difference = totalQuestions - currentSum;
+
+    if (difference !== 0) {
+      // Distribuir a diferença começando pelas dificuldades com mais questões disponíveis
+      const sortedByAvailable = newDistribution
+        .map((dist, index) => ({ ...dist, index, available: availableByDifficulty[dist.difficulty as DifficultyLevelType] || 0 }))
+        .sort((a, b) => b.available - a.available);
+
+      let remaining = Math.abs(difference);
+      const adjustment = difference > 0 ? 1 : -1;
+
+      for (const dist of sortedByAvailable) {
+        if (remaining === 0) break;
+
+        const canAdjust = adjustment > 0
+          ? dist.count < dist.available
+          : dist.count > 0;
+
+        if (canAdjust) {
+          newDistribution[dist.index].count += adjustment;
+          remaining--;
+        }
+      }
+    }
+
+    setExamData(prev => ({
+      ...prev,
+      questionDistribution: newDistribution
+    }));
+  }, [examData.totalQuestions, availableQuestions]);
+
+  // Outras funções existentes...
   const regenerateAccessCode = useCallback(() => {
     const newCode = generateAccessCode();
     setExamData(prev => ({
@@ -191,9 +426,7 @@ export const useExamCreator = () => {
     return newCode;
   }, []);
 
-  // Função para validar o código de acesso
   const validateAccessCode = useCallback((code: string) => {
-    // Códigos devem ter 6 caracteres alfanuméricos maiúsculos
     const validFormat = /^[A-Z0-9]{6}$/.test(code);
     if (!validFormat) {
       return {
@@ -201,14 +434,10 @@ export const useExamCreator = () => {
         message: 'O código deve ter 6 caracteres alfanuméricos maiúsculos'
       };
     }
-
-    // Simular validação de unicidade (em produção seria uma chamada à API)
     return { valid: true, message: 'Código válido' };
   }, []);
 
-  // Função para enviar o exame
   const handleSubmitExam = useCallback(() => {
-    // Atualiza as questões do exame com as selecionadas
     const finalExam = {
       ...examData,
       questions: selectedQuestions,
@@ -216,82 +445,18 @@ export const useExamCreator = () => {
     };
 
     console.log('Exame finalizado:', finalExam);
-    // Aqui você implementaria a lógica para salvar o exame no backend
     alert('Exame criado com sucesso!');
-    // Redirecionar para a lista de exames, por exemplo
   }, [examData, selectedQuestions]);
-
-  // Verificar se a distribuição de dificuldade está correta
-  const isDifficultyDistributionValid = useMemo(() => {
-    const totalFromDistribution = examData.questionDistribution.reduce(
-      (sum, dist) => sum + dist.count, 0
-    );
-
-    return totalFromDistribution === examData.totalQuestions;
-  }, [examData.questionDistribution, examData.totalQuestions]);
-
-  // Altera o modo de seleção de questões
-  const setSelectionMode = useCallback((mode: 'manual' | 'random') => {
-    setExamData(prev => ({
-      ...prev,
-      selectionMode: mode
-    }));
-
-    // Limpa as questões selecionadas quando muda o modo
-    setSelectedQuestions([]);
-  }, []);
-
-  const handleSelectQuestion = useCallback((questions: Question | Question[]) => {
-    setSelectedQuestions(prev => {
-      const newQuestions = Array.isArray(questions) ? questions : [questions];
-      const questionIds = newQuestions.map(q => q.id);
-
-      // Remove as questões que estão sendo adicionadas (caso já existam)
-      const filteredPrev = prev.filter(q => !questionIds.includes(q.id));
-
-      // Adiciona as novas questões (se não estiverem todas presentes)
-      const shouldAdd = newQuestions.some(q => !prev.some(p => p.id === q.id));
-      return shouldAdd ? [...filteredPrev, ...newQuestions] : filteredPrev;
-    });
-  }, []);
-
-  const availableQuestions = useMemo(() => {
-    return examData.discipline
-      ? questions.filter(q => q.discipline === examData.discipline)
-      : questions;
-  }, [examData.discipline, questions]);
-
-  const handleRandomSelection = useCallback(() => {
-    const { questionDistribution } = examData;
-    const newSelectedQuestions: Question[] = [];
-
-    questionDistribution.forEach(dist => {
-      const questionsOfDifficulty = filteredQuestions
-        .filter(q => q.difficultyLevel === dist.difficulty)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, dist.count);
-
-      newSelectedQuestions.push(...questionsOfDifficulty);
-    });
-
-    setSelectedQuestions(newSelectedQuestions);
-  }, [examData.questionDistribution, filteredQuestions]);
 
   const handlePrintVariant = (variantId: string) => {
     const variant = examData.variants.find(v => v.id === variantId);
     if (!variant) return;
-
-    // Implemente a lógica de impressão aqui
-    // Pode usar bibliotecas como react-to-print
     console.log(`Imprimindo ${variant.name}`);
   };
 
   const handleDownloadVariant = (variantId: string) => {
     const variant = examData.variants.find(v => v.id === variantId);
     if (!variant) return;
-
-    // Implemente a lógica de download aqui
-    // Pode gerar PDF com bibliotecas como jspdf ou html2pdf
     console.log(`Baixando ${variant.name}`);
   };
 
@@ -304,18 +469,15 @@ export const useExamCreator = () => {
     const baseQuestions = [...exam.questions];
 
     for (let i = 0; i < exam.variantsCount; i++) {
-      const variantLetter = String.fromCharCode(65 + i); // A, B, C, ...
+      const variantLetter = String.fromCharCode(65 + i);
       const variantName = `Variante ${variantLetter}`;
 
-      // Clone as questões para não modificar a original
       let questions = JSON.parse(JSON.stringify(baseQuestions));
 
-      // Embaralhar questões se configurado
       if (exam.shuffleQuestions) {
         questions = shuffleArray(questions);
       }
 
-      // Embaralhar alternativas se configurado
       if (exam.shuffleAlternatives) {
         questions = questions.map((q: Question) => ({
           ...q,
@@ -325,12 +487,11 @@ export const useExamCreator = () => {
         }));
       }
 
-      // Gerar gabarito
       const answerKey: Record<number, string> = {};
       questions.forEach((q: Question, index: number) => {
         if (q.questionType === 'multiple_choice') {
           const correctIndex = q.alternatives.findIndex(alt => alt.isCorrect);
-          answerKey[index + 1] = String.fromCharCode(65 + correctIndex); // A, B, C, ...
+          answerKey[index + 1] = String.fromCharCode(65 + correctIndex);
         }
       });
 
@@ -345,7 +506,6 @@ export const useExamCreator = () => {
     return { ...exam, variants };
   };
 
-  // Função auxiliar para embaralhar arrays
   const shuffleArray = <T,>(array: T[]): T[] => {
     const newArray = [...array];
     for (let i = newArray.length - 1; i > 0; i--) {
@@ -359,11 +519,13 @@ export const useExamCreator = () => {
     examData,
     currentStep,
     selectedQuestions,
-    filteredQuestions,
     isFormValid,
     isReadyForPreview,
     availableQuestions,
     isDistributionValid,
+    canGenerateAutomatically,
+    distributionAnalysis,
+    lastAutoSelectionResult,
     setExamData,
     updateExamConfig,
     handleTotalQuestionsChange,
@@ -375,6 +537,10 @@ export const useExamCreator = () => {
     handleSubmitExam,
     handlePrintVariant,
     handleDownloadVariant,
-    generateExamVariants
+    generateExamVariants,
+    generateAutomaticSelection,
+    autoAdjustDistribution,
+    regenerateAccessCode,
+    validateAccessCode
   };
 };

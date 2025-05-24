@@ -10,8 +10,14 @@ import {
   DistributionProgress,
   ProgressBar,
   ProgressLabel,
-  SelectionSummary
+  SelectionSummary,
+  AlertMessage,
+  AlertIcon,
+  AutoCorrectButton,
+  WarningText,
+  ExcessIndicator
 } from './styles';
+import { FaExclamationTriangle } from 'react-icons/fa';
 
 interface DifficultyDistributionProps {
   examData: Exam;
@@ -55,23 +61,75 @@ const DifficultyDistribution: React.FC<DifficultyDistributionProps> = ({
   const totalSelected = selectedQuestions.length;
   const isReadyForPreview = totalSelected === examData.totalQuestions;
 
-  return (
-    <DifficultyDistributionContainer>
-      <DistributionHeader>
-        <h4>Distribuição de Questões</h4>
-        <div>
-          <span>Total de questões: </span>
-          <input
-            type="number"
-            value={examData.totalQuestions}
-            onChange={(e) => onTotalQuestionsChange(parseInt(e.target.value) || 0)}
-            min="1"
-            aria-label="Total de questões"
-          />
-        </div>
-      </DistributionHeader>
+  // Verifica se a distribuição está correta
+  const verifyDistribution = () => {
+    return examData.questionDistribution.every(dist => {
+      const selectedCount = selectedQuestions.filter(
+        q => q.difficultyLevel === dist.difficulty
+      ).length;
+      return selectedCount >= dist.count;
+    });
+  };
 
-      {examData.questionDistribution.map((dist) => (
+  // Calcula a distribuição atual
+  const getCurrentDistribution = () => {
+    const distribution: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
+
+    selectedQuestions.forEach(question => {
+      distribution[question.difficultyLevel] += 1;
+    });
+
+    return distribution;
+  };
+
+  // Lógica de auto-correção
+  const handleAutoCorrect = () => {
+    const currentDist = getCurrentDistribution();
+    const missingQuestions: Record<string, number> = { easy: 0, medium: 0, hard: 0 };
+    let remainingQuestions = examData.totalQuestions - selectedQuestions.length;
+
+    // Calcular questões faltantes por nível
+    examData.questionDistribution.forEach(dist => {
+      const current = currentDist[dist.difficulty] || 0;
+      missingQuestions[dist.difficulty] = Math.max(0, dist.count - current);
+    });
+
+    // Implementar lógica de correção aqui (exemplo simplificado)
+    // Na prática, você precisaria de acesso ao banco de questões
+    console.log('Questões necessárias para auto-correção:', missingQuestions);
+    alert('Funcionalidade de auto-correção será implementada aqui');
+  };
+
+  // Atualize o retorno do componente DifficultyDistribution
+return (
+  <DifficultyDistributionContainer>
+    <DistributionHeader>
+      <h4>Distribuição de Questões</h4>
+      <div>
+        <span>Total de questões: </span>
+        <input
+          type="number"
+          value={examData.totalQuestions}
+          onChange={(e) => onTotalQuestionsChange(parseInt(e.target.value) || 0)}
+          min="1"
+          aria-label="Total de questões"
+        />
+        {!verifyDistribution() && (
+          <AutoCorrectButton onClick={handleAutoCorrect}>
+            Auto-correção
+          </AutoCorrectButton>
+        )}
+      </div>
+    </DistributionHeader>
+
+    {examData.questionDistribution.map((dist) => {
+      const selectedCount = selectedQuestions.filter(
+        q => q.difficultyLevel === dist.difficulty
+      ).length;
+      const isLevelComplete = selectedCount >= dist.count;
+      const progress = dist.count ? (selectedCount / dist.count) * 100 : 0;
+
+      return (
         <DistributionRow key={dist.difficulty}>
           <label htmlFor={`dist-${dist.difficulty}`}>
             {getDifficultyLabel(dist.difficulty)}:
@@ -88,38 +146,57 @@ const DifficultyDistribution: React.FC<DifficultyDistributionProps> = ({
 
           <DistributionProgress>
             <ProgressLabel>
-              {dist.selected} / {dist.count} selecionadas
+              {selectedCount}/{dist.count} selecionadas
+              {!isLevelComplete && (
+                <WarningText> (Faltam {dist.count - selectedCount})</WarningText>
+              )}
             </ProgressLabel>
             <ProgressBar
-              progress={dist.count ? (dist.selected / dist.count) * 100 : 0}
-              color={getProgressBarColor((dist.selected / Math.max(1, dist.count)) * 100)}
+              progress={progress}
+              color={getProgressBarColor(progress)}
+              isComplete={isLevelComplete}
             />
+            {progress > 100 && (
+              <ExcessIndicator>+{selectedCount - dist.count}</ExcessIndicator>
+            )}
           </DistributionProgress>
         </DistributionRow>
-      ))}
+      );
+    })}
 
-      <SelectionSummary isValid={isReadyForPreview}>
-        <div>
-          <strong>Total selecionado:</strong> {totalSelected}/{examData.totalQuestions}
-          {!isReadyForPreview && (
-            <span className="warning-message">
-              {totalSelected > examData.totalQuestions
-                ? " Remova algumas questões"
-                : " Selecione mais questões"}
-            </span>
-          )}
-        </div>
-        <div>
-          <strong>Distribuição:</strong>
-          {examData.questionDistribution.map(dist => (
+    <SelectionSummary isValid={isReadyForPreview && verifyDistribution()}>
+      <div>
+        <strong>Total selecionado:</strong> {totalSelected}/{examData.totalQuestions}
+        {!isReadyForPreview && (
+          <span className="warning-message">
+            {totalSelected > examData.totalQuestions
+              ? " Remova algumas questões"
+              : " Selecione mais questões"}
+          </span>
+        )}
+      </div>
+      <div>
+        <strong>Distribuição:</strong>
+        {examData.questionDistribution.map(dist => {
+          const selectedCount = selectedQuestions.filter(
+            q => q.difficultyLevel === dist.difficulty
+          ).length;
+          return (
             <span key={dist.difficulty} style={{ marginLeft: '8px' }}>
-              {getDifficultyLabel(dist.difficulty)}: {dist.selected}/{dist.count}
+              {getDifficultyLabel(dist.difficulty)}: {selectedCount}/{dist.count}
             </span>
-          ))}
-        </div>
-      </SelectionSummary>
-    </DifficultyDistributionContainer>
-  );
+          );
+        })}
+      </div>
+      {!verifyDistribution() && (
+        <AlertMessage>
+          <AlertIcon><FaExclamationTriangle /></AlertIcon>
+          A distribuição não atende aos requisitos
+        </AlertMessage>
+      )}
+    </SelectionSummary>
+  </DifficultyDistributionContainer>
+);
 };
 
 export default DifficultyDistribution;

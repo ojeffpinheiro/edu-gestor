@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { FiAlertCircle, FiArrowLeft, FiArrowRight, FiRefreshCw } from 'react-icons/fi';
 import { Exam } from '../../../../../utils/types/Exam';
 import { DifficultyLevelType, Question } from '../../../../../utils/types/Question';
@@ -6,32 +6,13 @@ import { DifficultyLevelType, Question } from '../../../../../utils/types/Questi
 import QuestionSelector from './QuestionSelector';
 import DifficultyDistribution from './DifficultyDistribution';
 import { DIFFICULTY_LABELS } from './QuestionSelector/types';
-
-import { 
-    Container,
-    SelectionModeContainer,
-    SectionHeader,
-    SelectionModeToggle,
-    ToggleButton,
-    RefreshButton,
-    RandomSelectionSummary,
-    LoadingIndicator,
-    InfoMessage,
-    SummaryTable,
-    TotalRow,
-    QuestionCardGrid,
-    QuestionCard,
-    QuestionTitle,
-    QuestionMeta,
-    ButtonGroup
- } from './styles';
+import { ButtonGroup, Container, QuestionCard, QuestionCardGrid, QuestionMeta, QuestionTitle, RandomSelectionSummary, RefreshButton, SectionHeader, SelectionModeContainer, SelectionModeToggle, SummaryTable, ToggleButton, TotalRow } from './styles';
 
 interface QuestionSelectionStepProps {
   examData: Exam;
   questions: Question[];
-  availableQuestions: Question[];
   selectedQuestions: Question[];
-  onQuestionsSelected: (questions: Question | Question[]) => void;
+  onQuestionsSelected: (questions: Question[]) => void;
   onDifficultyChange: (difficulty: DifficultyLevelType, value: number) => void;
   onTotalQuestionsChange: (value: number) => void;
   onRandomSelection: () => void;
@@ -45,78 +26,76 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
   questions,
   selectedQuestions,
   isReadyForPreview,
-  availableQuestions,
   onQuestionsSelected,
   onDifficultyChange,
   onTotalQuestionsChange,
   onBack,
   onNext,
 }) => {
-  const [selectionMode, setSelectionMode] = useState<'manual' | 'random'>(examData.selectionMode || 'manual');
+  const [selectionMode, setSelectionMode] = useState<'manual' | 'random'>(
+    examData.selectionMode || 'manual'
+  );
   const [isGeneratingRandom, setIsGeneratingRandom] = useState(false);
   const [shouldRegenerateQuestions, setShouldRegenerateQuestions] = useState(false);
 
-  // Geração de questões aleatórias com base na distribuição de dificuldade
-  const generateRandomQuestions = useCallback(() => {
+  // Filtramos as questões pela disciplina selecionada
+  const availableQuestions = questions.filter(
+    q => q.discipline === examData.discipline
+  );
+
+  // Função para selecionar questões aleatoriamente baseado na distribuição de dificuldade
+  const generateRandomQuestions = () => {
     setIsGeneratingRandom(true);
-    try {
-      const newSelectedQuestions: Question[] = [];
 
-      // Verificar se há questões suficientes para cada dificuldade
-      const canGenerate = examData.questionDistribution.every(dist => {
-        const difficulty = dist.difficulty as DifficultyLevelType;
-        return availableQuestions.filter(q => q.difficultyLevel === difficulty).length >= dist.count;
-      });
+    const newSelectedQuestions: Question[] = [];
 
-      if (!canGenerate) {
-        throw new Error('Não há questões suficientes para a distribuição solicitada');
-      }
+    // Para cada nível de dificuldade na distribuição
+    for (const distribution of examData.questionDistribution) {
+      const difficulty = distribution.difficulty as DifficultyLevelType;
+      const count = distribution.count;
 
-      // Gerar questões para cada categoria de dificuldade
-      examData.questionDistribution.forEach(dist => {
-        const difficulty = dist.difficulty as DifficultyLevelType;
-        const questionsOfDifficulty = availableQuestions
-          .filter(q => q.difficultyLevel === difficulty)
-          .sort(() => Math.random() - 0.5)
-          .slice(0, dist.count);
+      // Filtra questões disponíveis por dificuldade que não estão já selecionadas
+      const questionsOfDifficulty = availableQuestions.filter(
+        q => q.difficultyLevel === difficulty &&
+          !newSelectedQuestions.some(selected => selected.id === q.id)
+      );
 
-        newSelectedQuestions.push(...questionsOfDifficulty);
-      });
+      // Embaralha as questões filtradas
+      const shuffled = [...questionsOfDifficulty].sort(() => 0.5 - Math.random());
 
-      onQuestionsSelected(newSelectedQuestions);
-    } catch (error) {
-      onQuestionsSelected([]); // Envia array vazio em caso de erro
-    } finally {
-      setIsGeneratingRandom(false);
-      setShouldRegenerateQuestions(false);
+      // Seleciona apenas a quantidade necessária
+      const selected = shuffled.slice(0, count);
+
+      // Adiciona ao array de questões selecionadas
+      newSelectedQuestions.push(...selected);
     }
-  }, [examData.questionDistribution, availableQuestions, onQuestionsSelected]);
 
-  // Manipulação do modo de seleção
-  const handleSelectionModeChange = useCallback((mode: 'manual' | 'random') => {
+    // Atualiza as questões selecionadas
+    onQuestionsSelected(newSelectedQuestions);
+    setIsGeneratingRandom(false);
+    setShouldRegenerateQuestions(false);
+  };
+
+  // Mudança de modo de seleção
+  const handleSelectionModeChange = (mode: 'manual' | 'random') => {
     setSelectionMode(mode);
-    onQuestionsSelected([]);
 
+    // Se mudar para modo aleatório, já gera as questões
     if (mode === 'random') {
+      generateRandomQuestions();
       setShouldRegenerateQuestions(true);
+    } else {
+      // Se mudar para manual, limpa as seleções
+      onQuestionsSelected([]);
     }
-  }, [onQuestionsSelected]);
+  };
 
-  // Efeito para gerar questões quando necessário
+  // Se a distribuição de dificuldade mudar, regera questões aleatórias no modo aleatório
   useEffect(() => {
     if (shouldRegenerateQuestions && selectionMode === 'random') {
       generateRandomQuestions();
     }
-  }, [shouldRegenerateQuestions, selectionMode, generateRandomQuestions]);
-
-  // Agrupamento de questões por dificuldade para visualização
-  const questionsByDifficulty = useMemo(() => {
-    return selectedQuestions.reduce((acc, question) => {
-      const difficulty = question.difficultyLevel;
-      acc[difficulty] = (acc[difficulty] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
-  }, [selectedQuestions]);
+  }, [shouldRegenerateQuestions, selectionMode]);
 
   // Verificação de questões insuficientes por dificuldade
   const insufficientQuestionsByDifficulty = useMemo(() => {
@@ -127,11 +106,6 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
       return acc;
     }, {} as Record<string, boolean>);
   }, [examData.questionDistribution, availableQuestions]);
-
-  const handleClick = () =>{
-    onNext();
-    console.log(examData);
-  }
 
   return (
     <Container>
@@ -153,10 +127,9 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
             Seleção Aleatória
           </ToggleButton>
         </SelectionModeToggle>
-
         {selectionMode === 'random' && (
           <RefreshButton
-            onClick={() => setShouldRegenerateQuestions(true)}
+            onClick={generateRandomQuestions}
             disabled={isGeneratingRandom}
           >
             <FiRefreshCw size={16} /> Gerar Novo Conjunto
@@ -182,78 +155,68 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
         <RandomSelectionSummary>
           <SectionHeader>Questões Selecionadas Aleatoriamente</SectionHeader>
 
-          {isGeneratingRandom ? (
-            <LoadingIndicator aria-busy="true" />
-          ) : (
-            <>
-              {Object.values(insufficientQuestionsByDifficulty).some(Boolean) && (
-                <InfoMessage $warning>
-                  <FiAlertCircle size={20} />
-                  Aviso: Não há questões suficientes para algumas dificuldades.
-                </InfoMessage>
-              )}
+          <SummaryTable>
+            <thead>
+              <tr>
+                <th>Dificuldade</th>
+                <th>Selecionadas</th>
+                <th>Alvo</th>
+                <th>Disponíveis</th>
+              </tr>
+            </thead>
+            <tbody>
+              {examData.questionDistribution.map(dist => {
+                const difficulty = dist.difficulty as DifficultyLevelType;
+                const selectedCount = selectedQuestions.filter(
+                  q => q.difficultyLevel === dist.difficulty
+                ).length;
+                const availableCount = availableQuestions.filter(
+                  q => q.difficultyLevel === difficulty
+                ).length;
+                const insufficient = insufficientQuestionsByDifficulty[difficulty];
 
-              <SummaryTable>
-                <thead>
-                  <tr>
-                    <th>Dificuldade</th>
-                    <th>Selecionadas</th>
-                    <th>Alvo</th>
-                    <th>Disponíveis</th>
+                return (
+                  <tr key={difficulty} className={insufficient ? 'warning' : ''}>
+                    <td>{DIFFICULTY_LABELS[dist.difficulty as DifficultyLevelType]}</td>
+                    <td>{selectedCount}</td>
+                    <td>{dist.count}</td>
+                    <td>
+                      {availableCount}
+                      {insufficient && <span title="Questões insuficientes"><FiAlertCircle /></span>}
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {examData.questionDistribution.map(dist => {
-                    const difficulty = dist.difficulty as DifficultyLevelType;
-                    const selectedCount = questionsByDifficulty[difficulty] || 0;
-                    const availableCount = availableQuestions.filter(
-                      q => q.difficultyLevel === difficulty
-                    ).length;
-                    const insufficient = insufficientQuestionsByDifficulty[difficulty];
+                );
+              })}
+              <TotalRow>
+                <td>Total</td>
+                <td>{selectedQuestions.length}</td>
+                <td>{examData.totalQuestions}</td>
+                <td>{availableQuestions.length}</td>
+              </TotalRow>
+            </tbody>
+          </SummaryTable>
 
-                    return (
-                      <tr key={difficulty} className={insufficient ? 'warning' : ''}>
-                        <td>{DIFFICULTY_LABELS[difficulty]}</td>
-                        <td>{selectedCount}</td>
-                        <td>{dist.count}</td>
-                        <td>
-                          {availableCount}
-                          {insufficient && <span title="Questões insuficientes">⚠️</span>}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                  <TotalRow>
-                    <td>Total</td>
-                    <td>{selectedQuestions.length}</td>
-                    <td>{examData.totalQuestions}</td>
-                    <td>{availableQuestions.length}</td>
-                  </TotalRow>
-                </tbody>
-              </SummaryTable>
-
-              {selectedQuestions.length > 0 && (
-                <div className="selected-questions-list">
-                  <h4>Lista de Questões ({selectedQuestions.length})</h4>
-                  <QuestionCardGrid>
-                    {selectedQuestions.map(question => (
-                      <QuestionCard key={question.id} $difficulty={question.difficultyLevel}>
-                        <QuestionTitle>
-                          {question.statement.substring(0, 100)}
-                          {question.statement.length > 100 && '...'}
-                        </QuestionTitle>
-                        <QuestionMeta>
-                          <span className={`difficulty ${question.difficultyLevel}`}>
-                            {DIFFICULTY_LABELS[question.difficultyLevel]}
-                          </span>
-                          <span className="type">{question.questionType}</span>
-                        </QuestionMeta>
-                      </QuestionCard>
-                    ))}
-                  </QuestionCardGrid>
-                </div>
-              )}
-            </>
+          {selectedQuestions.length > 0 && (
+            <div className="selected-questions-list">
+              <h4>Lista de Questões ({selectedQuestions.length})</h4>
+              <QuestionCardGrid>
+                {selectedQuestions.map(question => (
+                  <QuestionCard key={question.id} $difficulty={question.difficultyLevel}>
+                    <QuestionTitle>
+                      {question.statement.length > 100
+                        ? `${question.statement.substring(0, 100)}...`
+                        : question.statement}
+                    </QuestionTitle>
+                    <QuestionMeta>
+                      <span className={`difficulty ${question.difficultyLevel}`}>
+                        {DIFFICULTY_LABELS[question.difficultyLevel]}
+                      </span>
+                      <span className="type">{question.questionType}</span>
+                    </QuestionMeta>
+                  </QuestionCard>
+                ))}
+              </QuestionCardGrid>
+            </div>
           )}
         </RandomSelectionSummary>
       )}
@@ -262,11 +225,12 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
         <button type="button" onClick={onBack} className="secondary">
           <FiArrowLeft /> Voltar
         </button>
+
         <button
           type="button"
-          onClick={handleClick}
+          onClick={onNext}
           disabled={!isReadyForPreview}
-          title={!isReadyForPreview ? `Selecione ${examData.totalQuestions} questões` : ""}
+          title={!isReadyForPreview ? `Selecione ${examData.totalQuestions} questões para visualizar` : ""}
         >
           Pré-visualizar <FiArrowRight />
         </button>
@@ -275,4 +239,4 @@ const QuestionSelectionStep: React.FC<QuestionSelectionStepProps> = ({
   );
 };
 
-export default React.memo(QuestionSelectionStep);
+export default QuestionSelectionStep;

@@ -1,13 +1,14 @@
-// components/Exam/ExamCreator/QuestionSelector/index.tsx corrigido
 import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 
+import { useQuestionSelection } from '../../../../../../hooks/useQuestionSelection';
 import { useQuestionFilters } from '../../../../../../hooks/useQuestionFilters';
+
 import { Exam } from '../../../../../../utils/types/Exam';
 import { Question } from '../../../../../../utils/types/Question';
+
 import SearchInput from '../../../../../shared/SearchInput';
 import FilterBar from '../../../../../shared/FilterBar';
-
 import SelectedQuestionsList from './SelectedQuestionsList';
 import QuestionsTable from './QuestionsTable';
 import TableFooter from './TableFooter';
@@ -20,7 +21,6 @@ import {
   SelectionControls,
   ResponsiveWrapper,
 } from './styles';
-import { useQuestionSelection } from '../../../../../../hooks/useQuestionSelection';
 
 interface QuestionSelectorProps {
   examData: Exam;
@@ -36,13 +36,15 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   onQuestionsSelected,
 }) => {
   const [showSelectedList, setShowSelectedList] = useState(false);
-
+  
   const {
     searchTerm,
     setSearchTerm,
     setFilters,
     filteredQuestions,
-  } = useQuestionFilters(questions, { discipline: examData.discipline });
+  } = useQuestionFilters(questions, { 
+    discipline: examData.discipline
+  });
 
   const {
     toggleQuestionSelection,
@@ -71,7 +73,7 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
       ...prev,
       discipline: examData.discipline
     }));
-  }, [examData.discipline, setFilters])
+  }, [examData.discipline, setFilters]);
 
   return (
     <Container>

@@ -116,30 +116,33 @@ export const DistributionProgress = styled.div`
   flex-direction: column;
   gap: 0.25rem;
 `;
-
-
+  
 interface ProgressBarProps {
-    progress: number;
-    color?: string;
+  progress: number;
+  color?: string;
+  isComplete?: boolean;
+}
+
+export const ProgressBar = styled.div<ProgressBarProps>`
+  height: 8px;
+  background: ${colors.gray[200]};
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: ${props => Math.min(props.progress, 100)}%;
+    background: ${props => 
+      props.isComplete ? colors.success : 
+      props.progress > 100 ? colors.danger : 
+      props.color || colors.info};
+    transition: width 0.3s ease, background-color 0.3s ease;
   }
-  
-  export const ProgressBar = styled.div<ProgressBarProps>`
-    height: 8px;
-    background: ${colors.gray[200]};
-    border-radius: 4px;
-    overflow: hidden;
-    position: relative;
-  
-    &::after {
-      content: '';
-      display: block;
-      height: 100%;
-      width: ${props => props.progress}%;
-      background: ${props => props.color || colors.info};
-      transition: width 0.3s ease, background-color 0.3s ease;
-    }
-  `;
-  
+`;
+
   export const ProgressLabel = styled.span`
     font-size: 0.875rem;
     color: ${colors.gray[600]};
@@ -171,3 +174,49 @@ interface ProgressBarProps {
       }
     }
   `;
+
+// Adicione ao arquivo styles.ts
+
+export const AutoCorrectButton = styled.button`
+  margin-left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background: ${colors.warning};
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+export const WarningText = styled.span`
+  color: ${colors.danger};
+  font-size: 0.8rem;
+  margin-left: 0.25rem;
+`;
+
+export const ExcessIndicator = styled.span`
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 0.75rem;
+  color: ${colors.danger};
+`;
+
+export const AlertMessage = styled.div`
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  color: ${colors.danger};
+  border-radius: 4px;
+  font-size: 0.85rem;
+`;
+
+export const AlertIcon = styled.span`
+  margin-right: 0.5rem;
+`;

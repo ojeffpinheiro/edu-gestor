@@ -8,10 +8,11 @@ import ExamSettingsForm from '../../../../components/Exam/ExamCreator/step/ExamS
 import HeaderSection from '../../../../components/Exam/ExamCreator/step/HeaderSection';
 import QuestionSelectionStep from '../../../../components/Exam/ExamCreator/step/QuestionSelectionStep';
 import CorrectionForm from '../../../../components/Exam/ExamCreator/step/CorrectionForm';
+import VariantGeneratorStep from '../../../../components/Exam/ExamCreator/step/VariantGeneratorStep';
+
+import VariantPreview from '../../../../components/Exam/ExamCreator/VariantPreview';
 
 import { ExamGeneratorContainer } from './styles';
-import VariantGeneratorStep from '../../../../components/Exam/ExamCreator/step/VariantGeneratorStep';
-import VariantPreview from '../../../../components/Exam/ExamCreator/VariantPreview';
 
 const ExamGenerator = () => {
   const {
@@ -63,7 +64,6 @@ const ExamGenerator = () => {
           <QuestionSelectionStep
             examData={examData}
             questions={mockQuestions}
-            availableQuestions={availableQuestions}
             selectedQuestions={selectedQuestions}
             onQuestionsSelected={handleSelectQuestion}
             onRandomSelection={handleRandomSelection}
@@ -107,8 +107,6 @@ const ExamGenerator = () => {
         return null;
     }
   };
-
-
 
   return (
     <ExamGeneratorContainer>
