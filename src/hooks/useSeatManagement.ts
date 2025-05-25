@@ -29,14 +29,6 @@ export const useSeatManagement = ({
     return student ? Math.floor(Math.random() * 100) : 0;
   }, [students]);
 
-  // Função para obter cor baseada na frequência
-  const getAttendanceColor = useCallback((attendance: number): string => {
-    if (attendance >= 90) return '#4caf50';
-    if (attendance >= 75) return '#8bc34a';
-    if (attendance >= 60) return '#ff9800';
-    return '#f44336';
-  }, []);
-
   // Função para obter nome do aluno
   const getStudentName = useCallback((studentId?: number): string => {
     if (!studentId) return '';
@@ -258,7 +250,6 @@ export const useSeatManagement = ({
     // Funções utilitárias
     updateSeat,
     getStudentAttendance,
-    getAttendanceColor,
     getStudentName,
     getPriorityInfo,
 

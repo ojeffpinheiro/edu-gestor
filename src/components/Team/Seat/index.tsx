@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { FaCheck } from 'react-icons/fa';
+import { FiCheck } from 'react-icons/fi';
 
 import { StudentFormData } from '../../../utils/types/BasicUser';
 import { SeatType, PriorityType, SeatStatus, PRIORITY_CONFIGS } from "../../../utils/types/Team";
 import { AttendanceIndicator, EmptySeatLabel, InteractionOverlay, SeatContainer, SeatTooltip, StudentName, } from './styles';
-import { FiCheck } from 'react-icons/fi';
 
 interface SeatProps {
   seat: SeatType;

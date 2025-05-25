@@ -142,6 +142,7 @@ export const SeatContainer = styled.div<{
   attendanceColor?: string;
   priority: 'low-vision' | 'intellectual-disability' | 'good-pair' | null;
   verification: boolean;
+  isHighlighted?: boolean;
 }>`
   padding: 1rem;
   border-radius: var(--border-radius-md);
@@ -183,6 +184,16 @@ export const SeatContainer = styled.div<{
   ${props => props.onDoubleClick && css`
     &:active {
       transform: scale(0.98);
+    }
+  `}
+  ${props => props.isHighlighted && css`
+    box-shadow: 0 0 0 3px #ffeb3b;
+    animation: pulse 1.5s infinite;
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 235, 59, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 235, 59, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 235, 59, 0); }
     }
   `}
 `;
@@ -308,4 +319,144 @@ export const StatLabel = styled.div`
 export const StatValue = styled.div`
   font-size: 1.2rem;
   font-weight: bold;
+`;
+
+// Add these styles to the existing file
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+  background-color: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+
+  h3 {
+    margin-top: 0;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 1rem 0;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+`;
+
+export const ModalActions = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+
+  button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:first-child {
+      background-color: #f0f0f0;
+    }
+
+    &:last-child {
+      background-color: var(--color-primary);
+      color: white;
+    }
+  }
+`;
+
+export const LayoutList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-bottom: 1px solid #eee;
+
+    div:first-child {
+      display: flex;
+      flex-direction: column;
+
+      strong {
+        margin-bottom: 0.25rem;
+      }
+
+      span {
+        font-size: 0.8rem;
+        color: #666;
+      }
+    }
+
+    div:last-child {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        padding: 0.25rem 0.5rem;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:first-child {
+          background-color: var(--color-primary);
+          color: white;
+        }
+
+        &.delete-btn {
+          background-color: #f44336;
+          color: white;
+        }
+      }
+    }
+  }
+`;
+
+export const SearchInput = styled.input`
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-border-light);
+  min-width: 250px;
+  transition: all 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+  }
+`;
+
+export const ClearSearchButton = styled.button`
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  font-size: 1.2rem;
+  line-height: 1;
+
+  &:hover {
+    color: #333;
+  }
 `;

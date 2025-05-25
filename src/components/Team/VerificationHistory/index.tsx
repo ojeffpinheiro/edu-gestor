@@ -15,9 +15,10 @@ import {
 
 interface Props {
     history: DailyVerification[];
-    viewDayDetails: (day: DailyVerification) => void;
     seats: SeatType[];
     students: StudentFormData[];
+    getSeatPosition: (seatId: string) => string;
+    viewDayDetails: (day: DailyVerification) => void;
 }
 
 const VerificationHistory: React.FC<Props> = ({ 
@@ -25,16 +26,12 @@ const VerificationHistory: React.FC<Props> = ({
     seats, 
     students,
     viewDayDetails, 
+    getSeatPosition
 }) => {
     const getStudentName = (studentId?: number): string => {
         if (!studentId) return 'N/A';
         const student = students.find(s => s.id === studentId);
         return student ? student.name : 'Aluno não encontrado';
-    };
-    
-    const getSeatPosition = (seatId: string): string => {
-        const seat = seats.find(s => s.id === seatId);
-        return seat ? `F${seat.position.row + 1}C${seat.position.column + 1}` : '';
     };
 
     return (

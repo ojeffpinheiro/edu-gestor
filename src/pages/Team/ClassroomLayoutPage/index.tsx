@@ -1,20 +1,26 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { FaTable, FaThLarge, FaExchangeAlt, FaCheck, FaClipboardCheck } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaTable, FaThLarge, FaExchangeAlt, FaCheck, FaClipboardCheck, FaPlus, FaMinus, FaSave, FaFolderOpen } from 'react-icons/fa';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+
 import { useStudents } from '../../../hooks/useStudent';
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { DailyVerification, LayoutConfig, PriorityType, SeatType } from '../../../utils/types/Team';
+import { PriorityType, SeatType } from '../../../utils/types/Team';
 import Notification from '../../../components/shared/Notification';
-import { Container } from '../../../styles/layoutUtils';
-import { ActionButton } from '../../../styles/buttons';
 import DraggableStudent from '../../../components/Team/DraggableStudent';
 import DroppableSeat from '../../../components/Team/DroppableSeat';
-
 import SeatFormModal from '../../../components/Team/SeatFormModal';
 import VerificationHistory from '../../../components/Team/VerificationHistory';
+import { Container } from '../../../styles/layoutUtils';
+import { ActionButton } from '../../../styles/buttons';
+import { findBestSeatForStudent, initializeLayout } from '../../../utils/classroomUtils';
+import { useClassroomLayout } from '../../../hooks/useClassroomLayout';
+import { useConferenceMode } from '../../../hooks/useConferenceMode';
+import { getAttendanceColor, getStudentAttendance } from '../../../utils/attendanceUtils';
+import { getSeatPosition } from '../../../utils/seatUtils';
 
-import {
+// Importe os estilos necessários
+import { 
     ActionContainer,
     ContentContainer,
     TableView,
@@ -35,39 +41,32 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
+import { useSeatingOperations } from '../../../hooks/useSeatingOperations';
 
-const MAX_COLUMNS = 5; // Definindo máximo de 5 colunas
+const MAX_COLUMNS = 5;
 
 const ClassroomLayoutPage: React.FC = () => {
-    const [layout, setLayout] = useState<LayoutConfig>({
-        rows: 5,
-        columns: MAX_COLUMNS,
-        seats: [],
-    });
-    const [conferenceMode, setConferenceMode] = useState(false);
-    const [conferenceDate, setConferenceDate] = useState(new Date().toISOString().split('T')[0]);
-    const [checkedSeats, setCheckedSeats] = useState<string[]>([]);
-    const [mismatchedSeats, setMismatchedSeats] = useState<string[]>([]);
-
-    const [verificationHistory, setVerificationHistory] = useState<DailyVerification[]>([]);
-    const [currentVerification, setCurrentVerification] = useState<DailyVerification>({
-        date: new Date().toISOString().split('T')[0],
-        verifiedSeats: [],
-        mismatchedSeats: [],
-    });
-
+    const [saveModalOpen, setSaveModalOpen] = useState(false);
+    const [loadModalOpen, setLoadModalOpen] = useState(false);
+    const [layoutName, setLayoutName] = useState('');
+    const [swapMode, setSwapMode] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
     const [view, setView] = useState<'table' | 'layout'>('layout');
-    const [selectedStudent, setSelectedStudent] = useState<StudentFormData | null>(null);
-    const [selectedSeat, setSelectedSeat] = useState<SeatType | null>(null);
-    const [notification, setNotification] = useState({ show: false, message: '', type: '' });
-    const [verifyMode, setVerifyMode] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
     const { studentList } = useStudents();
-
-    useEffect(() => {
-        initializeLayout(5, MAX_COLUMNS);
-    }, []);
+    const { 
+        layout, 
+        savedLayouts, 
+        editLayoutMode,
+        addRow, 
+        removeRow, 
+        setLayout, 
+        setSavedLayouts, 
+        toggleEditLayout,
+        loadLayout
+    } = useClassroomLayout(3, 4);
 
     const showNotification = (message: string, type: string) => {
         setNotification({ show: true, message, type });
@@ -76,40 +75,53 @@ const ClassroomLayoutPage: React.FC = () => {
         }, 3000);
     };
 
-    const initializeLayout = (rows: number, columns: number) => {
-        const seats: SeatType[] = [];
+    const { 
+        conferenceMode, 
+        finishDailyConference, 
+        startDailyConference,
+        onVerifySeat,
+        viewDayDetails,
+        checkedSeats,
+        mismatchedSeats,
+        verificationHistory
+    } = useConferenceMode({ 
+        showNotification, 
+        setVerifyMode: () => {}, // Adicionado para compatibilidade
+        setLayout 
+    });
 
-        for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < columns; col++) {
-                seats.push({
-                    id: `seat-${row}-${col}`,
-                    position: { row, column: col },
-                    studentId: undefined,
-                    priority: null,
-                });
-            }
+    const {
+        selectedStudent,
+        setSelectedStudent,
+        selectedSeat,
+        setSelectedSeat,
+        handleSeatClick,
+        removeStudentFromSeat,
+        handleSaveSeat
+    } = useSeatingOperations({
+        layout,
+        showNotification,
+        setLayout,
+        setIsModalOpen,
+        setCurrentVerification: () => {} // Adicionado para compatibilidade
+    });
+
+    useEffect(() => {
+        initializeLayout(5, MAX_COLUMNS);
+    }, []);
+
+    useEffect(() => {
+        const saved = localStorage.getItem('savedLayouts');
+        if (saved) {
+            setSavedLayouts(JSON.parse(saved));
         }
-
-        setLayout({ rows, columns, seats });
-    };
-
-    // Função auxiliar para encontrar melhor assento
-    const findBestSeatForStudent = (student: StudentFormData, seats: SeatType[]) => {
-        if (student.specialNeeds === 'low_vision') {
-            return seats.find(s =>
-                !s.studentId && s.position.row === 0 // Primeira fileira
-            );
-        }
-        // Outras lógicas de prioridade...
-        return seats.find(s => !s.studentId);
-    };
+    }, [setSavedLayouts]);
 
     const generateAutomaticLayout = () => {
         const newSeats = [...layout.seats];
         const unassignedStudents = [...studentList]
             .filter(student => !newSeats.some(s => s.studentId === student.id));
 
-        // 1. Atribuir alunos com prioridades primeiro
         const priorityStudents = unassignedStudents.filter(student => student.specialNeeds);
         priorityStudents.forEach(student => {
             const bestSeat = findBestSeatForStudent(student, newSeats);
@@ -118,7 +130,6 @@ const ClassroomLayoutPage: React.FC = () => {
             }
         });
 
-        // 2. Atribuir alunos restantes
         const remainingStudents = unassignedStudents.filter(student =>
             !priorityStudents.includes(student)
         );
@@ -133,180 +144,68 @@ const ClassroomLayoutPage: React.FC = () => {
         setLayout({ ...layout, seats: newSeats });
     };
 
-    const verifySeating = () => {
-        setVerifyMode(!verifyMode);
-        showNotification(
-            verifyMode ? 'Modo de verificação desativado' : 'Modo de verificação ativado',
-            'info'
-        );
-    };
-
     const toggleView = () => {
         setView(prev => prev === 'table' ? 'layout' : 'table');
     };
 
-    const updateSeatPriority = (seatId: string, priority: PriorityType | null) => {
-        const updatedSeats = layout.seats.map(seat => {
-            if (seat.id === seatId) {
-                return { ...seat, priority };
-            }
-            return seat;
-        });
-
-        setLayout({ ...layout, seats: updatedSeats });
-        showNotification(`Prioridade do assento atualizada: ${priority || 'Nenhuma'}`, 'success');
-    };
-
-    const handleSeatClick = (seat: SeatType) => {
-        if (verifyMode) {
-            handleSeatVerification(seat.id);
-            return;
-        }
-
-        if (selectedStudent && seat.studentId === undefined) {
-            const updatedSeats = layout.seats.map(s => {
-                if (s.id === seat.id) {
-                    return { ...s, studentId: selectedStudent.id };
-                }
-                return s;
-            });
-
-            setLayout({ ...layout, seats: updatedSeats });
-            setSelectedStudent(null);
-            showNotification(`Aluno ${selectedStudent.name} atribuído ao assento`, 'success');
-        } else if (seat.studentId !== undefined) {
-            setSelectedSeat(seat);
-            setIsModalOpen(true); // Abre o modal ao clicar no assento ocupado
-        }
-    };
-
-    const removeStudentFromSeat = (seatId: string) => {
-        const updatedSeats = layout.seats.map(seat => {
-            if (seat.id === seatId) {
-                return { ...seat, studentId: undefined };
-            }
-            return seat;
-        });
-
-        setLayout({ ...layout, seats: updatedSeats });
-        setSelectedSeat(null);
-        showNotification('Aluno removido do assento', 'success');
-    };
-
-    const handleSaveSeat = (updatedSeat: SeatType) => {
-        const updatedSeats = layout.seats.map(seat =>
-            seat.id === updatedSeat.id ? updatedSeat : seat
-        );
-        setLayout({ ...layout, seats: updatedSeats });
-        setIsModalOpen(false);
-        showNotification('Assento atualizado com sucesso', 'success');
-    };
-
-    const getStudentAttendance = (id?: number): number => {
-        if (!id) return 0;
-        return Math.floor(Math.random() * 100);
-    };
-
-    const getAttendanceColor = (attendance: number): string => {
-        if (attendance >= 90) return '#4CAF50';
-        if (attendance >= 75) return '#FFC107';
-        return '#F44336';
-    };
-
-    const getStudentName = (studentId?: number): string => {
-        if (!studentId) return '';
-        const student = studentList.find(s => s.id === studentId);
-        return student ? student.name : '';
-    };
-
-    const handleSeatVerification = (seatId: string) => {
-        setCurrentVerification(prev => {
-            const updated = { ...prev };
-            if (updated.verifiedSeats.includes(seatId)) {
-                updated.verifiedSeats = updated.verifiedSeats.filter(id => id !== seatId);
-            } else {
-                updated.verifiedSeats = [...updated.verifiedSeats, seatId];
-            }
-            return updated;
-        });
-
-        // Atualizar o assento
-        setLayout(prev => ({
-            ...prev,
-            seats: prev.seats.map(seat =>
-                seat.id === seatId ? { ...seat, lastVerified: new Date().toISOString() } : seat
-            )
-        }));
-    };
-
-    const saveDailyVerification = () => {
-        setVerificationHistory([...verificationHistory, currentVerification]);
-        setCurrentVerification({
-            date: new Date().toISOString().split('T')[0],
-            verifiedSeats: [],
-            mismatchedSeats: [],
-        });
-        setVerifyMode(false);
-    };
-
-    const viewDayDetails = (day: DailyVerification) => {
-        setNotification({
-            show: true,
-            message: `Em ${day.date}: ${day.verifiedSeats.length} alunos verificados`,
-            type: 'info'
-        });
-
-        // Destacar os assentos verificados naquele dia
-        setLayout(prev => ({
-            ...prev,
-            seats: prev.seats.map(seat => ({
-                ...seat,
-                isHighlighted: day.verifiedSeats.includes(seat.id)
-            }))
-        }));
-    };
-
-    // Nova função para iniciar conferência
-    const startDailyConference = () => {
-        setConferenceMode(true);
-        setCheckedSeats([]);
-        setMismatchedSeats([]);
-        setConferenceDate(new Date().toISOString().split('T')[0]);
-        showNotification('Modo conferência ativado. Verifique os alunos presentes.', 'info');
-    };
-
-    // Função para finalizar conferência
-    const finishDailyConference = () => {
-        if (checkedSeats.length === 0) {
-            showNotification('Nenhum aluno foi verificado. Deseja mesmo finalizar?', 'warning');
-            return;
-        }
-
-        const newVerification: DailyVerification = {
-            date: conferenceDate,
-            verifiedSeats: checkedSeats,
-            mismatchedSeats: mismatchedSeats
+    const saveCurrentLayout = () => {
+        const newLayout = {
+            name: layoutName,
+            layout: JSON.parse(JSON.stringify(layout))
         };
 
-        setVerificationHistory([...verificationHistory, newVerification]);
-        setConferenceMode(false);
-        showNotification(`Conferência do dia ${conferenceDate} salva com sucesso!`, 'success');
+        const updatedLayouts = [...savedLayouts, newLayout];
+        setSavedLayouts(updatedLayouts);
+        localStorage.setItem('savedLayouts', JSON.stringify(updatedLayouts));
+        setSaveModalOpen(false);
+        showNotification('Layout salvo com sucesso!', 'success');
     };
 
-    const handleVerifySeat = useCallback((seatId: string, isCorrect: boolean) => {
-        if (isCorrect) {
-            setCheckedSeats(prev => [...prev, seatId]);
-            setMismatchedSeats(prev => prev.filter(id => id !== seatId));
-        } else {
-            setMismatchedSeats(prev => [...prev, seatId]);
-            setCheckedSeats(prev => prev.filter(id => id !== seatId));
+    const deleteLayout = (name: string) => {
+        if (window.confirm(`Tem certeza que deseja excluir o layout "${name}"?`)) {
+            const updated = savedLayouts.filter(l => l.name !== name);
+            setSavedLayouts(updated);
+            localStorage.setItem('savedLayouts', JSON.stringify(updated));
+            showNotification(`Layout "${name}" excluído`, 'info');
         }
-    }, []);
+    };
 
     return (
         <Container>
             <Header>
-                <h1>Mapeamento da Sala de Aula</h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <h1>Mapeamento da Sala de Aula</h1>
+                    <div style={{ position: 'relative' }}>
+                        <input
+                            type="text"
+                            placeholder="Buscar aluno..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                padding: '0.5rem 1rem',
+                                borderRadius: '4px',
+                                border: '1px solid #ddd',
+                                minWidth: '250px'
+                            }}
+                        />
+                        {searchTerm && (
+                            <button
+                                onClick={() => setSearchTerm('')}
+                                style={{
+                                    position: 'absolute',
+                                    right: '8px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'transparent',
+                                    border: 'none',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                ×
+                            </button>
+                        )}
+                    </div>
+                </div>
                 <ActionContainer>
                     <ActionButton onClick={toggleView}>
                         {view === 'table' ? <><FaThLarge /> Visualizar Layout</> : <><FaTable /> Visualizar Tabela</>}
@@ -317,6 +216,37 @@ const ClassroomLayoutPage: React.FC = () => {
                     <ActionButton onClick={conferenceMode ? finishDailyConference : startDailyConference}>
                         {conferenceMode ? <><FaCheck /> Finalizar Conferência</> : <><FaClipboardCheck /> Iniciar Conferência</>}
                     </ActionButton>
+                    <ActionButton onClick={toggleEditLayout}>
+                        {editLayoutMode ? 'Salvar Layout' : 'Editar Layout'}
+                    </ActionButton>
+                    <ActionButton onClick={() => setSaveModalOpen(true)}>
+                        <FaSave /> Salvar Layout
+                    </ActionButton>
+                    <ActionButton onClick={() => setLoadModalOpen(true)}>
+                        <FaFolderOpen /> Carregar Layout
+                    </ActionButton>
+                    <ActionButton
+                        onClick={() => {
+                            setSwapMode(!swapMode);
+                            showNotification(
+                                swapMode ? 'Modo de troca desativado' : 'Modo de troca ativado - selecione dois assentos',
+                                'info'
+                            );
+                        }}
+                        style={swapMode ? { backgroundColor: '#4CAF50', color: 'white' } : {}}
+                    >
+                        {swapMode ? 'Cancelar Troca' : 'Trocar Assentos'}
+                    </ActionButton>
+                    {editLayoutMode && (
+                        <>
+                            <ActionButton onClick={addRow}>
+                                <FaPlus /> Adicionar Fileira
+                            </ActionButton>
+                            <ActionButton onClick={removeRow}>
+                                <FaMinus /> Remover Fileira
+                            </ActionButton>
+                        </>
+                    )}
                 </ActionContainer>
             </Header>
 
@@ -334,7 +264,7 @@ const ClassroomLayoutPage: React.FC = () => {
                             <tbody>
                                 {studentList.map(student => {
                                     const seat = layout.seats.find(s => s.studentId === student.id);
-                                    const attendance = getStudentAttendance();
+                                    const attendance = getStudentAttendance(student.id);
 
                                     return (
                                         <TableRow key={student.id} onClick={() => setSelectedStudent(student)}>
@@ -390,10 +320,12 @@ const ClassroomLayoutPage: React.FC = () => {
                                             onSeatClick={handleSeatClick}
                                             studentList={studentList}
                                             selectedSeat={selectedSeat}
-                                            verifyMode={verifyMode}
+                                            verifyMode={conferenceMode}
                                             getStudentAttendance={getStudentAttendance}
                                             getAttendanceColor={getAttendanceColor}
-                                            getStudentName={getStudentName}
+                                            getStudentName={(studentId?: number) => 
+                                                studentList.find(s => s.id === studentId)?.name || ''
+                                            }
                                             getPriorityInfo={(priority?: PriorityType) => {
                                                 switch (priority) {
                                                     case 'low_vision':
@@ -406,14 +338,13 @@ const ClassroomLayoutPage: React.FC = () => {
                                                         return { label: '', color: '', icon: '' };
                                                 }
                                             }}
-                                            editMode={false}
+                                            editMode={editLayoutMode}
                                             showTooltips={true}
                                             compactView={false}
-
                                             conferenceMode={conferenceMode}
                                             isChecked={checkedSeats.includes(seat.id)}
                                             isMismatched={mismatchedSeats.includes(seat.id)}
-                                            onVerify={handleVerifySeat}
+                                            onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
                                         />
                                     ))}
                                 </GridContainer>
@@ -422,7 +353,7 @@ const ClassroomLayoutPage: React.FC = () => {
                             <SettingsPanel>
                                 {conferenceMode && (
                                     <ConferenceControlPanel>
-                                        <h4>Conferência do Dia: {conferenceDate}</h4>
+                                        <h4>Conferência do Dia: {conferenceMode && new Date().toISOString().split('T')[0]}</h4>
                                         <ConferenceStats>
                                             <StatItem>
                                                 <StatLabel>Verificados:</StatLabel>
@@ -443,13 +374,6 @@ const ClassroomLayoutPage: React.FC = () => {
                                         >
                                             Finalizar Conferência
                                         </ActionButton>
-
-                                        <ActionButton
-                                            onClick={() => setConferenceMode(false)}
-                                            style={{ marginTop: '8px' }}
-                                        >
-                                            Cancelar
-                                        </ActionButton>
                                     </ConferenceControlPanel>
                                 )}
                                 <VerificationHistory
@@ -457,6 +381,7 @@ const ClassroomLayoutPage: React.FC = () => {
                                     viewDayDetails={viewDayDetails}
                                     seats={layout.seats}
                                     students={studentList}
+                                    getSeatPosition={(seatId: string) => getSeatPosition(seatId, layout.seats)}
                                 />
                             </SettingsPanel>
                         </LayoutContainer>
@@ -464,7 +389,6 @@ const ClassroomLayoutPage: React.FC = () => {
                 </DndProvider>
             </ContentContainer>
 
-            {/* Modal de edição de assento */}
             {selectedSeat && (
                 <SeatFormModal
                     isOpen={isModalOpen}
@@ -485,6 +409,62 @@ const ClassroomLayoutPage: React.FC = () => {
                     message={notification.message}
                     type={notification.type}
                 />
+            )}
+
+            {saveModalOpen && (
+                <div className="modal-overlay" onClick={() => setSaveModalOpen(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <h3>Salvar Layout</h3>
+                        <input
+                            type="text"
+                            value={layoutName}
+                            onChange={(e) => setLayoutName(e.target.value)}
+                            placeholder="Nome do layout (ex: Aula 1, Prova)"
+                        />
+                        <div className="modal-actions">
+                            <button onClick={() => setSaveModalOpen(false)}>Cancelar</button>
+                            <button onClick={saveCurrentLayout}>Salvar</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {loadModalOpen && (
+                <div className="modal-overlay" onClick={() => setLoadModalOpen(false)}>
+                    <div className="modal-content" onClick={e => e.stopPropagation()}>
+                        <h3>Carregar Layout</h3>
+                        {savedLayouts.length === 0 ? (
+                            <p>Nenhum layout salvo encontrado</p>
+                        ) : (
+                            <ul className="layout-list">
+                                {savedLayouts.map((saved, index) => (
+                                    <li key={index}>
+                                        <div>
+                                            <strong>{saved.name}</strong>
+                                            <span>{saved.layout.rows} fileiras × {saved.layout.columns} colunas</span>
+                                        </div>
+                                        <div>
+                                            <button onClick={() => {
+                                                loadLayout(saved.layout, setLoadModalOpen, showNotification);
+                                            }}>
+                                                Carregar
+                                            </button>
+                                            <button
+                                                onClick={() => deleteLayout(saved.name)}
+                                                className="delete-btn"
+                                            >
+                                                Excluir
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                        <div className="modal-actions">
+                            <button onClick={() => setLoadModalOpen(false)}>Fechar</button>
+                        </div>
+                    </div>
+                </div>
             )}
         </Container>
     );

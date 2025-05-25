@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react';
 import { useDrop } from 'react-dnd';
+import { FiAlertCircle } from 'react-icons/fi';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+
 import { LayoutConfig, SeatType, PriorityType } from '../../../utils/types/Team';
 import Seat from '../Seat';
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { FiAlertCircle } from 'react-icons/fi';
-import { FaCheck, FaTimes } from 'react-icons/fa';
 
 interface DraggableStudentItem {
     id: number;
