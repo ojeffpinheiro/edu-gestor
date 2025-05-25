@@ -3,9 +3,9 @@ import { StudentFormData } from "../utils/types/BasicUser";
 
 export const useStudents = () => {
     const [studentList, setStudentList] = useState<StudentFormData[]>([
-        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90, className: '9º Ano', rollNumber: 1, status: 'Ativo', gender: 'Feminino' },
-        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85, className: '9º Ano', rollNumber: 2, status: 'Ativo', gender: 'Masculino' },
-        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95, className: '9º Ano', rollNumber: 3, status: 'Ativo', gender: 'Feminino' },
+        { id: 1, name: 'Ana Souza', email: 'ana@exemplo.com', attendance: 90, className: '9º Ano', rollNumber: 1, status: 'Ativo', gender: 'Feminino', specialNeeds: null },
+        { id: 2, name: 'Carlos Oliveira', email: 'carlos@exemplo.com', attendance: 85, className: '9º Ano', rollNumber: 2, status: 'Ativo', gender: 'Masculino', specialNeeds: null },
+        { id: 3, name: 'Fernanda Lima', email: 'fernanda@exemplo.com', attendance: 95, className: '9º Ano', rollNumber: 3, status: 'Ativo', gender: 'Feminino', specialNeeds: null },
     ]);
 
     const [formData, setFormData] = useState<StudentFormData>({
@@ -16,7 +16,8 @@ export const useStudents = () => {
         className: "",
         rollNumber: 0,
         status: "Ativo",
-        gender: ""
+        gender: "",
+        specialNeeds: null
     });
 
     // Função de validação do formulário
@@ -75,7 +76,8 @@ export const useStudents = () => {
             className: "",
             rollNumber: 0,
             status: "Ativo",
-            gender: ""
+            gender: "",
+            specialNeeds: null
         });
     };
 
@@ -91,7 +93,8 @@ export const useStudents = () => {
             className: student.className || "",
             rollNumber: student.rollNumber || 0,
             status: student.status || "Ativo",
-            gender: student.gender || ""
+            gender: student.gender || "",
+            specialNeeds: student.specialNeeds || null
         });
     };
 

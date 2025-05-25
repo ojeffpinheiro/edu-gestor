@@ -1,4 +1,6 @@
 import { createGlobalStyle } from "styled-components";
+import { darken, transparentize } from 'polished';
+
 import { getTheme } from "./colors";
 
 export const GlobalStyles = createGlobalStyle`
@@ -36,6 +38,13 @@ export const GlobalStyles = createGlobalStyle`
         --color-input: ${currentTheme.component.input};
         --color-input-border: ${currentTheme.component.inputBorder};
         --color-input-focus: ${currentTheme.component.inputFocus};
+
+        --color-primary-active: ${darken(0.1, currentTheme.component.primaryButton)};
+        --color-secondary-active: ${darken(0.1, currentTheme.component.secondaryButton)};
+        --color-error-active: ${darken(0.1, currentTheme.feedback.error)};
+
+        --color-focus-ring: ${transparentize(0.7, currentTheme.component.primaryButton)};
+        --color-disabled-text: ${currentTheme.text.third};
         
         --color-success: ${currentTheme.feedback.success};
         --color-success-hover: #389E0D;
@@ -50,6 +59,15 @@ export const GlobalStyles = createGlobalStyle`
         --color-facebook: ${currentTheme.icons.facebook};
         --color-github: ${currentTheme.icons.github};
         --color-apple: ${currentTheme.icons.apple};
+
+        --line-height-sm: 1.25;
+        --line-height-md: 1.5;
+        --line-height-lg: 1.75;
+        
+        --font-weight-normal: 400;
+        --font-weight-medium: 500;
+        --font-weight-semibold: 600;
+        --font-weight-bold: 700;
 
         --font-family: 'Poppins', sans-serif;
         --font-family-secondary: 'Inter', sans-serif;
@@ -68,6 +86,8 @@ export const GlobalStyles = createGlobalStyle`
         --space-lg: 1.5rem;
         --space-xl: 2rem;
         --space-2xl: 3rem;
+        --space-3xl: 4rem;
+        --space-4xl: 6rem;
         
         --border-radius-sm: 0.25rem;
         --border-radius-md: 0.5rem;
@@ -84,6 +104,8 @@ export const GlobalStyles = createGlobalStyle`
         --breakpoint-md: 768px;
         --breakpoint-lg: 992px;
         --breakpoint-xl: 1200px;
+        --breakpoint-2xl: 1440px;
+        --breakpoint-3xl: 1920px;
         
         --transition-fast: 0.2s ease;
         --transition-normal: 0.3s ease;
@@ -253,5 +275,20 @@ export const GlobalStyles = createGlobalStyle`
   
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-text-secondary);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+  
+  // Melhorias para mobile
+  @media (max-width: 768px) {
+    :root {
+      --font-size-xs: 0.7rem;
+      --font-size-sm: 0.8rem;
+      --font-size-md: 0.9rem;
+      --space-md: 0.75rem;
+    }
   }
 `;

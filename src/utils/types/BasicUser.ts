@@ -1,5 +1,6 @@
 import { Assessment } from "./AssessmentEvaluation";
 import { AttendanceRecord } from "./Attendance";
+import { PriorityType } from "./Team";
 
 // Student Interface
 export interface Student {
@@ -19,13 +20,14 @@ export interface StudentData {
 }
 
 export interface StudentFormData {
-    id?: number;
-    name: string;
-    email: string;
-    attendance?: number;
-    birthDate?: string;
-    className?: string;
-    rollNumber?: number;
-    status?: string;
-    gender?: string;
+    id?: number; // Identificador
+    name: string; // Nome do aluno
+    email: string; // E-mail do aluno
+    attendance?: number; // Frequência do aluno
+    birthDate?: string; // Data de nascimento do aluno
+    className?: string; // Nome da turma do aluno
+    rollNumber?: number; // Número de matrícula do aluno
+    status?: string; // Status do aluno
+    gender?: string; // Gênero do aluno
+    specialNeeds: PriorityType | null; // Necessidades especiais do aluno
 }

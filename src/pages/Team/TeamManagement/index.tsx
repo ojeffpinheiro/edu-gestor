@@ -165,7 +165,8 @@ const TeamManagement: React.FC = () => {
             className: currentClass,
             rollNumber: 0,
             status: "Ativo",
-            gender: ""
+            gender: "",
+            specialNeeds: null
         });
         setShowForm(true);
     };
