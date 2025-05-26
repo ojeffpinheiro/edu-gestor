@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import { FiAlertCircle } from 'react-icons/fi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
-import { LayoutConfig, SeatType, PriorityType } from '../../../utils/types/Team';
+import { LayoutConfig, SeatType, PriorityType, PriorityInfo, PriorityConfig } from '../../../utils/types/Team';
 import Seat from '../Seat';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 
@@ -15,7 +15,7 @@ interface DraggableStudentItem {
 
 interface DroppableSeatProps {
     seat: SeatType;
-    layout: LayoutConfig;
+    seats: SeatType[];
     studentList: StudentFormData[];
     selectedSeat: SeatType | null;
     verifyMode: boolean;
@@ -30,17 +30,13 @@ interface DroppableSeatProps {
     getStudentAttendance: (id: number) => number;
     getAttendanceColor: (attendance: number) => string;
     getStudentName: (studentId?: number) => string;
-    getPriorityInfo: (priority?: PriorityType) => {
-        label: string;
-        color: string;
-        icon: string;
-    };
+    getPriorityInfo: (priority?: PriorityType) => PriorityConfig | PriorityInfo;
     onVerify?: (seatId: string, isCorrect: boolean) => void;
 }
 
 const DroppableSeat: React.FC<DroppableSeatProps> = ({
     seat,
-    layout,
+    seats,
     studentList,
     selectedSeat,
     verifyMode,
@@ -70,11 +66,11 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
     }, [seat.id, setLayout]);
 
     const canDropStudent = useCallback((item: DraggableStudentItem) => {
-        const isAlreadyAssigned = layout.seats.some(s =>
+        const isAlreadyAssigned = seats.some(s =>
             s.studentId === item.id && s.id !== seat.id
         );
         return !isAlreadyAssigned || !seat.studentId;
-    }, [layout.seats, seat.id, seat.studentId]);
+    }, [seats, seat.id, seat.studentId]);
 
     const [{ isOver, canDrop }] = useDrop<DraggableStudentItem, void, { isOver: boolean; canDrop: boolean }>({
         accept: 'STUDENT',

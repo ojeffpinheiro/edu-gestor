@@ -1,27 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { FaTable, FaThLarge, FaExchangeAlt, FaCheck, FaClipboardCheck, FaPlus, FaMinus, FaSave, FaFolderOpen } from 'react-icons/fa';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 
 import { useStudents } from '../../../hooks/useStudent';
-import { StudentFormData } from '../../../utils/types/BasicUser';
-import { PriorityType, SeatType } from '../../../utils/types/Team';
-import Notification from '../../../components/shared/Notification';
-import DraggableStudent from '../../../components/Team/DraggableStudent';
-import DroppableSeat from '../../../components/Team/DroppableSeat';
-import SeatFormModal from '../../../components/Team/SeatFormModal';
-import VerificationHistory from '../../../components/Team/VerificationHistory';
-import { Container } from '../../../styles/layoutUtils';
-import { ActionButton } from '../../../styles/buttons';
-import { findBestSeatForStudent, initializeLayout } from '../../../utils/classroomUtils';
+import { useSeatManagement } from '../../../hooks/useSeatManagement';
 import { useClassroomLayout } from '../../../hooks/useClassroomLayout';
 import { useConferenceMode } from '../../../hooks/useConferenceMode';
+import { useSeatingOperations } from '../../../hooks/useSeatingOperations';
+
+import { findBestSeatForStudent, initializeLayout } from '../../../utils/classroomUtils';
 import { getAttendanceColor, getStudentAttendance } from '../../../utils/attendanceUtils';
 import { getSeatPosition } from '../../../utils/seatUtils';
 
-// Importe os estilos necessários
-import { 
-    ActionContainer,
+import Notification from '../../../components/shared/Notification';
+import DraggableStudent from '../../../components/Team/DraggableStudent';
+import SeatFormModal from '../../../components/Team/SeatFormModal';
+import VerificationHistory from '../../../components/Team/VerificationHistory';
+import LayoutControls from '../../../components/Team/LayoutControls';
+import ConferencePanel from '../../../components/Team/ConferencePanel';
+import ClassroomGrid from '../../../components/Team/ClassroomGrid';
+
+import { Container } from '../../../styles/layoutUtils';
+import { ActionButton } from '../../../styles/buttons';
+
+import {
     ContentContainer,
     TableView,
     TableHeader,
@@ -31,9 +33,6 @@ import {
     StudentsPanel,
     StudentList,
     SettingsPanel,
-    GridContainer,
-    ClassroomLayout,
-    TeacherDesk,
     Header,
     ConferenceControlPanel,
     ConferenceStats,
@@ -41,7 +40,6 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
-import { useSeatingOperations } from '../../../hooks/useSeatingOperations';
 
 const MAX_COLUMNS = 5;
 
@@ -56,14 +54,15 @@ const ClassroomLayoutPage: React.FC = () => {
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
     const { studentList } = useStudents();
-    const { 
-        layout, 
-        savedLayouts, 
+
+    const {
+        layout,
+        savedLayouts,
         editLayoutMode,
-        addRow, 
-        removeRow, 
-        setLayout, 
-        setSavedLayouts, 
+        addRow,
+        removeRow,
+        setLayout,
+        setSavedLayouts,
         toggleEditLayout,
         loadLayout
     } = useClassroomLayout(3, 4);
@@ -75,26 +74,25 @@ const ClassroomLayoutPage: React.FC = () => {
         }, 3000);
     };
 
-    const { 
-        conferenceMode, 
-        finishDailyConference, 
+    const {
+        conferenceMode,
+        finishDailyConference,
         startDailyConference,
         onVerifySeat,
         viewDayDetails,
         checkedSeats,
         mismatchedSeats,
         verificationHistory
-    } = useConferenceMode({ 
-        showNotification, 
-        setVerifyMode: () => {}, // Adicionado para compatibilidade
-        setLayout 
+    } = useConferenceMode({
+        showNotification,
+        setVerifyMode: () => { },
+        setLayout
     });
 
     const {
         selectedStudent,
         setSelectedStudent,
         selectedSeat,
-        setSelectedSeat,
         handleSeatClick,
         removeStudentFromSeat,
         handleSaveSeat
@@ -103,7 +101,21 @@ const ClassroomLayoutPage: React.FC = () => {
         showNotification,
         setLayout,
         setIsModalOpen,
-        setCurrentVerification: () => {} // Adicionado para compatibilidade
+        setCurrentVerification: () => { }
+    });
+
+    const { getStudentName, getPriorityInfo } = useSeatManagement({
+        seats: layout.seats,
+        students: studentList,
+        onSeatUpdate: (seat) => {
+            const updatedSeats = layout.seats.map(s => s.id === seat.id ? seat : s);
+            setLayout({ ...layout, seats: updatedSeats });
+        },
+        onSeatSelect: (seat) => {
+            if (seat) { // Adicione esta verificação
+                handleSeatClick(seat);
+            }
+        }
     });
 
     useEffect(() => {
@@ -170,6 +182,14 @@ const ClassroomLayoutPage: React.FC = () => {
         }
     };
 
+    const handleSaveLayout = () => {
+        setSwapMode(!swapMode);
+        showNotification(
+            swapMode ? 'Modo de troca desativado' : 'Modo de troca ativado - selecione dois assentos',
+            'info'
+        );
+    }
+
     return (
         <Container>
             <Header>
@@ -206,48 +226,22 @@ const ClassroomLayoutPage: React.FC = () => {
                         )}
                     </div>
                 </div>
-                <ActionContainer>
-                    <ActionButton onClick={toggleView}>
-                        {view === 'table' ? <><FaThLarge /> Visualizar Layout</> : <><FaTable /> Visualizar Tabela</>}
-                    </ActionButton>
-                    <ActionButton onClick={generateAutomaticLayout}>
-                        <FaExchangeAlt /> Gerar Layout Automático
-                    </ActionButton>
-                    <ActionButton onClick={conferenceMode ? finishDailyConference : startDailyConference}>
-                        {conferenceMode ? <><FaCheck /> Finalizar Conferência</> : <><FaClipboardCheck /> Iniciar Conferência</>}
-                    </ActionButton>
-                    <ActionButton onClick={toggleEditLayout}>
-                        {editLayoutMode ? 'Salvar Layout' : 'Editar Layout'}
-                    </ActionButton>
-                    <ActionButton onClick={() => setSaveModalOpen(true)}>
-                        <FaSave /> Salvar Layout
-                    </ActionButton>
-                    <ActionButton onClick={() => setLoadModalOpen(true)}>
-                        <FaFolderOpen /> Carregar Layout
-                    </ActionButton>
-                    <ActionButton
-                        onClick={() => {
-                            setSwapMode(!swapMode);
-                            showNotification(
-                                swapMode ? 'Modo de troca desativado' : 'Modo de troca ativado - selecione dois assentos',
-                                'info'
-                            );
-                        }}
-                        style={swapMode ? { backgroundColor: '#4CAF50', color: 'white' } : {}}
-                    >
-                        {swapMode ? 'Cancelar Troca' : 'Trocar Assentos'}
-                    </ActionButton>
-                    {editLayoutMode && (
-                        <>
-                            <ActionButton onClick={addRow}>
-                                <FaPlus /> Adicionar Fileira
-                            </ActionButton>
-                            <ActionButton onClick={removeRow}>
-                                <FaMinus /> Remover Fileira
-                            </ActionButton>
-                        </>
-                    )}
-                </ActionContainer>
+                <LayoutControls
+                    onToggleView={toggleView}
+                    onGenerateLayout={generateAutomaticLayout}
+                    conferenceMode={conferenceMode}
+                    editLayoutMode={editLayoutMode}
+                    view={view}
+                    swapMode={swapMode}
+                    onAddRow={addRow}
+                    onRemoveRow={removeRow}
+                    onFinishConference={finishDailyConference}
+                    onStartConference={startDailyConference}
+                    onToggleEditLayout={toggleEditLayout}
+                    onToggleSwapMode={() => setSaveModalOpen(true)}
+                    onLoadLayout={() => setLoadModalOpen(true)}
+                    onSaveLayout={handleSaveLayout}
+                />
             </Header>
 
             <ContentContainer>
@@ -305,76 +299,55 @@ const ClassroomLayoutPage: React.FC = () => {
                                 </StudentList>
                             </StudentsPanel>
 
-                            <ClassroomLayout>
-                                <h3>Layout da Sala</h3>
-                                <TeacherDesk>
-                                    <span>Mesa do Professor</span>
-                                </TeacherDesk>
-                                <GridContainer>
-                                    {layout.seats.map(seat => (
-                                        <DroppableSeat
-                                            key={seat.id}
-                                            seat={seat}
-                                            layout={layout}
-                                            setLayout={setLayout}
-                                            onSeatClick={handleSeatClick}
-                                            studentList={studentList}
-                                            selectedSeat={selectedSeat}
-                                            verifyMode={conferenceMode}
-                                            getStudentAttendance={getStudentAttendance}
-                                            getAttendanceColor={getAttendanceColor}
-                                            getStudentName={(studentId?: number) => 
-                                                studentList.find(s => s.id === studentId)?.name || ''
-                                            }
-                                            getPriorityInfo={(priority?: PriorityType) => {
-                                                switch (priority) {
-                                                    case 'low_vision':
-                                                        return { label: 'Baixa visão', color: '#03A9F4', icon: '👓' };
-                                                    case 'intellectual_disability':
-                                                        return { label: 'Deficiência intelectual', color: '#9C27B0', icon: '🧠' };
-                                                    case 'good_pair':
-                                                        return { label: 'Bom par', color: '#FF9800', icon: '👥' };
-                                                    default:
-                                                        return { label: '', color: '', icon: '' };
-                                                }
-                                            }}
-                                            editMode={editLayoutMode}
-                                            showTooltips={true}
-                                            compactView={false}
-                                            conferenceMode={conferenceMode}
-                                            isChecked={checkedSeats.includes(seat.id)}
-                                            isMismatched={mismatchedSeats.includes(seat.id)}
-                                            onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
-                                        />
-                                    ))}
-                                </GridContainer>
-                            </ClassroomLayout>
+                            <ClassroomGrid
+                                seats={layout.seats}
+                                setLayout={setLayout}
+                                onSeatClick={handleSeatClick}
+                                studentList={studentList}
+                                selectedSeat={selectedSeat}
+                                getStudentName={getStudentName}
+                                getPriorityInfo={getPriorityInfo}
+                                conferenceMode={conferenceMode}
+                                editLayoutMode={editLayoutMode}
+                                isChecked={checkedSeats.includes(selectedSeat?.id || '')}
+                                isMismatched={mismatchedSeats.includes(selectedSeat?.id || '')}
+                                onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
+                            />
 
                             <SettingsPanel>
                                 {conferenceMode && (
-                                    <ConferenceControlPanel>
-                                        <h4>Conferência do Dia: {conferenceMode && new Date().toISOString().split('T')[0]}</h4>
-                                        <ConferenceStats>
-                                            <StatItem>
-                                                <StatLabel>Verificados:</StatLabel>
-                                                <StatValue>{checkedSeats.length}</StatValue>
-                                            </StatItem>
-                                            <StatItem>
-                                                <StatLabel>Divergências:</StatLabel>
-                                                <StatValue>{mismatchedSeats.length}</StatValue>
-                                            </StatItem>
-                                            <StatItem>
-                                                <StatLabel>Faltantes:</StatLabel>
-                                                <StatValue>{layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}</StatValue>
-                                            </StatItem>
-                                        </ConferenceStats>
+                                    <>
+                                        <ConferencePanel
+                                            conferenceMode={conferenceMode}
+                                            checkedSeats={checkedSeats.length}
+                                            mismatchedSeats={mismatchedSeats.length}
+                                            absentees={layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}
+                                            onFinish={finishDailyConference}
+                                        />
+                                        <ConferenceControlPanel>
+                                            <h4>Conferência do Dia: {conferenceMode && new Date().toISOString().split('T')[0]}</h4>
+                                            <ConferenceStats>
+                                                <StatItem>
+                                                    <StatLabel>Verificados:</StatLabel>
+                                                    <StatValue>{checkedSeats.length}</StatValue>
+                                                </StatItem>
+                                                <StatItem>
+                                                    <StatLabel>Divergências:</StatLabel>
+                                                    <StatValue>{mismatchedSeats.length}</StatValue>
+                                                </StatItem>
+                                                <StatItem>
+                                                    <StatLabel>Faltantes:</StatLabel>
+                                                    <StatValue>{layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}</StatValue>
+                                                </StatItem>
+                                            </ConferenceStats>
 
-                                        <ActionButton
-                                            onClick={finishDailyConference}
-                                        >
-                                            Finalizar Conferência
-                                        </ActionButton>
-                                    </ConferenceControlPanel>
+                                            <ActionButton
+                                                onClick={finishDailyConference}
+                                            >
+                                                Finalizar Conferência
+                                            </ActionButton>
+                                        </ConferenceControlPanel>
+                                    </>
                                 )}
                                 <VerificationHistory
                                     history={verificationHistory}

@@ -1,10 +1,5 @@
 import styled, { css } from "styled-components";
 
-export const ActionContainer = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
 export const ContentContainer = styled.div`
   margin-top: 2rem;
 `;
@@ -103,37 +98,6 @@ export const StudentItem = styled.div<{ isDragging: boolean; isSelected: boolean
   &:hover {
     background-color: ${props => props.isSelected ? 'var(--color-primary-hover)' : 'var(--color-background-third)'};
   }
-`;
-
-export const ClassroomLayout = styled.div`
-  background-color: var(--color-card);
-  border-radius: var(--border-radius-md);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  
-  h3 {
-    margin-bottom: 1rem;
-  }
-`;
-
-export const GridContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 1rem;
-  margin-top: 1rem;
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-`;
-
-export const TeacherDesk = styled.div`
-  padding: 1rem;
-  margin-bottom: 2rem;
-  background-color: var(--color-background-secondary);
-  border-radius: var(--border-radius-md);
-  text-align: center;
-  font-weight: 500;
 `;
 
 export const SeatContainer = styled.div<{ 

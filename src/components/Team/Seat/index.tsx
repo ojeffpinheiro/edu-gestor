@@ -3,7 +3,7 @@ import { FaCheck } from 'react-icons/fa';
 import { FiCheck } from 'react-icons/fi';
 
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { SeatType, PriorityType, SeatStatus, PRIORITY_CONFIGS } from "../../../utils/types/Team";
+import { SeatType, PriorityType, SeatStatus, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo } from "../../../utils/types/Team";
 import { AttendanceIndicator, EmptySeatLabel, InteractionOverlay, SeatContainer, SeatTooltip, StudentName, } from './styles';
 
 interface SeatProps {
@@ -19,11 +19,7 @@ interface SeatProps {
   getStudentAttendance: (id: number) => number;
   getAttendanceColor: (attendance: number) => string;
   getStudentName: (studentId?: number) => string;
-  getPriorityInfo: (priority?: PriorityType) => {
-    label: string;
-    color: string;
-    icon: string;
-  };
+  getPriorityInfo: (priority?: PriorityType) => PriorityConfig | PriorityInfo
   onClick: () => void;
   onDoubleClick?: () => void;
   onContextMenu?: (e: React.MouseEvent) => void;

@@ -22,6 +22,12 @@ export interface SeatType {
   verifications?: DailyVerification[];
 }
 
+export type PriorityInfo = {
+  label: string;
+  color: string;
+  icon: string;
+}
+
 export type PriorityType =
   | 'low_vision'           // Baixa visão
   | 'intellectual_disability' // Deficiência intelectual
@@ -30,7 +36,7 @@ export type PriorityType =
   | 'attention_required'   // Necessita atenção especial
   | 'behavioral_support';  // Suporte comportamental
 
-interface PriorityConfig {
+export interface PriorityConfig {
   label: string;
   color: string;
   icon: React.ComponentType<{ size?: number, color?: string }>;
