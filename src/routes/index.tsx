@@ -27,6 +27,7 @@ import CalendarView from '../components/Calendar/CalendarView';
 import ScheduleView from '../components/Calendar/ScheduleView';
 import ClassroomLayoutPage from '../pages/Team/ClassroomLayoutPage';
 import DashboardPlanning from '../pages/Planning/DashboardPlanning';
+import DashboardResultViewer from '../pages/DashboardResultViewer';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -37,6 +38,7 @@ const AppRoutes: React.FC = () => {
         
         {/* Rotas protegidas */}
           <Route path='/' index element={<HomeTest />} />
+          <Route path="/result-dashboard" element={<DashboardResultViewer />} />
           <Route path="/calendar" element={<CalendarView />} />
           <Route path="/schedule" element={<ScheduleView />} />
           <Route path="/home" element={<HomePage />} />

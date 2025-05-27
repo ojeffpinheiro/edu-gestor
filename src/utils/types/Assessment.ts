@@ -120,3 +120,54 @@ export  interface ReportTemplate {
     type: 'individual' | 'class' | 'question' | 'summary';
     sections: ReportSection[];
 }
+
+export interface RiskFactor {
+  id: string;
+  description: string;
+  weight: number;
+  threshold: number;
+}
+
+export interface StudentRiskAssessment {
+  studentId: string;
+  riskScore: number;
+  riskLevel: 'low' | 'medium' | 'high';
+  mainFactors: RiskFactor[];
+  lastUpdated: Date;
+}
+
+export interface PerformancePrediction {
+  studentId: string;
+  examId: string;
+  predictedScore: number;
+  confidence: number;
+  keyImprovementAreas: string[];
+  lastUpdated: Date;
+}
+
+export interface StudyRecommendation {
+  id: string;
+  studentId: string;
+  category: string;
+  resources: {
+    type: 'material' | 'exercise' | 'video' | 'external';
+    title: string;
+    url?: string;
+    description: string;
+  }[];
+  priority: 'low' | 'medium' | 'high';
+  created: Date;
+  completed?: boolean;
+}
+
+export interface TeacherAlert {
+  id: string;
+  type: 'risk' | 'performance' | 'participation' | 'behavior';
+  studentId: string;
+  classId: string;
+  message: string;
+  severity: 'low' | 'medium' | 'high';
+  createdAt: Date;
+  acknowledged: boolean;
+  actionItems?: string[];
+}
