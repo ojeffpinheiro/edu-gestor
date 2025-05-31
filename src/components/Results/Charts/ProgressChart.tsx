@@ -1,26 +1,50 @@
+// ProgressChart.tsx
 import React from 'react';
-import { Line } from 'react-chartjs-2';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-interface ProgressChartProps {
-  classPerformance: ClassPerformance;
+interface ProgressData {
+  date: Date;
+  averageScore: number;
+  classAverage: number;
+  passingRate: number;
 }
 
-const ProgressChart: React.FC<ProgressChartProps> = ({ classPerformance }) => {
-  // Lógica para processar os dados e criar o gráfico de progresso
-  const data = {
-    labels: ['Aval 1', 'Aval 2', 'Aval 3', 'Aval 4'],
-    datasets: [
-      {
-        label: 'Média da Turma',
-        data: [65, 72, 68, 75], // Substitua por dados reais
-        borderColor: 'rgba(75, 192, 192, 1)',
-        fill: false
-      }
-    ]
-  };
+interface ProgressChartProps {
+  progressData: ProgressData[];
+  width?: number;
+  height?: number;
+  margin?: { top: number; right: number; bottom: number; left: number };
+  xAxisLabel?: string;
+  yAxisLabel?: string;
+}
 
-  return <Line data={data} />;
+const ProgressChart: React.FC<ProgressChartProps> = ({
+  progressData,
+  width = 700,
+  height = 400,
+  margin = { top: 20, right: 30, bottom: 50, left: 50 },
+  xAxisLabel = 'Data',
+  yAxisLabel = 'Nota Média'
+}) => {
+  // Formatar dados para o gráfico
+  const formattedData = progressData.map(item => ({
+    ...item,
+    date: item.date.toLocaleDateString() // Ou outro formato de data desejado
+  }));
+
+  return (
+    <ResponsiveContainer width={width} height={height}>
+      <LineChart data={formattedData} margin={margin}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="date" label={{ value: xAxisLabel, position: 'insideBottomRight', offset: -10 }} />
+        <YAxis label={{ value: yAxisLabel, angle: -90, position: 'insideLeft' }} />
+        <Tooltip />
+        <Legend />
+        <Line type="monotone" dataKey="averageScore" stroke="#8884d8" name="Média do Exame" />
+        <Line type="monotone" dataKey="classAverage" stroke="#82ca9d" name="Média da Turma" />
+      </LineChart>
+    </ResponsiveContainer>
+  );
 };
 
 export default ProgressChart;

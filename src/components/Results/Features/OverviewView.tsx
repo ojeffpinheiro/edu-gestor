@@ -15,8 +15,8 @@ interface OverviewViewProps {
   error?: Error | null;
 }
 
-const OverviewView: React.FC<OverviewViewProps> = ({ 
-  examSummaries, 
+const OverviewView: React.FC<OverviewViewProps> = ({
+  examSummaries,
   classPerformances,
   onClassSelect,
   isLoading,
@@ -24,21 +24,40 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 }) => {
   if (isLoading) return <LoadingSpinner />;
   if (error) return <EmptyState message="Erro ao carregar dados" />;
-  
+
   const hasData = examSummaries.length > 0 && classPerformances.length > 0;
+
+
+  // Preparar dados para o ScoreDistributionChart
+  const getDistributionData = () => {
+    const allScores = examSummaries.flatMap(exam =>
+      exam.results?.map(result => result.totalScore) || []
+    );
+
+    // Contar ocorrências de cada score
+    const scoreCounts = allScores.reduce((acc, score) => {
+      acc[score] = (acc[score] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    return Object.entries(scoreCounts).map(([score, count]) => ({
+      score: Number(score),
+      count
+    }));
+  };
 
   return (
     <div className="overview-view">
       {hasData ? (
         <>
           <div className="chart-row">
-            <DashboardCard 
+            <DashboardCard
               title="Distribuição de Notas"
               description="Distribuição das notas dos alunos com curva normal"
             >
-              <ScoreDistributionChart examSummaries={examSummaries} />
+              <ScoreDistributionChart data={getDistributionData()} />
             </DashboardCard>
-            
+
             <DashboardCard
               title="Progresso Temporal"
               description="Evolução do desempenho ao longo do tempo"

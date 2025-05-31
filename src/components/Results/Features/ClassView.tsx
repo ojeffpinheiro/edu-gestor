@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
-import { ClassPerformance, EvaluationRubric, ClassMetrics } from '../../../utils/types/Assessment';
+import { FiTrendingUp } from 'react-icons/fi';
+
+import { ClassPerformance, EvaluationRubric, ClassMetricsType, StudentResult } from '../../../utils/types/Assessment';
+
+import { useFilters } from '../../../hooks/userResultsFilters';
 import DashboardCard from '../DashboardCard';
 import RadarChart from '../Charts/RadarChart';
 import EmptyState from '../EmptyState';
 import ClassSelector from '../ClassSelector';
 import SubjectSelector from '../SubjectSelector';
+import ComparisonTabs from '../ComparisonTabs';
+import BenchmarkCard from '../BenchmarkCard';
+import AdvancedFilters from '../AdvancedFilters';
+import InteractiveChart from '../InteractiveChart';
+import ClassResultsTable from '../ClassResultsTable';
+import EnhancedStudentDetailModal from '../EnhancedStudentDetailModal';
+
+import ComparisonBarChart from '../Charts/ComparisonBarChart';
+import ClassSelectorChart from '../Charts/ClassSelectorChart';
+
 import { ClassViewContainer } from '../../../pages/DashboardResultViewer/styles';
 import { ChartTabs, TabButton } from './styles/ClassViewStyles';
-import ScoreDistributionChart from '../Charts/ScoreDistributionChart';
-import ProgressChart from '../Charts/ProgressChart';
+import DistributionView from '../ClassCharts/DistributionView';
+import ProgressView from '../ClassCharts/ProgressView';
 
 interface ClassViewProps {
   classPerformances: ClassPerformance[];
@@ -29,6 +43,48 @@ const ClassView: React.FC<ClassViewProps> = ({
 }) => {
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [activeChartTab, setActiveChartTab] = useState<'radar' | 'distribution' | 'progress'>('radar');
+
+  const [activeView, setActiveView] = useState<'class' | 'school'>('class');
+  const [comparisonTab, setComparisonTab] = useState<'ranking' | 'value-added' | 'equity'>('ranking');
+  const [selectedStudent, setSelectedStudent] = useState<StudentResult | null>(null);
+
+  const [selectedClasses, setSelectedClasses] = useState<string[]>([]);
+  const [detailStudent, setDetailStudent] = useState<StudentResult | null>(null);
+
+  const [timeRange, setTimeRange] = useState<'week' | 'month' | 'quarter' | 'semester' | 'year'>('month');
+
+  const {
+    filters,
+    setFilter,
+    resetFilters,
+    filteredData,
+    availableOptions
+  } = useFilters(classPerformances);
+
+  const filteredBySubject = filteredData;
+
+  // Manipulador de clique no gráfico
+  const handleBarClick = (element: any) => {
+    const classId = filteredBySubject[element.index]?.classId;
+    if (classId) {
+      const classData = filteredBySubject.find(c => c.classId === classId);
+      if (classData) {
+        setDetailStudent({
+          studentId: 'sample-id', // Substitua pelo ID real
+          studentName: classData.className,
+          studentEmail: '', // Adicione se necessário
+          classId: classData.classId,
+          className: classData.className,
+          examResults: [], // Preencha com os resultados reais
+          overallAverage: classData.averageScore,
+          progressTrend: 'stable', // Ou calcule com base nos dados
+          attendanceRate: undefined, // Opcional
+          skillProfile: {}, // Opcional
+          riskAssessment: undefined // Opcional
+        });
+      }
+    }
+  };
   const currentClass = selectedClass
     ? classPerformances.find(c => c.classId === selectedClass)
     : null;
@@ -41,8 +97,35 @@ const ClassView: React.FC<ClassViewProps> = ({
       : currentClass.examResults
   } : null;
 
+  const studentsAsResults = currentClass?.students.map(student => ({
+    studentId: student.id,
+    studentName: student.name,
+    studentEmail: student.email,
+    classId: currentClass.classId,
+    className: currentClass.className,
+    examResults: currentClass.examResults.flatMap(exam =>
+      exam.results?.filter(result => result.studentId === student.id) || []
+    ),
+    overallAverage: student.overallAverage || 0,
+    progressTrend: 'stable' as const,
+    attendanceRate: student.attendanceRate,
+    skillProfile: {},
+    riskAssessment: undefined
+  })) || [];
+
+  const allExamResults = currentClass?.examResults.flatMap(exam => exam.results || []) || [];
+
+  const handleStudentSelect = (studentId: string) => {
+    const student = studentsAsResults.find(s => s.studentId === studentId);
+    setSelectedStudent(student || null);
+  };
+
+  if (!currentClass) {
+    return <div>Nenhuma turma selecionada</div>;
+  }
+
   // Calcula métricas da turma
-  const calculateClassMetrics = (): ClassMetrics | null => {
+  const calculateClassMetrics = (): ClassMetricsType | null => {
     if (!filteredClassData) return null;
 
     const totalStudents = filteredClassData.students.length;
@@ -95,13 +178,85 @@ const ClassView: React.FC<ClassViewProps> = ({
           onSelect={onClassSelect}
         />
 
-        {currentClass?.subjects && currentClass.subjects.length > 0 && (
-          <SubjectSelector
-            subjects={currentClass.subjects}
-            selectedSubject={selectedSubject}
-            onSelect={setSelectedSubject}
+        <AdvancedFilters
+          periods={availableOptions.periods}
+          subjects={availableOptions.subjects}
+          classes={availableOptions.allClasses}
+          currentFilters={filters}
+          onFilterChange={setFilter}
+          onReset={resetFilters}
+        />
+      </div>
+
+      {/* Seletor de turmas para gráficos */}
+      <ClassSelectorChart
+        classes={filteredBySubject}
+        initialSelection={selectedClasses}
+      >
+        {(selectedClasses) => (
+          <InteractiveChart
+            data={{
+              labels: selectedClasses.map(c => c.className),
+              datasets: [{
+                label: 'Média',
+                data: selectedClasses.map(c => c.averageScore),
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+              }]
+            }}
+            onElementClick={handleBarClick}
           />
         )}
+      </ClassSelectorChart>
+
+
+      {currentClass?.subjects && currentClass.subjects.length > 0 && (
+        <SubjectSelector
+          subjects={currentClass.subjects}
+          selectedSubject={selectedSubject}
+          onSelect={setSelectedSubject}
+        />
+      )}
+
+      <ComparisonTabs
+        tabs={['Ranking', 'Valor Agregado', 'Equidade']}
+        onTabChange={(tab) => setComparisonTab(tab.toLowerCase() as any)}
+      />
+
+      <ClassResultsTable
+        students={studentsAsResults}
+        examResults={allExamResults}
+        timeRange={timeRange}
+        onStudentSelect={handleStudentSelect}
+      />
+
+      <div className="view-toggle">
+        <button
+          className={activeView === 'class' ? 'active' : ''}
+          onClick={() => setActiveView('class')}
+        >
+          Visualização por Turma
+        </button>
+        <button
+          className={activeView === 'school' ? 'active' : ''}
+          onClick={() => setActiveView('school')}
+        >
+          Visualização por Escola
+        </button>
+      </div>
+
+      {/* Seção de Benchmarking */}
+      <div className="benchmark-section">
+        <BenchmarkCard
+          title="Desempenho Médio"
+          value={classMetrics?.averageScore.toFixed(1) || 'N/A'}
+          change={1.2}
+          icon={<FiTrendingUp />}
+        >
+          <ComparisonBarChart
+            classes={classPerformances}
+            metric="averageScore"
+          />
+        </BenchmarkCard>
       </div>
 
       {filteredClassData ? (
@@ -162,13 +317,13 @@ const ClassView: React.FC<ClassViewProps> = ({
                 />
               )}
               {activeChartTab === 'distribution' && (
-                <ScoreDistributionChart
+                <DistributionView
                   examSummaries={filteredClassData.examResults}
                 />
               )}
               {activeChartTab === 'progress' && (
-                <ProgressChart
-                  classPerformance={filteredClassData}
+                <ProgressView
+                  currentClass={filteredClassData}
                 />
               )}
             </div>
@@ -197,6 +352,13 @@ const ClassView: React.FC<ClassViewProps> = ({
         </>
       ) : (
         <EmptyState message="Nenhuma turma selecionada" />
+      )}
+
+      {selectedStudent && (
+        <EnhancedStudentDetailModal
+          student={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+        />
       )}
     </ClassViewContainer>
   );

@@ -1,99 +1,86 @@
+// components/ClassResultsTable.tsx
 import React from 'react';
-import { ClassPerformance } from '../../utils/types/Assessment';
-import { FiTrendingUp, FiTrendingDown, FiMinus } from 'react-icons/fi';
+import { ExamResult, StudentResult } from '../../utils/types/Assessment';
+import { calculatePerformanceTrend } from '../../utils/dataProcessing';
 
 interface ClassResultsTableProps {
-  classPerformance: ClassPerformance;
+  students: StudentResult[];
+  examResults: ExamResult[];
+  timeRange: 'week' | 'month' | 'quarter' | 'semester' | 'year';
   onStudentSelect: (studentId: string) => void;
-  selectedSubject?: string | null;
 }
 
-const ClassResultsTable: React.FC<ClassResultsTableProps> = ({
-  classPerformance,
-  onStudentSelect,
-  selectedSubject
+const ClassResultsTable: React.FC<ClassResultsTableProps> = ({ 
+  students, 
+  examResults,
+  timeRange,
+  onStudentSelect
 }) => {
-  // Processa os resultados filtrados por disciplina
-  const processResults = () => {
-    const studentMap: Record<string, {
-      name: string;
-      scores: number[];
-      lastScore?: number;
-      trend?: number;
-    }> = {};
-
-    // Inicializa com dados dos alunos
-    classPerformance.students.forEach(student => {
-      studentMap[student.id] = {
-        name: student.name,
-        scores: []
-      };
-    });
-
-    // Processa os exames
-    classPerformance.examResults.forEach(exam => {
-      if (selectedSubject && exam.subject !== selectedSubject) return;
-
-      exam.results?.forEach(result => {
-        if (studentMap[result.studentId]) {
-          studentMap[result.studentId].scores.push(result.totalScore);
-        }
-      });
-    });
-
-    // Calcula tendências
-    Object.values(studentMap).forEach(student => {
-      if (student.scores.length > 0) {
-        student.lastScore = student.scores[student.scores.length - 1];
-
-        if (student.scores.length > 1) {
-          const last = student.scores[student.scores.length - 1];
-          const prev = student.scores[student.scores.length - 2];
-          student.trend = last - prev;
-        }
-      }
-    });
-
-    return studentMap;
+  const getTrendIcon = (trend: string) => {
+    switch(trend) {
+      case 'improving': return '↑';
+      case 'declining': return '↓';
+      default: return '→';
+    }
   };
 
-  const studentResults = processResults();
-
-  const renderTrendIcon = (trend?: number) => {
-    if (trend === undefined) return null;
-    if (trend > 0) return <FiTrendingUp className="trend-up" />;
-    if (trend < 0) return <FiTrendingDown className="trend-down" />;
-    return <FiMinus className="trend-neutral" />;
+  // Função para filtrar examos por período
+  const filterExamsByTimeRange = (exams: ExamResult[]) => {
+    const now = new Date();
+    let startDate = new Date();
+    
+    switch(timeRange) {
+      case 'week': startDate.setDate(now.getDate() - 7); break;
+      case 'month': startDate.setMonth(now.getMonth() - 1); break;
+      case 'quarter': startDate.setMonth(now.getMonth() - 3); break;
+      case 'semester': startDate.setMonth(now.getMonth() - 6); break;
+      case 'year': startDate.setFullYear(now.getFullYear() - 1); break;
+    }
+    
+    return exams.filter(exam => new Date(exam.completedAt) >= startDate);
   };
 
   return (
-    <div className="class-results-table">
+    <div className="results-table-container">
       <table>
         <thead>
           <tr>
             <th>Aluno</th>
-            <th>Última Nota</th>
-            <th>Tendência</th>
-            <th>Nº Avaliações</th>
+            <th>Média Atual</th>
+            <th>Evolução ({timeRange})</th>
+            <th>Detalhes</th>
           </tr>
         </thead>
         <tbody>
-          {Object.entries(studentResults).map(([studentId, data]) => (
-            <tr key={studentId} onClick={() => onStudentSelect(studentId)} className="clickable-row">
-              <td>{data.name}</td>
-              <td>{data.lastScore?.toFixed(1) || '-'}</td>
-              <td className={data.trend !== undefined ?
-                `trend-cell ${data.trend > 0 ? 'up' : data.trend < 0 ? 'down' : 'neutral'}` : ''}>
-                {data.trend !== undefined ? (
-                  <>
-                    {renderTrendIcon(data.trend)}
-                    {data.trend !== 0 && <span>{Math.abs(data.trend).toFixed(1)}</span>}
-                  </>
-                ) : '-'}
-              </td>
-              <td>{data.scores.length}</td>
-            </tr>
-          ))}
+          {students.map(student => {
+            const studentExams = examResults
+              .filter(result => result.studentId === student.studentId);
+            
+            const recentExams = filterExamsByTimeRange(studentExams);
+            
+            // Converter para formato esperado por calculatePerformanceTrend
+            const examSummaries = recentExams.map(exam => ({
+              averageScore: exam.totalScore,
+              date: exam.completedAt
+            }));
+            
+            const trend = calculatePerformanceTrend(examSummaries);
+
+            return (
+              <tr key={student.studentId}>
+                <td>{student.studentName}</td>
+                <td>{student.overallAverage.toFixed(1)}</td>
+                <td className={`trend-${trend}`}>
+                  {getTrendIcon(trend)} ({trend})
+                </td>
+                <td>
+                  <button onClick={() => onStudentSelect(student.studentId)}>
+                    Ver Detalhes
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>

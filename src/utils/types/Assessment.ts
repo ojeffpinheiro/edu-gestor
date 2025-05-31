@@ -1,14 +1,14 @@
 export interface Question {
-    id: string;
-    content: string;
-    difficulty: 'easy' | 'medium' | 'hard';
-    categories: string[];
-    createdBy: string;
-    createdAt: Date;
-    updatedAt: Date;
-    points?: number;
-    explanation?: string;
-    correctAnswer?: string;
+  id: string;
+  content: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  categories: string[];
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  points?: number;
+  explanation?: string;
+  correctAnswer?: string;
 }
 
 export type ExamModalType = 'create' | 'security' | 'variants' | null;
@@ -37,29 +37,29 @@ export interface EvaluationRubric {
 }
 
 export interface Exam {
-    id?: string;
-    title: string;
-    description: string;
-    questions: string[];
-    classIds: string[];
-    totalPoints: number;
-    qrCode: string;
-    useQRCode: boolean;
-    barCode: string;
-    useBarCode: boolean;
-    password: string;
-    requirePassword: boolean;
-    startTime?: Date;
-    endTime?: Date;
-    timeLimit?: number;
-    createdAt: Date;
-    createdBy: string;
-    questionDistribution: {
-        categories: string[];
-        difficulty: 'easy' | 'medium' | 'hard';
-        count: number;
-    }[];
-    variants: string[];
+  id?: string;
+  title: string;
+  description: string;
+  questions: string[];
+  classIds: string[];
+  totalPoints: number;
+  qrCode: string;
+  useQRCode: boolean;
+  barCode: string;
+  useBarCode: boolean;
+  password: string;
+  requirePassword: boolean;
+  startTime?: Date;
+  endTime?: Date;
+  timeLimit?: number;
+  createdAt: Date;
+  createdBy: string;
+  questionDistribution: {
+    categories: string[];
+    difficulty: 'easy' | 'medium' | 'hard';
+    count: number;
+  }[];
+  variants: string[];
 }
 
 export interface ExamResult {
@@ -127,14 +127,22 @@ export interface ClassPerformance {
   examResults: ExamSummary[];
   studentCount: number;
   performanceTrend?: 'improving' | 'declining' | 'stable';
-  skillBreakdown: Record<string, number>; // Desempenho por habilidade
+  skillBreakdown: Record<string, number>;
   subjects: string[]; // Adicionado
   students: { // Adicionado para referência
     id: string;
     name: string;
     email?: string;
     attendanceRate?: number;
+    overallPercentile?: number;
+    overallAverage?: number;
   }[];
+  attendanceRate?: number;
+  failingRate?: number;
+  metrics?: {
+    attendanceRate?: number;
+    [key: string]: number | undefined;
+  }
 }
 
 export type TimeframeFilter = 'week' | 'month' | 'semester' | 'custom';
@@ -156,19 +164,19 @@ export interface EnhancedExamResult extends ExamResult {
   };
 }
 
-export  interface ReportSection {
-    id: string;
-    title: string;
-    type: 'scores' | 'chart' | 'statistics' | 'comments' | 'questions';
-    config: any;
+export interface ReportSection {
+  id: string;
+  title: string;
+  type: 'scores' | 'chart' | 'statistics' | 'comments' | 'questions';
+  config: any;
 }
 
-export  interface ReportTemplate {
-    id: string;
-    name: string;
-    description: string;
-    type: 'individual' | 'class' | 'question' | 'summary';
-    sections: ReportSection[];
+export interface ReportTemplate {
+  id: string;
+  name: string;
+  description: string;
+  type: 'individual' | 'class' | 'question' | 'summary';
+  sections: ReportSection[];
 }
 
 export interface RiskFactor {
@@ -222,7 +230,7 @@ export interface TeacherAlert {
   actionItems?: string[];
 }
 
-export interface ClassMetrics {
+export interface ClassMetricsType {
   totalStudents: number;
   averageScore: number;
   passingRate: number;

@@ -1,43 +1,62 @@
 import React from 'react';
-import { Chart } from 'react-chartjs-2';
-import { Chart as ChartJS, registerables } from 'chart.js';
-import { ExamSummary } from '../../../utils/types/Assessment';
-
-ChartJS.register(...registerables);
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 interface ScoreDistributionChartProps {
-  examSummaries: ExamSummary[];
+  data: {
+    score: number;
+    count: number;
+  }[];
+  binSize?: number;
+  width?: number;
+  height?: number;
 }
 
-const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({ examSummaries }) => {
-  
-  if (!examSummaries || examSummaries.length === 0) {
-    return <div className="aviso">Nenhum dado de exame disponível</div>;
-  }
-
-  const data = {
-    labels: examSummaries.map(exam => exam.title),
-    datasets: [
-      {
-        type: 'bar' as const,
-        label: 'Distribuição de Notas',
-        data: examSummaries.map(exam => exam.averageScore),
-        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      },
-      {
-        type: 'line' as const,
-        label: 'Curva Normal',
-        data: examSummaries.map(exam => exam.averageScore),
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 2,
-        tension: 0.1
-      }
-    ]
+const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
+  data,
+  binSize = 10,
+  width = 500,
+  height = 300
+}) => {
+  // Processar os dados para criar bins
+  const processData = () => {
+    const bins: Record<number, number> = {};
+    
+    // Inicializar bins
+    for (let i = 0; i <= 100; i += binSize) {
+      bins[i] = 0;
+    }
+    
+    // Contar scores em cada bin
+    data.forEach(item => {
+      const bin = Math.floor(item.score / binSize) * binSize;
+      bins[bin] = (bins[bin] || 0) + item.count;
+    });
+    
+    return Object.entries(bins).map(([score, count]) => ({
+      score: Number(score),
+      count
+    }));
   };
 
-  return <Chart type="bar" data={data} />;
+  const chartData = processData();
+
+  return (
+    <ResponsiveContainer width={width} height={height}>
+      <BarChart data={chartData}>
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis 
+          dataKey="score" 
+          label={{ value: 'Intervalo de Notas', position: 'insideBottomRight', offset: -5 }} 
+        />
+        <YAxis 
+          label={{ value: 'Número de Alunos', angle: -90, position: 'insideLeft' }} 
+        />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="count" fill="#8884d8" name="Distribuição" />
+      </BarChart>
+    </ResponsiveContainer>
+  );
 };
 
 export default ScoreDistributionChart;
