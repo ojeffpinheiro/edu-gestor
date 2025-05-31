@@ -1,52 +1,67 @@
 import React from 'react';
-import { StudentResult } from '../../../utils/types/Assessment';
+import { EnhancedExamResult, StudentResult } from '../../../utils/types/Assessment';
+import DashboardCard from '../DashboardCard';
 import StudentProgressChart from '../Charts/StudentProgressChart';
 import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';
+import EmptyState from '../EmptyState';
+import StudentSelector from '../StudentSelector';
+import { Question } from '../../../utils/types/Question';
 
 interface StudentViewProps {
   studentResults: StudentResult[];
   selectedStudent: string | null;
   onStudentSelect: (studentId: string | null) => void;
+  examResults?: EnhancedExamResult[];
+  questions?: Question[];
+  isLoading?: boolean;
 }
 
 const StudentView: React.FC<StudentViewProps> = ({ 
   studentResults, 
   selectedStudent,
-  onStudentSelect
+  onStudentSelect,
+  examResults,
+  questions,
+  isLoading
 }) => {
   const currentStudent = selectedStudent 
     ? studentResults.find(s => s.studentId === selectedStudent)
     : null;
 
+  if (isLoading) return <EmptyState message="Carregando dados do aluno..." />;
+
   return (
     <div className="student-view">
-      <div className="student-selector">
-        <select 
-          value={selectedStudent || ''}
-          onChange={(e) => onStudentSelect(e.target.value || null)}
-        >
-          <option value="">Selecione um aluno</option>
-          {studentResults.map(s => (
-            <option key={s.studentId} value={s.studentId}>
-              {s.studentName}
-            </option>
-          ))}
-        </select>
-      </div>
+      <StudentSelector
+        students={studentResults}
+        selectedStudent={selectedStudent}
+        onSelect={onStudentSelect}
+      />
 
-      {currentStudent && (
-        <>
-          <div className="chart-row">
-            <div className="chart-container">
-              <h2>Progresso ao Longo do Tempo</h2>
-              <StudentProgressChart studentResult={currentStudent} />
-            </div>
-            <div className="chart-container">
-              <h2>Desempenho por Categoria</h2>
-              <ScoreBreakdownChart studentResult={currentStudent} />
-            </div>
-          </div>
-        </>
+      {currentStudent ? (
+        <div className="chart-row">
+          <DashboardCard
+            title="Progresso ao Longo do Tempo"
+            description="Evolução do desempenho nas avaliações"
+          >
+            <StudentProgressChart
+              studentResult={currentStudent} 
+              examResults={examResults}
+            />
+          </DashboardCard>
+          
+          <DashboardCard
+            title="Desempenho por Categoria"
+            description="Distribuição de acertos por área de conhecimento"
+          >
+            <ScoreBreakdownChart 
+              studentResult={currentStudent}
+              questions={questions}
+            />
+          </DashboardCard>
+        </div>
+      ) : (
+        <EmptyState message="Nenhum aluno selecionado" />
       )}
     </div>
   );

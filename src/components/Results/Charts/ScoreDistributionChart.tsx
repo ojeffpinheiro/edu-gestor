@@ -10,6 +10,11 @@ interface ScoreDistributionChartProps {
 }
 
 const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({ examSummaries }) => {
+  
+  if (!examSummaries || examSummaries.length === 0) {
+    return <div className="aviso">Nenhum dado de exame disponível</div>;
+  }
+
   const data = {
     labels: examSummaries.map(exam => exam.title),
     datasets: [

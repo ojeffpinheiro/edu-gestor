@@ -7,9 +7,13 @@ interface TemporalProgressChartProps {
 }
 
 const TemporalProgressChart: React.FC<TemporalProgressChartProps> = ({ examSummaries }) => {
+  if (!examSummaries || examSummaries.length === 0) {
+    return <div className="aviso">Nenhum dado de exame disponível</div>;
+  }
+
   // Ordenar exames por data
-  const sortedExams = [...examSummaries].sort((a, b) => 
-    new Date(a.id).getTime() - new Date(b.id).getTime()
+  const sortedExams = [...examSummaries].sort((a, b) =>
+    new Date(a.examId).getTime() - new Date(b.examId).getTime()
   );
 
   const data = {

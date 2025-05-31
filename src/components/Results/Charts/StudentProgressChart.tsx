@@ -1,20 +1,25 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { StudentResult } from '../../../utils/types/Assessment';
+import { StudentResult, EnhancedExamResult } from '../../../utils/types/Assessment';
 
 interface StudentProgressChartProps {
   studentResult: StudentResult;
+  examResults?: EnhancedExamResult[];
 }
 
 const StudentProgressChart: React.FC<StudentProgressChartProps> = ({ 
-  studentResult 
+  studentResult,
+  examResults = []
 }) => {
+  // Use examResults if provided, otherwise fall back to studentResult.examResults
+  const resultsToUse = examResults.length > 0 ? examResults : studentResult.examResults;
+  
   const data = {
-    labels: studentResult.examResults.map((_, i) => `Avaliação ${i + 1}`),
+    labels: resultsToUse.map((_, i) => `Avaliação ${i + 1}`),
     datasets: [
       {
         label: 'Pontuação',
-        data: studentResult.examResults.map(er => 
+        data: resultsToUse.map(er => 
           (er.totalScore / er.answers.length) * 100 // Normaliza para porcentagem
         ),
         borderColor: 'rgba(75, 192, 192, 1)',

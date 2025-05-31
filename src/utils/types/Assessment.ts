@@ -13,18 +13,27 @@ export interface Question {
 
 export type ExamModalType = 'create' | 'security' | 'variants' | null;
 
+export interface RubricLevel {
+  score: number;
+  description: string;
+  examples?: string[]; // Exemplos de desempenho
+}
+
+export interface RubricCriteria {
+  id: string;
+  description: string;
+  weight: number;
+  levels: RubricLevel[];
+  skillCategory?: string; // Categoria de habilidade associada
+}
+
 export interface EvaluationRubric {
-    id: string;
-    title: string;
-    criteria: {
-        id: string;
-        description: string;
-        weight: number;
-        levels: {
-            score: number;
-            description: string;
-        }[];
-    }[];
+  id: string;
+  title: string;
+  description?: string;
+  criteria: RubricCriteria[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface Exam {
@@ -54,57 +63,97 @@ export interface Exam {
 }
 
 export interface ExamResult {
-    id: string;
-    examId: string;
-    studentId: string;
-    answers: {
-        questionId: string;
-        answer: string;
-        score: number;
-    }[];
-    totalScore: number;
-    completedAt: Date;
+  id: string;
+  examId: string;
+  studentId: string;
+  answers: {
+    questionId: string;
+    answer: string;
+    score: number;
+    skills?: Record<string, number>;
+  }[];
+  totalScore: number;
+  completedAt: Date;
+  metadata?: {
+    timeSpent?: number; // Tempo gasto na prova (em minutos)
+    attempts?: number; // Número de tentativas
+  };
 }
 
 export interface ExamSummary {
-    id: string;
-    title: string;
-    totalStudents: number;
-    averageScore: number;
-    passingRate: number;
-    highestScore: number;
-    lowestScore: number;
-    completionRate: number;
+  examId: string;
+  title: string;
+  subject: string;
+  date: Date;
+  totalStudents: number;
+  averageScore: number;
+  skillAverages?: Record<string, number>;
+  passingRate: number;
+  highestScore: number;
+  lowestScore: number;
+  completionRate: number;
+  questionStatistics?: {
+    easiestQuestion: string;
+    hardestQuestion: string;
+  };
+  results?: ExamResult[];
 }
 
 export interface StudentResult {
-    studentId: string;
-    studentName: string;
-    examResults: ExamResult[];
-    overallAverage: number;
-    progressTrend: 'improving' | 'declining' | 'stable';
+  studentId: string;
+  studentName: string;
+  studentEmail?: string;
+  classId: string;
+  className?: string;
+  examResults: ExamResult[];
+  overallAverage: number;
+  progressTrend: 'improving' | 'declining' | 'stable';
+  attendanceRate?: number;
+  skillProfile?: Record<string, number>; // Perfil de habilidades
+  riskAssessment?: {
+    level: 'low' | 'medium' | 'high';
+    factors: string[];
+  };
 }
 
+
 export interface ClassPerformance {
-    classId: string;
-    className: string;
-    averageScore: number;
-    passingRate: number;
-    examResults: ExamSummary[];
+  classId: string;
+  className: string;
+  teacher?: string;
+  academicPeriod?: string;
+  averageScore: number;
+  passingRate: number;
+  examResults: ExamSummary[];
+  studentCount: number;
+  performanceTrend?: 'improving' | 'declining' | 'stable';
+  skillBreakdown: Record<string, number>; // Desempenho por habilidade
+  subjects: string[]; // Adicionado
+  students: { // Adicionado para referência
+    id: string;
+    name: string;
+    email?: string;
+  }[];
 }
 
 export type TimeframeFilter = 'week' | 'month' | 'semester' | 'custom';
+export type ViewMode = 'overview' | 'class' | 'student' | 'questions';
 
-// Interface for enhanced exam result with student info
 export interface EnhancedExamResult extends ExamResult {
-    student?: {
-      id: string;
-      name: string;
-      email?: string;
-      classId?: string;
-    };
-    classId?: string;
-  }
+  student: {
+    id: string;
+    name: string;
+    email?: string;
+    classId: string;
+    avatar?: string;
+  };
+  classId: string;
+  examDetails?: {
+    title: string;
+    totalPoints: number;
+    averageScore?: number;
+  };
+}
 
 export  interface ReportSection {
     id: string;

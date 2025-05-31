@@ -115,45 +115,196 @@ export const mockExams: Exam[] = [
 // Mock de Rubrics
 export const mockRubrics: EvaluationRubric[] = [
   {
-    id: 'rubric1',
-    title: 'Rubrica para Avaliação de Redações',
+    id: "rubric001",
+    title: "Redação - Avaliação Final",
+    description: "Rubrica para avaliação da redação no concurso anual.",
+    createdAt: new Date("2025-01-05"),
+    updatedAt: new Date("2025-04-20"),
     criteria: [
       {
-        id: 'crit1',
-        description: 'Coesão e coerência textual',
+        id: "c1",
+        description: "Clareza e coesão textual",
         weight: 0.3,
+        skillCategory: "Compreensão e estruturação",
         levels: [
-          { score: 0, description: 'Texto sem coesão e incoerente' },
-          { score: 1, description: 'Texto com problemas graves de coesão' },
-          { score: 2, description: 'Texto parcialmente coeso' },
-          { score: 3, description: 'Texto bem estruturado e coeso' }
-        ]
+          {
+            score: 0,
+            description: "Texto sem coesão, ideias desconexas.",
+            examples: ["Falta de parágrafos", "Erro de concordância"],
+          },
+          {
+            score: 10,
+            description: "Texto claro, bem estruturado, com coesão.",
+            examples: ["Boa organização de ideias", "Uso correto de conectivos"],
+          },
+        ],
       },
       {
-        id: 'crit2',
-        description: 'Argumentação',
+        id: "c2",
+        description: "Argumentação e posicionamento",
         weight: 0.4,
+        skillCategory: "Pensamento crítico",
         levels: [
-          { score: 0, description: 'Sem argumentos válidos' },
-          { score: 1, description: 'Argumentação fraca e inconsistente' },
-          { score: 2, description: 'Boa argumentação com algumas falhas' },
-          { score: 3, description: 'Excelente argumentação' }
-        ]
+          {
+            score: 0,
+            description: "Argumentos frágeis e sem embasamento.",
+            examples: ["Afirmações sem fundamentação", "Sem contra-argumentos"],
+          },
+          {
+            score: 10,
+            description: "Argumentação bem fundamentada, com exemplos claros.",
+            examples: ["Uso de dados e fontes", "Contra-argumentação forte"],
+          },
+        ],
       },
       {
-        id: 'crit3',
-        description: 'Norma culta',
+        id: "c3",
+        description: "Ortografia e normas da língua portuguesa",
         weight: 0.3,
+        skillCategory: "Linguagem e gramática",
         levels: [
-          { score: 0, description: 'Muitos erros gramaticais graves' },
-          { score: 1, description: 'Diversos erros gramaticais' },
-          { score: 2, description: 'Poucos erros gramaticais' },
-          { score: 3, description: 'Sem erros gramaticais relevantes' }
-        ]
-      }
-    ]
-  }
+          {
+            score: 0,
+            description: "Erros constantes de ortografia e gramática.",
+            examples: ["Erros graves de acentuação", "Omissão de letras"],
+          },
+          {
+            score: 10,
+            description: "Ortografia e gramática impecáveis.",
+            examples: ["Uso correto de acentuação", "Concordância perfeita"],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "rubric002",
+    title: "Apresentação Oral - Projeto de Ciências",
+    description: "Rubrica para avaliar apresentações orais de projetos científicos.",
+    createdAt: new Date("2025-02-12"),
+    updatedAt: new Date("2025-05-10"),
+    criteria: [
+      {
+        id: "c1",
+        description: "Clareza na comunicação",
+        weight: 0.25,
+        skillCategory: "Comunicação verbal",
+        levels: [
+          {
+            score: 0,
+            description: "Dificuldade de expressão, fala incompreensível.",
+            examples: ["Fala muito rápida", "Gagueira excessiva"],
+          },
+          {
+            score: 5,
+            description: "Comunicação clara e objetiva.",
+            examples: ["Fala calma", "Uso adequado de pausas"],
+          },
+        ],
+      },
+      {
+        id: "c2",
+        description: "Uso de recursos visuais",
+        weight: 0.25,
+        skillCategory: "Tecnologia e mídia",
+        levels: [
+          {
+            score: 0,
+            description: "Nenhum recurso visual utilizado.",
+            examples: ["Apresentação apenas verbal", "Falta de slides"],
+          },
+          {
+            score: 5,
+            description: "Uso eficaz de recursos visuais que complementam a fala.",
+            examples: ["Slides claros", "Gráficos e imagens de apoio"],
+          },
+        ],
+      },
+      {
+        id: "c3",
+        description: "Domínio do conteúdo",
+        weight: 0.5,
+        skillCategory: "Conhecimento técnico",
+        levels: [
+          {
+            score: 0,
+            description: "Desconhecimento do conteúdo, respostas vagas.",
+            examples: ["Incerteza nas explicações", "Respostas superficiais"],
+          },
+          {
+            score: 10,
+            description: "Domínio completo do conteúdo, respostas detalhadas.",
+            examples: ["Explicações profundas", "Exemplos aplicados"],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "rubric003",
+    title: "Projeto de Arte - Avaliação de Técnica e Criatividade",
+    description: "Rubrica para avaliar projetos de arte com foco em técnica e criatividade.",
+    createdAt: new Date("2025-03-01"),
+    updatedAt: new Date("2025-04-15"),
+    criteria: [
+      {
+        id: "c1",
+        description: "Execução técnica",
+        weight: 0.4,
+        skillCategory: "Habilidade técnica",
+        levels: [
+          {
+            score: 0,
+            description: "Execução inconsistente ou mal feita.",
+            examples: ["Falhas na aplicação das técnicas", "Desconhecimento dos materiais"],
+          },
+          {
+            score: 10,
+            description: "Execução excelente e bem acabada.",
+            examples: ["Técnicas aplicadas corretamente", "Detalhes bem executados"],
+          },
+        ],
+      },
+      {
+        id: "c2",
+        description: "Criatividade e originalidade",
+        weight: 0.3,
+        skillCategory: "Criatividade e inovação",
+        levels: [
+          {
+            score: 0,
+            description: "Pouca ou nenhuma originalidade.",
+            examples: ["Cópia de outros trabalhos", "Ideias previsíveis"],
+          },
+          {
+            score: 10,
+            description: "Projeto inovador e criativo.",
+            examples: ["Uso de materiais inusitados", "Proposta original e impactante"],
+          },
+        ],
+      },
+      {
+        id: "c3",
+        description: "Harmonia visual e estética",
+        weight: 0.3,
+        skillCategory: "Composição visual",
+        levels: [
+          {
+            score: 0,
+            description: "Trabalho desorganizado, sem harmonia visual.",
+            examples: ["Cores conflitantes", "Desorganização no layout"],
+          },
+          {
+            score: 10,
+            description: "Excelente composição visual e harmonia estética.",
+            examples: ["Cores e formas combinando", "Composição equilibrada"],
+          },
+        ],
+      },
+    ],
+  },
 ];
+
 
 // Mock de ExamResults
 export const mockResults: ExamResult[] = [
