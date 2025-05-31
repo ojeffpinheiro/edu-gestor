@@ -31,7 +31,7 @@ const ClassSelector: React.FC<ClassSelectorProps> = ({
         </option>
         {classes.map(classItem => (
           <option key={classItem.classId} value={classItem.classId}>
-            {classItem.className} (Média: {classItem.averageScore.toFixed(1)}%)
+            {classItem.className}
           </option>
         ))}
       </select>

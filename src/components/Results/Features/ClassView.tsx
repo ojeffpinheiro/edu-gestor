@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClassPerformance, EvaluationRubric } from '../../../utils/types/Assessment'; // Removido StudentResult não utilizado
+import { ClassPerformance, EvaluationRubric, ClassMetrics } from '../../../utils/types/Assessment';
 import DashboardCard from '../DashboardCard';
 import RadarChart from '../Charts/RadarChart';
 import EmptyState from '../EmptyState';
@@ -42,19 +42,44 @@ const ClassView: React.FC<ClassViewProps> = ({
   } : null;
 
   // Calcula métricas da turma
-  const calculateClassMetrics = () => {
+  const calculateClassMetrics = (): ClassMetrics | null => {
     if (!filteredClassData) return null;
 
     const totalStudents = filteredClassData.students.length;
-    const averageScore = filteredClassData.examResults.length > 0
-      ? filteredClassData.examResults.reduce((sum, exam) => sum + exam.averageScore, 0) / filteredClassData.examResults.length
+    const examCount = filteredClassData.examResults.length;
+
+    // Cálculo de médias
+    const averageScore = examCount > 0
+      ? filteredClassData.examResults.reduce((sum, exam) => sum + exam.averageScore, 0) / examCount
       : 0;
 
-    const passingRate = filteredClassData.examResults.length > 0
-      ? (filteredClassData.examResults.filter(exam => exam.averageScore >= 70).length / filteredClassData.examResults.length) * 100
-      : 0;
+    // Taxas de aprovação/reprovação
+    const passingStudents = filteredClassData.students.filter(student => {
+      const studentResults = filteredClassData.examResults.flatMap(exam => exam.results || [])
+        .filter(result => result.studentId === student.id);
+      return studentResults.length > 0 &&
+        studentResults.every(result => result.totalScore >= 70);
+    }).length;
 
-    return { totalStudents, averageScore, passingRate };
+    const failingStudents = totalStudents - passingStudents;
+    const failingStudentsChange = 0; // Você precisará implementar a lógica real aqui
+
+    // Frequência
+    const frequentStudents = filteredClassData.students.filter(s =>
+      s.attendanceRate !== undefined && s.attendanceRate >= 75
+    ).length;
+
+    return {
+      totalStudents,
+      averageScore,
+      passingRate: (passingStudents / totalStudents) * 100,
+      failingRate: (failingStudents / totalStudents) * 100,
+      frequentStudents,
+      infrequentStudents: totalStudents - frequentStudents,
+      attendanceRate: frequentStudents / totalStudents * 100,
+      failingStudents,
+      failingStudentsChange
+    };
   };
 
   const classMetrics = calculateClassMetrics();
@@ -103,7 +128,7 @@ const ClassView: React.FC<ClassViewProps> = ({
               </div>
             </DashboardCard>
           </div>
-          
+
           <DashboardCard
             title="Análise de Desempenho"
             description="Selecione o tipo de visualização"
@@ -145,6 +170,27 @@ const ClassView: React.FC<ClassViewProps> = ({
                 <ProgressChart
                   classPerformance={filteredClassData}
                 />
+              )}
+            </div>
+          </DashboardCard>
+
+          <DashboardCard title="Alunos em Recuperação" className="metric-card warning">
+            <div className="metric-value">
+              {classMetrics?.failingStudents || 0}
+              <span className="metric-change">
+                {classMetrics?.failingStudentsChange ? `${classMetrics.failingStudentsChange}%` : ''}
+              </span>
+            </div>
+          </DashboardCard>
+
+          <DashboardCard title="Frequência" className="metric-card">
+            <div className="metric-value">
+              {classMetrics?.frequentStudents ?? 0}
+              <span className="metric-unit">/{classMetrics?.totalStudents ?? 0}</span>
+            </div>
+            <div className="metric-subtext">
+              {classMetrics && (
+                `(${((classMetrics.frequentStudents / classMetrics.totalStudents) * 100).toFixed(1)}% de frequência)`
               )}
             </div>
           </DashboardCard>

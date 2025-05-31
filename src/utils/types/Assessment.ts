@@ -133,6 +133,7 @@ export interface ClassPerformance {
     id: string;
     name: string;
     email?: string;
+    attendanceRate?: number;
   }[];
 }
 
@@ -219,4 +220,16 @@ export interface TeacherAlert {
   createdAt: Date;
   acknowledged: boolean;
   actionItems?: string[];
+}
+
+export interface ClassMetrics {
+  totalStudents: number;
+  averageScore: number;
+  passingRate: number;
+  failingRate: number;
+  frequentStudents: number;
+  infrequentStudents: number;
+  attendanceRate: number;
+  failingStudents: number;
+  failingStudentsChange?: number;
 }

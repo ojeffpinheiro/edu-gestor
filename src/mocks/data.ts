@@ -578,71 +578,71 @@ export const mockQuestions: Question[] = [
 // Mock de sumários de exames
 export const mockExamSummaries: ExamSummary[] = [
   {
-  examId: "exam123",
-  title: "Avaliação de Matemática - 2º Semestre",
-  subject: "Matemática",
-  date: new Date("2025-06-10T09:00:00Z"),
-  totalStudents: 150,
-  averageScore: 78.4,
-  skillAverages: {
-    "algebra": 85.6,
-    "geometria": 72.1,
-    "aritmetica": 80.3,
-    "estatistica": 65.4
-  },
-  passingRate: 85,
-  highestScore: 98,
-  lowestScore: 45,
-  completionRate: 95,
-  questionStatistics: {
-    easiestQuestion: "q3",
-    hardestQuestion: "q8"
-  },
-  results: [
-    {
-      id: "result001",
-      examId: "exam123",
-      studentId: "student001",
-      answers: [
-        { questionId: "q1", answer: "A", score: 9 },
-        { questionId: "q2", answer: "C", score: 7 },
-        { questionId: "q3", answer: "B", score: 10 },
-        { questionId: "q4", answer: "A", score: 8 },
-        { questionId: "q5", answer: "D", score: 6 },
-        { questionId: "q6", answer: "C", score: 7 },
-        { questionId: "q7", answer: "B", score: 9 },
-        { questionId: "q8", answer: "A", score: 5 }
-      ],
-      totalScore: 61,
-      completedAt: new Date("2025-06-10T10:30:00Z"),
-      metadata: {
-        timeSpent: 45,
-        attempts: 1
-      }
+    examId: "exam123",
+    title: "Avaliação de Matemática - 2º Semestre",
+    subject: "Matemática",
+    date: new Date("2025-06-10T09:00:00Z"),
+    totalStudents: 150,
+    averageScore: 78.4,
+    skillAverages: {
+      "algebra": 85.6,
+      "geometria": 72.1,
+      "aritmetica": 80.3,
+      "estatistica": 65.4
     },
-    {
-      id: "result002",
-      examId: "exam123",
-      studentId: "student002",
-      answers: [
-        { questionId: "q1", answer: "B", score: 8 },
-        { questionId: "q2", answer: "A", score: 9 },
-        { questionId: "q3", answer: "B", score: 10 },
-        { questionId: "q4", answer: "C", score: 7 },
-        { questionId: "q5", answer: "D", score: 6 },
-        { questionId: "q6", answer: "A", score: 8 },
-        { questionId: "q7", answer: "B", score: 9 },
-        { questionId: "q8", answer: "D", score: 6 }
-      ],
-      totalScore: 63,
-      completedAt: new Date("2025-06-10T11:00:00Z"),
-      metadata: {
-        timeSpent: 50,
-        attempts: 1
+    passingRate: 85,
+    highestScore: 98,
+    lowestScore: 45,
+    completionRate: 95,
+    questionStatistics: {
+      easiestQuestion: "q3",
+      hardestQuestion: "q8"
+    },
+    results: [
+      {
+        id: "result001",
+        examId: "exam123",
+        studentId: "student001",
+        answers: [
+          { questionId: "q1", answer: "A", score: 9 },
+          { questionId: "q2", answer: "C", score: 7 },
+          { questionId: "q3", answer: "B", score: 10 },
+          { questionId: "q4", answer: "A", score: 8 },
+          { questionId: "q5", answer: "D", score: 6 },
+          { questionId: "q6", answer: "C", score: 7 },
+          { questionId: "q7", answer: "B", score: 9 },
+          { questionId: "q8", answer: "A", score: 5 }
+        ],
+        totalScore: 61,
+        completedAt: new Date("2025-06-10T10:30:00Z"),
+        metadata: {
+          timeSpent: 45,
+          attempts: 1
+        }
+      },
+      {
+        id: "result002",
+        examId: "exam123",
+        studentId: "student002",
+        answers: [
+          { questionId: "q1", answer: "B", score: 8 },
+          { questionId: "q2", answer: "A", score: 9 },
+          { questionId: "q3", answer: "B", score: 10 },
+          { questionId: "q4", answer: "C", score: 7 },
+          { questionId: "q5", answer: "D", score: 6 },
+          { questionId: "q6", answer: "A", score: 8 },
+          { questionId: "q7", answer: "B", score: 9 },
+          { questionId: "q8", answer: "D", score: 6 }
+        ],
+        totalScore: 63,
+        completedAt: new Date("2025-06-10T11:00:00Z"),
+        metadata: {
+          timeSpent: 50,
+          attempts: 1
+        }
       }
-    }
-  ]
-},
+    ]
+  },
 ]
 
 
@@ -804,8 +804,8 @@ export const mockStudentResults: StudentResult[] = [
 // Mock de desempenho de turmas
 export const mockClassPerformances: ClassPerformance[] = [
   {
-    classId: "class-001",
-    className: "Matemática Avançada",
+    classId: "class-101",
+    className: "101 - FÍSICA",
     teacher: "Prof. João Silva",
     academicPeriod: "2023/2",
     averageScore: 75.6,
@@ -958,7 +958,259 @@ export const mockClassPerformances: ClassPerformance[] = [
       { id: "student-003", name: "Carlos Pereira", email: "carlos.pereira@example.com" },
       // Adicione mais alunos conforme necessário
     ],
+  },
+  {
+    classId: "class-102",
+    className: "102 - FÍSICA",
+    teacher: "Mr. John Doe",
+    academicPeriod: "2025-1",
+    averageScore: 78.5,
+    passingRate: 85.2,
+    examResults: [
+      {
+        examId: "EX1001",
+        title: "Final Exam 2025",
+        subject: "Math",
+        date: new Date(),
+        totalStudents: 20,
+        averageScore: 75.6,
+        passingRate: 80.0,
+        highestScore: 98,
+        lowestScore: 45,
+        completionRate: 95.0,
+        questionStatistics: {
+          easiestQuestion: "Q5",
+          hardestQuestion: "Q8",
+        },
+        results: [
+          {
+            id: "R1234",
+            examId: "EX1001",
+            studentId: "S001",
+            answers: [
+              { questionId: "Q1", answer: "A", score: 8.5, skills: { Math: 85, Geometry: 90 } },
+              { questionId: "Q2", answer: "C", score: 7.0, skills: { Math: 80, Algebra: 75 } },
+              { questionId: "Q3", answer: "B", score: 9.0, skills: { Math: 90, Geometry: 95 } },
+            ],
+            totalScore: 24.5,
+            completedAt: new Date(),
+            metadata: { timeSpent: 60, attempts: 1 },
+          },
+          {
+            id: "R1235",
+            examId: "EX1001",
+            studentId: "S002",
+            answers: [
+              { questionId: "Q1", answer: "B", score: 7.5, skills: { Math: 80, Algebra: 70 } },
+              { questionId: "Q2", answer: "D", score: 6.5, skills: { Math: 75, Geometry: 65 } },
+              { questionId: "Q3", answer: "A", score: 8.0, skills: { Math: 85, Algebra: 85 } },
+            ],
+            totalScore: 22.0,
+            completedAt: new Date(),
+            metadata: { timeSpent: 55, attempts: 2 },
+          },
+        ],
+      },
+    ],
+    studentCount: 20,
+    performanceTrend: "stable",
+    skillBreakdown: {
+      Math: 80.5,
+      Geometry: 75.0,
+      Algebra: 78.5,
+    },
+    subjects: ["Math", "Geometry", "Algebra"],
+    students: [
+      { id: "S001", name: "Student 1", email: "student1@school.com" },
+      { id: "S002", name: "Student 2", email: "student2@school.com" },
+      { id: "S003", name: "Student 3", email: "student3@school.com" },
+      { id: "S004", name: "Student 4", email: "student4@school.com" },
+      { id: "S005", name: "Student 5", email: "student5@school.com" },
+      { id: "S006", name: "Student 6", email: "student6@school.com" },
+      { id: "S007", name: "Student 7", email: "student7@school.com" },
+      { id: "S008", name: "Student 8", email: "student8@school.com" },
+      { id: "S009", name: "Student 9", email: "student9@school.com" },
+      { id: "S010", name: "Student 10", email: "student10@school.com" },
+      { id: "S011", name: "Student 11", email: "student11@school.com" },
+      { id: "S012", name: "Student 12", email: "student12@school.com" },
+      { id: "S013", name: "Student 13", email: "student13@school.com" },
+      { id: "S014", name: "Student 14", email: "student14@school.com" },
+      { id: "S015", name: "Student 15", email: "student15@school.com" },
+      { id: "S016", name: "Student 16", email: "student16@school.com" },
+      { id: "S017", name: "Student 17", email: "student17@school.com" },
+      { id: "S018", name: "Student 18", email: "student18@school.com" },
+      { id: "S019", name: "Student 19", email: "student19@school.com" },
+      { id: "S020", name: "Student 20", email: "student20@school.com" },
+    ],
+  },
+  {
+    classId: "class-201",
+    className: "201 - FÍSICA",
+    teacher: "Ms. Jane Smith",
+    academicPeriod: "2025-1",
+    averageScore: 72.3,
+    passingRate: 78.0,
+    examResults: [
+      {
+        examId: "EX1002",
+        title: "Midterm Exam 2025",
+        subject: "Programming",
+        date: new Date(),
+        totalStudents: 25,
+        averageScore: 70.2,
+        passingRate: 76.5,
+        highestScore: 95,
+        lowestScore: 40,
+        completionRate: 92.0,
+        questionStatistics: {
+          easiestQuestion: "Q4",
+          hardestQuestion: "Q7",
+        },
+        results: [
+          {
+            id: "R2234",
+            examId: "EX1002",
+            studentId: "S021",
+            answers: [
+              { questionId: "Q1", answer: "C", score: 7.5, skills: { Programming: 85, Logic: 90 } },
+              { questionId: "Q2", answer: "A", score: 6.5, skills: { Programming: 80, Algorithms: 75 } },
+              { questionId: "Q3", answer: "B", score: 8.0, skills: { Programming: 85, Logic: 80 } },
+            ],
+            totalScore: 22.0,
+            completedAt: new Date(),
+            metadata: { timeSpent: 50, attempts: 1 },
+          },
+          {
+            id: "R2235",
+            examId: "EX1002",
+            studentId: "S022",
+            answers: [
+              { questionId: "Q1", answer: "B", score: 6.0, skills: { Programming: 75, Logic: 70 } },
+              { questionId: "Q2", answer: "C", score: 5.5, skills: { Programming: 70, Algorithms: 80 } },
+              { questionId: "Q3", answer: "D", score: 7.0, skills: { Programming: 80, Logic: 75 } },
+            ],
+            totalScore: 18.5,
+            completedAt: new Date(),
+            metadata: { timeSpent: 60, attempts: 2 },
+          },
+        ],
+      },
+    ],
+    studentCount: 25,
+    performanceTrend: "improving",
+    skillBreakdown: {
+      Programming: 78.0,
+      Logic: 75.0,
+      Algorithms: 70.5,
+    },
+    subjects: ["Programming", "Algorithms", "Logic"],
+    students: [
+      { id: "S021", name: "Student 21", email: "student21@school.com" },
+      { id: "S022", name: "Student 22", email: "student22@school.com" },
+      { id: "S023", name: "Student 23", email: "student23@school.com" },
+      { id: "S024", name: "Student 24", email: "student24@school.com" },
+      { id: "S025", name: "Student 25", email: "student25@school.com" },
+      { id: "S026", name: "Student 26", email: "student26@school.com" },
+      { id: "S027", name: "Student 27", email: "student27@school.com" },
+      { id: "S028", name: "Student 28", email: "student28@school.com" },
+      { id: "S029", name: "Student 29", email: "student29@school.com" },
+      { id: "S030", name: "Student 30", email: "student30@school.com" },
+      { id: "S031", name: "Student 31", email: "student31@school.com" },
+      { id: "S032", name: "Student 32", email: "student32@school.com" },
+      { id: "S033", name: "Student 33", email: "student33@school.com" },
+      { id: "S034", name: "Student 34", email: "student34@school.com" },
+      { id: "S035", name: "Student 35", email: "student35@school.com" },
+      { id: "S036", name: "Student 36", email: "student36@school.com" },
+      { id: "S037", name: "Student 37", email: "student37@school.com" },
+      { id: "S038", name: "Student 38", email: "student38@school.com" },
+      { id: "S039", name: "Student 39", email: "student39@school.com" },
+      { id: "S040", name: "Student 40", email: "student40@school.com" },
+    ],
   }, 
+  {
+    classId: "class-201",
+    className: "301 - FÍSICA",
+    teacher: "Ms. Jane Smith",
+    academicPeriod: "2025-1",
+    averageScore: 72.3,
+    passingRate: 78.0,
+    examResults: [
+      {
+        examId: "EX1002",
+        title: "Midterm Exam 2025",
+        subject: "Programming",
+        date: new Date(),
+        totalStudents: 25,
+        averageScore: 70.2,
+        passingRate: 76.5,
+        highestScore: 95,
+        lowestScore: 40,
+        completionRate: 92.0,
+        questionStatistics: {
+          easiestQuestion: "Q4",
+          hardestQuestion: "Q7",
+        },
+        results: [
+          {
+            id: "R2234",
+            examId: "EX1002",
+            studentId: "S021",
+            answers: [
+              { questionId: "Q1", answer: "C", score: 7.5, skills: { Programming: 85, Logic: 90 } },
+              { questionId: "Q2", answer: "A", score: 6.5, skills: { Programming: 80, Algorithms: 75 } },
+              { questionId: "Q3", answer: "B", score: 8.0, skills: { Programming: 85, Logic: 80 } },
+            ],
+            totalScore: 22.0,
+            completedAt: new Date(),
+            metadata: { timeSpent: 50, attempts: 1 },
+          },
+          {
+            id: "R2235",
+            examId: "EX1002",
+            studentId: "S022",
+            answers: [
+              { questionId: "Q1", answer: "B", score: 6.0, skills: { Programming: 75, Logic: 70 } },
+              { questionId: "Q2", answer: "C", score: 5.5, skills: { Programming: 70, Algorithms: 80 } },
+              { questionId: "Q3", answer: "D", score: 7.0, skills: { Programming: 80, Logic: 75 } },
+            ],
+            totalScore: 18.5,
+            completedAt: new Date(),
+            metadata: { timeSpent: 60, attempts: 2 },
+          },
+        ],
+      },
+    ],
+    studentCount: 25,
+    performanceTrend: "improving",
+    skillBreakdown: {
+      Programming: 78.0,
+      Logic: 75.0,
+      Algorithms: 70.5,
+    },
+    subjects: ["Programming", "Algorithms", "Logic"],
+    students: [
+      { id: "S021", name: "Student 21", email: "student21@school.com" },
+      { id: "S022", name: "Student 22", email: "student22@school.com" },
+      { id: "S023", name: "Student 23", email: "student23@school.com" },
+      { id: "S024", name: "Student 24", email: "student24@school.com" },
+      { id: "S025", name: "Student 25", email: "student25@school.com" },
+      { id: "S026", name: "Student 26", email: "student26@school.com" },
+      { id: "S027", name: "Student 27", email: "student27@school.com" },
+      { id: "S028", name: "Student 28", email: "student28@school.com" },
+      { id: "S029", name: "Student 29", email: "student29@school.com" },
+      { id: "S030", name: "Student 30", email: "student30@school.com" },
+      { id: "S031", name: "Student 31", email: "student31@school.com" },
+      { id: "S032", name: "Student 32", email: "student32@school.com" },
+      { id: "S033", name: "Student 33", email: "student33@school.com" },
+      { id: "S034", name: "Student 34", email: "student34@school.com" },
+      { id: "S035", name: "Student 35", email: "student35@school.com" },
+      { id: "S036", name: "Student 36", email: "student36@school.com" },
+      { id: "S037", name: "Student 37", email: "student37@school.com" },
+      { id: "S038", name: "Student 38", email: "student38@school.com" },
+      { id: "S039", name: "Student 39", email: "student39@school.com" },
+      { id: "S040", name: "Student 40", email: "student40@school.com" },
+    ],
+  }
 ];
 
 
