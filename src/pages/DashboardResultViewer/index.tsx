@@ -83,6 +83,7 @@ const DashboardResultViewer: React.FC = () => {
         {selectedView === 'overview' && (
           <OverviewView
             examSummaries={mockExamSummaries}
+            studentResults={mockStudentResults}
             classPerformances={mockClassPerformances}
             onClassSelect={setSelectedClass}
           />

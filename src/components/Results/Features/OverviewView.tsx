@@ -1,36 +1,55 @@
 import React, { useMemo, useState } from 'react';
-import { ClassPerformance, ExamSummary } from '../../../utils/types/Assessment';
+import { FiBarChart2, FiPieChart, FiTrendingUp } from 'react-icons/fi';
+import { ClassPerformance, ExamSummary, StudentResult } from '../../../utils/types/Assessment';
+
+import { useStrategicData } from '../../../hooks/useStrategicData';
 
 import ScoreDistributionChart from '../Charts/ScoreDistributionChart';
 import TemporalProgressChart from '../Charts/TemporalProgressChart';
 import ClassPerformanceChart from '../ClassPerformanceChart';
+import PerformanceTrendSection from '../PerformanceTrendChart';
 
 import DashboardCard from '../DashboardCard';
 import EmptyState from '../EmptyState';
 
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import InstitutionalMetrics from '../InstitutionalMetrics';
+
 import { TabContent, TabsContainer } from './styles/OverviewViewStyles';
 import { TabButton } from './styles/ClassViewStyles';
-import { FiBarChart2, FiCalendar, FiPieChart, FiTrendingUp } from 'react-icons/fi';
 
 type OverviewTab = 'performance' | 'progress' | 'distribution';
 
 interface OverviewViewProps {
   examSummaries: ExamSummary[];
+  studentResults: StudentResult[],
   classPerformances: ClassPerformance[];
-  onClassSelect: (classId: string | null) => void;
   isLoading?: boolean;
   error?: Error | null;
+  onClassSelect: (classId: string | null) => void;
 }
 
 const OverviewView: React.FC<OverviewViewProps> = ({
   examSummaries,
   classPerformances,
+  studentResults,
   onClassSelect,
   isLoading,
   error
 }) => {
   const [activeTab, setActiveTab] = useState<OverviewTab>('performance');
+
+  const { 
+      metrics, 
+      learningGaps, 
+      classRankings, 
+      predictions, 
+      alerts 
+    } = useStrategicData(
+      examSummaries,
+      classPerformances,
+      studentResults
+    );
 
   const distributionData = useMemo(() => {
     const allScores = examSummaries.flatMap(exam =>
@@ -82,6 +101,12 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 
           {/* Conteúdo das Abas */}
           <TabContent>
+            <div className="overview-cards">
+              <InstitutionalMetrics metrics={metrics} />
+              <PerformanceTrendSection 
+                examSummaries={examSummaries} 
+                targetScore={metrics.goals.averageScore} />
+            </div>
             {activeTab === 'performance' && (
               <div className="chart-row">
                 <DashboardCard title="Desempenho por Turma" fullWidth>

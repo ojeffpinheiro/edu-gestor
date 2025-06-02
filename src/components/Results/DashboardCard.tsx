@@ -8,6 +8,7 @@ interface DashboardCardProps {
   fullWidth?: boolean;
   className?: string;
   icon?: React.ReactNode;
+  onClick?: () => void;
 }
 
 
@@ -68,18 +69,18 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   icon
 }) => {
   return (
-  <StyledCard className={className}>
-  <CardHeader>
-    {icon && <CardIcon>{icon}</CardIcon>}
-    <div>
-      <CardTitle>{title}</CardTitle>
-      {description && <CardDescription>{description}</CardDescription>}
-    </div>
-  </CardHeader>
-  <CardContent>
-    {children}
-  </CardContent>
-</StyledCard>
+    <StyledCard className={className}>
+      <CardHeader>
+        {icon && <CardIcon>{icon}</CardIcon>}
+        <div>
+          <CardTitle>{title}</CardTitle>
+          {description && <CardDescription>{description}</CardDescription>}
+        </div>
+      </CardHeader>
+      <CardContent>
+        {children}
+      </CardContent>
+    </StyledCard>
   );
 };
 

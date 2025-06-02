@@ -109,9 +109,9 @@ export interface StudentResult {
   overallAverage: number;
   progressTrend: 'improving' | 'declining' | 'stable';
   attendanceRate?: number;
-  skillProfile?: Record<string, number>; // Perfil de habilidades
+  skillProfile?: Record<string, number>;
   riskAssessment?: {
-    level: 'low' | 'medium' | 'high';
+    level:  'low' | 'medium' | 'high' | 'critical';
     factors: string[];
   };
 }
@@ -255,4 +255,10 @@ export interface ChartData {
     borderColor?: string;
     borderWidth?: number;
   }[];
+}
+
+export interface InstitutionalGoalsTypes {
+  averageScore: number; 
+  passingRate: number; 
+  attendanceRate: number
 }
