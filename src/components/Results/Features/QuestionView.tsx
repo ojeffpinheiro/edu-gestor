@@ -1,16 +1,17 @@
 import React from 'react';
+import { FaQuestionCircle, FaUserGraduate, FaChartLine, FaChartPie } from 'react-icons/fa';
+import styled from 'styled-components';
 import { EnhancedExamResult, EvaluationRubric, StudentResult } from '../../../utils/types/Assessment';
 import { Question } from '../../../utils/types/Question';
 import DashboardCard from '../DashboardCard';
-import StudentProgressChart from '../Charts/StudentProgressChart';
-import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';
 import EmptyState from '../EmptyState';
 import StudentSelector from '../StudentSelector';
 import LoadingSpinner from '../../shared/LoadingSpinner';
 import StudentDetails from '../StudentDetails';
-import { FaQuestionCircle, FaUserGraduate } from 'react-icons/fa'; // Added React Icon
+import StudentProgressChart from '../Charts/StudentProgressChart';
+import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';
 
-interface StudentViewProps {
+interface QuestionViewProps {
   studentResults: StudentResult[];
   selectedStudent: string | null;
   rubrics: EvaluationRubric[];
@@ -21,7 +22,68 @@ interface StudentViewProps {
   onStudentSelect: (studentId: string | null) => void;
 }
 
-const StudentView: React.FC<StudentViewProps> = ({ 
+const QuestionViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+`;
+
+const ControlsContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const MetricsContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+`;
+
+const MetricCard = styled.div`
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  span:first-child {
+    font-weight: 500;
+    color: #64748b;
+  }
+
+  span:last-child {
+    font-weight: 600;
+    color: #1e293b;
+  }
+`;
+
+const ChartsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+const StudentDetailsContainer = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const QuestionView: React.FC<QuestionViewProps> = ({ 
   studentResults, 
   selectedStudent,
   examResults = [],
@@ -36,36 +98,49 @@ const StudentView: React.FC<StudentViewProps> = ({
     : null;
 
   if (isLoading) return <LoadingSpinner />;
-  if (error) return <EmptyState message="Erro ao carregar dados do aluno" />;
-
-  if (isLoading) return <div>Loading questions...</div>;
-  if (error) return <EmptyState 
-    message="Error loading questions" 
-    illustration={<FaQuestionCircle size={64} />} />;
+  if (error) return (
+    <EmptyState 
+      message="Erro ao carregar dados das questões" 
+      illustration={<FaQuestionCircle size={64} />} 
+    />
+  );
 
   return (
-    <div className="student-view">
-      <div className="student-controls">
+    <QuestionViewContainer className="question-view">
+      <ControlsContainer className="question-controls">
         <StudentSelector
           students={studentResults}
           selectedStudent={selectedStudent}
           onSelect={onStudentSelect}
         />
-      </div>
+        
+        <MetricsContainer>
+          <MetricCard>
+            <span>Questões:</span>
+            <span>{questions.length}</span>
+          </MetricCard>
+          <MetricCard>
+            <span>Avaliações:</span>
+            <span>{examResults.length}</span>
+          </MetricCard>
+          <MetricCard>
+            <span>Rúbricas:</span>
+            <span>{rubrics.length}</span>
+          </MetricCard>
+        </MetricsContainer>
+      </ControlsContainer>
 
       {currentStudent ? (
-        <div className="student-dashboard">
-          <div>Total Questions: {questions.length}</div>
-      <div>Results Available: {examResults.length}</div>
-      <div>Rubrics: {rubrics.length}</div>
-          <div className="student-summary">
+        <div className="question-dashboard">
+          <StudentDetailsContainer>
             <StudentDetails student={currentStudent} />
-          </div>
+          </StudentDetailsContainer>
 
-          <div className="chart-row">
+          <ChartsGrid>
             <DashboardCard
               title="Progresso Acadêmico"
               description="Evolução do desempenho nas avaliações"
+              icon={<FaChartLine />}
             >
               <StudentProgressChart
                 studentResult={currentStudent} 
@@ -76,13 +151,14 @@ const StudentView: React.FC<StudentViewProps> = ({
             <DashboardCard
               title="Análise por Competência"
               description="Desempenho por área de conhecimento"
+              icon={<FaChartPie />}
             >
               <ScoreBreakdownChart 
                 studentResult={currentStudent}
                 questions={questions}
               />
             </DashboardCard>
-          </div>
+          </ChartsGrid>
         </div>
       ) : (
         <EmptyState 
@@ -90,8 +166,8 @@ const StudentView: React.FC<StudentViewProps> = ({
           illustration={<FaUserGraduate size={64} className="text-gray-400" />}
         />
       )}
-    </div>
+    </QuestionViewContainer>
   );
 };
 
-export default StudentView;
+export default QuestionView;

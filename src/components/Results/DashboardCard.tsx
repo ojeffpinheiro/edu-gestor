@@ -7,7 +7,9 @@ interface DashboardCardProps {
   children: React.ReactNode;
   fullWidth?: boolean;
   className?: string;
+  icon?: React.ReactNode;
 }
+
 
 const StyledCard = styled.div`
   background: white;
@@ -28,6 +30,9 @@ const StyledCard = styled.div`
 const CardHeader = styled.div`
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 `;
 
 const CardTitle = styled.h3`
@@ -48,23 +53,33 @@ const CardContent = styled.div`
   flex: 1;
 `;
 
+const CardIcon = styled.div`
+  color: #667eea;
+  font-size: 1.25rem;
+  display: flex;
+`;
+
 const DashboardCard: React.FC<DashboardCardProps> = ({
   title,
   description,
   children,
   fullWidth = false,
-  className = ''
+  className = '',
+  icon
 }) => {
   return (
-    <StyledCard className={className}>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        {description && <CardDescription>{description}</CardDescription>}
-      </CardHeader>
-      <CardContent>
-        {children}
-      </CardContent>
-    </StyledCard>
+  <StyledCard className={className}>
+  <CardHeader>
+    {icon && <CardIcon>{icon}</CardIcon>}
+    <div>
+      <CardTitle>{title}</CardTitle>
+      {description && <CardDescription>{description}</CardDescription>}
+    </div>
+  </CardHeader>
+  <CardContent>
+    {children}
+  </CardContent>
+</StyledCard>
   );
 };
 
