@@ -7,13 +7,13 @@ interface TemporalProgressChartProps {
 }
 
 const TemporalProgressChart: React.FC<TemporalProgressChartProps> = ({ examSummaries }) => {
-  if (!examSummaries || examSummaries.length === 0) {
-    return <div className="aviso">Nenhum dado de exame disponível</div>;
+  if (!examSummaries || !Array.isArray(examSummaries)) {
+    return <div className="aviso">Dados inválidos</div>;
   }
 
   // Ordenar exames por data
   const sortedExams = [...examSummaries].sort((a, b) =>
-    new Date(a.examId).getTime() - new Date(b.examId).getTime()
+    new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
   const data = {
@@ -43,7 +43,22 @@ const TemporalProgressChart: React.FC<TemporalProgressChartProps> = ({ examSumma
         borderColor: 'rgba(255, 159, 64, 1)',
         tension: 0.1
       }
-    ]
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 100
+      }
+    }
   };
 
   return (

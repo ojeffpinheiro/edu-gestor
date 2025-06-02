@@ -146,3 +146,62 @@ export const SelectorStyles = styled.div`
     }
   }
 `;
+
+export const ViewSelector = styled.nav`
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 4px;
+  margin-bottom: 24px;
+  background: var(--color-background-secondary);
+  padding: 4px;
+  border-radius: 12px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+
+  button {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &[aria-selected="true"] {
+      background: var(--color-card);
+      color: var(--color-primary);
+      box-shadow: var(--shadow-sm);
+      font-weight: 600;
+    }
+
+    &:hover {
+      background: rgba(var(--color-primary-rgb), 0.1);
+      color: var(--color-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+  }
+`;
+
+export const TimeframeSelector = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  
+  label {
+    font-weight: var(--font-weight-medium);
+  }
+  
+  select {
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--border-radius-sm);
+  }
+`;

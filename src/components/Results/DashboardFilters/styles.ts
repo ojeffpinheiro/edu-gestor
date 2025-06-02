@@ -39,16 +39,28 @@ export const ViewToggle = styled.div`
 export const ViewButton = styled.button<{ $active: boolean }>`
   padding: var(--space-sm) var(--space-md);
   border: none;
-  background: ${props => props.$active ? 'var(--color-primary)' : 'var(--color-surface)'};
+  background: ${props => props.$active ? 'var(--color-primary)' : 'transparent'};
   color: ${props => props.$active ? 'var(--color-text-on-primary)' : 'var(--color-text)'};
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: var(--transition-normal);
+  transition: 
+    background-color var(--transition-normal),
+    color var(--transition-normal);
   white-space: nowrap;
+  position: relative;
   
   &:hover {
-    background: ${props => props.$active ? 'var(--color-primary-hover)' : 'var(--color-background)'};
+    background: ${props => 
+      props.$active 
+        ? 'var(--color-primary-hover)' 
+        : 'var(--color-background)'};
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+    z-index: 1;
   }
   
   &:not(:last-child) {
@@ -60,7 +72,8 @@ export const ViewButton = styled.button<{ $active: boolean }>`
     }
   }
   
-  @media (max-width: 768px) {
-    padding: var(--space-md);
+  @media (max-width: 480px) {
+    padding: var(--space-sm);
+    font-size: var(--font-size-xs);
   }
 `;

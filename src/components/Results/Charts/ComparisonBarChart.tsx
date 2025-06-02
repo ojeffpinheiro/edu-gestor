@@ -1,4 +1,16 @@
 import React from 'react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  RadarController,
+  RadialLinearScale,
+  // ... outros elementos necessários
+} from 'chart.js';
+
 import { Bar } from 'react-chartjs-2';
 import { ClassPerformance } from '../../../utils/types/Assessment';
 
@@ -40,6 +52,25 @@ const getClassMetric = (classData: ClassPerformance, metric: ExtendedMetricKey):
   }
 };
 
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  PointElement,
+  LineElement,
+  RadarController,
+  RadialLinearScale
+);
+
+/**
+ * Gráfico de comparação entre turmas
+ * @param {ClassPerformance[]} classes - Dados das turmas para comparação
+ * @param {'averageScore' | 'passingRate' | 'attendanceRate'} metric - Métrica a ser comparada
+ * @description
+ *   - Suporta 3 métricas diferentes
+ *   - Normaliza valores para exibição consistente
+ *   - Responsivo para diferentes tamanhos de tela
+ */
 const ComparisonBarChart: React.FC<ComparisonBarChartProps> = ({ classes, metric }) => {
   // Mapeamento de labels
   const metricLabels: Record<ExtendedMetricKey, string> = {

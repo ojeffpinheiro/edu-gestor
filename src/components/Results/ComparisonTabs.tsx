@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { ComparisonTab } from '../../utils/types/Assessment';
 
 const TabsContainer = styled.div`
   display: flex;
@@ -17,15 +18,21 @@ const Tab = styled.button<{ active: boolean }>`
 `;
 
 interface ComparisonTabsProps {
-  tabs: string[];
+  tabs: ('ranking' | 'value-added' | 'equity')[];
   defaultTab?: string;
-  onTabChange: (tab: string) => void;
+  onTabChange: (tab: 'ranking' | 'value-added' | 'equity') => void;
 }
 
 const ComparisonTabs: React.FC<ComparisonTabsProps> = ({ tabs, defaultTab, onTabChange }) => {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]);
 
-  const handleTabClick = (tab: string) => {
+  const tabLabels = {
+  'ranking': 'Ranking',
+  'value-added': 'Valor Agregado',
+  'equity': 'Equidade'
+};
+
+  const handleTabClick = (tab: ComparisonTab) => {
     setActiveTab(tab);
     onTabChange(tab);
   };
@@ -38,7 +45,7 @@ const ComparisonTabs: React.FC<ComparisonTabsProps> = ({ tabs, defaultTab, onTab
           active={activeTab === tab}
           onClick={() => handleTabClick(tab)}
         >
-          {tab}
+          {tabLabels[tab]}
         </Tab>
       ))}
     </TabsContainer>

@@ -241,3 +241,18 @@ export interface ClassMetricsType {
   failingStudents: number;
   failingStudentsChange?: number;
 }
+
+export type ChartTab = 'radar' | 'distribution' | 'progress';
+export type ComparisonTab = 'ranking' | 'value-added' | 'equity';
+export type TimeRange = 'week' | 'month' | 'quarter' | 'semester' | 'year';
+
+export interface ChartData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+    borderColor?: string;
+    borderWidth?: number;
+  }[];
+}

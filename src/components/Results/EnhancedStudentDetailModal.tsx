@@ -7,11 +7,13 @@ interface EnhancedStudentDetailModalProps {
   onClose: () => void;
 }
 
+type ActiveTab = 'performance' | 'progress' | 'skills';
+
 const EnhancedStudentDetailModal: React.FC<EnhancedStudentDetailModalProps> = ({ 
   student, 
   onClose 
 }) => {
-  const [activeTab, setActiveTab] = useState<'performance' | 'progress' | 'skills'>('performance');
+  const [activeTab, setActiveTab] = useState<ActiveTab>('performance');
 
   // Processa dados para gráficos
   const processExamData = () => {

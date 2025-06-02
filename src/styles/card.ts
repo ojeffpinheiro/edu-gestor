@@ -172,3 +172,30 @@ export const CardBody = styled.div`
         color: var(--color-text-secondary);
     }
 `;
+
+export const StyledCard = styled.div<{ $fullWidth?: boolean }>`
+  background: var(--color-card);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s, box-shadow 0.2s;
+  width: ${props => props.$fullWidth ? '100%' : 'auto'};
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    border-bottom: 1px solid var(--color-border-light);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+
+    h3 {
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+`;

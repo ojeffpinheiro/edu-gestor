@@ -7,6 +7,8 @@ import ClassView from '../../components/Results/Features/ClassView';
 import StudentView from '../../components/Results/Features/StudentView';
 import QuestionView from '../../components/Results/Features/QuestionView';
 
+import DashboardFilters from '../../components/Results/DashboardFilters';
+
 import {
   mockExamSummaries,
   mockClassPerformances,
@@ -15,86 +17,69 @@ import {
   mockEvaluationRubrics,
   mockStudentResults
 } from '../../mocks/data';
-import DashboardFilters from '../../components/Results/DashboardFilters';
-import { ContentArea, Header, Title } from './styles';
+
+import { ContentArea, Header, Title, ViewSelector } from './styles';
+import { FiHelpCircle, FiHome, FiUser, FiUsers } from 'react-icons/fi';
 
 const DashboardResultViewer: React.FC = () => {
-  const [timeRange, setTimeRange] = useState<TimeframeFilter>('semester');
+  const [timeframe, setTimeframe] = useState<TimeframeFilter>('month');
+  const [selectedView, setSelectedView] = useState<ViewMode>('overview');
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<ViewMode>('overview');
 
-  const [timeframe, setTimeframe] = useState<TimeframeFilter>('month');
-  const [selectedView, setSelectedView] = useState<'overview' | 'classes' | 'students' | 'questions'>('overview');
-
-  // Função para lidar com mudança de período
-  // Optimize callbacks to prevent unnecessary re-renders
-  const handleTimeRangeChange = useCallback((range: TimeframeFilter) => {
-    setTimeRange(range);
+  const handleTimeframeChange = useCallback((range: TimeframeFilter) => {
+    setTimeframe(range);
   }, []);
 
-  const handleViewModeChange = useCallback((mode: ViewMode) => {
-    setViewMode(mode);
+  const handleViewChange = useCallback((view: ViewMode) => {
+    setSelectedView(view);
+    setSelectedClass(null);
+    setSelectedStudent(null);
   }, []);
 
   return (
     <div className="dashboard">
-
       <Header>
         <Title>Análise de Desempenho</Title>
         <DashboardFilters
-          timeRange={timeRange}
-          onTimeRangeChange={setTimeRange}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
+          timeRange={timeframe}
+          onTimeRangeChange={handleTimeframeChange}
+          viewMode={selectedView}
+          onViewModeChange={handleViewChange}
         />
       </Header>
 
-      <div className="dashboard-header">
-        <h1>Análise de Desempenho</h1>
-        <div className="timeframe-selector">
-          <label>Período:</label>
-          <select
-            value={timeframe}
-            onChange={(e) => handleTimeRangeChange(e.target.value as TimeframeFilter)}
-          >
-            <option value="week">Semana</option>
-            <option value="month">Mês</option>
-            <option value="semester">Semestre</option>
-            <option value="custom">Personalizado</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="view-selector">
+      <ViewSelector>
         <button
           className={selectedView === 'overview' ? 'active' : ''}
-          onClick={() => setSelectedView('overview')}
+          onClick={() => handleViewChange('overview')}
         >
-          Visão Geral
+          <FiHome /> Visão Geral
         </button>
+
         <button
-          className={selectedView === 'classes' ? 'active' : ''}
-          onClick={() => setSelectedView('classes')}
+          className={selectedView === 'class' ? 'active' : ''}
+          onClick={() => handleViewChange('class')}
         >
-          Por Turma
+          <FiUsers /> Por Turma
         </button>
+
         <button
-          className={selectedView === 'students' ? 'active' : ''}
-          onClick={() => setSelectedView('students')}
+          className={selectedView === 'student' ? 'active' : ''}
+          onClick={() => handleViewChange('student')}
         >
-          Por Aluno
+          <FiUser /> Por Aluno
         </button>
+
         <button
           className={selectedView === 'questions' ? 'active' : ''}
-          onClick={() => setSelectedView('questions')}
+          onClick={() => handleViewChange('questions')}
         >
-          Por Questão
+          <FiHelpCircle /> Por Questão
         </button>
-      </div>
+      </ViewSelector>
 
       <ContentArea>
-
         {selectedView === 'overview' && (
           <OverviewView
             examSummaries={mockExamSummaries}
@@ -103,7 +88,7 @@ const DashboardResultViewer: React.FC = () => {
           />
         )}
 
-        {selectedView === 'classes' && (
+        {selectedView === 'class' && (
           <ClassView
             classPerformances={mockClassPerformances}
             selectedClass={selectedClass}
@@ -112,7 +97,7 @@ const DashboardResultViewer: React.FC = () => {
           />
         )}
 
-        {selectedView === 'students' && (
+        {selectedView === 'student' && (
           <StudentView
             studentResults={mockStudentResults}
             selectedStudent={selectedStudent}

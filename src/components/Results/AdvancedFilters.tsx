@@ -1,6 +1,7 @@
 // components/AdvancedFilters.tsx
 import React, { useMemo } from 'react';
 import { ClassPerformance } from '../../utils/types/Assessment';
+import styled from 'styled-components';
 
 export interface FilterState {
   period: string;
@@ -38,17 +39,22 @@ interface SearchInputProps {
   placeholder?: string;
 }
 
-const SelectFilter: React.FC<SelectFilterProps> = ({ 
-  label, 
-  options, 
-  value, 
-  onChange, 
-  disabled 
+const FilterGroup = styled.div`
+  margin-bottom: 1rem;
+`;
+
+const SelectFilter: React.FC<SelectFilterProps> = ({
+  label,
+  options,
+  value,
+  onChange,
+  disabled
 }) => (
-  <div className="filter-group">
+  <FilterGroup>
     <label>{label}:</label>
     <select 
-      value={value} 
+      aria-label={`Selecionar ${label}`}
+      value={value}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
     >
@@ -58,15 +64,15 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
         </option>
       ))}
     </select>
-  </div>
+  </FilterGroup>
 );
 
-const SearchInput: React.FC<SearchInputProps> = ({ 
-  value, 
-  onChange, 
-  placeholder 
+const SearchInput: React.FC<SearchInputProps> = ({
+  value,
+  onChange,
+  placeholder
 }) => (
-  <div className="filter-group">
+  <FilterGroup>
     <label>Buscar:</label>
     <input
       type="text"
@@ -74,7 +80,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
     />
-  </div>
+  </FilterGroup>
 );
 
 const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
@@ -87,7 +93,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   isLoading = false
 }) => {
   const periodOptions = useMemo(() => [
-    { value: 'all', label: 'Todos os períodos' },
+    { value: 'all', label: 'Todos' },
     ...periods.map(p => ({ value: p, label: p }))
   ], [periods]);
 
@@ -110,7 +116,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         onChange={(v) => onFilterChange('period', v)}
         disabled={isLoading}
       />
-      
+
       <SelectFilter
         label="Turma"
         options={classOptions}
@@ -118,7 +124,7 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         onChange={(v) => onFilterChange('classId', v)}
         disabled={isLoading}
       />
-      
+
       <SelectFilter
         label="Disciplina"
         options={subjectOptions}
@@ -126,14 +132,14 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
         onChange={(v) => onFilterChange('subject', v)}
         disabled={isLoading}
       />
-      
+
       <SearchInput
         value={currentFilters.searchTerm || ''}
         onChange={(v) => onFilterChange('searchTerm', v)}
         placeholder="Buscar turmas..."
       />
 
-      <button 
+      <button
         onClick={onReset}
         disabled={isLoading}
       >

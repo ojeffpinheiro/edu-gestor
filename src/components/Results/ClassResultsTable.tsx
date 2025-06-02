@@ -1,5 +1,4 @@
-// components/ClassResultsTable.tsx
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ExamResult, StudentResult } from '../../utils/types/Assessment';
 import { calculatePerformanceTrend } from '../../utils/dataProcessing';
 
@@ -25,7 +24,7 @@ const ClassResultsTable: React.FC<ClassResultsTableProps> = ({
   };
 
   // Função para filtrar examos por período
-  const filterExamsByTimeRange = (exams: ExamResult[]) => {
+  const filterExamsByTimeRange = useCallback((exams: ExamResult[]) => {
     const now = new Date();
     let startDate = new Date();
     
@@ -38,7 +37,30 @@ const ClassResultsTable: React.FC<ClassResultsTableProps> = ({
     }
     
     return exams.filter(exam => new Date(exam.completedAt) >= startDate);
-  };
+  }, [timeRange]);
+
+  // Pré-processa os dados dos estudantes
+  const processedStudents = useMemo(() => {
+    return students.map(student => {
+      const studentExams = examResults
+        .filter(result => result.studentId === student.studentId);
+      
+      const recentExams = filterExamsByTimeRange(studentExams);
+      
+      const examSummaries = recentExams.map(exam => ({
+        averageScore: exam.totalScore,
+        date: exam.completedAt
+      }));
+      
+      const trend = calculatePerformanceTrend(examSummaries);
+
+      return {
+        ...student,
+        recentExams,
+        trend
+      };
+    });
+  }, [students, examResults, filterExamsByTimeRange]);
 
   return (
     <div className="results-table-container">
@@ -52,35 +74,20 @@ const ClassResultsTable: React.FC<ClassResultsTableProps> = ({
           </tr>
         </thead>
         <tbody>
-          {students.map(student => {
-            const studentExams = examResults
-              .filter(result => result.studentId === student.studentId);
-            
-            const recentExams = filterExamsByTimeRange(studentExams);
-            
-            // Converter para formato esperado por calculatePerformanceTrend
-            const examSummaries = recentExams.map(exam => ({
-              averageScore: exam.totalScore,
-              date: exam.completedAt
-            }));
-            
-            const trend = calculatePerformanceTrend(examSummaries);
-
-            return (
-              <tr key={student.studentId}>
-                <td>{student.studentName}</td>
-                <td>{student.overallAverage.toFixed(1)}</td>
-                <td className={`trend-${trend}`}>
-                  {getTrendIcon(trend)} ({trend})
-                </td>
-                <td>
-                  <button onClick={() => onStudentSelect(student.studentId)}>
-                    Ver Detalhes
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
+          {processedStudents.map(student => (
+            <tr key={student.studentId}>
+              <td>{student.studentName}</td>
+              <td>{student.overallAverage.toFixed(1)}</td>
+              <td className={`trend-${student.trend}`}>
+                {getTrendIcon(student.trend)} ({student.trend})
+              </td>
+              <td>
+                <button onClick={() => onStudentSelect(student.studentId)}>
+                  Ver Detalhes
+                </button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

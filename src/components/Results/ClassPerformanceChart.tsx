@@ -1,6 +1,11 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { ClassPerformance } from '../../utils/types/Assessment';
+import { 
+  ChartEvent, 
+  ActiveElement,
+  TooltipItem
+} from 'chart.js';
 
 interface ClassPerformanceChartProps {
   classPerformances: ClassPerformance[];
@@ -32,7 +37,7 @@ const ClassPerformanceChart: React.FC<ClassPerformanceChartProps> = ({
   };
 
   const options = {
-    onClick: (event: any, elements: any[]) => {
+    onClick: (event: ChartEvent, elements: ActiveElement[]) => {
       if (elements.length > 0) {
         const index = elements[0].index;
         onClassSelect(classPerformances[index].classId);
@@ -40,6 +45,16 @@ const ClassPerformanceChart: React.FC<ClassPerformanceChartProps> = ({
     },
     scales: {
       y: { beginAtZero: true, max: 100 }
+    },
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: (context: TooltipItem<'bar'>) => {
+            const label = context.dataset.label || '';
+            return `${label}: ${context.raw}${context.datasetIndex === 1 ? '%' : ''}`;
+          }
+        }
+      }
     }
   };
 

@@ -1,11 +1,11 @@
-import React, { useCallback, MouseEvent as ReactMouseEvent } from 'react';
+import React, { useCallback } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { 
   Chart, 
   InteractionItem
 } from 'chart.js';
 
-interface InteractiveChartProps {
+export interface InteractiveChartProps {
   data: {
     labels: string[];
     datasets: {

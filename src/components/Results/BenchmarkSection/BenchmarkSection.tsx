@@ -1,30 +1,29 @@
 import React from 'react';
-import { FiTrendingUp } from 'react-icons/fi';
+import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
-import { ClassPerformance } from '../../../utils/types/Assessment'
+import { ClassMetricsType, ClassPerformance } from '../../../utils/types/Assessment'
 
 import ComparisonBarChart from '../Charts/ComparisonBarChart'
 import BenchmarkCard from '../BenchmarkCard';
 
 interface BenchmarkSectionProps {
-  classPerformances: ClassPerformance[];
-  currentClass: ClassPerformance;
+  classes: ClassPerformance[];
+  metrics: ClassMetricsType | null;
 }
 
-const BenchmarkSection: React.FC<BenchmarkSectionProps> = ({
-  classPerformances,
-  currentClass
-}) => {
+const BenchmarkSection: React.FC<BenchmarkSectionProps> = ({ classes, metrics }) => {
   return (
     <div className="benchmark-section">
       <BenchmarkCard
         title="Desempenho Médio"
-        value={currentClass.averageScore.toFixed(1)}
-        change={1.2}
-        icon={<FiTrendingUp />}
+        value={metrics?.averageScore.toFixed(1) || 'N/A'}
+        change={metrics?.failingStudentsChange || 0}
+        icon={metrics?.failingStudentsChange && metrics.failingStudentsChange > 0 ?
+          <FiTrendingUp color="green" /> :
+          <FiTrendingDown color="red" />}
       >
         <ComparisonBarChart
-          classes={classPerformances}
+          classes={classes}
           metric="averageScore"
         />
       </BenchmarkCard>

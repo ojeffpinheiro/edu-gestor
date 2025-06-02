@@ -1128,7 +1128,7 @@ export const mockClassPerformances: ClassPerformance[] = [
     ],
   }, 
   {
-    classId: "class-201",
+    classId: "class-301",
     className: "301 - FÍSICA",
     teacher: "Ms. Jane Smith",
     academicPeriod: "2025-1",

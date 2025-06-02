@@ -1,4 +1,5 @@
 import React from 'react';
+import { StyledCard } from '../../styles/card';
 
 interface DashboardCardProps {
   title: string;
@@ -16,7 +17,7 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
   className = ''
 }) => {
   return (
-    <div className={`dashboard-card ${fullWidth ? 'full-width' : ''} ${className}`}>
+    <StyledCard>
       <div className="card-header">
         <h3>{title}</h3>
         {description && <p className="card-description">{description}</p>}
@@ -24,8 +25,10 @@ const DashboardCard: React.FC<DashboardCardProps> = ({
       <div className="card-content">
         {children}
       </div>
-    </div>
+    </StyledCard>
   );
 };
+
+
 
 export default DashboardCard;

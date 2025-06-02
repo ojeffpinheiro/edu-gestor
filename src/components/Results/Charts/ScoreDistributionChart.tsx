@@ -17,21 +17,21 @@ const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
   width = 500,
   height = 300
 }) => {
-  // Processar os dados para criar bins
+  // Processar os dados para criar binsbins
   const processData = () => {
     const bins: Record<number, number> = {};
-    
+
     // Inicializar bins
     for (let i = 0; i <= 100; i += binSize) {
       bins[i] = 0;
     }
-    
+
     // Contar scores em cada bin
     data.forEach(item => {
       const bin = Math.floor(item.score / binSize) * binSize;
       bins[bin] = (bins[bin] || 0) + item.count;
     });
-    
+
     return Object.entries(bins).map(([score, count]) => ({
       score: Number(score),
       count
@@ -40,16 +40,20 @@ const ScoreDistributionChart: React.FC<ScoreDistributionChartProps> = ({
 
   const chartData = processData();
 
+  if (!data || data.length === 0) {
+    return <div className="no-data">Nenhum dado disponível</div>;
+  }
+
   return (
     <ResponsiveContainer width={width} height={height}>
       <BarChart data={chartData}>
         <CartesianGrid strokeDasharray="3 3" />
-        <XAxis 
-          dataKey="score" 
-          label={{ value: 'Intervalo de Notas', position: 'insideBottomRight', offset: -5 }} 
+        <XAxis
+          dataKey="score"
+          label={{ value: 'Intervalo de Notas', position: 'insideBottomRight', offset: -5 }}
         />
-        <YAxis 
-          label={{ value: 'Número de Alunos', angle: -90, position: 'insideLeft' }} 
+        <YAxis
+          label={{ value: 'Número de Alunos', angle: -90, position: 'insideLeft' }}
         />
         <Tooltip />
         <Legend />

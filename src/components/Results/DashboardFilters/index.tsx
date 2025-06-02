@@ -1,7 +1,6 @@
 import React from 'react';
 import { TimeframeFilter, ViewMode } from '../../../utils/types/Assessment';
-import { FilterGroup, FiltersContainer, ViewButton, ViewToggle } from './styles';
-import { Label, Select } from '../../../styles/inputs';
+import { FilterGroup, FiltersContainer } from './styles';
 
 interface DashboardFiltersProps {
   timeRange: TimeframeFilter;
@@ -12,9 +11,7 @@ interface DashboardFiltersProps {
 
 const DashboardFilters: React.FC<DashboardFiltersProps> = ({ 
   timeRange, 
-  onTimeRangeChange, 
-  viewMode, 
-  onViewModeChange 
+  onTimeRangeChange
 }) => {
   const timeRangeOptions = [
     { value: 'week', label: 'Semana' },
@@ -23,45 +20,25 @@ const DashboardFilters: React.FC<DashboardFiltersProps> = ({
     { value: 'custom', label: 'Personalizado' },
   ];
 
-  const viewModeOptions = [
-    { value: 'overview', label: 'Visão Geral' },
-    { value: 'class', label: 'Por Turma' },
-    { value: 'student', label: 'Por Aluno' },
-    { value: 'questions', label: 'Por Questão' },
-  ];
-
   return (
     <FiltersContainer>
       <FilterGroup>
-        <Label>Período:</Label>
-        <Select
+        <label htmlFor="timeRangeSelect">Período:</label>
+        <select
+          id="timeRangeSelect"
           value={timeRange}
           onChange={(e) => onTimeRangeChange(e.target.value as TimeframeFilter)}
+          aria-label="Selecionar período de tempo"
         >
           {timeRangeOptions.map(option => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
           ))}
-        </Select>
-      </FilterGroup>
-
-      <FilterGroup>
-        <Label>Visualização:</Label>
-        <ViewToggle>
-          {viewModeOptions.map(option => (
-            <ViewButton
-              key={option.value}
-              $active={viewMode === option.value}
-              onClick={() => onViewModeChange(option.value as ViewMode)}
-            >
-              {option.label}
-            </ViewButton>
-          ))}
-        </ViewToggle>
+        </select>
       </FilterGroup>
     </FiltersContainer>
   );
 };
 
-export default DashboardFilters;
+export default React.memo(DashboardFilters);
