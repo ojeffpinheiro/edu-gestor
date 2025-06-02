@@ -1,11 +1,14 @@
 import React from 'react';
 import { EnhancedExamResult, StudentResult } from '../../../utils/types/Assessment';
+import { Question } from '../../../utils/types/Question';
+
 import DashboardCard from '../DashboardCard';
-import StudentProgressChart from '../Charts/StudentProgressChart';
-import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';
 import EmptyState from '../EmptyState';
 import StudentSelector from '../StudentSelector';
-import { Question } from '../../../utils/types/Question';
+
+import StudentProgressChart from '../Charts/StudentProgressChart';
+import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';
+import styled from 'styled-components';
 
 interface StudentViewProps {
   studentResults: StudentResult[];
@@ -15,6 +18,24 @@ interface StudentViewProps {
   questions?: Question[];
   isLoading?: boolean;
 }
+
+const StudentViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+`;
+
+const ChartsGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
 
 const StudentView: React.FC<StudentViewProps> = ({ 
   studentResults, 
@@ -31,7 +52,7 @@ const StudentView: React.FC<StudentViewProps> = ({
   if (isLoading) return <EmptyState message="Carregando dados do aluno..." />;
 
   return (
-    <div className="student-view">
+    <StudentViewContainer className="student-view">
       <StudentSelector
         students={studentResults}
         selectedStudent={selectedStudent}
@@ -39,7 +60,7 @@ const StudentView: React.FC<StudentViewProps> = ({
       />
 
       {currentStudent ? (
-        <div className="chart-row">
+        <ChartsGrid>
           <DashboardCard
             title="Progresso ao Longo do Tempo"
             description="Evolução do desempenho nas avaliações"
@@ -59,11 +80,14 @@ const StudentView: React.FC<StudentViewProps> = ({
               questions={questions}
             />
           </DashboardCard>
-        </div>
+        </ChartsGrid>
       ) : (
-        <EmptyState message="Nenhum aluno selecionado" />
+        <EmptyState 
+          message="Selecione um aluno para visualizar seu desempenho" 
+          type="users"
+        />
       )}
-    </div>
+    </StudentViewContainer>
   );
 };
 

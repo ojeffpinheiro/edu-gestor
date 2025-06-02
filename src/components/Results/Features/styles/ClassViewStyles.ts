@@ -137,7 +137,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
       ? 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%)'
       : 'transparent'
   };
-  color: ${({ $active }) => $active ? 'white' : 'rgba(255,255,255,0.8)'};
+  color: ${({ $active }) => $active ? 'var(--color-text-button)' : 'rgba(255,255,255,0.8)'};
   border-radius: 12px;
   font-weight: ${({ $active }) => $active ? '600' : '500'};
   font-size: 0.9rem;
