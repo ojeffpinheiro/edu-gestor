@@ -1,28 +1,32 @@
 import React, { useMemo, useState } from 'react';
-import { FiBarChart2, FiPieChart, FiTrendingUp } from 'react-icons/fi';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { ClassPerformance, ExamSummary, StudentResult } from '../../../utils/types/Assessment';
-
 import { useStrategicData } from '../../../hooks/useStrategicData';
 
 import ScoreDistributionChart from '../Charts/ScoreDistributionChart';
 import TemporalProgressChart from '../Charts/TemporalProgressChart';
 import ClassPerformanceChart from '../ClassPerformanceChart';
-import PerformanceTrendSection from '../PerformanceTrendChart';
-
-import DashboardCard from '../DashboardCard';
-import EmptyState from '../EmptyState';
 
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import DashboardCard from '../DashboardCard';
+import EmptyState from '../EmptyState';
 import InstitutionalMetrics from '../InstitutionalMetrics';
+import PerformanceTrendSection from '../PerformanceTrendChart';
 
-import { TabContent, TabsContainer } from './styles/OverviewViewStyles';
-import { TabButton } from './styles/ClassViewStyles';
-
-type OverviewTab = 'performance' | 'progress' | 'distribution';
+import { 
+  Container,
+  GraphsContainer,
+  SlideContainer, 
+  SlideControls, 
+  SlideButton,
+  BulletsContainer,
+  Bullet
+} from './styles/OverviewViewStyles';
+import { ProgressTrendChart } from '../Charts/ProgressTrendChart';
 
 interface OverviewViewProps {
   examSummaries: ExamSummary[];
-  studentResults: StudentResult[],
+  studentResults: StudentResult[];
   classPerformances: ClassPerformance[];
   isLoading?: boolean;
   error?: Error | null;
@@ -35,21 +39,10 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   studentResults,
   onClassSelect,
   isLoading,
-  error
+  error,
 }) => {
-  const [activeTab, setActiveTab] = useState<OverviewTab>('performance');
-
-  const { 
-      metrics, 
-      learningGaps, 
-      classRankings, 
-      predictions, 
-      alerts 
-    } = useStrategicData(
-      examSummaries,
-      classPerformances,
-      studentResults
-    );
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const { metrics } = useStrategicData(examSummaries, classPerformances, studentResults);
 
   const distributionData = useMemo(() => {
     const allScores = examSummaries.flatMap(exam =>
@@ -69,76 +62,77 @@ const OverviewView: React.FC<OverviewViewProps> = ({
 
   const hasData = examSummaries.length > 0 && classPerformances.length > 0;
 
+  const slides = [
+    <DashboardCard key="performance" title="Desempenho por Turma" fullWidth>
+      <ClassPerformanceChart 
+        classPerformances={classPerformances} 
+        onClassSelect={onClassSelect} 
+      />
+    </DashboardCard>,
+    <DashboardCard key="progress" title="Progresso Temporal" fullWidth>
+      <TemporalProgressChart examSummaries={examSummaries} />
+    </DashboardCard>,
+    <DashboardCard key="trend" title="Tendência de Desempenho" fullWidth>
+      <ProgressTrendChart examSummaries={examSummaries} />
+    </DashboardCard>,
+    <DashboardCard key="distribution" title="Distribuição de Notas" fullWidth>
+      <ScoreDistributionChart data={distributionData} />
+    </DashboardCard>
+  ];
+
+  const totalSlides = slides.length;
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   if (isLoading) return <LoadingSpinner />;
   if (error) return <EmptyState message={`Erro ao carregar dados: ${error.message}`} />;
 
   return (
-    <div className="overview-view">
+    <Container>
       {hasData ? (
         <>
-          <TabsContainer>
-            <TabButton
-              $active={activeTab === 'performance'}
-              onClick={() => setActiveTab('performance')}
-            >
-              <FiBarChart2 /> Desempenho
-            </TabButton>
+          <InstitutionalMetrics metrics={metrics} />
 
-            <TabButton
-              $active={activeTab === 'progress'}
-              onClick={() => setActiveTab('progress')}
-            >
-              <FiTrendingUp /> Progresso
-            </TabButton>
-
-            <TabButton
-              $active={activeTab === 'distribution'}
-              onClick={() => setActiveTab('distribution')}
-            >
-              <FiPieChart />Distribuição
-            </TabButton>
-          </TabsContainer>
-
-          {/* Conteúdo das Abas */}
-          <TabContent>
-            <div className="overview-cards">
-              <InstitutionalMetrics metrics={metrics} />
-              <PerformanceTrendSection 
-                examSummaries={examSummaries} 
-                targetScore={metrics.goals.averageScore} />
-            </div>
-            {activeTab === 'performance' && (
-              <div className="chart-row">
-                <DashboardCard title="Desempenho por Turma" fullWidth>
-                  <ClassPerformanceChart 
-                    classPerformances={classPerformances} 
-                    onClassSelect={onClassSelect} 
-                  />
-                </DashboardCard>
-              </div>
-            )}
-
-            {activeTab === 'progress' && (
-              <div className="chart-row">
-                <DashboardCard title="Progresso Temporal">
-                  <TemporalProgressChart examSummaries={examSummaries} />
-                </DashboardCard>
-              </div>
-            )}
-
-            {activeTab === 'distribution' && (
-              <div className="chart-row">
-                <DashboardCard title="Distribuição de Notas">
-                  <ScoreDistributionChart data={distributionData} />
-                </DashboardCard>
-              </div>
-            )}
-          </TabContent>
+          <GraphsContainer>
+            <SlideContainer>
+              {slides[currentSlide]}
+              
+              <SlideControls>
+                <SlideButton onClick={prevSlide}>
+                  <FiChevronLeft />
+                </SlideButton>
+                
+                <BulletsContainer>
+                  {slides.map((_, index) => (
+                    <Bullet 
+                      key={index} 
+                      $active={index === currentSlide}
+                      onClick={() => goToSlide(index)}
+                    />
+                  ))}
+                </BulletsContainer>
+                
+                <SlideButton onClick={nextSlide}>
+                  <FiChevronRight />
+                </SlideButton>
+              </SlideControls>
+            </SlideContainer>
+          </GraphsContainer>
         </>
       ) : (
         <EmptyState message="Nenhum dado disponível para exibição" />
       )}
-    </div>
+    </Container>
   );
 };
 

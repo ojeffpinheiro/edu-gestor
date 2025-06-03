@@ -3,6 +3,7 @@ import { FiUsers, FiAward, FiAlertTriangle, FiTarget, FiBarChart2 } from 'react-
 import DashboardCard from './DashboardCard';
 import ProgressBadge from './ProgressBadge';
 import MetricComparison from './MetricComparison';
+import styled from 'styled-components';
 
 interface InstitutionalMetricsProps {
   metrics: {
@@ -27,6 +28,21 @@ interface InstitutionalMetricsProps {
   onMetricClick?: (metricKey: string) => void;
 }
 
+const MetricsContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
 const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, onMetricClick }) => {
   // Calcula porcentagem de alunos em risco
   const riskPercentage = (metrics.riskStudents / metrics.totalStudents) * 100;
@@ -37,7 +53,7 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
   const attendanceVsGoal = metrics.attendanceRate - metrics.goals.attendanceRate;
 
   return (
-    <div className="institutional-metrics-grid">
+    <MetricsContainer>
       {/* Cartão 1: Média Geral */}
       <DashboardCard 
         title="Média Geral" 
@@ -191,7 +207,7 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
           </div>
         </div>
       </DashboardCard>
-    </div>
+    </MetricsContainer>
   );
 };
 
