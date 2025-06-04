@@ -59,6 +59,11 @@ export const GlobalStyles = createGlobalStyle`
         --color-facebook: ${currentTheme.icons.facebook};
         --color-github: ${currentTheme.icons.github};
         --color-apple: ${currentTheme.icons.apple};
+        
+        --color-critical: #e53935;
+        --color-high-risk: #fb8c00;
+        --color-medium-risk: #fdd835;
+        --color-low-risk: #7cb342;
 
         --line-height-sm: 1.25;
         --line-height-md: 1.5;

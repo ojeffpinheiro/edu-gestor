@@ -21,7 +21,7 @@ interface InstitutionalMetrics {
   };
 }
 
-interface LearningGap {
+export interface LearningGap {
   skill: string;
   category: string;
   gapPercentage: number;
@@ -32,7 +32,7 @@ interface LearningGap {
   recommendations: string[];
 }
 
-interface PerformancePrediction {
+export interface PerformancePrediction {
   studentId: string;
   studentName: string;
   classId: string;

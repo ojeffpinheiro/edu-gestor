@@ -1,4 +1,3 @@
-// styles/utils.ts
 import { ButtonVariant } from "./types/UIComponent";
 
 export const getButtonColor = (variant: ButtonVariant) => {

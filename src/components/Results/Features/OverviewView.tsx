@@ -24,6 +24,10 @@ import {
 } from './styles/OverviewViewStyles';
 import { ProgressTrendChart } from '../Charts/ProgressTrendChart';
 import { AlertPanel } from '../AlertPanel';
+import { LearningGapsPanel } from '../LearningGapsPanel';
+import { BenchmarkQuadrant } from '../BenchmarkQuadrant';
+import { ValueAddedChart } from '../ValueAddedChart';
+import { PredictionsPanel } from '../PredictionsPanel';
 
 interface SlideItem {
   key: string;
@@ -49,7 +53,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   error,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { metrics, alerts } = useStrategicData(examSummaries, classPerformances, studentResults);
+  const { metrics, alerts, learningGaps, predictions } = useStrategicData(examSummaries, classPerformances, studentResults);
 
   const hasData = examSummaries.length > 0 && classPerformances.length > 0;
 
@@ -122,7 +126,38 @@ const OverviewView: React.FC<OverviewViewProps> = ({
           // Remova ou substitua setSelectedView se não estiver sendo usado
         }} 
       />
-    }
+    },{
+    key: "gaps",
+    title: "Gaps de Aprendizagem",
+    component: <LearningGapsPanel
+      gaps={learningGaps} 
+      onSelectSkill={(skill) => console.log('Skill selected:', skill)}
+    />
+  },
+  {
+    key: "benchmark",
+    title: "Benchmarking",
+    component: <BenchmarkQuadrant
+      classes={classPerformances} 
+      onSelectClass={onClassSelect}
+    />
+  },
+  {
+    key: "value-added",
+    title: "Valor Agregado",
+    component: <ValueAddedChart
+      classes={classPerformances}
+      onSelectClass={onClassSelect}
+    />
+  },
+  {
+    key: "predictions",
+    title: "Predições",
+    component: <PredictionsPanel
+      predictions={predictions}
+      onSelectStudent={(studentId) => console.log('Student selected:', studentId)}
+    />
+  }
   ];
 
   return slideItems.map(item => (
@@ -130,7 +165,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
       {item.component}
     </DashboardCard>
   ));
-}, [classPerformances, examSummaries, alerts, onClassSelect]);
+}, [classPerformances, alerts, learningGaps, predictions, onClassSelect]);
   
   
   if (isLoading) return <LoadingSpinner />;
