@@ -7,7 +7,8 @@ interface EnhancedStudentDetailModalProps {
   onClose: () => void;
 }
 
-type ActiveTab = 'performance' | 'progress' | 'skills';
+const TAB_OPTIONS = ['performance', 'progress', 'skills'] as const;
+type ActiveTab = typeof TAB_OPTIONS[number];
 
 const EnhancedStudentDetailModal: React.FC<EnhancedStudentDetailModalProps> = ({ 
   student, 

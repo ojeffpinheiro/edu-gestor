@@ -1,6 +1,6 @@
 // components/AdvancedFilters.tsx
 import React, { useMemo } from 'react';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../../utils/types/Assessment';
 import styled from 'styled-components';
 
 export interface FilterState {
@@ -12,14 +12,9 @@ export interface FilterState {
 
 interface AdvancedFiltersProps {
   periods: string[];
-  subjects: string[];
+  subjects: Subject[];
   classes: ClassPerformance[];
-  currentFilters: {
-    period: string;
-    classId: string;
-    subject: string;
-    searchTerm?: string;
-  };
+  currentFilters: FilterState;
   onFilterChange: <K extends keyof FilterState>(key: K, value: FilterState[K]) => void;
   onReset: () => void;
   isLoading?: boolean;
@@ -103,9 +98,12 @@ const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   ], [classes]);
 
   const subjectOptions = useMemo(() => [
-    { value: 'all', label: 'Todas as disciplinas' },
-    ...subjects.map(s => ({ value: s, label: s }))
-  ], [subjects]);
+  { value: 'all', label: 'Todas as disciplinas' },
+  ...subjects.map(s => ({ 
+    value: s.name, 
+    label: `${s.name} (${s.averageScore.toFixed(1)}/${s.schoolAverage.toFixed(1)})`
+  }))
+], [subjects]);
 
   return (
     <div className="filters-container">

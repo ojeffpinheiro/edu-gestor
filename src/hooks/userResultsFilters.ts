@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { ClassPerformance } from '../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../utils/types/Assessment';
 
 interface FilterState {
   period: 'all' | string;
@@ -15,7 +15,7 @@ interface UseFiltersReturn {
   filteredData: ClassPerformance[];
   availableOptions: {
     periods: string[];
-    subjects: string[];
+    subjects: Subject[];
     allClasses: ClassPerformance[];
   };
 }
@@ -48,11 +48,15 @@ export const useFilters = (classPerformances: ClassPerformance[]): UseFiltersRet
       )
     );
 
-    const subjects = Array.from(
-      new Set(classPerformances
-        .flatMap(c => c.subjects || [])
-      )
-    );
+    const subjectsMap = new Map<string, Subject>();
+    classPerformances.forEach(c => {
+      c.subjects?.forEach(subject => {
+        if (!subjectsMap.has(subject.name)) {
+          subjectsMap.set(subject.name, subject);
+        }
+      });
+    });
+    const subjects = Array.from(subjectsMap.values());
 
     return {
       periods,
@@ -71,8 +75,11 @@ export const useFilters = (classPerformances: ClassPerformance[]): UseFiltersRet
         return false;
       }
 
-      if (filters.subject !== 'all' && !classItem.subjects?.includes(filters.subject)) {
-        return false;
+      if (filters.subject !== 'all') {
+        const hasSubject = classItem.subjects?.some(s =>
+          typeof s === 'string' ? s === filters.subject : s.name === filters.subject
+        );
+        if (!hasSubject) return false;
       }
 
       if (filters.searchTerm) {

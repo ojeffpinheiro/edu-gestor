@@ -1,11 +1,11 @@
 import React from 'react'
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../../utils/types/Assessment';
 import AdvancedFilters, { FilterState } from './AdvancedFilters';
 import ClassSelector from './ClassSelector';
 
 interface AvailableOptions {
   periods: string[];
-  subjects: string[];
+  subjects: Subject[];
   allClasses: ClassPerformance[];
 }
 

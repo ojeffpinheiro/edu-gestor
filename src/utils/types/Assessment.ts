@@ -116,6 +116,11 @@ export interface StudentResult {
   };
 }
 
+export type Subject = { 
+  name: string;
+  averageScore: number;
+  schoolAverage: number;
+ };
 
 export interface ClassPerformance {
   classId: string;
@@ -128,8 +133,16 @@ export interface ClassPerformance {
   studentCount: number;
   performanceTrend?: 'improving' | 'declining' | 'stable';
   skillBreakdown: Record<string, number>;
-  subjects: string[]; // Adicionado
-  students: { // Adicionado para referência
+  subjects: Subject[];
+  schoolAverage?: number;
+  schoolSkillAverages?: number[];
+  studentScores?: number[];
+  schoolComparisons?: {
+    name: string;
+    averageScore: number;
+    schoolAverage: number;
+  }[];
+  students: {
     id: string;
     name: string;
     email?: string;

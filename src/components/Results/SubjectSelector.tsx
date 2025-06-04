@@ -57,7 +57,7 @@ const ChevronIcon = styled(FiChevronDown)`
 `;
 
 interface SubjectSelectorProps {
-  subjects: string[];
+  subjects: { name: string }[]; 
   selectedSubject: string | null;
   onSelect: (subject: string | null) => void;
   className?: string;
@@ -69,7 +69,8 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   onSelect,
   className = ''
 }) => {
-  return (
+
+   return (
     <SelectorContainer className={className}>
       <SelectorLabel>
         <FiBook size={16} />
@@ -82,8 +83,8 @@ const SubjectSelector: React.FC<SubjectSelectorProps> = ({
         >
           <option value="">Todas as disciplinas</option>
           {subjects.map((subject) => (
-            <option key={subject} value={subject}>
-              {subject}
+            <option key={subject.name} value={subject.name}>
+              {subject.name}
             </option>
           ))}
         </StyledSelect>

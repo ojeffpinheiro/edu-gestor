@@ -1,10 +1,33 @@
-// utils/dataProcessing.ts
 import { ClassPerformance, ExamSummary, StudentResult } from './types/Assessment';
+
+interface ProcessedProgressData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    borderColor: string;
+    backgroundColor: string;
+    fill: boolean;
+    tension: number;
+  }[];
+}
+
+interface ProcessedRadarData {
+  labels: string[];
+  datasets: {
+    label: string;
+    data: number[];
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
+    pointBackgroundColor: string;
+  }[];
+}
 
 /**
  * Processa dados de progresso temporal para gráficos
  */
-export const processProgressData = (classPerformance: ClassPerformance) => {
+export const processProgressData = (classPerformance: ClassPerformance): ProcessedProgressData => {
   const sortedExams = classPerformance.examResults
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
@@ -34,7 +57,7 @@ export const processProgressData = (classPerformance: ClassPerformance) => {
 /**
  * Processa dados de radar chart baseado em habilidades
  */
-export const processRadarData = (classPerformance: ClassPerformance) => {
+export const processRadarData = (classPerformance: ClassPerformance): ProcessedRadarData => {
   const skillCategories = Object.keys(classPerformance.skillBreakdown);
   
   return {
@@ -159,7 +182,7 @@ export const generateHeatmapData = (classPerformance: ClassPerformance) => {
     return subjects.map(subject => {
       // Lógica para calcular correlação (exemplo simplificado)
       const relevantExams = classPerformance.examResults
-        .filter(exam => exam.subject === subject);
+        .filter(exam => exam.subject === subject.name);
       
       const correlation = relevantExams.length > 0 
         ? Math.random() * 2 - 1 // Exemplo - substituir por cálculo real

@@ -14,7 +14,7 @@ interface ClassViewToolbarProps {
   setSelectedPeriod: (period: string | null) => void;
   activeView: 'class' | 'school';
   setActiveView: (view: 'class' | 'school') => void;
-  subjects: string[];
+  subjects: { name: string }[]; 
   selectedSubject: string | null;
   setSelectedSubject: (subject: string | null) => void;
 }

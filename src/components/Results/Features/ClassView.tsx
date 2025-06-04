@@ -46,6 +46,10 @@ interface ClassViewProps {
   isLoading?: boolean;
 }
 
+interface ClassPerformanceWithSubjects extends ClassPerformance {
+  subjects: { name: string; averageScore: number; schoolAverage: number }[];
+}
+
 // Componente de métricas animadas
 interface MetricDisplayProps {
   value: number;
@@ -259,7 +263,7 @@ const ClassView: React.FC<ClassViewProps> = ({
   const currentClass = useMemo(() => {
     if (!selectedClass) return null;
     const foundClass = classPerformances.find(c => c.classId === selectedClass);
-    return foundClass ?? null; // Converte undefined para null
+    return foundClass as ClassPerformanceWithSubjects | null;
   }, [selectedClass, classPerformances]);
 
   const { filteredData } = useFilters(classPerformances);
@@ -302,7 +306,7 @@ const ClassView: React.FC<ClassViewProps> = ({
     onStudentSelect(studentId);
   }, [studentsAsResults, onStudentSelect]);
 
-  const handleBarClick = useCallback<NonNullable<InteractiveChartProps['onElementClick']>>((element) => {
+  const handleBarClick = useCallback((element: { datasetIndex: number }) => {
     const classId = filteredByPeriod[element.datasetIndex]?.classId;
     if (classId) {
       const classData = filteredByPeriod.find((c: ClassPerformance) => c.classId === classId);
@@ -322,7 +326,7 @@ const ClassView: React.FC<ClassViewProps> = ({
             level: 'high',
             factors: ['Baixo desempenho geral da turma']
           } : undefined
-        });
+        } as StudentResult);
       }
     }
   }, [filteredByPeriod]);

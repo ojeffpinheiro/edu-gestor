@@ -20,7 +20,8 @@ import {
   SlideControls, 
   SlideButton,
   BulletsContainer,
-  Bullet
+  Bullet,
+  SlideTitle
 } from './styles/OverviewViewStyles';
 import { ProgressTrendChart } from '../Charts/ProgressTrendChart';
 
@@ -104,11 +105,15 @@ const OverviewView: React.FC<OverviewViewProps> = ({
           <InstitutionalMetrics metrics={metrics} />
 
           <GraphsContainer>
+            <SlideTitle>
+              Visualizações de Dados
+            </SlideTitle>
+            
             <SlideContainer>
               {slides[currentSlide]}
               
               <SlideControls>
-                <SlideButton onClick={prevSlide}>
+                <SlideButton onClick={prevSlide} aria-label="Slide anterior">
                   <FiChevronLeft />
                 </SlideButton>
                 
@@ -118,11 +123,12 @@ const OverviewView: React.FC<OverviewViewProps> = ({
                       key={index} 
                       $active={index === currentSlide}
                       onClick={() => goToSlide(index)}
+                      aria-label={`Ir para slide ${index + 1}`}
                     />
                   ))}
                 </BulletsContainer>
                 
-                <SlideButton onClick={nextSlide}>
+                <SlideButton onClick={nextSlide} aria-label="Próximo slide">
                   <FiChevronRight />
                 </SlideButton>
               </SlideControls>

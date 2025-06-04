@@ -4,6 +4,7 @@ import DashboardCard from './DashboardCard';
 import ProgressBadge from './ProgressBadge';
 import MetricComparison from './MetricComparison';
 import styled from 'styled-components';
+import { ComparisonContainer, MetricHighlight } from './Features/styles/OverviewViewStyles';
 
 interface InstitutionalMetricsProps {
   metrics: {
@@ -28,15 +29,21 @@ interface InstitutionalMetricsProps {
   onMetricClick?: (metricKey: string) => void;
 }
 
-const MetricsContainer = styled.div`
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin-bottom: 16px;
+const MetricValue = styled.div`
+  font-size: 2rem;
+  font-weight: 600;
+  color: ${({ theme }) => theme.primary};
+  margin: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
 
-  @media (max-width: 1200px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
+const MetricGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+  width: 100%;
 
   @media (max-width: 768px) {
     grid-template-columns: 1fr;
@@ -53,7 +60,7 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
   const attendanceVsGoal = metrics.attendanceRate - metrics.goals.attendanceRate;
 
   return (
-    <MetricsContainer>
+    <MetricGrid>
       {/* Cartão 1: Média Geral */}
       <DashboardCard 
         title="Média Geral" 
@@ -61,16 +68,16 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
         onClick={() => onMetricClick?.('overallAverage')}
         className="highlight-card"
       >
-        <div className="metric-main-value">
+        <MetricHighlight>
           {metrics.overallAverage.toFixed(1)}%
           <ProgressBadge 
             value={averageVsGoal}
             isPercentage={true}
             threshold={1}
           />
-        </div>
+        </MetricHighlight>
         
-        <div className="metric-comparisons">
+        <ComparisonContainer>
           <MetricComparison
             label="Meta"
             value={metrics.goals.averageScore}
@@ -89,7 +96,7 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
             difference={metrics.overallAverage - metrics.benchmarkComparison.national}
             isPercentage={true}
           />
-        </div>
+        </ComparisonContainer>
       </DashboardCard>
 
       {/* Cartão 2: Taxa de Aprovação */}
@@ -98,14 +105,14 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
         icon={<FiAward />}
         onClick={() => onMetricClick?.('passingRate')}
       >
-        <div className="metric-main-value">
+        <MetricHighlight>
           {metrics.passingRate.toFixed(1)}%
           <ProgressBadge 
             value={passingVsGoal}
             isPercentage={true}
             threshold={2}
           />
-        </div>
+        </MetricHighlight>
         
         <div className="metric-details">
           <div className="metric-detail-item">
@@ -207,7 +214,7 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
           </div>
         </div>
       </DashboardCard>
-    </MetricsContainer>
+    </MetricGrid>
   );
 };
 

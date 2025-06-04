@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { TimeframeFilter, ViewMode } from '../../utils/types/Assessment';
+import { ClassPerformance, TimeframeFilter, ViewMode } from '../../utils/types/Assessment';
 
 // Componentes de visualização
 import OverviewView from '../../components/Results/Features/OverviewView';
@@ -84,14 +84,20 @@ const DashboardResultViewer: React.FC = () => {
           <OverviewView
             examSummaries={mockExamSummaries}
             studentResults={mockStudentResults}
-            classPerformances={mockClassPerformances}
+            classPerformances={Array.isArray(mockClassPerformances) ? mockClassPerformances : [mockClassPerformances]}
             onClassSelect={setSelectedClass}
           />
         )}
 
         {selectedView === 'class' && (
           <ClassView
-            classPerformances={mockClassPerformances}
+            classPerformances={
+              selectedClass
+                ? (Array.isArray(mockClassPerformances)
+                  ? mockClassPerformances.filter((c: ClassPerformance) => c.classId === selectedClass)
+                  : mockClassPerformances.classId === selectedClass ? [mockClassPerformances] : [])
+                : (Array.isArray(mockClassPerformances) ? mockClassPerformances : [mockClassPerformances])
+            }
             selectedClass={selectedClass}
             onClassSelect={setSelectedClass}
             onStudentSelect={setSelectedStudent}
