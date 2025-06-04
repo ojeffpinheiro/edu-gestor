@@ -232,3 +232,28 @@ export const MetricGrid = styled.div`
     grid-template-columns: 1fr;
   }
 `;
+
+export const KeyboardHint = styled.div`
+  position: fixed;
+  bottom: var(--space-md);
+  right: var(--space-md);
+  background: var(--color-background-secondary);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--border-radius-lg);
+  font-size: var(--font-size-sm);
+  box-shadow: var(--shadow-md);
+  opacity: 0.9;
+  z-index: 100;
+  
+  kbd {
+    background: var(--color-card);
+    padding: 2px 6px;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    margin: 0 2px;
+  }
+  
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;

@@ -1,29 +1,45 @@
 import React from 'react';
-import ProgressBadge from './ProgressBadge';
+import styled from 'styled-components';
 
 interface MetricComparisonProps {
   label: string;
-  value: number;
-  difference: number;
-  isPercentage: boolean;
+  currentValue: number;
+  targetValue?: number;
+  isPercentage?: boolean;
+  difference?: number;
 }
 
-const MetricComparison: React.FC<MetricComparisonProps> = ({ 
-  label, 
-  value, 
-  difference,
-  isPercentage 
+const ComparisonItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+`;
+
+const Value = styled.span<{ isBetter?: boolean }>`
+  color: ${({ isBetter }) => isBetter ? 'var(--color-success)' : 'var(--color-error)'};
+`;
+
+const MetricComparison: React.FC<MetricComparisonProps> = ({
+  label,
+  currentValue,
+  targetValue,
+  isPercentage = false,
 }) => {
+  const difference = targetValue !== undefined ? currentValue - targetValue : undefined;
+  const isBetter = difference !== undefined ? difference >= 0 : undefined;
+
   return (
-    <div className="metric-comparison">
-      <span className="comparison-label">{label}:</span>
-      <span className="comparison-value">{value.toFixed(1)}{isPercentage ? '%' : ''}</span>
-      <ProgressBadge 
-        value={difference} 
-        isPercentage={isPercentage}
-        threshold={0.5}
-      />
-    </div>
+    <ComparisonItem>
+      <span>{label}:</span>
+      <div>
+        <span>{currentValue.toFixed(1)}{isPercentage ? '%' : ''}</span>
+        {difference !== undefined && (
+          <Value isBetter={isBetter}>
+            {' '}({difference > 0 ? '+' : ''}{difference.toFixed(1)})
+          </Value>
+        )}
+      </div>
+    </ComparisonItem>
   );
 };
 

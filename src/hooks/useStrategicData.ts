@@ -1,4 +1,3 @@
-// hooks/useStrategicData.ts
 import { useMemo } from 'react';
 import { ClassPerformance, ExamSummary, StudentResult } from '../utils/types/Assessment';
 
@@ -46,7 +45,7 @@ interface PerformancePrediction {
   interventionNeeded: boolean;
 }
 
-interface ClassAlert {
+export interface ClassAlert {
   id: string;
   type: 'performance' | 'attendance' | 'risk';
   severity: 'critical' | 'high' | 'medium' | 'low';

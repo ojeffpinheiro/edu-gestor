@@ -2,9 +2,9 @@ import React from 'react';
 import { FiUsers, FiAward, FiAlertTriangle, FiTarget, FiBarChart2 } from 'react-icons/fi';
 import DashboardCard from './DashboardCard';
 import ProgressBadge from './ProgressBadge';
-import MetricComparison from './MetricComparison';
 import styled from 'styled-components';
 import { ComparisonContainer, MetricHighlight } from './Features/styles/OverviewViewStyles';
+import MetricComparison from './MetricComparison';
 
 interface InstitutionalMetricsProps {
   metrics: {
@@ -27,17 +27,13 @@ interface InstitutionalMetricsProps {
     };
   };
   onMetricClick?: (metricKey: string) => void;
+  riskDistribution?: {
+    critical: number;
+    high: number;
+    medium: number;
+  };
+  attendanceTrend?: number;
 }
-
-const MetricValue = styled.div`
-  font-size: 2rem;
-  font-weight: 600;
-  color: ${({ theme }) => theme.primary};
-  margin: 0.5rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
 
 const MetricGrid = styled.div`
   display: grid;
@@ -50,11 +46,13 @@ const MetricGrid = styled.div`
   }
 `;
 
-const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, onMetricClick }) => {
-  // Calcula porcentagem de alunos em risco
+const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ 
+  metrics, 
+  onMetricClick,
+  riskDistribution = { critical: 0.3, high: 0.5, medium: 0.2 },
+  attendanceTrend = 2.5
+}) => {
   const riskPercentage = (metrics.riskStudents / metrics.totalStudents) * 100;
-  
-  // Calcula diferença em relação às metas
   const averageVsGoal = metrics.overallAverage - metrics.goals.averageScore;
   const passingVsGoal = metrics.passingRate - metrics.goals.passingRate;
   const attendanceVsGoal = metrics.attendanceRate - metrics.goals.attendanceRate;
@@ -80,20 +78,20 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
         <ComparisonContainer>
           <MetricComparison
             label="Meta"
-            value={metrics.goals.averageScore}
-            difference={averageVsGoal}
+            currentValue={metrics.goals.averageScore}
+            targetValue={metrics.overallAverage}
             isPercentage={true}
           />
           <MetricComparison
             label="Regional"
-            value={metrics.benchmarkComparison.regional}
-            difference={metrics.overallAverage - metrics.benchmarkComparison.regional}
+            currentValue={metrics.benchmarkComparison.regional}
+            targetValue={metrics.overallAverage}
             isPercentage={true}
           />
           <MetricComparison
             label="Nacional"
-            value={metrics.benchmarkComparison.national}
-            difference={metrics.overallAverage - metrics.benchmarkComparison.national}
+            currentValue={metrics.benchmarkComparison.national}
+            targetValue={metrics.overallAverage}
             isPercentage={true}
           />
         </ComparisonContainer>
@@ -148,20 +146,19 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
           <div className="risk-level critical">
             <span className="level-label">Crítico:</span>
             <span className="level-value">
-              {/* Valor mockado - na prática viria dos dados */}
-              {Math.round(metrics.riskStudents * 0.3)}
+              {Math.round(metrics.riskStudents * riskDistribution.critical)}
             </span>
           </div>
           <div className="risk-level high">
             <span className="level-label">Alto:</span>
             <span className="level-value">
-              {Math.round(metrics.riskStudents * 0.5)}
+              {Math.round(metrics.riskStudents * riskDistribution.high)}
             </span>
           </div>
           <div className="risk-level medium">
             <span className="level-label">Médio:</span>
             <span className="level-value">
-              {Math.round(metrics.riskStudents * 0.2)}
+              {Math.round(metrics.riskStudents * riskDistribution.medium)}
             </span>
           </div>
         </div>
@@ -185,8 +182,9 @@ const InstitutionalMetrics: React.FC<InstitutionalMetricsProps> = ({ metrics, on
         <div className="attendance-trend">
           <div className="trend-label">Tendência:</div>
           <div className="trend-value">
-            {/* Valor mockado - na prática viria da comparação histórica */}
-            <span className="positive">+2.5%</span> vs último período
+            <span className={attendanceTrend >= 0 ? "positive" : "negative"}>
+              {attendanceTrend >= 0 ? '+' : ''}{attendanceTrend}%
+            </span> vs último período
           </div>
         </div>
       </DashboardCard>

@@ -1,20 +1,25 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { ClassPerformance } from '../../utils/types/Assessment';
 import { 
   ChartEvent, 
   ActiveElement,
   TooltipItem
 } from 'chart.js';
+import { ClassPerformance } from '../../utils/types/Assessment';
 
 interface ClassPerformanceChartProps {
   classPerformances: ClassPerformance[];
   onClassSelect: (classId: string | null) => void;
+  goals?: {
+    averageScore: number;
+    passingRate: number;
+  };
 }
 
 const ClassPerformanceChart: React.FC<ClassPerformanceChartProps> = ({ 
   classPerformances,
-  onClassSelect 
+  onClassSelect,
+  goals = { averageScore: 70, passingRate: 80 }
 }) => {
   const data = {
     labels: classPerformances.map(c => c.className),
@@ -49,9 +54,24 @@ const ClassPerformanceChart: React.FC<ClassPerformanceChartProps> = ({
     plugins: {
       tooltip: {
         callbacks: {
+          title: ([context]: TooltipItem<'bar'>[]) => `Turma: ${context.label}`,
           label: (context: TooltipItem<'bar'>) => {
             const label = context.dataset.label || '';
-            return `${label}: ${context.raw}${context.datasetIndex === 1 ? '%' : ''}`;
+            let value = context.raw as number;
+            let suffix = context.datasetIndex === 1 ? '%' : ' pts';
+            
+            if (context.datasetIndex === 0) {
+              const diff = value - goals.averageScore;
+              suffix += ` (${diff > 0 ? '+' : ''}${diff.toFixed(1)} vs meta)`;
+            }
+            
+            return `${label}: ${value}${suffix}`;
+          },
+          afterLabel: (context: TooltipItem<'bar'>) => {
+            if (context.datasetIndex === 1) {
+              return `Meta: ${goals.passingRate}%`;
+            }
+            return '';
           }
         }
       }

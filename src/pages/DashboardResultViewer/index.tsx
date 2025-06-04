@@ -21,16 +21,41 @@ import {
 import { ContentArea, Header, Title, ViewSelector } from './styles';
 import { FiHelpCircle, FiHome, FiUser, FiUsers } from 'react-icons/fi';
 
+/**
+ * Componente principal para visualização e análise de desempenho acadêmico.
+ * 
+ * Este componente exibe diferentes visualizações de dados de desempenho (visão geral, por turma,
+ * por aluno e por questão) com capacidade de filtragem por período de tempo.
+ * 
+ * <DashboardResultViewer />
+ */
 const DashboardResultViewer: React.FC = () => {
+  // Estado que armazena o período de tempo selecionado para filtragem.
   const [timeframe, setTimeframe] = useState<TimeframeFilter>('month');
+  // Estado que armazena o modo de visualização atual.
   const [selectedView, setSelectedView] = useState<ViewMode>('overview');
+  // Estado que armazena a turma selecionada (quando aplicável).
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+  // Estado que armazena o aluno selecionado (quando aplicável).
   const [selectedStudent, setSelectedStudent] = useState<string | null>(null);
 
+  /**
+   * Manipulador para alteração do período de tempo.
+   * 
+   * @callback
+   * @param {TimeframeFilter} range - Novo período selecionado
+   */
   const handleTimeframeChange = useCallback((range: TimeframeFilter) => {
     setTimeframe(range);
   }, []);
 
+  /**
+   * Manipulador para alteração do modo de visualização.
+   * Reseta as seleções de turma e aluno ao mudar de visualização.
+   * 
+   * @callback
+   * @param {ViewMode} view - Novo modo de visualização selecionado
+   */
   const handleViewChange = useCallback((view: ViewMode) => {
     setSelectedView(view);
     setSelectedClass(null);

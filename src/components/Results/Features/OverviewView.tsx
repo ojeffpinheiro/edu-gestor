@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { ClassPerformance, ExamSummary, StudentResult } from '../../../utils/types/Assessment';
 import { useStrategicData } from '../../../hooks/useStrategicData';
 
-import ScoreDistributionChart from '../Charts/ScoreDistributionChart';
 import TemporalProgressChart from '../Charts/TemporalProgressChart';
 import ClassPerformanceChart from '../ClassPerformanceChart';
 
@@ -11,7 +10,6 @@ import LoadingSpinner from '../../shared/LoadingSpinner';
 import DashboardCard from '../DashboardCard';
 import EmptyState from '../EmptyState';
 import InstitutionalMetrics from '../InstitutionalMetrics';
-import PerformanceTrendSection from '../PerformanceTrendChart';
 
 import { 
   Container,
@@ -21,9 +19,17 @@ import {
   SlideButton,
   BulletsContainer,
   Bullet,
-  SlideTitle
+  SlideTitle,
+  KeyboardHint
 } from './styles/OverviewViewStyles';
 import { ProgressTrendChart } from '../Charts/ProgressTrendChart';
+import { AlertPanel } from '../AlertPanel';
+
+interface SlideItem {
+  key: string;
+  title: string;
+  component: React.ReactNode;
+}
 
 interface OverviewViewProps {
   examSummaries: ExamSummary[];
@@ -43,58 +49,90 @@ const OverviewView: React.FC<OverviewViewProps> = ({
   error,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { metrics } = useStrategicData(examSummaries, classPerformances, studentResults);
-
-  const distributionData = useMemo(() => {
-    const allScores = examSummaries.flatMap(exam =>
-      exam.results?.map(result => result.totalScore) || []
-    );
-
-    const scoreCounts = allScores.reduce((acc, score) => {
-      acc[score] = (acc[score] || 0) + 1;
-      return acc;
-    }, {} as Record<number, number>);
-
-    return Object.entries(scoreCounts).map(([score, count]) => ({
-      score: Number(score),
-      count
-    }));
-  }, [examSummaries]);
+  const { metrics, alerts } = useStrategicData(examSummaries, classPerformances, studentResults);
 
   const hasData = examSummaries.length > 0 && classPerformances.length > 0;
 
-  const slides = [
-    <DashboardCard key="performance" title="Desempenho por Turma" fullWidth>
-      <ClassPerformanceChart 
+  // Funções de navegação memoizadas
+  const totalSlides = 4; // Definir como constante ou calcular com base nos slides
+
+  const nextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev + 1) % totalSlides);
+  }, [totalSlides]);
+
+  const prevSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
+  }, [totalSlides]);
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index);
+  }, []);
+
+  // Navegação por teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (document.activeElement?.tagName === 'INPUT' || 
+          document.activeElement?.tagName === 'TEXTAREA' ||
+          document.activeElement?.getAttribute('contenteditable') === 'true') {
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowLeft': prevSlide(); break;
+        case 'ArrowRight': nextSlide(); break;
+        case 'Home': goToSlide(0); break;
+        case 'End': goToSlide(totalSlides - 1); break;
+        case '1': case '2': case '3': case '4': 
+          goToSlide(Number(e.key) - 1); break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [prevSlide, nextSlide, goToSlide, totalSlides]);
+
+  // Slides config
+  const slides = useMemo(() => {
+  const slideItems: SlideItem[] = [
+    {
+      key: "performance",
+      title: "Desempenho por Turma",
+      component: <ClassPerformanceChart 
         classPerformances={classPerformances} 
         onClassSelect={onClassSelect} 
       />
-    </DashboardCard>,
-    <DashboardCard key="progress" title="Progresso Temporal" fullWidth>
-      <TemporalProgressChart examSummaries={examSummaries} />
-    </DashboardCard>,
-    <DashboardCard key="trend" title="Tendência de Desempenho" fullWidth>
-      <ProgressTrendChart examSummaries={examSummaries} />
-    </DashboardCard>,
-    <DashboardCard key="distribution" title="Distribuição de Notas" fullWidth>
-      <ScoreDistributionChart data={distributionData} />
-    </DashboardCard>
+    },
+    {
+      key: "progress",
+      title: "Progresso Temporal",
+      component: <TemporalProgressChart examSummaries={examSummaries} />
+    },
+    {
+      key: "trend",
+      title: "Tendência de Desempenho",
+      component: <ProgressTrendChart examSummaries={examSummaries} />
+    },
+    {
+      key: "alerts",
+      title: "Alertas Prioritários",
+      component: <AlertPanel 
+        alerts={alerts} 
+        onSelectClass={(classId) => {
+          onClassSelect(classId);
+          // Remova ou substitua setSelectedView se não estiver sendo usado
+        }} 
+      />
+    }
   ];
 
-  const totalSlides = slides.length;
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % totalSlides);
-  };
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + totalSlides) % totalSlides);
-  };
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
+  return slideItems.map(item => (
+    <DashboardCard key={item.key} title={item.title} fullWidth>
+      {item.component}
+    </DashboardCard>
+  ));
+}, [classPerformances, examSummaries, alerts, onClassSelect]);
+  
+  
   if (isLoading) return <LoadingSpinner />;
   if (error) return <EmptyState message={`Erro ao carregar dados: ${error.message}`} />;
 
@@ -105,9 +143,7 @@ const OverviewView: React.FC<OverviewViewProps> = ({
           <InstitutionalMetrics metrics={metrics} />
 
           <GraphsContainer>
-            <SlideTitle>
-              Visualizações de Dados
-            </SlideTitle>
+            <SlideTitle>Visualizações de Dados</SlideTitle>
             
             <SlideContainer>
               {slides[currentSlide]}
@@ -134,6 +170,10 @@ const OverviewView: React.FC<OverviewViewProps> = ({
               </SlideControls>
             </SlideContainer>
           </GraphsContainer>
+
+          <KeyboardHint>
+            Navegação: <kbd>←</kbd> <kbd>→</kbd> ou <kbd>1</kbd>-<kbd>4</kbd> para slides
+          </KeyboardHint>
         </>
       ) : (
         <EmptyState message="Nenhum dado disponível para exibição" />
