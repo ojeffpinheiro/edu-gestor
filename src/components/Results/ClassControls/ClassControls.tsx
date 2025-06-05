@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ClassPerformance } from '../../../utils/types/Assessment';
 import ClassSelector from '../ClassSelector';
-import AdvancedFilters from '../AdvancedFilters';
 import SubjectSelector from '../SubjectSelector';
 import { useFilters } from '../../../hooks/userResultsFilters';
+import AdvancedFilters from '../AdvancedFilters';
 
 interface ClassControlsProps {
   classPerformances: ClassPerformance[];
@@ -36,6 +36,11 @@ const ClassControls: React.FC<ClassControlsProps> = ({
         currentFilters={filters}
         onFilterChange={setFilter}
         onReset={resetFilters}
+        onApply={(selectedFilters) => {
+          // Handle apply logic here, e.g., filter results based on selected filters
+          console.log('Applied Filters:', selectedFilters);
+        }}
+        isLoading={false} // Replace with actual loading state if needed
       />
 
       {currentClass.subjects && currentClass.subjects.length > 0 && (

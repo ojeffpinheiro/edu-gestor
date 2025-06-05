@@ -1,7 +1,7 @@
 import React from 'react'
 import { ClassPerformance, Subject } from '../../utils/types/Assessment';
-import AdvancedFilters, { FilterState } from './AdvancedFilters';
 import ClassSelector from './ClassSelector';
+import AdvancedFilters, { FilterState } from './AdvancedFilters';
 
 interface AvailableOptions {
   periods: string[];
@@ -39,6 +39,11 @@ const ClassControlsSection = ({
       currentFilters={filters}
       onFilterChange={setFilter}
       onReset={resetFilters}
+      onApply={(selectedFilters) => {
+        // Handle apply logic here, e.g., filter results based on selected filters
+        console.log('Applied Filters:', selectedFilters);
+      }}
+      isLoading={false} // Replace with actual loading state if needed
     />
   </div>
 );
