@@ -23,6 +23,22 @@ interface ComparisonTabsProps {
   onTabChange: (tab: 'ranking' | 'value-added' | 'equity') => void;
 }
 
+/**
+ * Componente de abas para navegação entre diferentes modos de comparação.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Array<'ranking' | 'value-added' | 'equity'>} props.tabs - Abas disponíveis
+ * @param {string} [props.defaultTab] - Aba selecionada por padrão (opcional)
+ * @param {Function} props.onTabChange - Callback para mudança de aba
+ * @returns {JSX.Element} Componente de abas de comparação
+ * 
+ * @example
+ * <ComparisonTabs
+ *   tabs={['ranking', 'value-added']}
+ *   defaultTab="ranking"
+ *   onTabChange={handleTabChange}
+ * />
+ */
 const ComparisonTabs: React.FC<ComparisonTabsProps> = ({ tabs, defaultTab, onTabChange }) => {
   const [activeTab, setActiveTab] = useState(defaultTab || tabs[0]);
 

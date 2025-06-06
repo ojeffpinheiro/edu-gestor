@@ -7,6 +7,20 @@ interface RadarChartViewProps {
   rubrics?: EvaluationRubric[];
 }
 
+/**
+ * Visualização em radar chart para análise de habilidades/rubricas.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ClassPerformance} props.currentClass - Dados da turma para análise
+ * @param {EvaluationRubric[]} [props.rubrics] - Rubricas de avaliação (opcional)
+ * @returns {JSX.Element} Gráfico radar de habilidades
+ * 
+ * @example
+ * <RadarChartView 
+ *   currentClass={selectedClass} 
+ *   rubrics={evaluationRubrics} 
+ * />
+ */
 const RadarChartView: React.FC<RadarChartViewProps> = ({ currentClass, rubrics }) => {
   // Transformar os dados para o formato esperado pelo RadarChart
   const radarData = rubrics?.map(rubric => ({

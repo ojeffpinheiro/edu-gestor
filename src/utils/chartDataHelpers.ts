@@ -31,5 +31,3 @@ export const prepareComparisonData = (
       ]
     };
 };
-
-// Outras funções auxiliares para gráficos...

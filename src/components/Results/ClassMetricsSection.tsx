@@ -12,6 +12,13 @@ const MetricsContainer = styled.div`
   margin-bottom: 2rem;
 `;
 
+/**
+ * Componente que exibe métricas de turma em cards.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ClassMetricsType | null} props.metrics - Dados das métricas da turma
+ * @returns {JSX.Element} Seção de métricas da turma
+ */
 const ClassMetricsSection = ({ metrics }: { metrics: ClassMetricsType | null }) => (
     <MetricsContainer>
         <MetricCard

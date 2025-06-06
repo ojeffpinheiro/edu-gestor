@@ -13,6 +13,24 @@ interface ClassViewProps {
     onTabChange: (tab: ChartTab) => void;
 }
 
+/**
+ * Componente de abas para visualização de diferentes análises de turma.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ChartTab} props.activeTab - Aba atualmente selecionada
+ * @param {ClassPerformance} props.classPerformance - Dados de desempenho da turma
+ * @param {EvaluationRubric[]} [props.rubrics] - Rubricas para análise de habilidades (opcional)
+ * @param {Function} props.onTabChange - Callback para mudança de aba
+ * @returns {JSX.Element} Container com abas e visualizações de análise
+ * 
+ * @example
+ * <ClassChartTabs
+ *   activeTab="progress"
+ *   classPerformance={selectedClass}
+ *   rubrics={evaluationRubrics}
+ *   onTabChange={handleTabChange}
+ * />
+ */
 const ClassChartTabs = ({ activeTab, onTabChange, classPerformance, rubrics }: ClassViewProps) => (
     <DashboardCard title="Análise de Desempenho">
         <ChartTabs>

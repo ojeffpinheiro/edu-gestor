@@ -7,6 +7,16 @@ interface DistributionViewProps {
   examSummaries: ClassPerformance['examResults'];
 }
 
+/**
+ * Visualização de distribuição de notas para múltiplos exames.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ExamSummary[]} props.examSummaries - Resultados dos exames para análise
+ * @returns {JSX.Element} Gráficos de distribuição de notas para cada exame
+ * 
+ * @example
+ * <DistributionView examSummaries={classData.examResults} />
+ */
 const DistributionView: React.FC<DistributionViewProps> = ({ examSummaries }) => {
   // Processar dados para cada exame individualmente
   const processExamData = (exam: ExamSummary) => {

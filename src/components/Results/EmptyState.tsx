@@ -47,6 +47,17 @@ interface EmptyStateProps {
   type?: 'default' | 'search' | 'users';
 }
 
+/**
+ * Componente que exibe um estado vazio com ilustração, mensagem e ação opcional.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {string} props.message - Mensagem a ser exibida no estado vazio
+ * @param {React.ReactNode} [props.illustration] - Elemento de ilustração personalizado (opcional)
+ * @param {React.ReactNode} [props.action] - Ação/CTA a ser exibido (opcional)
+ * @param {string} [props.className] - Classes CSS adicionais (opcional)
+ * @param {'default' | 'search' | 'users'} [props.type='default'] - Tipo de ícone padrão a ser exibido (opcional)
+ * @returns {JSX.Element} Componente de estado vazio
+ */
 const EmptyState: React.FC<EmptyStateProps> = ({
   message,
   illustration,

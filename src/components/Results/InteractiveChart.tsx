@@ -20,6 +20,22 @@ export interface InteractiveChartProps {
   onElementClick?: (element: { label: string; value: number; datasetIndex: number }) => void;
 }
 
+/**
+ * Gráfico interativo com suporte a eventos de clique nos elementos.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Object} props.data - Dados do gráfico no formato Chart.js
+ * @param {Object} [props.options] - Opções de configuração do gráfico (opcional)
+ * @param {Function} [props.onElementClick] - Callback para clique em elementos do gráfico (opcional)
+ * @returns {JSX.Element} Gráfico de barras interativo
+ * 
+ * @example
+ * <InteractiveChart
+ *   data={chartData}
+ *   options={chartOptions}
+ *   onElementClick={handleBarClick}
+ * />
+ */
 const InteractiveChart: React.FC<InteractiveChartProps> = ({ data, options, onElementClick }) => {
   const chartRef = React.useRef<Chart<'bar', number[], string> | null>(null);
 

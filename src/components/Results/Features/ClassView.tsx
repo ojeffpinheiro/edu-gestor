@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
-// Tipos
 import {
   ClassPerformance,
   EvaluationRubric,
@@ -9,33 +8,27 @@ import {
   ExamSummary
 } from '../../../utils/types/Assessment';
 
-// Hooks
 import { useFilters } from '../../../hooks/userResultsFilters';
 import { useStudentResults } from '../../../hooks/useStudentResults';
 import { useClassMetrics } from '../../../hooks/useClassMetrics';
 
-// Utils
 import { prepareComparisonData } from '../../../utils/chartDataHelpers';
 
-// Componentes UI
 import EmptyState from '../EmptyState';
 import ClassMetricsSection from '../ClassMetricsSection';
 import SubjectSelector from '../SubjectSelector';
-import InteractiveChart, { InteractiveChartProps } from '../InteractiveChart';
+import InteractiveChart from '../InteractiveChart';
 import ClassResultsTable from '../ClassResultsTable';
 import EnhancedStudentDetailModal from '../EnhancedStudentDetailModal';
 import ClassChartTabs from '../ClassChartTabs';
 import ClassComparisonSection from '../ClassComparisonSection';
 import StudentDetailModalWrapper from '../StudentDetailModalWrapper';
+import BenchmarkSection from '../BenchmarkSection/BenchmarkSection';
+import ClassViewToolbar from '../ClassViewToolbar';
 
-// Graficos
-import ComparisonBarChart from '../Charts/ComparisonBarChart';
 import ClassSelectorChart from '../Charts/ClassSelectorChart';
 
-import BenchmarkSection from '../BenchmarkSection/BenchmarkSection';
-
-import ClassViewToolbar from '../ClassViewToolbar';
-import { ChartTabs, ClassViewContainer, MetricCard, ModernButton, ModernSelect, ModernToolbar, TabButton } from './styles/ClassViewStyles';
+import { ClassViewContainer } from './styles/ClassViewStyles';
 
 interface ClassViewProps {
   classPerformances: ClassPerformance[];
@@ -50,198 +43,6 @@ interface ClassPerformanceWithSubjects extends ClassPerformance {
   subjects: { name: string; averageScore: number; schoolAverage: number }[];
 }
 
-// Componente de métricas animadas
-interface MetricDisplayProps {
-  value: number;
-  label: string;
-  trend?: 'up' | 'down' | 'stable';
-  suffix?: string;
-  prefix?: string;
-  delay?: number;
-}
-
-const useIntersectionObserver = (options = {}) => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsIntersecting(entry.isIntersecting);
-    }, options);
-
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
-
-    return () => observer.disconnect();
-  }, [options]);
-
-  return [ref, isIntersecting];
-};
-
-export const AnimatedMetric: React.FC<MetricDisplayProps> = ({
-  value,
-  label,
-  trend = 'stable',
-  suffix = '',
-  prefix = '',
-  delay = 0
-}) => {
-  const [displayValue, setDisplayValue] = useState(0);
-  const [isVisible] = useIntersectionObserver({ threshold: 0.3 });
-
-  useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        const duration = 2000;
-        const steps = 60;
-        const increment = value / steps;
-        let current = 0;
-
-        const counter = setInterval(() => {
-          current += increment;
-          if (current >= value) {
-            setDisplayValue(value);
-            clearInterval(counter);
-          } else {
-            setDisplayValue(Math.floor(current));
-          }
-        }, duration / steps);
-
-        return () => clearInterval(counter);
-      }, delay);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isVisible, value, delay]);
-
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'up': return '📈';
-      case 'down': return '📉';
-      default: return '➡️';
-    }
-  };
-
-  return (
-    <MetricCard $trend={trend}>
-      <span className="metric-value">
-        {prefix}{displayValue.toLocaleString()}{suffix}
-      </span>
-      <div className="metric-label">{label}</div>
-      <div className={`metric-trend ${trend}`}>
-        {getTrendIcon(trend)} {trend === 'up' ? '+5.2%' : trend === 'down' ? '-2.1%' : '0%'}
-      </div>
-    </MetricCard>
-  );
-};
-
-// Toolbar moderna
-interface ModernClassToolbarProps {
-  activeView: 'class' | 'school';
-  onViewChange: (view: 'class' | 'school') => void;
-  selectedClass: string | null;
-  classes: Array<{ classId: string; className: string }>;
-  onClassSelect: (classId: string | null) => void;
-  selectedSubject: string | null;
-  subjects: string[];
-  onSubjectSelect: (subject: string | null) => void;
-}
-
-export const ModernClassToolbar: React.FC<ModernClassToolbarProps> = ({
-  activeView,
-  onViewChange,
-  selectedClass,
-  classes,
-  onClassSelect,
-  selectedSubject,
-  subjects,
-  onSubjectSelect
-}) => {
-  return (
-    <ModernToolbar>
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <ModernButton
-          $variant={activeView === 'class' ? 'primary' : 'ghost'}
-          onClick={() => onViewChange('class')}
-        >
-          📊 Turma
-        </ModernButton>
-        <ModernButton
-          $variant={activeView === 'school' ? 'primary' : 'ghost'}
-          onClick={() => onViewChange('school')}
-        >
-          🏫 Escola
-        </ModernButton>
-      </div>
-
-      <ModernSelect
-        value={selectedClass || ''}
-        onChange={(e) => onClassSelect(e.target.value || null)}
-      >
-        <option value="">Selecionar Turma</option>
-        {classes.map(cls => (
-          <option key={cls.classId} value={cls.classId}>
-            {cls.className}
-          </option>
-        ))}
-      </ModernSelect>
-
-      <ModernSelect
-        value={selectedSubject || ''}
-        onChange={(e) => onSubjectSelect(e.target.value || null)}
-      >
-        <option value="">Todas as Disciplinas</option>
-        {subjects.map(subject => (
-          <option key={subject} value={subject}>
-            {subject}
-          </option>
-        ))}
-      </ModernSelect>
-
-      <ModernButton $variant="secondary" $size="sm">
-        📥 Exportar
-      </ModernButton>
-    </ModernToolbar>
-  );
-};
-
-// Tabs modernas com indicador fluido
-interface ModernTabsProps {
-  tabs: Array<{ key: string; label: string; icon?: string }>;
-  activeTab: string;
-  onTabChange: (tab: string) => void;
-}
-
-export const ModernTabs: React.FC<ModernTabsProps> = ({
-  tabs,
-  activeTab,
-  onTabChange
-}) => {
-  return (
-    <ChartTabs>
-      {tabs.map((tab) => (
-        <TabButton
-          key={tab.key}
-          $active={activeTab === tab.key}
-          onClick={() => onTabChange(tab.key)}
-        >
-          {tab.icon && <span>{tab.icon}</span>}
-          {tab.label}
-        </TabButton>
-      ))}
-    </ChartTabs>
-  );
-};
-
-/**
- * Componente principal para visualização de desempenho de turmas
- * @param {ClassPerformance[]} classPerformances - Dados de desempenho das turmas
- * @param {string|null} selectedClass - ID da turma selecionada
- * @param {(classId: string | null) => void} onClassSelect - Handler para seleção de turma
- * @param {EvaluationRubric[]} [rubrics] - Rubricas de avaliação opcionais
- * @param {boolean} [isLoading] - Flag de carregamento
- */
 const ClassView: React.FC<ClassViewProps> = ({
   classPerformances,
   selectedClass,
@@ -281,7 +82,7 @@ const ClassView: React.FC<ClassViewProps> = ({
     const periods = new Set(classPerformances
       .map((c: ClassPerformance) => c.academicPeriod)
       .filter((p): p is string => !!p));
-    return Array.from(periods);
+      return Array.from(periods);
   }, [classPerformances]);
 
   const filteredClassData = useMemo(() => {
@@ -416,6 +217,7 @@ const ClassView: React.FC<ClassViewProps> = ({
           onStudentSelect(null);
         }}
       />
+      
       {selectedStudent && (
         <EnhancedStudentDetailModal
           student={selectedStudent}

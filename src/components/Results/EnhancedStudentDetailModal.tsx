@@ -10,6 +10,14 @@ interface EnhancedStudentDetailModalProps {
 const TAB_OPTIONS = ['performance', 'progress', 'skills'] as const;
 type ActiveTab = typeof TAB_OPTIONS[number];
 
+/**
+ * Modal detalhado com informações do aluno, incluindo gráficos de desempenho, progresso e habilidades.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {StudentResult} props.student - Dados do aluno a serem exibidos
+ * @param {Function} props.onClose - Função chamada ao fechar o modal
+ * @returns {JSX.Element} Modal de detalhes do aluno
+ */
 const EnhancedStudentDetailModal: React.FC<EnhancedStudentDetailModalProps> = ({ 
   student, 
   onClose 

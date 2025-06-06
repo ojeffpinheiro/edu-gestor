@@ -67,6 +67,28 @@ const CardIcon = styled.div`
   display: flex;
 `;
 
+/**
+ * Componente de cartão reutilizável para o dashboard com cabeçalho e conteúdo.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {string} props.title - Título do cartão (obrigatório)
+ * @param {string} [props.description] - Descrição opcional do cartão
+ * @param {React.ReactNode} props.children - Conteúdo principal do cartão
+ * @param {boolean} [props.fullWidth=false] - Se o cartão deve ocupar 100% da largura
+ * @param {string} [props.className] - Classes CSS adicionais
+ * @param {React.ReactNode} [props.icon] - Ícone opcional para o cabeçalho
+ * @param {Function} [props.onClick] - Callback para clique no cartão
+ * @returns {JSX.Element} Componente de cartão estilizado para dashboard
+ * 
+ * @example
+ * <DashboardCard
+ *   title="Desempenho da Turma"
+ *   description="Média geral e evolução"
+ *   icon={<FiBarChart2 />}
+ * >
+ *   <PerformanceChart data={data} />
+ * </DashboardCard>
+ */
 const DashboardCard: React.FC<DashboardCardProps> = ({
   title,
   description,

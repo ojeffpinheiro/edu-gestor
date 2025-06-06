@@ -9,6 +9,16 @@ interface ClassResultsTableProps {
   onStudentSelect: (studentId: string) => void;
 }
 
+/**
+ * Tabela que exibe os resultados da turma com filtro por período de tempo.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Array<StudentResult>} props.students - Lista de alunos
+ * @param {Array<ExamResult>} props.examResults - Resultados dos exames
+ * @param {'week' | 'month' | 'quarter' | 'semester' | 'year'} props.timeRange - Período de tempo para filtrar os resultados
+ * @param {Function} props.onStudentSelect - Função chamada ao selecionar um aluno
+ * @returns {JSX.Element} Tabela de resultados da turma
+ */
 const ClassResultsTable: React.FC<ClassResultsTableProps> = ({ 
   students, 
   examResults,

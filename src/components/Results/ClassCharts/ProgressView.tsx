@@ -7,6 +7,16 @@ interface ProgressViewProps {
   currentClass: ClassPerformance;
 }
 
+/**
+ * Visualização de progresso temporal com gráfico de evolução de notas.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ClassPerformance} props.currentClass - Dados da turma para análise de progresso
+ * @returns {JSX.Element} Gráfico de progresso temporal
+ * 
+ * @example
+ * <ProgressView currentClass={selectedClass} />
+ */
 const ProgressView: React.FC<ProgressViewProps> = ({ currentClass }) => {
   // Preparar dados para o gráfico de progresso
   const progressData = currentClass.examResults

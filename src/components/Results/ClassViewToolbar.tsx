@@ -19,6 +19,31 @@ interface ClassViewToolbarProps {
   setSelectedSubject: (subject: string | null) => void;
 }
 
+/**
+ * Barra de ferramentas para controle da visualização de turmas com seletores.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ClassPerformance[]} props.classPerformances - Lista de turmas disponíveis
+ * @param {string | null} props.selectedClass - ID da turma selecionada
+ * @param {Function} props.onClassSelect - Callback para seleção de turma
+ * @param {string[]} props.availablePeriods - Períodos disponíveis para filtro
+ * @param {string | null} props.selectedPeriod - Período selecionado
+ * @param {Function} props.setSelectedPeriod - Callback para seleção de período
+ * @param {'class' | 'school'} props.activeView - Visualização ativa
+ * @param {Function} props.setActiveView - Callback para mudança de visualização
+ * @param {Array<{name: string}>} props.subjects - Disciplinas disponíveis
+ * @param {string | null} props.selectedSubject - Disciplina selecionada
+ * @param {Function} props.setSelectedSubject - Callback para seleção de disciplina
+ * @returns {JSX.Element} Barra de ferramentas com controles de visualização
+ * 
+ * @example
+ * <ClassViewToolbar
+ *   classPerformances={classes}
+ *   selectedClass={selectedClassId}
+ *   onClassSelect={handleClassSelect}
+ *   // ... outras props
+ * />
+ */
 const ClassViewToolbar: React.FC<ClassViewToolbarProps> = ({
     classPerformances,
     selectedClass,

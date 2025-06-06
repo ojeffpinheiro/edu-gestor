@@ -83,6 +83,30 @@ interface MetricCardProps {
     trend?: string;
 }
 
+/**
+ * Componente de cartão para exibição de métricas com ícone, valor e tendência.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {string} props.title - Título da métrica
+ * @param {string | number} props.value - Valor da métrica
+ * @param {string} [props.unit] - Unidade de medida (opcional)
+ * @param {React.ReactNode} props.icon - Ícone associado à métrica
+ * @param {string} props.color - Cor da borda superior (hex, rgb, etc)
+ * @param {string} props.bgColor - Cor de fundo do ícone
+ * @param {string} [props.trend] - Texto de tendência (opcional)
+ * @returns {JSX.Element} Cartão de métrica estilizado
+ * 
+ * @example
+ * <MetricCard
+ *   title="Média da Turma"
+ *   value={7.5}
+ *   unit="pts"
+ *   icon={<FiTrendingUp />}
+ *   color="#10b981"
+ *   bgColor="rgba(16, 185, 129, 0.1)"
+ *   trend="↗ 2.3 pts"
+ * />
+ */
 const MetricCard: React.FC<MetricCardProps> = ({
     title,
     value,

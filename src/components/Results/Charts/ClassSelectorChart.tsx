@@ -7,7 +7,29 @@ interface ClassSelectorChartProps {
   children: (selectedClasses: ClassPerformance[]) => React.ReactNode;
   onSelectionChange?: (selectedClasses: ClassPerformance[]) => void;
 }
-
+/**
+ * Componente que combina seleção de turmas com visualização de gráfico.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {ClassPerformance[]} props.classes - Lista de turmas disponíveis
+ * @param {string[]} [props.initialSelection=[]] - IDs das turmas selecionadas inicialmente
+ * @param {Function} props.children - Função de renderização que recebe as turmas selecionadas
+ * @param {Function} [props.onSelectionChange] - Callback chamado quando a seleção muda
+ * @returns {JSX.Element} Componente com painel de seleção e área de gráfico
+ * 
+ * @example
+ * <ClassSelectorChart
+ *   classes={classPerformances}
+ *   onSelectionChange={handleSelectionChange}
+ * >
+ *   {(selectedClasses) => (
+ *     <ComparisonBarChart 
+ *       classes={selectedClasses} 
+ *       metric="averageScore" 
+ *     />
+ *   )}
+ * </ClassSelectorChart>
+ */
 const ClassSelectorChart: React.FC<ClassSelectorChartProps> = ({
   classes,
   initialSelection = [],

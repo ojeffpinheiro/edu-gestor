@@ -63,6 +63,16 @@ interface SubjectSelectorProps {
   className?: string;
 }
 
+/**
+ * Componente de seleção de disciplinas com estilo personalizado.
+ * 
+ * @param {Object} props - Propriedades do componente
+ * @param {Array<{name: string}>} props.subjects - Lista de disciplinas disponíveis
+ * @param {string | null} props.selectedSubject - Disciplina atualmente selecionada
+ * @param {Function} props.onSelect - Função chamada ao selecionar uma disciplina
+ * @param {string} [props.className] - Classes CSS adicionais (opcional)
+ * @returns {JSX.Element} Seletor de disciplinas
+ */
 const SubjectSelector: React.FC<SubjectSelectorProps> = ({
   subjects,
   selectedSubject,
