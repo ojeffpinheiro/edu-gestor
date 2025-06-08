@@ -1,7 +1,7 @@
 // hooks/useClassroomLayout.ts
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { LayoutConfig } from '../utils/types/Team';
-import { initializeLayout } from '../utils/classroomUtils';
+import { generateLayout, initializeLayout, Template } from '../utils/classroomUtils';
 
 export const useClassroomLayout = (initialRows: number, initialColumns: number) => {
     const [layout, setLayout] = useState<LayoutConfig>({
@@ -13,29 +13,43 @@ export const useClassroomLayout = (initialRows: number, initialColumns: number) 
     const [editLayoutMode, setEditLayoutMode] = useState(false);
     const [tempRows, setTempRows] = useState(5);
 
-    const addRow = () => {
-        if (layout.rows >= 10) return;
-        const newRows = layout.rows + 1;
-        initializeLayout(newRows, layout.columns);
-        setTempRows(newRows);
-    };
+    // Limites de redimensionamento
+    const MIN_ROWS = 3;
+    const MAX_ROWS = 10;
+    const MIN_COLS = 3;
+    const MAX_COLS = 8;
 
-     const removeRow = () => {
-        if (layout.rows <= 3) return; // Min 3 rows
-        const newRows = layout.rows - 1;
-
-        // Filter out seats that are in the removed row
-        const filteredSeats = layout.seats.filter(
-            seat => seat.position.row < newRows
-        );
-
-        setLayout({
-            rows: newRows,
-            columns: layout.columns,
-            seats: filteredSeats
+    const addRow = useCallback(() => {
+        setLayout(prev => {
+            if (prev.rows >= MAX_ROWS) return prev;
+            return generateLayout(prev.rows + 1, prev.columns);
         });
-        setTempRows(newRows);
-    };
+    }, []);
+
+    const removeRow = useCallback(() => {
+        setLayout(prev => {
+            if (prev.rows <= MIN_ROWS) return prev;
+            return generateLayout(prev.rows - 1, prev.columns);
+        });
+    }, []);
+
+    const addColumn = useCallback(() => {
+        setLayout(prev => {
+            if (prev.columns >= MAX_COLS) return prev;
+            return generateLayout(prev.rows, prev.columns + 1);
+        });
+    }, []);
+
+    const removeColumn = useCallback(() => {
+        setLayout(prev => {
+            if (prev.columns <= MIN_COLS) return prev;
+            return generateLayout(prev.rows, prev.columns - 1);
+        });
+    }, []);
+
+    const applyTemplate = useCallback((template: Template) => {
+        setLayout(generateLayout(layout.rows, layout.columns, template));
+    }, [layout.rows, layout.columns]);
 
     const loadLayout = (
         savedLayout: LayoutConfig,
@@ -56,15 +70,22 @@ export const useClassroomLayout = (initialRows: number, initialColumns: number) 
         }
     };
 
-    return { 
-        layout, 
+    return {
+        layout,
         savedLayouts,
         editLayoutMode,
-        setLayout, 
-        setSavedLayouts, 
-        addRow, 
-        removeRow, 
+        addColumn,
+        removeColumn,
+        applyTemplate,
+        setLayout,
+        setSavedLayouts,
+        addRow,
+        removeRow,
         toggleEditLayout,
         loadLayout,
-     };
+        canAddRow: layout.rows < MAX_ROWS,
+        canRemoveRow: layout.rows > MIN_ROWS,
+        canAddColumn: layout.columns < MAX_COLS,
+        canRemoveColumn: layout.columns > MIN_COLS
+    };
 };

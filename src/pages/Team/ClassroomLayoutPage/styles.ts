@@ -11,52 +11,6 @@ export const Header = styled.header`
   margin-bottom: 2rem;
 `;
 
-export const TableView = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  box-shadow: var(--shadow-sm);
-  background-color: var(--color-card);
-  border-radius: var(--border-radius-md);
-  overflow: hidden;
-`;
-
-export const TableHeader = styled.thead`
-  background-color: var(--color-primary);
-  color: var(--color-text-on-primary);
-  
-  th {
-    padding: 1rem;
-    text-align: left;
-  }
-`;
-
-export const TableRow = styled.tr`
-  cursor: pointer;
-  transition: background-color 0.2s;
-  
-  &:nth-child(even) {
-    background-color: var(--color-background-secondary);
-  }
-  
-  &:hover {
-    background-color: var(--color-background-third);
-  }
-  
-  td {
-    padding: 0.75rem 1rem;
-    border-bottom: 1px solid var(--color-border-light);
-  }
-`;
-
-export const AttendanceBadge = styled.span<{ color: string }>`
-  display: inline-block;
-  padding: 0.25rem 0.5rem;
-  border-radius: var(--border-radius-sm);
-  font-weight: 500;
-  background-color: ${props => props.color};
-  color: white;
-`;
-
 export const LayoutContainer = styled.div`
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
@@ -65,25 +19,6 @@ export const LayoutContainer = styled.div`
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
   }
-`;
-
-export const StudentsPanel = styled.div`
-  background-color: var(--color-card);
-  border-radius: var(--border-radius-md);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  
-  h3 {
-    margin-bottom: 1rem;
-  }
-`;
-
-export const StudentList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-height: 500px;
-  overflow-y: auto;
 `;
 
 export const StudentItem = styled.div<{ isDragging: boolean; isSelected: boolean }>`

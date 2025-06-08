@@ -71,15 +71,15 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
   }, [seat]);
 
   // Available students (not assigned to other seats)
-  const availableStudents = useMemo(() => 
+  const availableStudents = useMemo(() =>
     students.filter(student => {
       if (seat?.studentId === student.id) return true;
       return !seats.some(s => s.studentId === student.id && s.id !== seat?.id);
-    }), 
+    }),
     [students, seats, seat?.id, seat?.studentId]
   );
 
-  const selectedStudent = useMemo(() => 
+  const selectedStudent = useMemo(() =>
     formData.studentId ? students.find(s => s.id === formData.studentId) : null,
     [formData.studentId, students]
   );
@@ -102,13 +102,19 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
     return Object.keys(newErrors).length === 0;
   }, [formData, students]);
 
+  useEffect(() => {
+    if (formData.studentId && formData.priority) {
+      validateForm();
+    }
+  }, [formData.studentId, formData.priority, validateForm]);
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm() || !seat) return;
 
     setIsLoading(true);
-    
+
     try {
       const updatedSeat: SeatType = {
         ...seat,
