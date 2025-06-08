@@ -51,7 +51,7 @@ interface AlertPanelProps {
   onSelectClass?: (classId: string) => void;
 }
 
-export const AlertPanel: React.FC<AlertPanelProps> = ({ alerts, onSelectClass }) => {
+const AlertPanel: React.FC<AlertPanelProps> = ({ alerts, onSelectClass }) => {
   const getIcon = (severity: string) => {
     switch (severity) {
       case 'critical': return <FiAlertTriangle />;
@@ -81,3 +81,5 @@ export const AlertPanel: React.FC<AlertPanelProps> = ({ alerts, onSelectClass })
     </div>
   );
 };
+
+export default AlertPanel;

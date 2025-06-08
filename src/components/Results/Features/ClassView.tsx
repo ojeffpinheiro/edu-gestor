@@ -43,6 +43,14 @@ interface ClassPerformanceWithSubjects extends ClassPerformance {
   subjects: { name: string; averageScore: number; schoolAverage: number }[];
 }
 
+/**
+ * Componente principal para visualização de desempenho de turmas
+ * @param {ClassPerformance[]} classPerformances - Dados de desempenho das turmas
+ * @param {string|null} selectedClass - ID da turma selecionada
+ * @param {(classId: string | null) => void} onClassSelect - Handler para seleção de turma
+ * @param {EvaluationRubric[]} [rubrics] - Rubricas de avaliação opcionais
+ * @param {boolean} [isLoading] - Flag de carregamento
+ */
 const ClassView: React.FC<ClassViewProps> = ({
   classPerformances,
   selectedClass,

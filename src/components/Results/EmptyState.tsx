@@ -44,7 +44,7 @@ interface EmptyStateProps {
   illustration?: React.ReactNode;
   action?: React.ReactNode;
   className?: string;
-  type?: 'default' | 'search' | 'users';
+  type?: 'default' | 'search' | 'users' | 'error';
 }
 
 /**

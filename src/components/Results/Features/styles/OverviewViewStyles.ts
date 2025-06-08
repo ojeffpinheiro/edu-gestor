@@ -257,3 +257,65 @@ export const KeyboardHint = styled.div`
     display: none;
   }
 `;
+
+export const FiltersContainer = styled.div`
+  display: flex;
+  gap: 16px;
+  margin: 20px 0;
+  padding: 16px;
+  background-color: var(--color-background-secondary);
+  border-radius: var(--border-radius-md);
+  flex-wrap: wrap;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  & > div {
+    flex: 1;
+    min-width: 200px;
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+  }
+`;
+
+export const FilterSelect = styled.select`
+  width: 100%;
+  padding: var(--space-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  background-color: var(--color-background);
+  
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
+  }
+
+  /* Estilo para selects múltiplos */
+  &[multiple] {
+    min-height: 100px;
+    padding: var(--space-xs);
+
+    option {
+      padding: var(--space-xs);
+      margin: var(--space-xs) 0;
+      border-radius: var(--border-radius-xs);
+      
+      &:checked {
+        background-color: var(--color-primary-light);
+        color: var(--color-primary-dark);
+      }
+    }
+  }
+`;
