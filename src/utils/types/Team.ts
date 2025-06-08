@@ -1,5 +1,6 @@
 import { FaBook, FaBrain, FaEye, FaUsers } from "react-icons/fa";
 import { FiAlertTriangle, FiTarget } from "react-icons/fi";
+import { StudentFormData } from "./BasicUser";
 
 export type LayoutConfig = {
   rows: number;
@@ -112,4 +113,18 @@ export interface DailyVerification {
   verifiedSeats: string[];
   mismatchedSeats?: string[];
   totalStudents?: number;
+  absentees?: string[];
+  conductedBy?: string;
+  notes?: string;
+}
+
+export interface AttendanceReport {
+  date: string;
+  totalStudents: number;
+  presentCount: number;
+  absentCount: number;
+  mismatchCount: number;
+  attendancePercentage: number;
+  absentStudents: StudentFormData[];
+  mismatchStudents: StudentFormData[];
 }

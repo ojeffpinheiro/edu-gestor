@@ -38,6 +38,7 @@ import {
 } from './styles';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 import SearchBar from '../../../components/Team/SearchBar';
+import { AttendanceReport, DailyVerification } from '../../../utils/types/Team';
 
 const MAX_COLUMNS = 5;
 
@@ -50,6 +51,10 @@ const ClassroomLayoutPage: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filteredStudents, setFilteredStudents] = useState<StudentFormData[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
+    
+  const [conferenceHistory, setConferenceHistory] = useState<DailyVerification[]>([]);
+  const [currentReport, setCurrentReport] = useState<AttendanceReport | null>(null);
+
 
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
@@ -318,6 +323,7 @@ const ClassroomLayoutPage: React.FC = () => {
                                             </ConferenceControlPanel>
                                         </>
                                     )}
+                                    
                                     <VerificationHistory
                                         history={verificationHistory}
                                         viewDayDetails={viewDayDetails}
