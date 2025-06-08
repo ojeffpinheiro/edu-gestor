@@ -36,6 +36,8 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
+import { StudentFormData } from '../../../utils/types/BasicUser';
+import SearchBar from '../../../components/Team/SearchBar';
 
 const MAX_COLUMNS = 5;
 
@@ -46,6 +48,8 @@ const ClassroomLayoutPage: React.FC = () => {
     const [swapMode, setSwapMode] = useState(false);
     const [view, setView] = useState<'table' | 'layout'>('layout');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [filteredStudents, setFilteredStudents] = useState<StudentFormData[]>([]);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
@@ -121,7 +125,8 @@ const ClassroomLayoutPage: React.FC = () => {
     });
 
     useEffect(() => {
-        initializeLayout(5, MAX_COLUMNS);
+        const newLayout = initializeLayout(5, MAX_COLUMNS);
+        setLayout(newLayout);
     }, []);
 
     useEffect(() => {
@@ -130,6 +135,11 @@ const ClassroomLayoutPage: React.FC = () => {
             setSavedLayouts(JSON.parse(saved));
         }
     }, [setSavedLayouts]);
+
+    // Estado inicial - todos os alunos
+    useEffect(() => {
+        setFilteredStudents(studentList);
+    }, [studentList]);
 
     const generateAutomaticLayout = () => {
         const newSeats = [...layout.seats];
@@ -192,6 +202,17 @@ const ClassroomLayoutPage: React.FC = () => {
         );
     }
 
+    const highlightText = (text: string, term: string) => {
+        if (!term) return text;
+
+        const parts = text.split(new RegExp(`(${term})`, 'gi'));
+        return parts.map((part, i) =>
+            part.toLowerCase() === term.toLowerCase() ?
+                <mark key={i}>{part}</mark> :
+                part
+        );
+    };
+
     const contextValue = {
         layout,
         studentList,
@@ -204,6 +225,11 @@ const ClassroomLayoutPage: React.FC = () => {
         <ClassroomProvider value={contextValue} >
             <Container>
                 <Header>
+                    <h1>Gerenciamento de Alunos</h1>
+                    <SearchBar
+                        students={studentList}
+                        onSearchResults={setFilteredStudents}
+                    />
                     <LayoutControls
                         view={view}
                         conferenceMode={conferenceMode}
@@ -221,7 +247,7 @@ const ClassroomLayoutPage: React.FC = () => {
                         onFinishConference={finishDailyConference}
                         onStartConference={startDailyConference}
                         onToggleEditLayout={toggleEditLayout}
-                        onToggleSwapMode={() => setSaveModalOpen(true)}
+                        onToggleSwapMode={handleSaveLayout}
                         onLoadLayout={() => setLoadModalOpen(true)}
                         onSaveLayout={handleSaveLayout}
                         onAddColumn={addColumn}
@@ -237,12 +263,14 @@ const ClassroomLayoutPage: React.FC = () => {
                                 getStudentAttendance={getStudentAttendance}
                                 layout={layout}
                                 onSelectStudent={setSelectedStudent}
-                                studentList={studentList} />
+                                studentList={filteredStudents}
+                                highlightText={(text) => highlightText(text, searchTerm)}
+                            />
                         ) : (
                             <LayoutContainer>
                                 <LayoutView
                                     layout={layout}
-                                    studentList={studentList}
+                                    studentList={filteredStudents}
                                     selectedSeat={selectedSeat}
                                     onSeatClick={handleSeatClick}
                                     setLayout={setLayout}

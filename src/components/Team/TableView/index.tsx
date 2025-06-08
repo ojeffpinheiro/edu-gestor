@@ -1,10 +1,10 @@
 import React from 'react';
-import { 
-  TableContainer, 
-  TableHeader, 
-  TableRow, 
+import {
+  TableContainer,
+  TableHeader,
+  TableRow,
   AttendanceBadge,
-  PriorityTag 
+  PriorityTag
 } from './styles';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 import { LayoutConfig, PRIORITY_CONFIGS, PriorityType } from '../../../utils/types/Team';
@@ -12,6 +12,7 @@ import { LayoutConfig, PRIORITY_CONFIGS, PriorityType } from '../../../utils/typ
 interface TableViewProps {
   studentList: StudentFormData[];
   layout: LayoutConfig;
+  highlightText?: (text: string) => React.ReactNode;
   onSelectStudent: (student: StudentFormData) => void;
   getStudentAttendance: (id: number) => number;
   getAttendanceColor: (attendance: number) => string;
@@ -20,6 +21,7 @@ interface TableViewProps {
 const TableView: React.FC<TableViewProps> = ({
   studentList,
   layout,
+  highlightText,
   onSelectStudent,
   getStudentAttendance,
   getAttendanceColor
@@ -48,7 +50,9 @@ const TableView: React.FC<TableViewProps> = ({
           return (
             <TableRow key={student.id} onClick={() => onSelectStudent(student)}>
               <td>{student.id}</td>
-              <td>{student.name}</td>
+              <td>
+                {highlightText ? highlightText(student.name) : student.name}
+              </td>
               <td>
                 <AttendanceBadge color={getAttendanceColor(attendance)}>
                   {attendance}%
