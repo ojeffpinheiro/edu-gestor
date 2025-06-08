@@ -18,6 +18,16 @@ interface TableViewProps {
   getAttendanceColor: (attendance: number) => string;
 }
 
+/**
+ * Visualização em tabela dos alunos e seus assentos
+ * Exibe informações como frequência, posição e prioridades
+ * @param {StudentFormData[]} studentList - Lista de alunos para exibir
+ * @param {LayoutConfig} layout - Configuração atual dos assentos
+ * @param {function} [highlightText] - Função para destacar texto de busca
+ * @param {function} onSelectStudent - Callback ao selecionar aluno
+ * @param {function} getStudentAttendance - Obtém frequência do aluno
+ * @param {function} getAttendanceColor - Obtém cor baseada na frequência
+ */
 const TableView: React.FC<TableViewProps> = ({
   studentList,
   layout,

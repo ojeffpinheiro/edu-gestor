@@ -1,17 +1,23 @@
 // hooks/useClassroomLayout.ts
 import { useCallback, useState } from 'react';
 import { LayoutConfig } from '../utils/types/Team';
-import { generateLayout, initializeLayout, Template } from '../utils/classroomUtils';
+import { generateLayout, initializeLayout, Template, validateLayout } from '../utils/classroomUtils';
 
+
+/**
+ * Custom hook to manage classroom layout state and operations.
+ * 
+ * @param initialRows - Initial number of rows in the classroom layout.
+ * @param initialColumns - Initial number of columns in the classroom layout.
+ * @returns An object containing the current layout, operations to modify it, and state management functions.
+ */
 export const useClassroomLayout = (initialRows: number, initialColumns: number) => {
-    const [layout, setLayout] = useState<LayoutConfig>({
-        rows: initialRows,
-        columns: initialColumns,
-        seats: [],
-    });
-    const [savedLayouts, setSavedLayouts] = useState<{ name: string, layout: LayoutConfig }[]>([]);
-    const [editLayoutMode, setEditLayoutMode] = useState(false);
-    const [tempRows, setTempRows] = useState(5);
+   const [savedLayouts, setSavedLayouts] = useState<{ name: string, layout: LayoutConfig }[]>([]);
+    const [editLayoutMode, setEditLayoutMode] = useState<boolean>(false);
+
+    const [layout, setLayout] = useState<LayoutConfig>(() =>
+        initializeLayout(initialRows, initialColumns)
+    );
 
     // Limites de redimensionamento
     const MIN_ROWS = 3;
@@ -20,11 +26,9 @@ export const useClassroomLayout = (initialRows: number, initialColumns: number) 
     const MAX_COLS = 8;
 
     const addRow = useCallback(() => {
-        setLayout(prev => {
-            if (prev.rows >= MAX_ROWS) return prev;
-            return generateLayout(prev.rows + 1, prev.columns);
-        });
-    }, []);
+        if (layout.rows >= MAX_ROWS) return;
+        setLayout(prev => generateLayout(prev.rows + 1, prev.columns));
+    }, [layout.rows]);
 
     const removeRow = useCallback(() => {
         setLayout(prev => {
@@ -57,18 +61,22 @@ export const useClassroomLayout = (initialRows: number, initialColumns: number) 
         showNotification: (message: string, type: string) => void
     ) => {
         setLayout(savedLayout);
-        setTempRows(savedLayout.rows);
         setLoadModalOpen(false);
         showNotification('Layout carregado com sucesso!', 'success');
     };
 
-    const toggleEditLayout = () => {
-        setEditLayoutMode(!editLayoutMode);
-        if (editLayoutMode) {
-            // When exiting edit mode, reinitialize with current rows
-            initializeLayout(tempRows, layout.columns);
-        }
-    };
+    const toggleEditLayout = useCallback(() => {
+        setEditLayoutMode(prev => {
+            const newMode = !prev;
+            if (!newMode) {
+                const { isValid, errors } = validateLayout(layout);
+                if (!isValid) {
+                    console.warn('Layout inválido:', errors.join(', '));
+                }
+            }
+            return newMode;
+        });
+    }, [layout]);
 
     return {
         layout,

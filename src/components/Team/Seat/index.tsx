@@ -29,6 +29,31 @@ interface SeatProps {
   onVerify?: (isCorrect: boolean) => void;
 }
 
+/**
+ * Componente que renderiza um assento na visualização de layout da sala
+ * @param {SeatType} seat - Dados do assento
+ * @param {StudentFormData[]} studentList - Lista de alunos disponíveis
+ * @param {SeatType | null} selectedSeat - Assento atualmente selecionado
+ * @param {boolean} verifyMode - Modo de verificação
+ * @param {boolean} editMode - Modo de edição do assento
+ * @param {boolean} showTooltips - Exibir tooltips informativos
+ * @param {boolean} compactView - Exibir visualização compacta
+ * @param {boolean} isHighlighted - Indica se o assento está destacado
+ * @param {boolean} isInvalid - Indica se o assento é inválido
+ * @param {function} getStudentAttendance - Função para obter a frequência do aluno
+ * @param {function} getAttendanceColor - Função para obter a cor da frequência
+ * @param {function} getStudentName - Função para obter o nome do aluno
+ * @param {function} getPriorityInfo - Função para obter informações de prioridade do assento
+ * @param {function} onClick - Função chamada ao clicar no assento
+ * @param {function} onDoubleClick - Função chamada ao clicar duas vezes no assento
+ * @param {function} onContextMenu - Função chamada ao abrir o menu de contexto no assento
+ * @param {boolean} conferenceMode - Modo de conferência
+ * @param {boolean} isChecked - Indica se o assento foi verificado
+ * @param {boolean} isMismatched - Indica se há discrepâncias no assento
+ * @param {function} onVerify - Função chamada para verificar o assento
+ * @returns {JSX.Element} Componente de assento 
+
+*/
 const Seat: React.FC<SeatProps> = ({
   seat,
   studentList,
@@ -151,7 +176,7 @@ const Seat: React.FC<SeatProps> = ({
         isHighlighted={isHighlighted}
         isInvalid={isInvalid}
         attendanceColor={attendanceColor}
-        priority={seat.priority ?? null} // Garante que nunca será undefined
+        priority={seat.priority ?? null}
         compactView={compactView}
         verifyMode={verifyMode}
         editMode={editMode}
@@ -160,7 +185,10 @@ const Seat: React.FC<SeatProps> = ({
         onContextMenu={onContextMenu ? handleContextMenu : undefined}
         conferenceMode={conferenceMode}
         isChecked={isChecked}
-        isMismatched={isMismatched} >
+        isMismatched={isMismatched}
+
+        aria-label={`Assento ${seat.position.row}-${seat.position.column}`}
+        aria-describedby={`tooltip-${seat.id}`} >
         {/* Indicador de prioridade */}
         {renderPriorityIcon()}
 
@@ -229,7 +257,7 @@ const Seat: React.FC<SeatProps> = ({
             <FaCheck size={12} />
           </div>
         )}
-        
+
         {conferenceMode && (
           <div style={{
             position: 'absolute',
@@ -238,7 +266,7 @@ const Seat: React.FC<SeatProps> = ({
             display: 'flex',
             gap: '4px'
           }}>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 onVerify?.(true);
@@ -255,7 +283,7 @@ const Seat: React.FC<SeatProps> = ({
             >
               Correto
             </button>
-            <button 
+            <button
               onClick={(e) => {
                 e.stopPropagation();
                 onVerify?.(false);

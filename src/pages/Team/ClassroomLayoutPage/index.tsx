@@ -2,25 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
 
-import { useStudents } from '../../../hooks/useStudent';
-import { useSeatManagement } from '../../../hooks/useSeatManagement';
 import { useClassroomLayout } from '../../../hooks/useClassroomLayout';
 import { useConferenceMode } from '../../../hooks/useConferenceMode';
 import { useSeatingOperations } from '../../../hooks/useSeatingOperations';
+import { useSeatManagement } from '../../../hooks/useSeatManagement';
+import { useStudents } from '../../../hooks/useStudent';
 
 import { findBestSeatForStudent, initializeLayout } from '../../../utils/classroomUtils';
-import { getAttendanceColor, getStudentAttendance } from '../../../utils/attendanceUtils';
+import { getAttendanceColor } from '../../../utils/attendanceUtils';
 import { getSeatPosition } from '../../../utils/seatUtils';
+
+import { StudentFormData } from '../../../utils/types/BasicUser';
+import { AttendanceReport, DailyVerification } from '../../../utils/types/Team';
 
 import { ClassroomProvider } from '../../../contexts/ClassroomContext';
 
 import Notification from '../../../components/shared/Notification';
-import SeatFormModal from '../../../components/Team/SeatFormModal';
-import VerificationHistory from '../../../components/Team/VerificationHistory';
-import LayoutControls from '../../../components/Team/LayoutControls';
+
 import ConferencePanel from '../../../components/Team/ConferencePanel';
-import TableView from '../../../components/Team/TableView';
+import LayoutControls from '../../../components/Team/LayoutControls';
 import LayoutView from '../../../components/Team/LayoutView';
+import SearchBar from '../../../components/Team/SearchBar';
+import SeatFormModal from '../../../components/Team/SeatFormModal';
+import TableView from '../../../components/Team/TableView';
+import VerificationHistory from '../../../components/Team/VerificationHistory';
 
 import { Container } from '../../../styles/layoutUtils';
 import { ActionButton } from '../../../styles/buttons';
@@ -36,24 +41,25 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
-import { StudentFormData } from '../../../utils/types/BasicUser';
-import SearchBar from '../../../components/Team/SearchBar';
-import { AttendanceReport, DailyVerification } from '../../../utils/types/Team';
 
 const MAX_COLUMNS = 5;
+
+/**
+ * @description Este componente permite a visualização e edição do layout da sala de aula, gerenciamento de alunos, conferência diária e relatórios de presença.
+ */
 
 const ClassroomLayoutPage: React.FC = () => {
     const [saveModalOpen, setSaveModalOpen] = useState(false);
     const [loadModalOpen, setLoadModalOpen] = useState(false);
     const [layoutName, setLayoutName] = useState('');
-    const [swapMode, setSwapMode] = useState(false);
+    const [swapMode, setSwapMode] = useState<boolean>(false);
     const [view, setView] = useState<'table' | 'layout'>('layout');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filteredStudents, setFilteredStudents] = useState<StudentFormData[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
-    
-  const [conferenceHistory, setConferenceHistory] = useState<DailyVerification[]>([]);
-  const [currentReport, setCurrentReport] = useState<AttendanceReport | null>(null);
+
+    const [conferenceHistory, setConferenceHistory] = useState<DailyVerification[]>([]);
+    const [currentReport, setCurrentReport] = useState<AttendanceReport | null>(null);
 
 
     const [notification, setNotification] = useState({ show: false, message: '', type: '' });
@@ -88,13 +94,13 @@ const ClassroomLayoutPage: React.FC = () => {
 
     const {
         conferenceMode,
+        checkedSeats,
+        mismatchedSeats,
+        verificationHistory,
         finishDailyConference,
         startDailyConference,
         onVerifySeat,
-        viewDayDetails,
-        checkedSeats,
-        mismatchedSeats,
-        verificationHistory
+        viewDayDetails
     } = useConferenceMode({
         showNotification,
         setVerifyMode: () => { },
@@ -115,7 +121,7 @@ const ClassroomLayoutPage: React.FC = () => {
         setCurrentVerification: () => { }
     });
 
-    const { getStudentName, getPriorityInfo } = useSeatManagement({
+    const { getStudentName, getPriorityInfo, getStudentAttendance } = useSeatManagement({
         seats: layout.seats,
         students: studentList,
         onSeatUpdate: (seat) => {
@@ -200,7 +206,7 @@ const ClassroomLayoutPage: React.FC = () => {
     };
 
     const handleSaveLayout = () => {
-        setSwapMode(!swapMode);
+        setSaveModalOpen(true);
         showNotification(
             swapMode ? 'Modo de troca desativado' : 'Modo de troca ativado - selecione dois assentos',
             'info'
@@ -218,12 +224,23 @@ const ClassroomLayoutPage: React.FC = () => {
         );
     };
 
+    const handleSwapToggle = () => {
+        if (editLayoutMode) {
+            toggleEditLayout();
+        }
+        setSwapMode(!swapMode);
+        showNotification(
+            swapMode ? 'Modo de troca desativado' : 'Modo de troca ativado - selecione dois assentos',
+            'info'
+        );
+    };
+
     const contextValue = {
         layout,
         studentList,
         setLayout,
         getStudentName,
-        getStudentAttendance,
+        getStudentAttendance
     };
 
     return (
@@ -252,7 +269,7 @@ const ClassroomLayoutPage: React.FC = () => {
                         onFinishConference={finishDailyConference}
                         onStartConference={startDailyConference}
                         onToggleEditLayout={toggleEditLayout}
-                        onToggleSwapMode={handleSaveLayout}
+                        onToggleSwapMode={handleSwapToggle}
                         onLoadLayout={() => setLoadModalOpen(true)}
                         onSaveLayout={handleSaveLayout}
                         onAddColumn={addColumn}
@@ -277,14 +294,15 @@ const ClassroomLayoutPage: React.FC = () => {
                                     layout={layout}
                                     studentList={filteredStudents}
                                     selectedSeat={selectedSeat}
-                                    onSeatClick={handleSeatClick}
-                                    setLayout={setLayout}
                                     conferenceMode={conferenceMode}
                                     editLayoutMode={editLayoutMode}
-                                    getPriorityInfo={getPriorityInfo}
-                                    getStudentName={getStudentName}
                                     isChecked={checkedSeats.includes(selectedSeat?.id || '')}
                                     isMismatched={mismatchedSeats.includes(selectedSeat?.id || '')}
+                                    getStudentAttendance={getStudentAttendance}
+                                    onSeatClick={handleSeatClick}
+                                    setLayout={setLayout}
+                                    getPriorityInfo={getPriorityInfo}
+                                    getStudentName={getStudentName}
                                     onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
                                 />
 
@@ -323,7 +341,7 @@ const ClassroomLayoutPage: React.FC = () => {
                                             </ConferenceControlPanel>
                                         </>
                                     )}
-                                    
+
                                     <VerificationHistory
                                         history={verificationHistory}
                                         viewDayDetails={viewDayDetails}

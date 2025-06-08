@@ -19,6 +19,16 @@ interface ConferencePanelProps {
   onCancel?: () => void;
 }
 
+/**
+ * Componente para controle da conferência diária de alunos
+ * Exibe estatísticas e permite finalizar a conferência
+ * @param {string} conferenceDate - Data da conferência no formato YYYY-MM-DD
+ * @param {number} checkedSeats - Número de assentos verificados
+ * @param {number} mismatchedSeats - Número de assentos com discrepâncias
+ * @param {number} absentees - Número de alunos faltantes
+ * @param {function} onFinish - Callback ao finalizar conferência
+ * @param {function} [onCancel] - Callback opcional ao cancelar
+ */
 const ConferencePanel: React.FC<ConferencePanelProps> = ({
   conferenceDate,
   checkedSeats,

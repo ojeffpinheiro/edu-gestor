@@ -3,7 +3,7 @@ import { StudentFormData } from "../../../utils/types/BasicUser";
 import { ClassroomLayout, GridContainer, TeacherDesk } from "./style";
 import { LayoutConfig, PriorityConfig, PriorityInfo, PriorityType, SeatType } from '../../../utils/types/Team';
 import DroppableSeat from '../DroppableSeat';
-import { getAttendanceColor, getStudentAttendance } from '../../../utils/attendanceUtils';
+import { getAttendanceColor } from '../../../utils/attendanceUtils';
 
 interface Props {
     seats: SeatType[];
@@ -18,6 +18,7 @@ interface Props {
     setLayout: React.Dispatch<React.SetStateAction<LayoutConfig>>;
     getStudentName: (studentId?: number | undefined) => string;
     getPriorityInfo: (priority?: PriorityType) => PriorityConfig | PriorityInfo;
+    getStudentAttendance: (studentId: number) => number;
 }
 
 const ClassroomGrid: React.FC<Props> = ({
@@ -28,6 +29,7 @@ const ClassroomGrid: React.FC<Props> = ({
     isMismatched,
     editLayoutMode,
     isChecked,
+    getStudentAttendance,
     setLayout,
     onSeatClick,
     getStudentName,

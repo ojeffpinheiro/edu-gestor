@@ -28,6 +28,18 @@ interface UseSeatingOperationsReturn {
   handleSeatVerification: (seatId: string) => void;
 }
 
+/**
+ * Hook para gerenciar operações de assentos na sala de aula.
+ * Permite trocar assentos, atribuir alunos, verificar presença e editar detalhes do assento.
+ * 
+ * @param {LayoutConfig} layout - Configuração atual do layout da sala de aula.
+ * @param {function} showNotification - Função para exibir notificações ao usuário.
+ * @param {function} setLayout - Função para atualizar o layout da sala.
+ * @param {function} setIsModalOpen - Função para abrir/fechar o modal de edição de assento.
+ * @param {function} setCurrentVerification - Função para atualizar a verificação diária.
+ * 
+ * @returns {UseSeatingOperationsReturn} Objeto com estados e funções para manipulação dos assentos.
+ */
 export const useSeatingOperations = ({
   layout,
   showNotification,
@@ -41,6 +53,13 @@ export const useSeatingOperations = ({
   const [selectedSeat, setSelectedSeat] = useState<SeatType | null>(null);
   const [verifyMode, setVerifyMode] = useState(false);
 
+  /**
+   * Lida com o clique em um assento no modo de troca.
+   * Seleciona o primeiro assento ou realiza a troca se o segundo for selecionado.
+   * 
+   * @param {SeatType} seat - Assento clicado.
+   * @returns {void}
+   */
   const handleSeatClickForSwap = (seat: SeatType) => {
     if (!swapMode) return;
 
@@ -75,6 +94,13 @@ export const useSeatingOperations = ({
     }
   };
 
+  /**
+   * Lida com o clique em um assento.
+   * Atribui aluno, edita ou troca assento, ou ativa verificação dependendo do modo.
+   * 
+   * @param {SeatType} seat - Assento clicado.
+   * @returns {void}
+   */
   const handleSeatClick = (seat: SeatType) => {
     if (verifyMode) {
       handleSeatVerification(seat.id);
@@ -89,7 +115,7 @@ export const useSeatingOperations = ({
     if (selectedStudent && !seat.studentId) {
       setLayout((prev: LayoutConfig) => ({
         ...prev,
-        seats: prev.seats.map(s => 
+        seats: prev.seats.map(s =>
           s.id === seat.id ? { ...s, studentId: selectedStudent.id } : s
         )
       }));
@@ -101,10 +127,15 @@ export const useSeatingOperations = ({
     }
   };
 
+  /**
+   * Remove o aluno atribuído a um assento. 
+   * @param {string} seatId - ID do assento.
+   * @returns {void}
+   */
   const removeStudentFromSeat = (seatId: string) => {
     setLayout((prev: LayoutConfig) => ({
       ...prev,
-      seats: prev.seats.map(seat => 
+      seats: prev.seats.map(seat =>
         seat.id === seatId ? { ...seat, studentId: undefined } : seat
       )
     }));
@@ -112,10 +143,16 @@ export const useSeatingOperations = ({
     showNotification('Aluno removido do assento', 'success');
   };
 
+  /**
+ * Salva as alterações feitas em um assento.
+ * 
+ * @param {SeatType} updatedSeat - Dados atualizados do assento.
+ * @returns {void}
+ */
   const handleSaveSeat = (updatedSeat: SeatType) => {
     setLayout((prev: LayoutConfig) => ({
       ...prev,
-      seats: prev.seats.map(seat => 
+      seats: prev.seats.map(seat =>
         seat.id === updatedSeat.id ? updatedSeat : seat
       )
     }));
@@ -123,6 +160,16 @@ export const useSeatingOperations = ({
     showNotification('Assento atualizado com sucesso', 'success');
   };
 
+  /**
+   * @function verifySeating
+   * @description Ativa ou desativa o modo de verificação de presença.
+   * Permite ao usuário verificar a presença dos alunos nos assentos.
+   * Exibe uma notificação informando o estado atual do modo de verificação.
+   * @throws {Error} Se ocorrer um erro ao alternar o modo de verificação.
+   * Se o modo de verificação estiver ativo, desativa-o e exibe uma notificação.
+   * Se o modo de verificação estiver inativo, ativa-o e exibe uma notificação.
+   * 
+   */
   const verifySeating = () => {
     setVerifyMode(!verifyMode);
     showNotification(
@@ -131,6 +178,13 @@ export const useSeatingOperations = ({
     );
   };
 
+  /**
+ * Alterna a verificação de presença de um assento.
+ * Atualiza o histórico e o layout.
+ * 
+ * @param {string} seatId - ID do assento a ser verificado.
+ * @returns {void}
+ */
   const handleSeatVerification = (seatId: string) => {
     setCurrentVerification((prev: DailyVerification) => {
       const updated = { ...prev };

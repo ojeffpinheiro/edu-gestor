@@ -35,6 +35,17 @@ interface FormDataProps {
   notes: string;
 }
 
+/**
+ * Modal para edição de assentos
+ * Permite atribuir alunos, definir prioridades e adicionar observações
+ * @param {boolean} isOpen - Controla visibilidade do modal
+ * @param {SeatType} seat - Assento sendo editado
+ * @param {SeatType[]} seats - Lista de todos os assentos
+ * @param {StudentFormData[]} students - Lista de alunos disponíveis
+ * @param {function} onClose - Fecha o modal
+ * @param {function} onSave - Salva alterações no assento
+ * @param {function} [onDelete] - Remove aluno do assento (opcional)
+ */
 const SeatFormModal: React.FC<SeatFormModalProps> = ({
   isOpen,
   seat,

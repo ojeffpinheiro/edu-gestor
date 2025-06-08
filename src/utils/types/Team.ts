@@ -8,6 +8,27 @@ export type LayoutConfig = {
   seats: SeatType[];
 };
 
+export interface DailyVerification {
+  date: string;
+  verifiedSeats: string[];
+  mismatchedSeats?: string[];
+  totalStudents?: number;
+  absentees?: string[];
+  conductedBy?: string;
+  notes?: string;
+}
+
+export interface AttendanceReport {
+  date: string;
+  totalStudents: number;
+  presentCount: number;
+  absentCount: number;
+  mismatchCount: number;
+  attendancePercentage: number;
+  absentStudents: StudentFormData[];
+  mismatchStudents: StudentFormData[];
+}
+
 export interface SeatType {
   id: string;
   studentId?: number;
@@ -106,25 +127,4 @@ export interface SeatArrangement {
   verificationStatus: 'pending' | 'verified' | 'needs_review';
   lastVerified?: Date;
   verifiedBy?: number; // userId
-}
-
-export interface DailyVerification {
-  date: string;
-  verifiedSeats: string[];
-  mismatchedSeats?: string[];
-  totalStudents?: number;
-  absentees?: string[];
-  conductedBy?: string;
-  notes?: string;
-}
-
-export interface AttendanceReport {
-  date: string;
-  totalStudents: number;
-  presentCount: number;
-  absentCount: number;
-  mismatchCount: number;
-  attendancePercentage: number;
-  absentStudents: StudentFormData[];
-  mismatchStudents: StudentFormData[];
 }

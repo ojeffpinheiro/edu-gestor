@@ -19,6 +19,12 @@ interface SearchBarProps {
   onSearchResults: (results: StudentFormData[]) => void;
 }
 
+/**
+ * Barra de busca e filtros para alunos
+ * Permite buscar por nome e filtrar por turma, frequência e necessidades especiais
+ * @param {StudentFormData[]} students - Lista completa de alunos
+ * @param {function} onSearchResults - Callback com resultados filtrados
+ */
 const SearchBar: React.FC<SearchBarProps> = ({ students, onSearchResults }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
