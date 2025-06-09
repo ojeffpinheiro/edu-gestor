@@ -20,6 +20,18 @@ type ClassroomState = {
   notification: { show: boolean; message: string; type: string };
   savedLayouts: { name: string; layout: LayoutConfig }[];
   searchTerm: string;
+  isLoading: boolean;
+  loadingMessage: string;
+};
+
+type ClassroomActions = {
+  generateAutomaticLayout: () => void;
+  getStudentAttendance: (studentId?: number) => number;
+  toggleView: () => void;
+  showNotification: (message: string, type: string) => void;
+  saveCurrentLayout: () => void;
+  deleteLayout: (name: string) => void;
+  withLoading: (message: string, action: () => Promise<void>) => Promise<void>;
 };
 
 type ClassroomAction =
@@ -40,8 +52,9 @@ type ClassroomAction =
   | { type: 'SET_FILTERED_STUDENTS'; payload: StudentFormData[] }
   | { type: 'SET_NOTIFICATION'; payload: { show: boolean; message: string; type: string } }
   | { type: 'SET_SAVED_LAYOUTS'; payload: { name: string; layout: LayoutConfig }[] }
+  | { type: 'SET_LOADING'; payload: { loading: boolean; message: string } }
   | { type: 'SET_SEARCH_TERM'; payload: string };
-  ;
+;
 
 const initialState: ClassroomState = {
   layout: { rows: 0, columns: 0, seats: [] },
@@ -59,7 +72,9 @@ const initialState: ClassroomState = {
   layoutName: '',
   view: 'table',
   notification: { show: false, message: '', type: '' },
-  searchTerm: ''
+  searchTerm: '',
+  isLoading: false,
+  loadingMessage: '',
 };
 
 const reducer = (state: ClassroomState, action: ClassroomAction): ClassroomState => {
@@ -121,6 +136,12 @@ const reducer = (state: ClassroomState, action: ClassroomAction): ClassroomState
       return { ...state, savedLayouts: action.payload };
     case 'SET_SEARCH_TERM':
       return { ...state, searchTerm: action.payload };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        isLoading: action.payload.loading,
+        loadingMessage: action.payload.message || ''
+      };
     default:
       return state;
   }
@@ -129,21 +150,19 @@ const reducer = (state: ClassroomState, action: ClassroomAction): ClassroomState
 const ClassroomContext = createContext<{
   state: ClassroomState;
   dispatch: React.Dispatch<ClassroomAction>;
-  saveCurrentLayout: () => void;
-  generateAutomaticLayout: () => void;
-  getStudentAttendance: (studentId?: number) => number;
-  toggleView: () => void;
-  showNotification: (message: string, type: string) => void;
-  deleteLayout: (name: string) => void;
+  actions: ClassroomActions;
 }>({
   state: initialState,
   dispatch: () => null,
-  generateAutomaticLayout: () => {},
-  getStudentAttendance: () => 0,
-  toggleView: () => {},
-  showNotification: () => {},
-  saveCurrentLayout: () => {},
-  deleteLayout: () => {}
+  actions: {
+    generateAutomaticLayout: () => { },
+    getStudentAttendance: () => 0,
+    toggleView: () => { },
+    showNotification: () => { },
+    saveCurrentLayout: () => { },
+    deleteLayout: () => { },
+    withLoading: async () => { }
+  }
 });
 
 export const ClassroomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -213,17 +232,27 @@ export const ClassroomProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   }, [state.savedLayouts, showNotification]);
 
+  const withLoading = async (message: string, action: () => Promise<void>) => {
+    dispatch({ type: 'SET_LOADING', payload: { loading: true, message } });
+    try {
+      await action();
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: { loading: false, message: '' } });
+    }
+  };
+
+  const actions = {
+    generateAutomaticLayout,
+    getStudentAttendance,
+    toggleView,
+    showNotification,
+    saveCurrentLayout,
+    deleteLayout,
+    withLoading,
+  };
+
   return (
-    <ClassroomContext.Provider value={{
-      state,
-      dispatch,
-      generateAutomaticLayout,
-      getStudentAttendance,
-      toggleView,
-      showNotification,
-      saveCurrentLayout,
-      deleteLayout
-    }}>
+    <ClassroomContext.Provider value={{ state, dispatch, actions }}>
       {children}
     </ClassroomContext.Provider>
   );

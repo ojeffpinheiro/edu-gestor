@@ -49,7 +49,7 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
             selectedSeat,
             editMode,
             layout:{ seats } },
-        getStudentAttendance,
+        actions: { getStudentAttendance },
         dispatch } = useClassroom();
 
     const handleDrop = useCallback((item: DraggableStudentItem) => {
@@ -144,6 +144,7 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
                     </button>
                 </div>
             )}
+
             {isOver && !canDrop && (
                 <div
                     style={{

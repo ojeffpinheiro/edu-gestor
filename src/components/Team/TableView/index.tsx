@@ -30,7 +30,7 @@ const TableView: React.FC<TableViewProps> = ({
 }) => {
   const { 
     state: { layout, filteredStudents },
-    getStudentAttendance
+    actions: { getStudentAttendance }
    } = useClassroom();
   const getPriorityConfig = (priority?: PriorityType) => {
     return priority ? PRIORITY_CONFIGS[priority] : null;

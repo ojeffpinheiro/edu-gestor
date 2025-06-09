@@ -35,6 +35,8 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
+import { LoadLayoutModal } from '../../../components/Team/LoadLayoutModal';
+import { SaveLayoutModal } from '../../../components/Team/SaveLayoutModal';
 
 const MAX_COLUMNS = 5;
 
@@ -48,16 +50,12 @@ const ClassroomLayoutPage: React.FC = () => {
             editMode,
             view,
             notification,
-            savedLayouts,
             searchTerm,
-            layoutName,
             loadModalOpen,
             saveModalOpen
         },
         dispatch,
-        showNotification,
-        saveCurrentLayout,
-        deleteLayout
+        actions
     } = useClassroom();
 
     const {
@@ -107,6 +105,8 @@ const ClassroomLayoutPage: React.FC = () => {
         console.log('Visualizando detalhes do dia:', day.date);
         // Implementação real viria aqui
     }, []);
+
+    const { showNotification } = actions;
 
     // Efeitos corrigidos
     useEffect(() => {
@@ -275,62 +275,12 @@ const ClassroomLayoutPage: React.FC = () => {
                     />
                 )}
 
-                {saveModalOpen && (
-                    <div className="modal-overlay" onClick={() => dispatch({ type: 'TOGGLE_SAVE_MODAL', payload: false })}>
-                        <div className="modal-content" onClick={e => e.stopPropagation()}>
-                            <h3>Salvar Layout</h3>
-                            <input
-                                type="text"
-                                value={layoutName}
-                                onChange={(e) => dispatch({ type: 'SET_LAYOUT_NAME', payload: e.target.value })}
-                                placeholder="Nome do layout (ex: Aula 1, Prova)"
-                            />
-                            <div className="modal-actions">
-                                <button onClick={() => dispatch({ type: 'TOGGLE_SAVE_MODAL', payload: false })}>Cancelar</button>
-                                <button onClick={saveCurrentLayout}>Salvar</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                {saveModalOpen && <SaveLayoutModal /> }
 
                 {loadModalOpen && (
-                    <div className="modal-overlay" onClick={() => dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false })}>
-                        <div className="modal-content" onClick={e => e.stopPropagation()}>
-                            <h3>Carregar Layout</h3>
-                            {savedLayouts.length === 0 ? (
-                                <p>Nenhum layout salvo encontrado</p>
-                            ) : (
-                                <ul className="layout-list">
-                                    {savedLayouts.map((saved, index) => (
-                                        <li key={index}>
-                                            <div>
-                                                <strong>{saved.name}</strong>
-                                                <span>{saved.layout.rows} fileiras × {saved.layout.columns} colunas</span>
-                                            </div>
-                                            <div>
-                                                <button onClick={() => {
-                                                    loadLayout(saved.layout);
-                                                    dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false });
-                                                    showNotification('Layout loaded successfully!', 'success');
-                                                }}>
-                                                    Carregar
-                                                </button>
-                                                <button
-                                                    onClick={() => deleteLayout(saved.name)}
-                                                    className="delete-btn"
-                                                >
-                                                    Excluir
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            )}
-                            <div className="modal-actions">
-                                <button onClick={() => dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false })}>Fechar</button>
-                            </div>
-                        </div>
-                    </div>
+                    <LoadLayoutModal 
+                        onClose={() => dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false })}
+                        loadLayout={loadLayout} />
                 )}
             </Container>
         </ClassroomProvider>

@@ -72,8 +72,9 @@ const LayoutControls: React.FC<Props> = ({
   onRemoveColumn,
   onApplyTemplate
 }) => {
-  const { state, dispatch, toggleView, generateAutomaticLayout } = useClassroom();
+  const { state, dispatch, actions } = useClassroom();
   const { view } = state;
+  const { toggleView, generateAutomaticLayout } = actions;
   const [activeMode, setActiveMode] = useState<'none' | 'edit' | 'swap'>('none');
 
   const handleEditToggle = () => {
