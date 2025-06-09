@@ -1,85 +1,32 @@
-import { useCallback, useState } from "react";
-import { DailyVerification, LayoutConfig, SeatType } from "../utils/types/Team";
+import { useCallback, useState } from 'react';
+import { DailyVerification } from '../utils/types/Team';
+import { useClassroom } from '../contexts/ClassroomContext';
 
-interface UseConferenceModeProps {
-  showNotification: (message: string, type: string) => void;
-  setVerifyMode: (active: boolean) => void;
-  setLayout: (layout: LayoutConfig | ((prev: LayoutConfig) => LayoutConfig)) => void;
-}
-
-/**
- * Hook para gerenciar o modo de conferência na sala de aula.
- * Permite verificar a presença dos alunos e registrar as verificações diárias.
- * 
- * @param {function} showNotification - Função para exibir notificações ao usuário.
- * @param {function} setVerifyMode - Função para ativar ou desativar o modo de verificação.
- * @param {function} setLayout - Função para atualizar o layout da sala de aula.
- * 
- * @returns {object} Objeto contendo estado e funções para gerenciar o modo de conferência:
- * - `conferenceMode`: Indica se o modo de conferência está ativo.
- * - `conferenceDate`: Data atual da conferência.
- * - `checkedSeats`: Lista de IDs dos assentos verificados.
- * - `mismatchedSeats`: Lista de IDs dos assentos com discrepâncias.
- * - `verificationHistory`: Histórico de verificações diárias.
- * - `startDailyConference()`: Inicia o modo de conferência.
- * - `finishDailyConference()`: Finaliza o modo de conferência e salva os dados.
- * - `onVerifySeat(seatId: string, isCorrect: boolean)`: Verifica um assento.
- * - `viewDayDetails(day: DailyVerification)`: Exibe os detalhes de um dia de verificação.
- */
-export const useConferenceMode = ({
-  showNotification,
-  setVerifyMode,
-  setLayout
-}: UseConferenceModeProps) => {
-  const [conferenceMode, setConferenceMode] = useState(false);
-  const [conferenceDate, setConferenceDate] = useState(new Date().toISOString().split('T')[0]);
+export const useConferenceMode = () => {
+  const { state, dispatch } = useClassroom();
   const [checkedSeats, setCheckedSeats] = useState<string[]>([]);
   const [mismatchedSeats, setMismatchedSeats] = useState<string[]>([]);
   const [verificationHistory, setVerificationHistory] = useState<DailyVerification[]>([]);
-
-  /**
- * Inicia o modo de conferência diário.
- * Reseta os assentos verificados e discrepantes e define a data atual.
- * 
- * @returns {void}
- */
-  const startDailyConference = () => {
-    setConferenceMode(true);
+  
+  const startDailyConference = useCallback(() => {
+    dispatch({ type: 'TOGGLE_VERIFY_MODE' });
     setCheckedSeats([]);
     setMismatchedSeats([]);
-    setConferenceDate(new Date().toISOString().split('T')[0]);
-    showNotification('Modo conferência ativado. Verifique os alunos presentes.', 'info');
-  };
-
-  /**
-   * Finaliza o modo de conferência diário.
-   * Salva as verificações realizadas e atualiza o histórico de verificações.
-   * @return {void}
-   */
-  const finishDailyConference = () => {
-    if (checkedSeats.length === 0) {
-      showNotification('Nenhum aluno foi verificado. Deseja mesmo finalizar?', 'warning');
-      return;
-    }
-
+  }, []);
+  
+  const finishDailyConference = useCallback(() => {
+    if (checkedSeats.length === 0) return;
+    
     const newVerification: DailyVerification = {
-      date: conferenceDate,
+      date: new Date().toISOString().split('T')[0],
       verifiedSeats: checkedSeats,
-      mismatchedSeats: mismatchedSeats
+      mismatchedSeats: mismatchedSeats,
     };
 
     setVerificationHistory([...verificationHistory, newVerification]);
-    setConferenceMode(false);
-    showNotification(`Conferência do dia ${conferenceDate} salva com sucesso!`, 'success');
-  };
-
-  /**
-   * Atualiza os assentos verificados e as discrepâncias com base na verificação realizada.
-   * 
-   * @param {string} seatId - ID do assento a ser verificado.
-   * @param {boolean} isCorrect - Indica se a verificação foi correta (true) ou incorreta (false).
-   * @returns {void}
-   */
+    dispatch({ type: 'TOGGLE_VERIFY_MODE' });
+  }, [checkedSeats, mismatchedSeats, verificationHistory]);
+  
   const onVerifySeat = useCallback((seatId: string, isCorrect: boolean) => {
     if (isCorrect) {
       setCheckedSeats(prev => [...prev, seatId]);
@@ -90,43 +37,13 @@ export const useConferenceMode = ({
     }
   }, []);
 
-  /**
-   * Exibe os detalhes de um dia específico de verificação.
-   * Atualiza o layout para destacar os assentos verificados nesse dia.
-   * 
-   * @param {DailyVerification} day - Objeto com os dados da verificação diária.
-   * @returns {void}
-   */
-  const viewDayDetails = (day: DailyVerification) => {
-    showNotification(
-      `Em ${day.date}: ${day.verifiedSeats.length} alunos verificados`,
-      'info'
-    );
-
-    // Atualização correta do layout
-    setLayout((prev: LayoutConfig) => {
-      const updatedSeats = prev.seats.map((seat: SeatType) => ({
-        ...seat,
-        isHighlighted: day.verifiedSeats.includes(seat.id)
-      }));
-
-      return {
-        rows: prev.rows,
-        columns: prev.columns,
-        seats: updatedSeats
-      };
-    });
-  };
-
   return {
-    conferenceMode,
-    conferenceDate,
+    conferenceMode: state.verifyMode,
     checkedSeats,
     mismatchedSeats,
     verificationHistory,
     startDailyConference,
     finishDailyConference,
     onVerifySeat,
-    viewDayDetails
   };
 };

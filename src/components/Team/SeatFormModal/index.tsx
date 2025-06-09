@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 import { SeatType, PriorityType, PRIORITY_CONFIGS } from '../../../utils/types/Team';
-import { StudentFormData } from '../../../utils/types/BasicUser';
 import {
   ModalBody,
   ModalContent,
@@ -18,13 +17,9 @@ import {
   PriorityOptions
 } from './styles';
 import { FiUser } from 'react-icons/fi';
+import { useClassroom } from '../../../contexts/ClassroomContext';
 
 interface SeatFormModalProps {
-  isOpen: boolean;
-  seat: SeatType | null;
-  seats: SeatType[];
-  students: StudentFormData[];
-  onClose: () => void;
   onSave: (seat: SeatType) => void;
   onDelete?: (seatId: string) => void;
 }
@@ -38,7 +33,6 @@ interface FormDataProps {
 /**
  * Modal para edição de assentos
  * Permite atribuir alunos, definir prioridades e adicionar observações
- * @param {boolean} isOpen - Controla visibilidade do modal
  * @param {SeatType} seat - Assento sendo editado
  * @param {SeatType[]} seats - Lista de todos os assentos
  * @param {StudentFormData[]} students - Lista de alunos disponíveis
@@ -47,14 +41,14 @@ interface FormDataProps {
  * @param {function} [onDelete] - Remove aluno do assento (opcional)
  */
 const SeatFormModal: React.FC<SeatFormModalProps> = ({
-  isOpen,
-  seat,
-  seats,
-  students,
-  onClose,
   onSave,
   onDelete
 }) => {
+  const { state:
+    { isModalOpen, selectedSeat, layout: { seats }, studentList },
+    dispatch
+  } = useClassroom();
+
   const [formData, setFormData] = useState<FormDataProps>({
     studentId: undefined,
     priority: null,
@@ -65,11 +59,11 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
 
   // Reset form when seat changes
   useEffect(() => {
-    if (seat) {
+    if (selectedSeat) {
       setFormData({
-        studentId: seat.studentId,
-        priority: seat.priority || null,
-        notes: seat.notes || ''
+        studentId: selectedSeat.studentId,
+        priority: selectedSeat.priority || null,
+        notes: selectedSeat.notes || ''
       });
     } else {
       setFormData({
@@ -79,27 +73,27 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
       });
     }
     setErrors({});
-  }, [seat]);
+  }, [selectedSeat]);
 
   // Available students (not assigned to other seats)
   const availableStudents = useMemo(() =>
-    students.filter(student => {
-      if (seat?.studentId === student.id) return true;
-      return !seats.some(s => s.studentId === student.id && s.id !== seat?.id);
+    studentList.filter(student => {
+      if (selectedSeat?.studentId === student.id) return true;
+      return !seats.some(s => s.studentId === student.id && s.id !== selectedSeat?.id);
     }),
-    [students, seats, seat?.id, seat?.studentId]
+    [studentList, seats, selectedSeat?.id, selectedSeat?.studentId]
   );
 
   const selectedStudent = useMemo(() =>
-    formData.studentId ? students.find(s => s.id === formData.studentId) : null,
-    [formData.studentId, students]
+    formData.studentId ? studentList.find(s => s.id === formData.studentId) : null,
+    [formData.studentId, studentList]
   );
 
   const validateForm = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (formData.studentId) {
-      const student = students.find(s => s.id === formData.studentId);
+      const student = studentList.find(s => s.id === formData.studentId);
       if (!student) {
         newErrors.studentId = 'Aluno não encontrado';
       }
@@ -111,7 +105,7 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  }, [formData, students]);
+  }, [formData, studentList]);
 
   useEffect(() => {
     if (formData.studentId && formData.priority) {
@@ -119,16 +113,21 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
     }
   }, [formData.studentId, formData.priority, validateForm]);
 
+  const handleCloseModal = () => {
+    dispatch({ type: 'TOGGLE_MODAL', payload: false })
+  }
+
+
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!validateForm() || !seat) return;
+    if (!validateForm() || !selectedSeat) return;
 
     setIsLoading(true);
 
     try {
       const updatedSeat: SeatType = {
-        ...seat,
+        ...selectedSeat,
         studentId: formData.studentId,
         priority: formData.priority,
         notes: formData.notes,
@@ -136,29 +135,29 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
       };
 
       await onSave(updatedSeat);
-      onClose();
+      handleCloseModal()
     } catch (error) {
       setErrors({ submit: 'Erro ao salvar assento' });
     } finally {
       setIsLoading(false);
     }
-  }, [validateForm, seat, formData, onSave, onClose]);
+  }, [validateForm, selectedSeat, formData, onSave, handleCloseModal, setErrors, setIsLoading]);
 
   const handleDelete = useCallback(async () => {
-    if (!seat || !onDelete) return;
+    if (!selectedSeat || !onDelete) return;
 
     if (window.confirm('Tem certeza que deseja remover este aluno do assento?')) {
       setIsLoading(true);
       try {
-        await onDelete(seat.id);
-        onClose();
+        await onDelete(selectedSeat.id);
+        handleCloseModal();
       } catch (error) {
         setErrors({ submit: 'Erro ao remover aluno' });
       } finally {
         setIsLoading(false);
       }
     }
-  }, [seat, onDelete, onClose]);
+  }, [selectedSeat, onDelete, handleCloseModal]);
 
   const handleClearSeat = useCallback(() => {
     setFormData({
@@ -174,18 +173,17 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
     const IconComponent = config.icon;
     return <IconComponent size={20} color={config.color} />;
   };
-
-  if (!isOpen || !seat) return null;
+  if (!isModalOpen || !selectedSeat) return null;
 
   return (
-    <ModalOverlay onClick={onClose}>
+    <ModalOverlay onClick={handleCloseModal}>
       <ModalContent onClick={e => e.stopPropagation()}>
         <ModalHeader>
           <h2>
-            {seat.studentId ? 'Editar' : 'Configurar'} Assento
+            {selectedSeat.studentId ? 'Editar' : 'Configurar'} Assento
           </h2>
           <span>
-            Posição: Fileira {seat.position.row}, Coluna {seat.position.column}
+            Posição: Fileira {selectedSeat.position.row}, Coluna {selectedSeat.position.column}
           </span>
         </ModalHeader>
 
@@ -300,7 +298,7 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
           <ModalFooter>
             <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
               <div>
-                {seat.studentId && (
+                {selectedSeat.studentId && (
                   <>
                     <ActionButton
                       type="button"
@@ -329,7 +327,7 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
                 <ActionButton
                   type="button"
                   variant="secondary"
-                  onClick={onClose}
+                  onClick={handleCloseModal}
                   disabled={isLoading}
                 >
                   Cancelar

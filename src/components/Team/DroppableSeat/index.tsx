@@ -3,9 +3,10 @@ import { useDrop } from 'react-dnd';
 import { FiAlertCircle } from 'react-icons/fi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
-import { LayoutConfig, SeatType, PriorityType, PriorityInfo, PriorityConfig } from '../../../utils/types/Team';
+import { SeatType, PriorityType, PriorityInfo, PriorityConfig } from '../../../utils/types/Team';
 import Seat from '../Seat';
 import { StudentFormData } from '../../../utils/types/BasicUser';
+import { useClassroom } from '../../../contexts/ClassroomContext';
 
 interface DraggableStudentItem {
     id: number;
@@ -15,19 +16,13 @@ interface DraggableStudentItem {
 
 interface DroppableSeatProps {
     seat: SeatType;
-    seats: SeatType[];
-    studentList: StudentFormData[];
-    selectedSeat: SeatType | null;
     verifyMode: boolean;
-    setLayout: React.Dispatch<React.SetStateAction<LayoutConfig>>;
-    editMode?: boolean;
     showTooltips?: boolean;
     compactView?: boolean;
     conferenceMode?: boolean;
     isChecked?: boolean;
     isMismatched?: boolean;
     onSeatClick: (seat: SeatType) => void;
-    getStudentAttendance: (id: number) => number;
     getAttendanceColor: (attendance: number) => string;
     getStudentName: (studentId?: number) => string;
     getPriorityInfo: (priority?: PriorityType) => PriorityConfig | PriorityInfo;
@@ -36,34 +31,37 @@ interface DroppableSeatProps {
 
 const DroppableSeat: React.FC<DroppableSeatProps> = ({
     seat,
-    seats,
-    studentList,
-    selectedSeat,
     verifyMode,
-    editMode = false,
     showTooltips = true,
     compactView = false,
     conferenceMode = false,
     isChecked = false,
     isMismatched = false,
-    setLayout,
     onSeatClick,
-    getStudentAttendance,
     getAttendanceColor,
     getStudentName,
     getPriorityInfo,
     onVerify
 }) => {
+    const { 
+        state: { 
+            filteredStudents,
+            selectedSeat,
+            editMode,
+            layout:{ seats } },
+        getStudentAttendance,
+        dispatch } = useClassroom();
+
     const handleDrop = useCallback((item: DraggableStudentItem) => {
-        setLayout(prevLayout => ({
-            ...prevLayout,
-            seats: prevLayout.seats.map(s =>
-                s.id === seat.id
-                    ? { ...s, studentId: item.id, updatedAt: new Date() }
-                    : s
-            )
-        }));
-    }, [seat.id, setLayout]);
+        dispatch({
+            type: 'UPDATE_SEAT',
+            payload: {
+                ...seat,
+                studentId: item.id,
+                updatedAt: new Date()
+            }
+        });
+    }, [seat, dispatch]);
 
     const canDropStudent = useCallback((item: DraggableStudentItem) => {
         const isAlreadyAssigned = seats.some(s =>
@@ -86,7 +84,7 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
         <div style={{ position: 'relative' }}>
             <Seat
                 seat={seat}
-                studentList={studentList}
+                studentList={filteredStudents}
                 selectedSeat={selectedSeat}
                 verifyMode={verifyMode}
                 editMode={editMode}
@@ -99,7 +97,6 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
                 onClick={() => onSeatClick(seat)}
                 isHighlighted={isOver && canDrop}
                 isInvalid={isOver && !canDrop}
-
                 conferenceMode={conferenceMode}
                 isChecked={isChecked}
                 isMismatched={isMismatched}

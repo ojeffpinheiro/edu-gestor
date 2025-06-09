@@ -7,35 +7,31 @@ import {
   PriorityTag
 } from './styles';
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { LayoutConfig, PRIORITY_CONFIGS, PriorityType } from '../../../utils/types/Team';
+import { PRIORITY_CONFIGS, PriorityType } from '../../../utils/types/Team';
+import { useClassroom } from '../../../contexts/ClassroomContext';
 
 interface TableViewProps {
-  studentList: StudentFormData[];
-  layout: LayoutConfig;
   highlightText?: (text: string) => React.ReactNode;
   onSelectStudent: (student: StudentFormData) => void;
-  getStudentAttendance: (id: number) => number;
   getAttendanceColor: (attendance: number) => string;
 }
 
 /**
  * Visualização em tabela dos alunos e seus assentos
  * Exibe informações como frequência, posição e prioridades
- * @param {StudentFormData[]} studentList - Lista de alunos para exibir
- * @param {LayoutConfig} layout - Configuração atual dos assentos
  * @param {function} [highlightText] - Função para destacar texto de busca
  * @param {function} onSelectStudent - Callback ao selecionar aluno
- * @param {function} getStudentAttendance - Obtém frequência do aluno
  * @param {function} getAttendanceColor - Obtém cor baseada na frequência
  */
 const TableView: React.FC<TableViewProps> = ({
-  studentList,
-  layout,
   highlightText,
   onSelectStudent,
-  getStudentAttendance,
   getAttendanceColor
 }) => {
+  const { 
+    state: { layout, filteredStudents },
+    getStudentAttendance
+   } = useClassroom();
   const getPriorityConfig = (priority?: PriorityType) => {
     return priority ? PRIORITY_CONFIGS[priority] : null;
   };
@@ -52,7 +48,7 @@ const TableView: React.FC<TableViewProps> = ({
         </tr>
       </TableHeader>
       <tbody>
-        {studentList.map(student => {
+        {filteredStudents.map(student => {
           const seat = layout.seats.find(s => s.studentId === student.id);
           const attendance = getStudentAttendance(student.id!);
           const priorityConfig = getPriorityConfig(seat?.priority ?? undefined);

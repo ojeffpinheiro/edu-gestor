@@ -15,24 +15,19 @@ import {
 import { ActionContainer, TemplateSelect, ControlGroup, ActionButton } from "./styles";
 import { Template } from '../../../utils/classroomUtils';
 import { Tooltip } from '@mui/material';
+import { useClassroom } from '../../../contexts/ClassroomContext';
 
 interface Props {
-  view: 'table' | 'layout';
   conferenceMode: boolean;
-  editLayoutMode: boolean;
-  swapMode: boolean;
   canAddRow: boolean;
   canRemoveRow: boolean;
   canAddColumn: boolean;
   canRemoveColumn: boolean;
-  onToggleView: () => void;
-  onGenerateLayout: () => void;
   onStartConference: () => void;
   onFinishConference: () => void;
   onToggleEditLayout: () => void;
   onToggleSwapMode: () => void;
   onSaveLayout: () => void;
-  onLoadLayout: () => void;
   onAddRow: () => void;
   onRemoveRow: () => void;
   onAddColumn: () => void;
@@ -45,20 +40,15 @@ interface Props {
  * Contém botões para adicionar/remover fileiras, colunas, templates e modos especiais
  * @param {string} view - Visualização atual ('table' ou 'layout')
  * @param {boolean} conferenceMode - Indica se está no modo conferência
- * @param {boolean} editLayoutMode - Indica se está no modo edição
- * @param {boolean} swapMode - Indica se está no modo troca de assentos
  * @param {boolean} canAddRow - Se pode adicionar fileira
  * @param {boolean} canRemoveRow - Se pode remover fileira
  * @param {boolean} canAddColumn - Se pode adicionar coluna
  * @param {boolean} canRemoveColumn - Se pode remover coluna
- * @param {function} onToggleView - Alterna entre visualizações
- * @param {function} onGenerateLayout - Gera layout automático
  * @param {function} onStartConference - Inicia modo conferência
  * @param {function} onFinishConference - Finaliza modo conferência
  * @param {function} onToggleEditLayout - Alterna modo edição
  * @param {function} onToggleSwapMode - Alterna modo troca
  * @param {function} onSaveLayout - Salva layout atual
- * @param {function} onLoadLayout - Carrega layout salvo
  * @param {function} onAddRow - Adiciona fileira
  * @param {function} onRemoveRow - Remove fileira
  * @param {function} onAddColumn - Adiciona coluna
@@ -66,26 +56,24 @@ interface Props {
  * @param {function} onApplyTemplate - Aplica template selecionado
  */
 const LayoutControls: React.FC<Props> = ({
-  view,
   conferenceMode,
   canAddRow,
   canRemoveRow,
   canAddColumn,
   canRemoveColumn,
-  onToggleView,
-  onGenerateLayout,
   onStartConference,
   onFinishConference,
   onToggleEditLayout,
   onToggleSwapMode,
   onSaveLayout,
-  onLoadLayout,
   onAddRow,
   onRemoveRow,
   onAddColumn,
   onRemoveColumn,
   onApplyTemplate
 }) => {
+  const { state, dispatch, toggleView, generateAutomaticLayout } = useClassroom();
+  const { view } = state;
   const [activeMode, setActiveMode] = useState<'none' | 'edit' | 'swap'>('none');
 
   const handleEditToggle = () => {
@@ -107,6 +95,10 @@ const LayoutControls: React.FC<Props> = ({
     setActiveMode(next);
     onToggleSwapMode();
   };
+
+  const handleLoadLayout = () => {
+    dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: true })
+  }
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -135,7 +127,7 @@ const LayoutControls: React.FC<Props> = ({
     <ActionContainer>
       <ControlGroup>
         <Tooltip title="Alternar entre visualização de tabela e layout">
-          <ActionButton onClick={onToggleView}>
+          <ActionButton onClick={toggleView}>
             {view === 'table' ? <FaThLarge /> : <FaTable />}
             {view === 'table' ? ' Layout' : ' Tabela'}
           </ActionButton>
@@ -182,7 +174,7 @@ const LayoutControls: React.FC<Props> = ({
         </Tooltip>
 
         <Tooltip title="Gerar um layout automático com os alunos disponíveis">
-          <ActionButton onClick={onGenerateLayout}>
+          <ActionButton onClick={generateAutomaticLayout}>
             <FaExchangeAlt /> Gerar Layout Automático
           </ActionButton>
         </Tooltip>
@@ -220,7 +212,7 @@ const LayoutControls: React.FC<Props> = ({
         </Tooltip>
 
         <Tooltip title="Carregar um layout salvo">
-          <ActionButton onClick={onLoadLayout}>
+          <ActionButton onClick={handleLoadLayout}>
             <FaFolderOpen /> Carregar Layout
           </ActionButton>
         </Tooltip>
