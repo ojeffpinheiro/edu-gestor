@@ -8,11 +8,16 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { momentLocalizer, Views } from 'react-big-calendar';
 
 import { CalendarEvent } from '../../../utils/types/CalendarEvent';
-import { generateMockEvents } from '../../../hooks/useCalendar';
+import { StudentFormData } from '../../../utils/types/BasicUser';
 
-import EventCreation from '../../../components/Events/EventCreation';
+import { generateMockEvents } from '../../../hooks/useCalendar';
+import { useStudents } from '../../../hooks/useStudent';
+
 import Notification from '../../../components/shared/Notification';
+import EventCreation from '../../../components/Events/EventCreation';
 import GroupDrawModal from '../../../components/modals/GroupDrawModal';
+import StudentDrawModal from '../../../components/modals/StudentDrawModal';
+import ActionsContainer from '../../../components/Team/ActionsContainer';
 
 import { Container } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/eventsStyles';
@@ -30,10 +35,6 @@ import {
   QuickCardHeader,
   ViewToggleButton
 } from './styles';
-import ActionsContainer from '../../../components/Team/ActionsContainer';
-import { useStudents } from '../../../hooks/useStudent';
-import StudentDrawModal from '../../../components/modals/StudentDrawModal';
-import { StudentFormData } from '../../../utils/types/BasicUser';
 
 
 // Configure moment locale

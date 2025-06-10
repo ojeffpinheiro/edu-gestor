@@ -1,37 +1,40 @@
-import React, { useState } from 'react';
-import { 
-  FaBook, 
-  FaChevronRight, 
-  FaChevronDown, 
-  FaEdit, 
-  FaTrash, 
+import React, { useMemo, useState } from 'react';
+import {
+  FaBook,
+  FaChevronRight,
+  FaChevronDown,
+  FaEdit,
+  FaTrash,
   FaPlus,
   FaLayerGroup,
   FaCubes,
   FaBookOpen,
-  FaAlignLeft
+  FaAlignLeft,
+  FaChevronLeft,
+  FaSearch,
+  FaTimes
 } from 'react-icons/fa';
-import { 
-  ActionButton, 
-  ActionButtons, 
-  AddButton, 
-  AddCard, 
-  PageContainer, 
-  BreadcrumbItem, 
-  BreadcrumbNav, 
-  CardContent, 
-  CardIcon, 
-  CardTitle, 
-  CardType, 
-  ContentCard, 
-  ContentGrid, 
-  ContentPanel, 
-  ContentSection, 
-  DetailHeader, 
-  DetailsContainer, DetailTitle, EmptyContentMessage, EmptyState, ExpandButton, 
-  ItemIcon, ItemLabel, ItemType, ItemTypeLabel, MainLayout, 
-  ModalContent, ModalOverlay, NavigationPanel, 
-  NavigationTree, NavItem, PageHeader, PageTitle, 
+import {
+  ActionButton,
+  ActionButtons,
+  AddButton,
+  AddCard,
+  PageContainer,
+  BreadcrumbItem,
+  BreadcrumbNav,
+  CardContent,
+  CardIcon,
+  CardTitle,
+  CardType,
+  ContentCard,
+  ContentGrid,
+  ContentPanel,
+  ContentSection,
+  DetailHeader,
+  DetailsContainer, DetailTitle, EmptyContentMessage, EmptyState, ExpandButton,
+  ItemIcon, ItemLabel, ItemType, ItemTypeLabel, MainLayout,
+  ModalContent, ModalOverlay, NavigationPanel,
+  NavigationTree, NavItem, PageHeader, PageTitle,
   PanelHeader, SectionTitle,
   CancelButton,
   CloseButton,
@@ -41,8 +44,12 @@ import {
   ModalFooter,
   ModalHeader,
   SaveButton,
-  Select
- } from './styles';
+  Select,
+  CollapseButton,
+  SearchBar,
+  LoadingSpinner,
+  ErrorText
+} from './styles';
 import { CurriculumItem, HierarchyLevel } from '../../utils/types/Topic';
 import { initialCurriculumItem } from '../../mocks/topic';
 
@@ -52,6 +59,13 @@ const TopicManagementPage = () => {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set(['eixo1', 'unidade1', 'cap1']));
   const [selectedItem, setSelectedItem] = useState<CurriculumItem | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [editItem, setEditItem] = useState<CurriculumItem | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
   const [newItemData, setNewItemData] = useState({
     name: '',
     type: 'titulo' as HierarchyLevel,
@@ -97,6 +111,8 @@ const TopicManagementPage = () => {
 
   // Função para adicionar novo item
   const handleAddItem = () => {
+    if (!validateForm()) return;
+
     const newItem: CurriculumItem = {
       id: `id-${Date.now()}`,
       name: newItemData.name,
@@ -158,8 +174,8 @@ const TopicManagementPage = () => {
 
     return (
       <div key={item.id}>
-        <NavItem 
-          level={level} 
+        <NavItem
+          level={level}
           onClick={() => selectItem(item)}
           isSelected={isSelected}
           isHigherLevel={isHigherLevel}
@@ -173,7 +189,7 @@ const TopicManagementPage = () => {
             <ItemIcon>{getItemIcon(item.type)}</ItemIcon>
             <span>{item.name}</span>
           </ItemLabel>
-          
+
           <ItemType>{getLevelLabel(item.type)}</ItemType>
         </NavItem>
 
@@ -202,17 +218,17 @@ const TopicManagementPage = () => {
   const findBreadcrumb = (itemId: string): CurriculumItem[] => {
     const result: CurriculumItem[] = [];
     const allItems = getAllItems();
-    
+
     const findParents = (id: string | null) => {
       if (!id) return;
-      
+
       const item = allItems.find(i => i.id === id);
       if (item) {
         result.unshift(item);
         findParents(item.parentId);
       }
     };
-    
+
     findParents(itemId);
     return result;
   };
@@ -221,15 +237,23 @@ const TopicManagementPage = () => {
   const renderItemDetails = () => {
     if (!selectedItem) {
       return (
-        <EmptyState>
-          <FaBook size={48} color="#ccc" />
-          <p>Selecione um item para ver detalhes</p>
+        <EmptyState className="fade-in">
+          <FaLayerGroup size={64} />
+          <h2>Organização de Conteúdos</h2>
+          <p>Selecione um item na árvore de navegação para visualizar ou editar seus detalhes</p>
+          <AddButton onClick={() => {
+            setNewItemData({ name: '', type: 'eixoTematico', parentId: '' });
+            setShowAddModal(true);
+          }}>
+            <FaPlus />
+            <span>Criar Primeiro Eixo Temático</span>
+          </AddButton>
         </EmptyState>
       );
     }
 
     const breadcrumb = findBreadcrumb(selectedItem.id);
-    
+
     return (
       <DetailsContainer>
         <BreadcrumbNav>
@@ -263,7 +287,13 @@ const TopicManagementPage = () => {
             <SectionTitle>Conteúdo</SectionTitle>
             <ContentGrid>
               {selectedItem.children.map(child => (
-                <ContentCard key={child.id} onClick={() => selectItem(child)}>
+                <ContentCard
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`${child.name}, ${getLevelLabel(child.type)}`}
+                  onClick={() => selectItem(child)}
+                  onKeyDown={(e) => e.key === 'Enter' && selectItem(child)}
+                >
                   <CardIcon>{getItemIcon(child.type)}</CardIcon>
                   <CardContent>
                     <CardTitle>{child.name}</CardTitle>
@@ -272,10 +302,10 @@ const TopicManagementPage = () => {
                 </ContentCard>
               ))}
               <AddCard onClick={() => {
-                setNewItemData({ 
-                  name: '', 
+                setNewItemData({
+                  name: '',
                   type: getNextLevelType(selectedItem.type),
-                  parentId: selectedItem.id 
+                  parentId: selectedItem.id
                 });
                 setShowAddModal(true);
               }}>
@@ -288,10 +318,10 @@ const TopicManagementPage = () => {
           <EmptyContentMessage>
             <p>Este item não possui conteúdos. Adicione um novo item abaixo.</p>
             <AddButton onClick={() => {
-              setNewItemData({ 
-                name: '', 
+              setNewItemData({
+                name: '',
                 type: getNextLevelType(selectedItem.type),
-                parentId: selectedItem.id 
+                parentId: selectedItem.id
               });
               setShowAddModal(true);
             }}>
@@ -315,6 +345,96 @@ const TopicManagementPage = () => {
     }
   };
 
+  // Funções CRUD adicionais
+  const handleEditItem = () => {
+    if (!editItem) return;
+
+    setData(prevData => {
+      const updateItem = (items: CurriculumItem[]): CurriculumItem[] => {
+        return items.map(item => {
+          if (item.id === editItem.id) {
+            return { ...item, ...editItem };
+          }
+          if (item.children.length > 0) {
+            return { ...item, children: updateItem(item.children) };
+          }
+          return item;
+        });
+      };
+
+      return updateItem(prevData);
+    });
+
+    setEditItem(null);
+    setSelectedItem(editItem);
+  };
+
+  const handleDeleteItem = (id: string) => {
+    if (!window.confirm('Tem certeza que deseja excluir este item?')) return;
+
+    setData(prevData => {
+      const deleteItem = (items: CurriculumItem[]): CurriculumItem[] => {
+        return items.filter(item => item.id !== id)
+          .map(item => ({
+            ...item,
+            children: item.children ? deleteItem(item.children) : []
+          }));
+      };
+
+      return deleteItem(prevData);
+    });
+
+    if (selectedItem?.id === id) {
+      setSelectedItem(null);
+    }
+  };
+
+  // Função de busca
+  const filteredData = useMemo(() => {
+    if (!searchTerm) return data;
+
+    const searchItems = (items: CurriculumItem[]): CurriculumItem[] => {
+      return items.filter(item =>
+        item.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ).map(item => ({
+        ...item,
+        children: searchItems(item.children)
+      }));
+    };
+
+    return searchItems(data);
+  }, [data, searchTerm]);
+
+  const handleSave = async () => {
+    setIsLoading(true);
+    try {
+      // Simular chamada API
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      handleAddItem();
+    } catch (error) {
+      console.error('Erro ao salvar:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!newItemData.name.trim()) {
+      newErrors.name = 'Nome é obrigatório';
+    } else if (newItemData.name.length > 100) {
+      newErrors.name = 'Nome muito longo (máx. 100 caracteres)';
+    }
+
+    if (newItemData.type !== 'eixoTematico' && !newItemData.parentId) {
+      newErrors.parentId = 'Selecione um item pai';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   return (
     <PageContainer>
       <PageHeader>
@@ -328,11 +448,31 @@ const TopicManagementPage = () => {
         </AddButton>
       </PageHeader>
 
-      <MainLayout>
+
+      <MainLayout className={isCollapsed ? 'collapsed' : ''}>
         <NavigationPanel>
-          <PanelHeader>Estrutura do Conteúdo</PanelHeader>
+          <PanelHeader>
+            {!isCollapsed && <span>Estrutura do Conteúdo</span>}
+            <CollapseButton
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              aria-label={isCollapsed ? 'Expandir painel' : 'Recolher painel'}
+            >
+              {isCollapsed ? <FaChevronRight /> : <FaChevronLeft />}
+            </CollapseButton>
+          </PanelHeader>
+
+          <SearchBar>
+            <FaSearch />
+            <Input
+              type="text"
+              placeholder="Buscar..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </SearchBar>
+
           <NavigationTree>
-            {data.map(item => renderNavigationItem(item))}
+            {filteredData.map(item => renderNavigationItem(item))}
           </NavigationTree>
         </NavigationPanel>
 
@@ -343,11 +483,20 @@ const TopicManagementPage = () => {
 
       {/* Modal para adicionar novo item */}
       {showAddModal && (
-        <ModalOverlay>
+        <ModalOverlay
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
           <ModalContent>
             <ModalHeader>
-              <h3>Adicionar {getLevelLabel(newItemData.type)}</h3>
-              <CloseButton onClick={() => setShowAddModal(false)}>×</CloseButton>
+              <h3 id="modal-title">Adicionar {getLevelLabel(newItemData.type)}</h3>
+              <CloseButton
+                onClick={() => setShowAddModal(false)}
+                aria-label="Fechar modal"
+              >
+                <FaTimes />
+              </CloseButton>
             </ModalHeader>
             <ModalBody>
               <FormGroup>
@@ -357,7 +506,9 @@ const TopicManagementPage = () => {
                   value={newItemData.name}
                   onChange={(e) => setNewItemData({ ...newItemData, name: e.target.value })}
                   placeholder={`Nome do ${getLevelLabel(newItemData.type).toLowerCase()}`}
+                  aria-invalid={!!errors.name}
                 />
+                {errors.name && <ErrorText>{errors.name}</ErrorText>}
               </FormGroup>
 
               <FormGroup>
@@ -372,6 +523,7 @@ const TopicManagementPage = () => {
                   <option value="titulo">Título</option>
                   <option value="subtitulo">Subtítulo</option>
                 </Select>
+                {errors.type && <ErrorText>{errors.type}</ErrorText>}
               </FormGroup>
 
               {newItemData.type !== 'eixoTematico' && (
@@ -402,7 +554,16 @@ const TopicManagementPage = () => {
             </ModalBody>
             <ModalFooter>
               <CancelButton onClick={() => setShowAddModal(false)}>Cancelar</CancelButton>
-              <SaveButton onClick={handleAddItem} disabled={!newItemData.name}>Salvar</SaveButton>
+              <SaveButton
+                onClick={handleSave}
+                disabled={!newItemData.name || isLoading}
+              >
+                {isLoading ? (
+                  <LoadingSpinner size="16px" />
+                ) : (
+                  'Salvar'
+                )}
+              </SaveButton>
             </ModalFooter>
           </ModalContent>
         </ModalOverlay>
