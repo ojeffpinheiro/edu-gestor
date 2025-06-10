@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
 import { ptBR } from 'date-fns/locale';
+import { 
+  addDays, eachMonthOfInterval, format, 
+  getDaysInMonth, getQuarter, getYear, 
+  isSameDay, startOfMonth, 
+  startOfQuarter, endOfQuarter 
+} from 'date-fns';
+
 import { useCalendar } from '../../../../contexts/CalendarContext';
 import { ErrorBoundary } from '../../../shared/ErrorBoundary';
 import CalendarBase from '../../Base/CalendarBase';
 import { EventType } from '../../../../utils/types/CalendarEvent';
-import { addDays, eachMonthOfInterval, format, getDaysInMonth, getQuarter, getYear, isSameDay, startOfMonth, startOfQuarter, endOfQuarter } from 'date-fns';
 
-import { ActiveFiltersBadge, DayCell, DaysGrid, EventItem, FilterButton, FiltersContainer, MonthHeader, PopupContainer, PopupHeader, PopupTitle, WeekdayCell, WeekdayHeader } from '../AnnualView/styles';
+import { 
+  ActiveFiltersBadge, DayCell, DaysGrid, EventItem, 
+  FilterButton, FiltersContainer, MonthHeader, 
+  PopupContainer, PopupHeader, PopupTitle, WeekdayCell, WeekdayHeader 
+} from '../AnnualView/styles';
 import { constants, EventTypeConfig } from '../../../../utils/consts';
 import { FaFilter, FaTimes } from 'react-icons/fa';
 import { MonthContainer, MonthsGrid, QuarterContainer, QuarterHeader } from './styles';

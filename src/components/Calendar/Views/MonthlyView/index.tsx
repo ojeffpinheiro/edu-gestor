@@ -17,12 +17,23 @@ interface MonthlyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;
 }
 
+/**
+ * Componente que exibe a visualização mensal do calendário
+ * @param {Object} props - Props do componente
+ * @param {function} props.onSelectEvent - Callback quando um evento é selecionado
+ * @returns {JSX.Element} Visualização mensal do calendário com navegação
+ */
 const MonthlyView: React.FC<MonthlyViewProps> = ({ onSelectEvent }) => {
   const today = useMemo(() => new Date(), []);
 
   const { currentDate, filterEvents, onPrevMonth, onToday, onNextMonth } = useCalendar();
   const events = filterEvents({});
 
+  /**
+   * Manipula o clique no botão "Mostrar mais" para eventos em um dia
+   * @param {Date} day - Dia selecionado
+   * @param {number} count - Número total de eventos no dia
+   */
   const handleShowMoreEvents = (day: Date, count: number) => {
     alert(`Total de ${count} eventos para ${formatDate(day, 'dd/MM/yyyy')}`);
   };

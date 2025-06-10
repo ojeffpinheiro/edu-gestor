@@ -15,7 +15,10 @@ const WeekdayCell = styled.div<{ isWeekend: boolean }>`
   text-align: center;
   font-weight: 500;
 `;
-
+/**
+ * Componente que renderiza o cabeçalho com os dias da semana
+ * @returns {JSX.Element} Linha com os nomes dos dias da semana
+ */
 export const WeekdayHeader: React.FC = () => {
   return (
     <WeekHeader>

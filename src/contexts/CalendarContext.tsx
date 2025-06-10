@@ -1,4 +1,3 @@
-// contexts/CalendarContext.tsx
 import React, { createContext, useState, useCallback, useContext } from 'react';
 import {
   addMonths,
@@ -57,6 +56,44 @@ interface CalendarContextData {
 
 const CalendarContext = createContext<CalendarContextData | undefined>(undefined);
 
+/**
+ * Contexto que fornece dados e operações para o calendário escolar
+ * @typedef {Object} CalendarContextData
+ * @property {Date} currentDate - Data atualmente selecionada no calendário
+ * @property {CalendarViewType} view - Visualização atual (dia, semana, mês, etc.)
+ * @property {SchoolCalendar} calendar - Dados completos do calendário escolar
+ * @property {AcademicPeriod | null} currentPeriod - Período acadêmico atual
+ * @property {CalendarEvent | null} selectedEvent - Evento atualmente selecionado
+ * @property {CalendarEvent[]} events - Lista de todos os eventos
+ * @property {boolean} isLoading - Indica se os dados estão sendo carregados
+ * @property {Error | null} error - Erro ocorrido, se houver
+ * @property {function} createEvent - Função para criar um novo evento
+ * @property {function} updateEvent - Função para atualizar um evento existente
+ * @property {function} deleteEvent - Função para remover um evento
+ * @property {function} onToday - Função para voltar à data atual
+ * @property {function} isEventSelected - Verifica se um evento está selecionado
+ * @property {function} setView - Altera a visualização do calendário
+ * @property {function} nextDay - Navega para o próximo dia
+ * @property {function} prevDay - Navega para o dia anterior
+ * @property {function} onNextWeek - Navega para a próxima semana
+ * @property {function} onPrevWeek - Navega para a semana anterior
+ * @property {function} onNextMonth - Navega para o próximo mês
+ * @property {function} onPrevMonth - Navega para o mês anterior
+ * @property {function} onNextYear - Navega para o próximo ano
+ * @property {function} onPrevYear - Navega para o ano anterior
+ * @property {function} onSelectEvent - Seleciona/desseleciona um evento
+ * @property {function} addEvent - Adiciona um evento ao calendário
+ * @property {function} moveEvent - Move um evento para novas datas
+ * @property {function} setCurrentPeriod - Define o período acadêmico atual
+ * @property {function} filterEvents - Filtra eventos com base em critérios
+ */
+
+/**
+ * Provedor do contexto do calendário
+ * @param {Object} props - Propriedades do componente
+ * @param {React.ReactNode} props.children - Componentes filhos
+ * @param {SchoolCalendar} props.initialCalendar - Dados iniciais do calendário
+ */
 export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalendar: SchoolCalendar }>> = ({
   children,
   initialCalendar

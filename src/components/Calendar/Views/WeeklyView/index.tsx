@@ -33,19 +33,28 @@ import {
 import { ExpandAllDayButton, ExpandedDayView } from '../../Base/EventPopup/styles';
 import EventPopup from '../../Base/EventPopup';
 
+/**
+ * Props do componente WeeklyView
+ * @typedef {Object} WeeklyViewProps
+ * @property {function} onSelectEvent - Callback quando um evento é selecionado
+ */
 interface WeeklyViewProps {
   onSelectEvent: (event: CalendarEvent) => void;
 }
 
 const timeSlots = Array.from({ length: 24 }, (_, i) => i); // 0-23 hours
 
+/**
+ * Componente que exibe a visualização semanal do calendário
+ * @param {WeeklyViewProps} props - Props do componente
+ * @returns {JSX.Element} Visualização semanal com grade de horários e eventos
+ */
 const WeeklyView: React.FC<WeeklyViewProps> = ({ onSelectEvent }) => {
   const { currentDate, filterEvents, onPrevWeek, onNextWeek, onToday } = useCalendar();
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [expandedTimeSlots, setExpandedTimeSlots] = useState<Record<string, boolean>>({});
   const [expandedAllDays, setExpandedAllDays] = useState<Record<string, boolean>>({});
-
 
   const [expandedDay, setExpandedDay] = useState<Date | null>(null);
   const [popupEvent, setPopupEvent] = useState<CalendarEvent | null>(null);
@@ -56,15 +65,20 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ onSelectEvent }) => {
   const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
   const events = filterEvents({});
 
+  /**
+   * Manipula o clique em um dia específico
+   * @param {Date} day - Dia que foi clicado
+   */
   const handleDayClick = (day: Date) => {
     setSelectedDay(day);
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
-
+  /**
+   * Alterna a expansão de um time slot específico
+   * @param {string} dayStr - String representando o dia
+   * @param {number} hour - Hora do slot
+   */
   const toggleExpandTimeSlot = (dayStr: string, hour: number) => {
     const key = `${dayStr}-${hour}`;
     setExpandedTimeSlots(prev => ({
@@ -78,10 +92,6 @@ const WeeklyView: React.FC<WeeklyViewProps> = ({ onSelectEvent }) => {
       ...prev,
       [dayStr]: !prev[dayStr]
     }));
-  };
-
-  const toggleExpandDay = (day: Date) => {
-    setExpandedDay(prev => isSameDay(prev || new Date(0), day) ? null : day);
   };
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {

@@ -1,18 +1,29 @@
 import React from 'react';
 import { useCalendar } from '../../contexts/CalendarContext';
+
+import { eventTypeColors } from '../../utils/consts';
+
 import WeeklyView from './Views/WeeklyView';
 import MonthlyView from './Views/MonthlyView';
 import DailyView from './Views/DailyView';
-import AnnualView from './Views/AnnualView'; // Novo componente
-import { ViewToggle } from './Base/ViewToggle';
-import { eventTypeColors } from '../../utils/consts';
+import AnnualView from './Views/AnnualView';
 import SemesterView from './Views/SemesterView';
 import QuarterView from './Views/QuarterView';
 
-const CalendarView: React.FC = () => {
-  const { view, setView, filterEvents, onSelectEvent } = useCalendar();
-  const events = filterEvents({});
+import { ViewToggle } from './Base/ViewToggle';
 
+/**
+ * Componente principal que renderiza a visualização do calendário baseado na view selecionada
+ * @param {Object} props - Props do componente (não possui props explícitas)
+ * @returns {JSX.Element} Componente do calendário com seletor de visualização
+ */
+const CalendarView: React.FC = () => {
+  const { view, setView, onSelectEvent } = useCalendar();
+  
+  /**
+   * Manipula a mudança de visualização do calendário
+   * @param {string} newView - Nova visualização a ser ativada
+   */
   const handleViewChange = (newView: string) => {
     if (newView === 'month' || newView === 'week' || newView === 'day' || newView === 'quarter' || newView === 'semester' || newView === 'year') {
       setView(newView);

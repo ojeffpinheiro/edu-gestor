@@ -1,16 +1,23 @@
 import React, { useState } from 'react';
+import { addDays, eachMonthOfInterval, format, getDaysInMonth, getYear, isSameDay, isSameMonth, startOfMonth } from 'date-fns';
 
 import { ptBR } from 'date-fns/locale';
 import { useCalendar } from '../../../../contexts/CalendarContext';
 import { ErrorBoundary } from '../../../shared/ErrorBoundary';
 import CalendarBase from '../../Base/CalendarBase';
 import { EventType } from '../../../../utils/types/CalendarEvent';
-import { addDays, eachMonthOfInterval, format, getDaysInMonth, getYear, isSameDay, isSameMonth, startOfMonth } from 'date-fns';
 
-import { ActiveFiltersBadge, DayCell, DaysGrid, EventItem, FilterButton, FiltersContainer, MonthHeader, PopupContainer, PopupHeader, PopupTitle, WeekdayCell, WeekdayHeader } from '../AnnualView/styles';
+import { 
+  ActiveFiltersBadge, DayCell, 
+  DaysGrid, EventItem, FilterButton, 
+  FiltersContainer, 
+  MonthHeader, PopupContainer, 
+  PopupHeader, PopupTitle, WeekdayCell, WeekdayHeader } from '../AnnualView/styles';
 import { constants, EventTypeConfig } from '../../../../utils/consts';
 import { FaFilter, FaTimes } from 'react-icons/fa';
-import { MonthContainer, MonthsGrid, NavigationButton, SemesterContainer, SemesterHeader } from './styles';
+import { MonthContainer, MonthsGrid, 
+  NavigationButton, 
+  SemesterContainer, SemesterHeader } from './styles';
 import { CloseButton } from '../../../../styles/buttons';
 
 
