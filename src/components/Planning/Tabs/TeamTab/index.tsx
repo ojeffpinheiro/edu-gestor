@@ -19,18 +19,31 @@ import {
   TeamInfo,
   TeamTitle,
   Title
-} from './styles'; // Import your styled components here
+} from './styles';
 import { Grid } from '../../../../styles/layoutUtils';
 
 
-// Main component
+/**
+ * Componente de Gerenciamento de Turmas
+ * @module TeamTab
+ * @description Exibe informações detalhadas sobre turmas e suas aulas
+ * @returns {JSX.Element} Interface de visualização de turmas
+ */
 const TeamTab = () => {
+  /**
+   * Lista de turmas cadastradas
+   * @type {Array<{id: number, name: string, students: number, period: string}>}
+   */
   const teams = [
     { id: 1, name: "Class A", students: 25, period: "Manhã" },
     { id: 2, name: "Class B", students: 30, period: "Tarde" },
     { id: 3, name: "Class C", students: 28, period: "Noite" }
   ];
 
+ /**
+   * Lista de aulas programadas
+   * @type {Array<{id: number, team: string, subject: string, day: string, time: string}>}
+   */
   const classes = [
     { id: 1, team: "Class A", subject: "Física", day: "Mon", time: "08:00 - 09:40" },
     { id: 2, team: "Class A", subject: "Portuguese", day: "Tue", time: "10:00 - 11:40" },

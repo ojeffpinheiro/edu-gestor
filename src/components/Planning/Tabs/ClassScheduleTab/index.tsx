@@ -18,6 +18,18 @@ interface ClassScheduleTabProps {
   addLesson: () => void;
 }
 
+/**
+ * Componente de Gerenciamento de Horários
+ * @module ClassScheduleTab
+ * @description Gerencia a grade de horários e adição de novas aulas
+ * @param {Object} props - Propriedades do componente
+ * @param {Array<Lesson>} props.lessons - Lista de aulas cadastradas
+ * @param {Array<Team>} props.teams - Lista de turmas disponíveis
+ * @param {Lesson} props.newLesson - Dados do novo horário sendo criado
+ * @param {Function} props.setNewLesson - Atualiza os dados do novo horário
+ * @param {Function} props.addLesson - Adiciona o novo horário à lista
+ * @returns {JSX.Element} Interface de gerenciamento de horários
+ */
 const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({ 
   lessons, 
   teams, 

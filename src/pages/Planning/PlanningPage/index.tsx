@@ -75,7 +75,12 @@ const MainContent = styled.main`
   padding: 1rem;
 `;
 
-// Componente principal
+/**
+ * Componente principal do Planejador de Classe
+ * @module PlanejadorClasse
+ * @description Gerencia toda a aplicação, incluindo navegação por abas e estado global
+ * @returns {JSX.Element} A estrutura completa da aplicação
+ */
 const PlanejadorClasse = () => {
   const [activeTab, setActiveTab] = useState('planejamento');
 

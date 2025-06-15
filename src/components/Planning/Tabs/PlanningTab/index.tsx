@@ -23,6 +23,16 @@ interface TabPlanningProps {
   toggleTask: (id: number) => void;
 }
 
+/**
+ * Componente de Planejamento de Aulas
+ * @module TabPlanning
+ * @description Mostra tarefas pendentes e grade semanal de aulas
+ * @param {Object} props - As propriedades do componente
+ * @param {Array<Task>} props.tasks - Lista de tarefas
+ * @param {Array<Lesson>} props.lessons - Lista de aulas
+ * @param {Function} props.toggleTask - Função para alternar estado de tarefas
+ * @returns {JSX.Element} Interface de planejamento
+ */
 const TabPlanning: React.FC<TabPlanningProps> = ({ tasks, lessons, toggleTask }) => {
   const weekDays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
