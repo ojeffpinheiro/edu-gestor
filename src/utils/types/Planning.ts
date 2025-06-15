@@ -1,3 +1,5 @@
+import { LessonPlan } from "./DidacticSequence";
+
 export interface Task {
     id: number;
     text: string;
@@ -24,4 +26,31 @@ export interface Team {
     name: string;
     session: 'Manhã' | 'Tarde' | 'Noite';
     numStudent: number;
+}
+
+export interface NonSchoolDay {
+  id: number;
+  description: string;
+  date: string;
+  affectsAllTeams: boolean;
+  affectedTeams?: number[];
+}
+
+export interface Holiday extends Event {
+  recurring: boolean;
+  recurrencePattern?: string;
+}
+
+export interface GradeSettings {
+  id: string;
+  gradeLevel: string;
+  curriculum: string;
+  specificRequirements: string;
+}
+
+export interface LessonPlanTemplate {
+  id: string;
+  name: string;
+  template: Partial<LessonPlan>;
+  applicableGrades: string[];
 }

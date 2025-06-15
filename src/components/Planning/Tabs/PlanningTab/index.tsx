@@ -1,39 +1,26 @@
-import React from 'react';
-import { Lesson, Task } from '../../../../utils/types/Planning';
+import React, { useContext } from 'react';
+import { filterLessons } from '../../../../utils/scheduleUtils';
+import PlanningContext from '../../../../contexts/PlanningContext';
+
 import { 
-    Card, 
-    CardTitle, 
-    Checkbox, 
-    CheckboxContainer, 
-    CheckboxLabel, 
-    ClassInfo, 
-    ClassItem, 
-    ClassTime, 
-    ClassTitle, 
-    Content, 
-    DayCard, 
-    DayTitle, 
-    WeekGrid,
- } from './styles';
+  Card, 
+  CardTitle,
+  Checkbox,
+  CheckboxContainer,
+  CheckboxLabel,
+  ClassInfo,
+  ClassItem,
+  ClassTitle,
+  ClassTime,
+  Content,
+  DayCard,
+  DayTitle,
+  WeekGrid
+} from './styles';
 
-
-interface TabPlanningProps {
-  tasks: Task[];
-  lessons: Lesson[];
-  toggleTask: (id: number) => void;
-}
-
-/**
- * Componente de Planejamento de Aulas
- * @module TabPlanning
- * @description Mostra tarefas pendentes e grade semanal de aulas
- * @param {Object} props - As propriedades do componente
- * @param {Array<Task>} props.tasks - Lista de tarefas
- * @param {Array<Lesson>} props.lessons - Lista de aulas
- * @param {Function} props.toggleTask - Função para alternar estado de tarefas
- * @returns {JSX.Element} Interface de planejamento
- */
-const TabPlanning: React.FC<TabPlanningProps> = ({ tasks, lessons, toggleTask }) => {
+const TabPlanning: React.FC = () => {
+  const { state, toggleTask } = useContext(PlanningContext);
+  const { tasks, lessons } = state;
   const weekDays = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
   return (
@@ -60,15 +47,13 @@ const TabPlanning: React.FC<TabPlanningProps> = ({ tasks, lessons, toggleTask })
               {weekDays.map(day => (
                 <DayCard key={day}>
                   <DayTitle>{day}</DayTitle>
-                  {lessons
-                    .filter(lesson => lesson.day === day)
-                    .map(lesson => (
-                      <ClassItem key={`${day}-${lesson.id}`}>
-                        <ClassTitle>{lesson.discipline}</ClassTitle>
-                        <ClassTime>{lesson.timeSlot}</ClassTime>
-                        <ClassInfo>{lesson.team}</ClassInfo>
-                      </ClassItem>
-                    ))}
+                  {filterLessons(lessons, 'todas', day).map(lesson => (
+                    <ClassItem key={`${day}-${lesson.id}`}>
+                      <ClassTitle>{lesson.discipline}</ClassTitle>
+                      <ClassTime>{lesson.timeSlot}</ClassTime>
+                      <ClassInfo>{lesson.team}</ClassInfo>
+                    </ClassItem>
+                  ))}
                 </DayCard>
               ))}
             </WeekGrid>

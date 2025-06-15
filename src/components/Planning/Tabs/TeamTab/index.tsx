@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { FaUsers, FaClock, FaPlus, FaEdit } from 'react-icons/fa';
 
 import {
@@ -21,35 +21,11 @@ import {
   Title
 } from './styles';
 import { Grid } from '../../../../styles/layoutUtils';
+import PlanningContext from '../../../../contexts/PlanningContext';
 
-
-/**
- * Componente de Gerenciamento de Turmas
- * @module TeamTab
- * @description Exibe informações detalhadas sobre turmas e suas aulas
- * @returns {JSX.Element} Interface de visualização de turmas
- */
-const TeamTab = () => {
-  /**
-   * Lista de turmas cadastradas
-   * @type {Array<{id: number, name: string, students: number, period: string}>}
-   */
-  const teams = [
-    { id: 1, name: "Class A", students: 25, period: "Manhã" },
-    { id: 2, name: "Class B", students: 30, period: "Tarde" },
-    { id: 3, name: "Class C", students: 28, period: "Noite" }
-  ];
-
- /**
-   * Lista de aulas programadas
-   * @type {Array<{id: number, team: string, subject: string, day: string, time: string}>}
-   */
-  const classes = [
-    { id: 1, team: "Class A", subject: "Física", day: "Mon", time: "08:00 - 09:40" },
-    { id: 2, team: "Class A", subject: "Portuguese", day: "Tue", time: "10:00 - 11:40" },
-    { id: 3, team: "Class B", subject: "History", day: "Wed", time: "14:00 - 15:40" },
-    { id: 4, team: "Class C", subject: "Physics", day: "Thu", time: "19:00 - 20:40" }
-  ];
+const TeamTab: React.FC = () => {
+  const { state } = useContext(PlanningContext);
+  const { teams, lessons: classes } = state;
 
   return (
     <Container>
@@ -68,14 +44,14 @@ const TeamTab = () => {
                   <TeamIcon>
                     <FaUsers size={16} />
                   </TeamIcon>
-                  <span>{team.students} alunos</span>
+                  <span>{team.numStudent} alunos</span>
                 </div>
                 
                 <div>
                   <TeamIcon>
                     <FaClock size={16} />
                   </TeamIcon>
-                  <span>Turno: {team.period}</span>
+                  <span>Turno: {team.session}</span>
                 </div>
               </Grid>
               
@@ -87,10 +63,10 @@ const TeamTab = () => {
                     .map(c => (
                       <ClassItem key={c.id}>
                         <ClassHeader>
-                          <span>{c.subject}</span>
+                          <span>{c.discipline}</span>
                           <span>{c.day}</span>
                         </ClassHeader>
-                        <ClassTime>{c.time}</ClassTime>
+                        <ClassTime>{c.timeSlot}</ClassTime>
                       </ClassItem>
                     ))}
                 </ClassesList>

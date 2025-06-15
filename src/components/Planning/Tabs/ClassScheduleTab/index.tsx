@@ -1,5 +1,8 @@
-import React from 'react';
-import { Lesson, Team } from '../../../../utils/types/Planning';
+import React, { useContext, useState } from 'react';
+
+import { Lesson } from '../../../../utils/types/Planning';
+
+import PlanningContext from '../../../../contexts/PlanningContext';
 
 import { Container } from '../../../../styles/layoutUtils';
 import { Title } from '../../../../styles/typography';
@@ -9,35 +12,52 @@ import { Input, Select, Label } from '../../../../styles/inputs';
 import { Button } from '../../../../styles/buttons';
 import { FormGrid } from '../../../../styles/modals';
 import { FormGroup } from '../../../../styles/formControls';
+import { classLimitRule, scheduleConflictRule, validateForm } from '../../../../utils/validationPlanning';
+import ValidationFeedback from '../../../ui/ValidationFeedback';
 
-interface ClassScheduleTabProps {
-  lessons: Lesson[];
-  teams: Team[];
-  newLesson: Lesson;
-  setNewLesson: (lesson: Lesson) => void;
-  addLesson: () => void;
-}
+const ClassScheduleTab: React.FC = () => {
+  const { state, addLesson } = useContext(PlanningContext);
+  const { lessons, teams } = state;
+  const [newLesson, setNewLesson] = useState<Lesson>({
+    id: 0,
+    team: '',
+    day: 'Segunda',
+    timeSlot: '',
+    discipline: ''
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-/**
- * Componente de Gerenciamento de Horários
- * @module ClassScheduleTab
- * @description Gerencia a grade de horários e adição de novas aulas
- * @param {Object} props - Propriedades do componente
- * @param {Array<Lesson>} props.lessons - Lista de aulas cadastradas
- * @param {Array<Team>} props.teams - Lista de turmas disponíveis
- * @param {Lesson} props.newLesson - Dados do novo horário sendo criado
- * @param {Function} props.setNewLesson - Atualiza os dados do novo horário
- * @param {Function} props.addLesson - Adiciona o novo horário à lista
- * @returns {JSX.Element} Interface de gerenciamento de horários
- */
-const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({ 
-  lessons, 
-  teams, 
-  newLesson, 
-  setNewLesson, 
-  addLesson 
-}) => {
   const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+  const validationRules = {
+    team: { required: true },
+    day: { required: true },
+    timeSlot: {
+      required: true,
+      pattern: /^([01]?[0-9]|2[0-3]):[0-5][0-9] - ([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
+      ...scheduleConflictRule(state.lessons, newLesson)
+    },
+    discipline: {
+      required: true,
+      minLength: 3,
+      ...classLimitRule(
+        state.lessons.filter(l => l.team === newLesson.team).length,
+        10
+      )
+    }
+  };
+
+  const handleAddLesson = () => {
+    const { isValid, errors } = validateForm(newLesson, validationRules);
+    setErrors(errors);
+
+    if (!isValid) return;
+
+    addLesson({
+      ...newLesson,
+      id: Date.now()
+    });
+  }
 
   return (
     <Container>
@@ -83,6 +103,9 @@ const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({
                 </option>
               ))}
             </Select>
+            <ValidationFeedback
+              error={errors.timeSlot}
+            />
           </FormGroup>
 
           <FormGroup>
@@ -100,6 +123,9 @@ const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({
                 </option>
               ))}
             </Select>
+            <ValidationFeedback
+              error={errors.timeSlot}
+            />
           </FormGroup>
 
           <FormGroup>
@@ -109,6 +135,11 @@ const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({
               placeholder="Ex: 08:00 - 09:40"
               value={newLesson.timeSlot}
               onChange={(e) => setNewLesson({ ...newLesson, timeSlot: e.target.value })}
+            />
+            {errors.timeSlot && <span style={{ color: 'red' }}>{errors.timeSlot}</span>}
+            
+            <ValidationFeedback
+              error={errors.timeSlot}
             />
           </FormGroup>
 
@@ -120,10 +151,13 @@ const ClassScheduleTab: React.FC<ClassScheduleTabProps> = ({
               value={newLesson.discipline}
               onChange={(e) => setNewLesson({ ...newLesson, discipline: e.target.value })}
             />
+            <ValidationFeedback
+              error={errors.timeSlot}
+            />
           </FormGroup>
         </FormGrid>
 
-        <Button onClick={addLesson}>Adicionar Aula</Button>
+        <Button onClick={handleAddLesson}>Adicionar Aula</Button>
       </Card>
     </Container>
   );

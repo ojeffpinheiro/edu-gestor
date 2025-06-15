@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import { Container, Flex } from '../../../../styles/layoutUtils';
 import { Title } from '../../../../styles/typography';
@@ -8,51 +8,44 @@ import { Input, Select } from '../../../../styles/inputs';
 import { Button } from '../../../../styles/buttons';
 
 import { CalendarSection, DayCell, DayNumber, DaysGrid, EventDate, EventIndicator, EventItem, EventsList, EventsSection, EventTag, EventTagContainer, EventTitle, FormFields, WeekdayCell, WeekdaysGrid } from './styles';
-/**
- * Componente de Calendário Acadêmico
- * @module CalendarTab
- * @description Exibe um calendário interativo com eventos e permite adição de novos
- * @returns {JSX.Element} A interface do calendário e gerenciamento de eventos
- */
-const CalendarTab = () => {
-  /**
-   * Estado dos eventos do calendário
-   * @type {Array<Event>}
-   */
-  const [events, setEvents] = useState([
-    { id: 1, title: 'Início das Aulas', date: '2025-04-15', type: 'Evento' },
-    { id: 2, title: 'Prazo de Matrícula', date: '2025-04-10', type: 'Prazo' },
-    { id: 3, title: 'Feriado Nacional', date: '2025-04-21', type: 'Feriado' },
-    { id: 4, title: 'Reunião de Colegiado', date: '2025-04-23', type: 'Reunião' }
-  ]);
+import PlanningContext from '../../../../contexts/PlanningContext';
+import { validateForm } from '../../../../utils/validationPlanning';
 
+const CalendarTab = () => {
+  const { state, dispatch } = useContext(PlanningContext);
+  const { events } = state;
   const [newEvent, setNewEvent] = useState({
     title: '',
     date: '',
     type: 'Evento'
   });
-  
-  /**
-   * Adiciona um novo evento ao calendário
-   * @function adicionarEvento
-   * @returns {void}
-   */
-  const adicionarEvento = () => {
-    if (newEvent.title && newEvent.date) {
-      setEvents([
-        ...events,
-        {
-          id: events.length + 1,
-          ...newEvent
-        }
-      ]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-      setNewEvent({
-        title: '',
-        date: '',
-        type: 'Evento'
-      });
-    }
+  const adicionarEvento = () => {
+    const validationRules = {
+      title: { required: true, minLength: 3 },
+      date: { required: true },
+      type: { required: true }
+    };
+
+    const { isValid, errors } = validateForm(newEvent, validationRules);
+    setErrors(errors);
+
+    if (!isValid) return;
+
+    dispatch({
+      type: 'ADD_EVENT',
+      payload: {
+        id: Date.now(),
+        ...newEvent
+      }
+    });
+
+    setNewEvent({
+      title: '',
+      date: '',
+      type: 'Evento'
+    });
   };
 
   return (
