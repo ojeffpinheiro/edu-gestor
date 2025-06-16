@@ -225,3 +225,9 @@ export const Switch = styled.label`
     box-shadow: var(--shadow-focus);
   }
 `;
+
+export const StyledInputGroup = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+`;

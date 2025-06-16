@@ -1,24 +1,14 @@
 import React, { useContext, useState } from 'react';
-import { Lesson } from '../../../../utils/types/Planning';
+
 import PlanningContext from '../../../../contexts/PlanningContext';
+import { Lesson } from '../../../../utils/types/Planning';
 import { classLimitRule, scheduleConflictRule, validateForm } from '../../../../utils/validationPlanning';
 
-import { Title } from '../../../../styles/typography';
-import { Input, Select, Label } from '../../../../styles/inputs';
-import { Button, CloseButton } from '../../../../styles/buttons';
-import { FormGrid, ModalFooter, ModalHeader } from '../../../../styles/modals';
-import { FormGroup } from '../../../../styles/formControls';
-import ValidationFeedback from '../../../ui/ValidationFeedback';
-import { ModalOverlay } from '../../../../styles/baseComponents';
+import { LessonForm } from './LessonForm/LessonForm';
+import ScheduleHeader from './ScheduleHeader';
 
-import { 
-  AddButton, DayHeader, EmptyCell, 
-  LessonCell, LessonInfo, ModalBody, 
-  ModalContent, ModalTitle, ScheduleContainer, 
-  ScheduleGrid, ScheduleHeader, 
-  TimeSlotCell 
-} from './styles';
-
+import { ScheduleContainer } from './styles';
+import ScheduleGrid from './Schedule/ScheduleGrid';
 
 const timeSlots = [
   '07:00 - 07:50',
@@ -37,7 +27,6 @@ const timeSlots = [
 ];
 const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
-
 const ClassScheduleTab: React.FC = () => {
   const { state, addLesson } = useContext(PlanningContext);
   const { lessons } = state;
@@ -50,8 +39,8 @@ const ClassScheduleTab: React.FC = () => {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCell, setSelectedCell] = useState<{day: string, time: string} | null>(null);
-  
+  const [selectedCell, setSelectedCell] = useState<{ day: string, time: string } | null>(null);
+
   const validationRules = {
     team: { required: true },
     day: { required: true },
@@ -93,7 +82,7 @@ const ClassScheduleTab: React.FC = () => {
   };
 
   const openModal = (day: string, time: string) => {
-    setSelectedCell({day, time});
+    setSelectedCell({ day, time });
     setNewLesson(prev => ({
       ...prev,
       day: day as Lesson['day'],
@@ -107,142 +96,24 @@ const ClassScheduleTab: React.FC = () => {
     setErrors({});
   };
 
-  const getLessonForCell = (day: string, time: string) => {
-    return lessons.find(lesson => lesson.day === day && lesson.timeSlot === time);
-  };
-
   return (
-   <ScheduleContainer>
-      <ScheduleHeader>
-        <Title style={{ margin: 0 }}>Grade de Horários</Title>
-        <AddButton onClick={() => openModal('Segunda', '')}>
-          + Adicionar Aula
-        </AddButton>
-      </ScheduleHeader>
-
-      <ScheduleGrid>
-        {/* Célula vazia no canto superior esquerdo */}
-        <div style={{ gridColumn: '1', gridRow: '1', background: 'var(--gradient-primary)'}}></div>
-        
-        {/* Cabeçalhos dos dias */}
-        {daysOfWeek.map(day => (
-          <DayHeader key={day}>{day}</DayHeader>
-        ))}
-        
-        {/* Grade de horários */}
-        {timeSlots.map((time, timeIndex) => (
-          <React.Fragment key={time}>
-            {/* Coluna de horários */}
-            <TimeSlotCell>{time}</TimeSlotCell>
-            
-            {/* Aulas para cada dia */}
-            {daysOfWeek.map(day => {
-              const lesson = getLessonForCell(day, time);
-              return (
-                <LessonCell 
-                  key={`${day}-${time}`}
-                  isEmpty={!lesson}
-                  onClick={() => lesson ? null : openModal(day, time)}
-                >
-                  {lesson ? (
-                    <LessonInfo>
-                      <strong>{lesson.discipline}</strong>
-                      <div>{lesson.team}</div>
-                    </LessonInfo>
-                  ) : (
-                    <EmptyCell>Clique para adicionar</EmptyCell>
-                  )}
-                </LessonCell>
-              );
-            })}
-          </React.Fragment>
-        ))}
-      </ScheduleGrid>
-
+    <ScheduleContainer>
+      <ScheduleHeader onAddClick={() => openModal('Segunda', '')} />
+      
+      <ScheduleGrid 
+        days={daysOfWeek} 
+        lessons={lessons} 
+        onCellClick={ openModal }
+        timeSlots={timeSlots} />
+      
       {/* Modal de Adição */}
-      {isModalOpen && (
-        <ModalOverlay>
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>
-                {selectedCell ? `Adicionar Aula - ${selectedCell.day} ${selectedCell.time}` : 'Adicionar Nova Aula'}
-              </ModalTitle>
-              <CloseButton onClick={closeModal}>&times;</CloseButton>
-            </ModalHeader>
-            <ModalBody>
-              <FormGrid>
-                <FormGroup>
-                  <Label>Turma</Label>
-                  <Select
-                    value={newLesson.team}
-                    onChange={(e) => setNewLesson({ ...newLesson, team: e.target.value })}
-                  >
-                    <option value="">Selecione uma turma</option>
-                    {state.teams.map((team) => (
-                      <option key={team.id} value={team.name}>
-                        {team.name}
-                      </option>
-                    ))}
-                  </Select>
-                  <ValidationFeedback error={errors.team} />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Dia da Semana</Label>
-                  <Select
-                    value={newLesson.day}
-                    onChange={(e) =>
-                      setNewLesson({ ...newLesson, day: e.target.value as Lesson['day'] })
-                    }
-                  >
-                    {daysOfWeek.map((day) => (
-                      <option key={day} value={day}>
-                        {day}
-                      </option>
-                    ))}
-                  </Select>
-                  <ValidationFeedback error={errors.day} />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Horário</Label>
-                  <Select
-                    value={newLesson.timeSlot}
-                    onChange={(e) => setNewLesson({ ...newLesson, timeSlot: e.target.value })}
-                  >
-                    <option value="">Selecione um horário</option>
-                    {timeSlots.map((time) => (
-                      <option key={time} value={time}>
-                        {time}
-                      </option>
-                    ))}
-                  </Select>
-                  <ValidationFeedback error={errors.timeSlot} />
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>Disciplina</Label>
-                  <Input
-                    type="text"
-                    placeholder="Ex: Matemática"
-                    value={newLesson.discipline}
-                    onChange={(e) => setNewLesson({ ...newLesson, discipline: e.target.value })}
-                  />
-                  <ValidationFeedback error={errors.discipline} />
-                </FormGroup>
-              </FormGrid>
-            </ModalBody>
-            <ModalFooter>
-              <Button variant="secondary" onClick={closeModal}>
-                Cancelar
-              </Button>
-              <Button onClick={handleAddLesson}>
-                Adicionar Aula
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </ModalOverlay>
-      )}
+      {isModalOpen &&
+        <LessonForm
+          isOpen={isModalOpen} lesson={newLesson}
+          errors={errors} teams={state.teams}
+          daysOfWeek={daysOfWeek} timeSlots={timeSlots}
+          onChange={() => setNewLesson} onClose={closeModal}
+          onSubmit={handleAddLesson} selectedCell={selectedCell} />}
     </ScheduleContainer>
   );
 };

@@ -1,81 +1,83 @@
 import { keyframes, css } from 'styled-components';
-import { fadeIn } from './animations';
 
-// Animações específicas para modais
+// Animações mais suaves e modernas
 export const modalFadeIn = keyframes`
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { 
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to { 
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
 `;
 
 export const modalSlideDown = keyframes`
   from { 
-    opacity: 0; 
-    transform: translateY(-30px);
+    opacity: 0;
+    transform: translateY(-20px) scale(0.98);
   }
   to { 
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 `;
 
 export const modalScaleUp = keyframes`
   from { 
-    opacity: 0; 
-    transform: scale(0.95);
+    opacity: 0;
+    transform: scale(0.97) translateZ(0);
   }
   to { 
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateZ(0);
   }
 `;
 
-// Estilos CSS reutilizáveis para animações modais
+// Efeito glassmorphism moderno
+export const backdropBlur = css`
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+`;
+
+// Transições mais fluidas com will-change
 export const modalEntranceAnimation = css`
-  animation: ${modalFadeIn} 0.25s ease-in-out,
-             ${modalScaleUp} 0.25s ease-in-out;
+  animation: ${modalFadeIn} 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+             ${modalSlideDown} 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 `;
 
 export const modalExitAnimation = css`
-  animation: ${modalFadeIn} 0.25s ease-in-out reverse,
-             ${modalScaleUp} 0.25s ease-in-out reverse;
+  animation: ${modalFadeIn} 0.2s ease-in-out reverse forwards,
+             ${modalSlideDown} 0.2s ease-in-out reverse forwards;
+  will-change: transform, opacity;
 `;
 
 export const backdropAnimation = css`
-  animation: ${fadeIn} 0.2s ease-in-out;
+  animation: ${modalFadeIn} 0.3s ease-out forwards;
+  ${backdropBlur};
 `;
 
-// Utilitário para controlar animações com base no estado de abertura do modal
-export const getModalAnimationStyle = (isOpen: boolean, isExiting: boolean) => {
-  if (!isOpen && !isExiting) return { display: 'none' };
-  
-  if (isExiting) {
-    return {
-      animation: `${modalFadeIn} 0.2s ease-in-out reverse, 
-                  ${modalScaleUp} 0.2s ease-in-out reverse`
-    };
-  }
-  
-  return {
-    animation: `${modalFadeIn} 0.25s ease-in-out, 
-                ${modalScaleUp} 0.25s ease-in-out`
-  };
-};
-
-// Definições de tamanho para os modais
+// Definições de tamanho responsivas
 export const modalSizes = {
   sm: {
-    width: '30vw'
+    width: '90vw',
+    maxWidth: '400px'
   },
   md: {
-    width: '50vw'
+    width: '90vw',
+    maxWidth: '600px'
   },
   lg: {
-    width: '75vw'
+    width: '90vw',
+    maxWidth: '800px'
   },
   xl: {
-    width: '80vw'
+    width: '90vw',
+    maxWidth: '1000px'
   },
   full: {
-    width: '95vw'
+    width: '95vw',
+    maxWidth: '95vw'
   }
 };

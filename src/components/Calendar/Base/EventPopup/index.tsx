@@ -31,8 +31,7 @@ import {
   EventParticipants,
   ParticipantTag,
 } from './styles';
-import { Grid2Columns } from '../../../../styles/modals';
-import { Flex } from '../../../../styles/layoutUtils';
+import { Flex, Grid2Columns } from '../../../../styles/layoutUtils';
 import { ptBR } from 'date-fns/locale';
 
 interface EventPopupProps {

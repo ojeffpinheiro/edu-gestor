@@ -22,7 +22,6 @@ import {
   Main
 } from './styles'
 
-
 /**
  * Componente principal do Planejador de Classe
  * @module PlanejadorClasse

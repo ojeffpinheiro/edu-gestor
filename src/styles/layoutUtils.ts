@@ -244,3 +244,34 @@ export const EquationContainer = styled.div`
   justify-content: center;
   margin: var(--space-xl);
 `
+
+export const FormGrid = styled.div`
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    
+    @media (min-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+`;
+
+export const InfoBox = styled.div`
+  background-color: var(--color-info);
+  color: var(--color-text-on-primary);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  
+  svg {
+    margin-top: 3px;
+  }
+`;
+
+export const Grid2Columns = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+`;

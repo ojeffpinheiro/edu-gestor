@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
 import PlanningContext from '../../../../contexts/PlanningContext';
+
+import { DayOfWeek } from '../../../../utils/types/Planning';
+
 import {
   Card,
   CardTitle,
@@ -27,7 +30,6 @@ import {
   FormSelect,
   FormButton
 } from './styles';
-import { DayOfWeek } from '../../../../utils/types/Planning';
 
 const timeSlots = [
   '07:00 - 08:00',

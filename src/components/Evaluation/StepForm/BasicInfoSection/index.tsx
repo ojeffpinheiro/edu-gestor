@@ -3,7 +3,7 @@ import { FiInfo, FiCalendar, FiBook, FiClipboard } from "react-icons/fi";
 
 import { initializeEmptyEvaluation } from "../../../../hooks/useEvaluationForm";
 
-import { Label } from "../../../../styles/inputs";
+import { Label, StyledInputGroup } from "../../../../styles/inputs";
 import { 
     Container, 
     ErrorMessage, 
@@ -17,7 +17,7 @@ import {
     StyledTextArea
  } from './styles'
 import { Evaluation, EvaluationType } from "../../../../utils/types/AssessmentEvaluation";
-import { FormGrid, Grid2Columns, SectionHeader, StyledInputGroup } from "../../../../styles/modals";
+import { FormGrid, Grid2Columns, SectionHeader } from "../../../../styles/layoutUtils";
 
 interface BasicInfoSectionProps {
     evaluationData: Evaluation | null;

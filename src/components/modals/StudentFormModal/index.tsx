@@ -2,10 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { FaCheck, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 
 import { Input, Label } from "../../../styles/formControls";
-import { InputGroup } from "../../../styles/inputs";
+import { InputGroup, StyledInputGroup } from "../../../styles/inputs";
 import { useStudents } from "../../../hooks/useStudent";
-import { InfoBox, StyledInputGroup } from "../../../styles/modals";
-import { Grid } from "../../../styles/layoutUtils";
+import { Grid, InfoBox } from "../../../styles/layoutUtils";
 import { FormCard } from "../../../styles/containers";
 import { Select, InlineErrorMessage } from "./styles";
 import Modal from "../Modal";

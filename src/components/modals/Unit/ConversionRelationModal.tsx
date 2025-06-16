@@ -3,9 +3,9 @@ import { FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import styled from 'styled-components';
 
 import { ConversionRelation, UnitType } from '../../../utils/types/Question';
-import { InfoBox } from '../../../styles/modals';
+
 import { Input, Label, InputGroup, TextArea, Select } from '../../../styles/inputs';
-import { Grid } from '../../../styles/layoutUtils';
+import { Grid, InfoBox } from '../../../styles/layoutUtils';
 import Modal from '../Modal';
 import { ErrorMessage } from '../../../styles/feedback';
 
