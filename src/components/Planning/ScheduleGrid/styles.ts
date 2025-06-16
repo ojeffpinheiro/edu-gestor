@@ -19,7 +19,7 @@ export const GridContainer = styled.div`
   grid-template-columns: 120px repeat(5, 1fr);
   gap: 0.5rem;
   background: var(--color-background-secondary);
-  border-radius: var(--radius-xl);
+  border-radius: var(--space-md);
   padding: 1rem;
   box-shadow: var(--shadow-md);
   overflow-x: auto;
@@ -31,7 +31,7 @@ export const DayHeader = styled.div`
   padding: 0.75rem;
   background: var(--gradient-primary);
   color: var(--color-text-on-primary);
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   position: sticky;
   top: 0;
   margin-bottom: 0.5rem;
@@ -48,14 +48,14 @@ export const TimeLabel = styled.div`
   justify-content: flex-end;
   border-bottom: 1px solid var(--color-border-light);
   background: var(--color-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
 `;
 
 export const HourSlot = styled.div`
   height: 80px;
   padding: 0.25rem;
   border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   background: var(--color-surface);
   transition: var(--transition-all);
   position: relative;
@@ -72,7 +72,7 @@ export const HourSlot = styled.div`
 
 export const LessonItem = styled.div`
   background: var(--gradient-surface);
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   padding: 0.75rem;
   height: 100%;
   position: relative;
@@ -136,7 +136,7 @@ export const EmptySlot = styled.div`
   color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-  border-radius: var(--radius-md);
+  border-radius: var(--border-radius-md);
   
   &:hover {
     background: var(--color-primary-light);
@@ -156,7 +156,7 @@ export const AddButton = styled.button`
   background: var(--gradient-primary);
   color: var(--color-text-on-primary);
   border: none;
-  border-radius: var(--radius-xl);
+  border-radius: var(--space-md);
   padding: 0.5rem 1rem;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);

@@ -13,7 +13,7 @@ export const Nav = styled.nav`
 export const NavContainer = styled.div`
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-md);
 `;
 
 export const NavList = styled.ul`
@@ -21,8 +21,8 @@ export const NavList = styled.ul`
   overflow-x: auto;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  gap: var(--space-4);
-  padding: var(--space-2) 0;
+  gap: var(--space-md);
+  padding: var(--space-xl) 0;
   
   &::-webkit-scrollbar {
     display: none;

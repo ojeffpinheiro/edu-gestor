@@ -2,10 +2,10 @@ import React from 'react';
 import { Lesson, Team, DayOfWeek } from '../../utils/types/Planning';
 import { FormGroup, Label } from '../../styles/formControls';
 import { Input, Select } from '../../styles/inputs';
-import { Button } from '../../styles/buttons';
 import ValidationFeedback from '../ui/ValidationFeedback';
 import Modal from '../modals/Modal';
 import { FormGrid } from '../../styles/layoutUtils';
+import { ModalBody } from '../../styles/modals';
 
 interface LessonFormProps {
     isOpen: boolean;
@@ -53,12 +53,12 @@ export const LessonForm: React.FC<LessonFormProps> = ({
         onSubmit(e);
     };
 
-    const modalTitle = selectedCell 
+    const modalTitle = selectedCell
         ? `Adicionar Aula - ${selectedCell.day} ${selectedCell.time}`
         : 'Adicionar Nova Aula';
 
     return (
-        <Modal 
+        <Modal
             isOpen={isOpen}
             size='md'
             title={modalTitle}
@@ -66,116 +66,95 @@ export const LessonForm: React.FC<LessonFormProps> = ({
             onSubmit={() => handleSubmit}
             submitText="Salvar Aula"
             closeOnClickOutside={false}
-            showFooter={false}
+            showFooter={true}
         >
-            <form onSubmit={handleSubmit}>
-                <FormGrid>
-                    <FormGroup>
-                        <Label>Turma</Label>
-                        {teams.length > 0 ? (
-                            <>
-                                <Select
-                                    value={lesson.team}
-                                    onChange={(e) => onChange({ team: e.target.value })}
-                                    disabled={isLoading}
-                                >
-                                    <option value="">Selecione uma turma</option>
-                                    {teams.map((team) => (
-                                        <option key={team.id} value={team.name}>
-                                            {team.name}
-                                        </option>
-                                    ))}
-                                </Select>
-                                <ValidationFeedback error={errors.team} />
-                            </>
-                        ) : (
-                            <>
-                                <Input
-                                    type="text"
-                                    placeholder="Ex: 8º Ano A"
-                                    value={lesson.team}
-                                    onChange={(e) => onChange({ team: e.target.value })}
-                                    disabled={isLoading}
-                                    required
-                                />
-                                <ValidationFeedback error={errors.team} />
-                            </>
-                        )}
-                    </FormGroup>
+            <ModalBody id="modal-content">
+                <form onSubmit={handleSubmit}>
+                    <FormGrid>
+                        <FormGroup>
+                            <Label>Turma</Label>
+                            {teams.length > 0 ? (
+                                <>
+                                    <Select
+                                        value={lesson.team}
+                                        onChange={(e) => onChange({ team: e.target.value })}
+                                        disabled={isLoading}
+                                    >
+                                        <option value="">Selecione uma turma</option>
+                                        {teams.map((team) => (
+                                            <option key={team.id} value={team.name}>
+                                                {team.name}
+                                            </option>
+                                        ))}
+                                    </Select>
+                                    <ValidationFeedback error={errors.team} />
+                                </>
+                            ) : (
+                                <>
+                                    <Input
+                                        type="text"
+                                        placeholder="Ex: 8º Ano A"
+                                        value={lesson.team}
+                                        onChange={(e) => onChange({ team: e.target.value })}
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                    <ValidationFeedback error={errors.team} />
+                                </>
+                            )}
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label>Dia da Semana</Label>
-                        <Select
-                            value={lesson.day}
-                            onChange={(e) => onChange({ day: e.target.value as DayOfWeek })}
-                            disabled={isLoading || !!selectedCell?.day}
-                            required
-                        >
-                            {!selectedCell?.day && <option value="">Selecione um dia</option>}
-                            {daysOfWeek.map((day) => (
-                                <option key={day} value={day}>
-                                    {day}
-                                </option>
-                            ))}
-                        </Select>
-                        <ValidationFeedback error={errors.day} />
-                    </FormGroup>
+                        <FormGroup>
+                            <Label>Dia da Semana</Label>
+                            <Select
+                                value={lesson.day}
+                                onChange={(e) => onChange({ day: e.target.value as DayOfWeek })}
+                                disabled={isLoading || !!selectedCell?.day}
+                                required
+                            >
+                                {!selectedCell?.day && <option value="">Selecione um dia</option>}
+                                {daysOfWeek.map((day) => (
+                                    <option key={day} value={day}>
+                                        {day}
+                                    </option>
+                                ))}
+                            </Select>
+                            <ValidationFeedback error={errors.day} />
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label>Horário</Label>
-                        <Select
-                            value={lesson.timeSlot}
-                            onChange={(e) => onChange({ timeSlot: e.target.value })}
-                            disabled={isLoading || !!selectedCell?.time}
-                            required
-                        >
-                            {!selectedCell?.time && <option value="">Selecione um horário</option>}
-                            {timeSlots.map((time) => (
-                                <option key={time} value={time}>
-                                    {time}
-                                </option>
-                            ))}
-                        </Select>
-                        <ValidationFeedback error={errors.timeSlot} />
-                    </FormGroup>
+                        <FormGroup>
+                            <Label>Horário</Label>
+                            <Select
+                                value={lesson.timeSlot}
+                                onChange={(e) => onChange({ timeSlot: e.target.value })}
+                                disabled={isLoading || !!selectedCell?.time}
+                                required
+                            >
+                                {!selectedCell?.time && <option value="">Selecione um horário</option>}
+                                {timeSlots.map((time) => (
+                                    <option key={time} value={time}>
+                                        {time}
+                                    </option>
+                                ))}
+                            </Select>
+                            <ValidationFeedback error={errors.timeSlot} />
+                        </FormGroup>
 
-                    <FormGroup>
-                        <Label>Disciplina</Label>
-                        <Input
-                            type="text"
-                            placeholder="Ex: Matemática"
-                            value={lesson.discipline}
-                            onChange={(e) => onChange({ discipline: e.target.value })}
-                            disabled={isLoading}
-                            required
-                        />
-                        <ValidationFeedback error={errors.discipline} />
-                    </FormGroup>
-                </FormGrid>
-
-                <div style={{ 
-                    display: 'flex', 
-                    gap: '1rem', 
-                    marginTop: '1.5rem',
-                    justifyContent: 'flex-end'
-                }}>
-                    <Button 
-                        type="button" 
-                        variant="secondary" 
-                        onClick={onClose}
-                        disabled={isLoading}
-                    >
-                        Cancelar
-                    </Button>
-                    <Button 
-                        type="submit" 
-                        variant="primary"
-                        disabled={isLoading}
-                    >
-                        {isLoading ? 'Salvando...' : 'Salvar Aula'}
-                    </Button>
-                </div>
-            </form>
+                        <FormGroup>
+                            <Label>Disciplina</Label>
+                            <Input
+                                type="text"
+                                placeholder="Ex: Matemática"
+                                value={lesson.discipline}
+                                onChange={(e) => onChange({ discipline: e.target.value })}
+                                disabled={isLoading}
+                                required
+                            />
+                            <ValidationFeedback error={errors.discipline} />
+                        </FormGroup>
+                    </FormGrid>
+                </form>
+            </ModalBody>
         </Modal>
     );
 };

@@ -6,11 +6,9 @@ import { getTheme } from "./colors";
 export const GlobalStyles = createGlobalStyle`
   :root {
     ${({ theme }) => {
-    // Se `theme.mode` existe e é 'light' ou 'dark', use ele. Caso contrário, use 'light' como fallback.
     const currentTheme = getTheme(theme.mode || "light");
 
     return `
-        /* Cores principais com melhor contraste */
         --color-background: ${currentTheme.background.primary};
         --color-background-secondary: ${currentTheme.background.secondary};
         --color-background-third: ${currentTheme.background.third};
@@ -20,43 +18,23 @@ export const GlobalStyles = createGlobalStyle`
         --color-title-card: ${currentTheme.text.card};
         --color-text-third: ${currentTheme.text.third};
         --color-text-on-primary: ${currentTheme.text.onPrimary};
-
-        /* Bordas modernas com gradientes sutis */
+        
         --color-border-light: ${currentTheme.border.light};
         --color-border: ${currentTheme.border.medium};
         --color-border-dark: ${currentTheme.border.dark};
 
-        /* Sistema de cores primárias com variações */
         --color-primary: ${currentTheme.component.primaryButton};
         --color-primary-hover: ${currentTheme.component.primaryButtonHover};
-        --color-primary-light: ${transparentize(0.9, currentTheme.component.primaryButton)};
-        --color-primary-dark: ${darken(0.15, currentTheme.component.primaryButton)};
+         --color-primary-dark: ${darken(0.15, currentTheme.component.primaryButton)};
         --color-secondary: ${currentTheme.component.secondaryButton};
         --color-secondary-hover: ${currentTheme.component.secondaryButtonHover};
         --color-card: ${currentTheme.component.card};
 
-        /* Glassmorphism effects */
-        --glass-background-rgb: ${theme.mode === 'dark' ? '17, 25, 40' : '255, 255, 255'};
-        --glass-border: ${theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
-        
-        --glass-background: ${theme.mode === 'dark' 
-          ? 'rgba(17, 25, 40, 0.75)' 
-          : 'rgba(255, 255, 255, 0.25)'};
-        --glass-border: ${theme.mode === 'dark' 
-          ? 'rgba(255, 255, 255, 0.18)' 
-          : 'rgba(255, 255, 255, 0.18)'};
-        --glass-shadow: ${theme.mode === 'dark'
-          ? '0 8px 32px 0 rgba(31, 38, 135, 0.37)'
-          : '0 8px 32px 0 rgba(31, 38, 135, 0.37)'};
-
-        /* Gradientes modernos */
-        --gradient-primary: linear-gradient(135deg, ${currentTheme.component.primaryButton}, ${darken(0.1, currentTheme.component.primaryButton)});
-        --gradient-secondary: linear-gradient(135deg, ${currentTheme.component.secondaryButton}, ${darken(0.05, currentTheme.component.secondaryButton)});
-        --gradient-surface: linear-gradient(135deg, ${theme.mode === 'dark' ? 'rgba(17, 25, 40, 0.8)' : 'rgba(255, 255, 255, 0.8)'}, ${theme.mode === 'dark' ? 'rgba(17, 25, 40, 0.4)' : 'rgba(255, 255, 255, 0.4)'});
-
         --color-text-button: ${currentTheme.component.text};
+
         --color-button-disabled: ${currentTheme.component.disabled};
         --color-button: rgba(0, 0, 0, 0.05);
+
         --color-input: ${currentTheme.component.input};
         --color-input-border: ${currentTheme.component.inputBorder};
         --color-input-focus: ${currentTheme.component.inputFocus};
@@ -68,7 +46,10 @@ export const GlobalStyles = createGlobalStyle`
         --color-focus-ring: ${transparentize(0.7, currentTheme.component.primaryButton)};
         --color-disabled-text: ${currentTheme.text.third};
         
-         /* Cores de estado */
+        /* Glassmorphism effects */
+        --glass-background-rgb: ${theme.mode === 'dark' ? '17, 25, 40' : '255, 255, 255'};
+        --glass-border: ${theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'};
+
         --color-success: ${currentTheme.feedback.success};
         --color-success-hover: #389E0D;
         --color-error: ${currentTheme.feedback.error};
@@ -82,29 +63,32 @@ export const GlobalStyles = createGlobalStyle`
         --color-facebook: ${currentTheme.icons.facebook};
         --color-github: ${currentTheme.icons.github};
         --color-apple: ${currentTheme.icons.apple};
-        
-        --color-surface: ${theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.8)'};
+
+         --color-surface: ${theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(255, 255, 255, 0.8)'};
         --color-surface-elevated: ${theme.mode === 'dark' ? 'rgba(255, 255, 255, 0.08)' : 'rgba(255, 255, 255, 0.95)'};
+        --gradient-surface: linear-gradient(135deg, ${theme.mode === 'dark' ? 'rgba(17, 25, 40, 0.8)' : 'rgba(255, 255, 255, 0.8)'}, ${theme.mode === 'dark' ? 'rgba(17, 25, 40, 0.4)' : 'rgba(255, 255, 255, 0.4)'});
+
+        /* New color additions (keep these) */
+        --glass-background: ${theme.mode === 'dark'
+        ? 'rgba(17, 25, 40, 0.75)'
+        : 'rgba(255, 255, 255, 0.25)'};
+        --glass-border: ${theme.mode === 'dark'
+        ? 'rgba(255, 255, 255, 0.18)'
+        : 'rgba(255, 255, 255, 0.18)'};
+        --gradient-primary: linear-gradient(135deg, ${currentTheme.component.primaryButton}, ${darken(0.1, currentTheme.component.primaryButton)});
+        --gradient-secondary: linear-gradient(135deg, ${currentTheme.component.secondaryButton}, ${darken(0.05, currentTheme.component.secondaryButton)});
 
         --line-height-sm: 1.25;
         --line-height-md: 1.5;
         --line-height-lg: 1.75;
+        
+        --font-weight-normal: 400;
+        --font-weight-medium: 500;
+        --font-weight-semibold: 600;
+        --font-weight-bold: 700;
 
-        /* Sombras modernas em camadas */
-        --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
-        --shadow-focus: 0 0 0 3px ${transparentize(0.7, currentTheme.component.primaryButton)};
-        --shadow-glow: 0 0 20px ${transparentize(0.8, currentTheme.component.primaryButton)};
-
-        /* Tipografia */
         --font-family: 'Poppins', sans-serif;
         --font-family-secondary: 'Inter', sans-serif;
-        
         --font-size-xs: 0.75rem;
         --font-size-sm: 0.875rem;
         --font-size-md: 1rem;
@@ -113,12 +97,7 @@ export const GlobalStyles = createGlobalStyle`
         --font-size-2xl: 1.5rem;
         --font-size-3xl: 1.875rem;
         --font-size-4xl: 2.25rem;
-        --font-weight-normal: 400;
-        --font-weight-medium: 500;
-        --font-weight-semibold: 600;
-        --font-weight-bold: 700;
 
-        /* Sistema de espaçamento consistente */
         --space-xs: 0.25rem;
         --space-sm: 0.5rem;
         --space-md: 1rem;
@@ -127,37 +106,12 @@ export const GlobalStyles = createGlobalStyle`
         --space-2xl: 3rem;
         --space-3xl: 4rem;
         --space-4xl: 6rem;
-
-        /* Border radius moderno */
-        --radius-none: 0;
-        --radius-sm: 0.125rem;
-        --radius-base: 0.25rem;
-        --radius-md: 0.375rem;
-        --radius-lg: 0.5rem;
-        --radius-xl: 0.75rem;
-        --radius-2xl: 1rem;
-        --radius-3xl: 1.5rem;
-        --radius-full: 50%;
-
-        /* Transições modernas com curvas de bezier */
-        --transition-none: none;
-        --transition-all: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-colors: color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-opacity: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-shadow: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-transform: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        --transition-bounce: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        --transition-elastic: all 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
-
-        /* Z-index system */
-        --z-dropdown: 1000;
-        --z-sticky: 1020;
-        --z-fixed: 1030;
-        --z-modal-backdrop: 1040;
-        --z-modal: 1050;
-        --z-popover: 1060;
-        --z-tooltip: 1070;
-        --z-toast: 1080;
+        
+        --border-radius-sm: 0.25rem;
+        --border-radius-md: 0.5rem;
+        --border-radius-lg: 1rem;
+        --border-radius-xl: 1.5rem;
+        --border-radius-full: 50%;
 
         --shadow-sm: ${currentTheme.shadow.sm};
         --shadow-md: ${currentTheme.shadow.md};
@@ -170,7 +124,16 @@ export const GlobalStyles = createGlobalStyle`
         --breakpoint-xl: 1200px;
         --breakpoint-2xl: 1440px;
         --breakpoint-3xl: 1920px;
-        
+
+         /* Transições modernas com curvas de bezier */
+        --transition-none: none;
+        --transition-all: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-colors: color 150ms cubic-bezier(0.4, 0, 0.2, 1), background-color 150ms cubic-bezier(0.4, 0, 0.2, 1), border-color 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-opacity: opacity 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-shadow: box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-transform: transform 150ms cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-bounce: all 300ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        --transition-elastic: all 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
         --transition-fast: 0.2s ease;
         --transition-normal: 0.3s ease;
         --transition-slow: 0.5s ease;
@@ -344,14 +307,6 @@ export const GlobalStyles = createGlobalStyle`
   *:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
-    border-radius: var(--radius-sm);
-  }
-  
-  /* Modo escuro aprimorado */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-    }
   }
   
   // Melhorias para mobile

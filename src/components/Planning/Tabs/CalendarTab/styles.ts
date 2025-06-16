@@ -14,11 +14,11 @@ export const CalendarHeader = styled.header`
   h1 {
     font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
     font-weight: var(--font-weight-extrabold);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-xl);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--space-4);
+    gap: var(--space-md);
     color: var(--color-primary);
   }
 
@@ -39,8 +39,8 @@ export const CalendarGrid = styled.div`
 
   .calendar-view {
     background: var(--color-card);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
+    border-radius: var(--space-md);
+    padding: var(--space-lg);
     box-shadow: var(--shadow-md);
     transition: var(--transition-all);
 
@@ -53,8 +53,8 @@ export const CalendarGrid = styled.div`
   .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: var(--space-2);
-    margin-bottom: var(--space-4);
+    gap: .75rem;
+    margin-bottom: var(--space-md);
     text-align: center;
     font-weight: var(--font-weight-semibold);
     color: var(--color-text-secondary);
@@ -63,13 +63,13 @@ export const CalendarGrid = styled.div`
   .days-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: var(--space-2);
+    gap: .75rem;
   }
 
   .day-cell {
     aspect-ratio: 1;
-    padding: var(--space-2);
-    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    border-radius: var(--border-radius-md);
     display: flex;
     flex-direction: column;
     background: var(--color-background-third);
@@ -97,7 +97,7 @@ export const CalendarGrid = styled.div`
     .event-indicators {
       display: flex;
       flex-wrap: wrap;
-      gap: var(--space-1);
+      gap: var(--space-xs);
       margin-top: auto;
       justify-content: center;
     }
@@ -136,15 +136,15 @@ export const CalendarGrid = styled.div`
 
   .upcoming-events {
     background: var(--color-card);
-    border-radius: var(--radius-xl);
-    padding: var(--space-6);
+    border-radius: var(--space-md);
+    padding: var(--space-lg);
     box-shadow: var(--shadow-md);
 
     h3 {
       display: flex;
       align-items: center;
-      gap: var(--space-2);
-      margin-bottom: var(--space-6);
+      gap: var(--space-xl);
+      margin-bottom: var(--space-lg);
       color: var(--color-text);
     }
   }
@@ -152,13 +152,13 @@ export const CalendarGrid = styled.div`
   .events-list {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-md);
   }
 
   .event-item {
     background: var(--color-surface);
-    padding: var(--space-4);
-    border-radius: var(--radius-lg);
+    padding: var(--space-md);
+    border-radius: var(--border-radius-md);
     border-left: 4px solid var(--color-primary);
     transition: var(--transition-transform);
 
@@ -169,17 +169,17 @@ export const CalendarGrid = styled.div`
     .event-date {
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
-      margin-bottom: var(--space-1);
+      margin-bottom: var(--space-xs);
     }
 
     .event-title {
       font-weight: var(--font-weight-medium);
-      margin-bottom: var(--space-2);
+      margin-bottom: var(--space-xl);
     }
 
     .event-type {
       display: inline-block;
-      padding: var(--space-1) var(--space-3);
+      padding: var(--space-xs) 0.75rem;
       border-radius: var(--radius-full);
       font-size: var(--font-size-xs);
       font-weight: var(--font-weight-semibold);
@@ -206,12 +206,12 @@ export const CalendarGrid = styled.div`
 
 export const EventForm = styled.div`
   background: var(--color-card);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  border-radius: var(--space-md);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-md);
 
   h3 {
-    margin-bottom: var(--space-6);
+    margin-bottom: var(--space-lg);
     color: var(--color-text);
   }
 
@@ -220,16 +220,16 @@ export const EventForm = styled.div`
 
     label {
       display: block;
-      margin-bottom: var(--space-2);
+      margin-bottom: var(--space-xl);
       font-weight: var(--font-weight-medium);
       color: var(--color-text);
     }
 
     input, select {
       width: 100%;
-      padding: var(--space-3) var(--space-4);
+      padding: var(--space-3) var(--space-md);
       border: 1px solid var(--color-border);
-      border-radius: var(--radius-lg);
+      border-radius: var(--border-radius-md);
       background: var(--color-surface);
       color: var(--color-text);
       transition: var(--transition-all);
@@ -245,13 +245,13 @@ export const EventForm = styled.div`
   .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--space-4);
+    gap: var(--space-md);
   }
 
   .checkbox-group {
     display: flex;
     align-items: center;
-    gap: var(--space-3);
+    gap: 0.75rem;
 
     input[type="checkbox"] {
       width: auto;
@@ -267,16 +267,16 @@ export const EventForm = styled.div`
 
 export const AddButton = styled.button`
   width: 100%;
-  padding: var(--space-3);
+  padding: 0.75rem;
   background: var(--gradient-primary);
   color: var(--color-text-on-primary);
   border: none;
-  border-radius: var(--radius-lg);
+  border-radius: var(--border-radius-md);
   font-weight: var(--font-weight-semibold);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-2);
+  gap: var(--space-xl);
   cursor: pointer;
   transition: var(--transition-all);
 
@@ -307,8 +307,8 @@ export const Modal = styled.div`
 
 export const ModalContent = styled.div`
   background: var(--color-surface-elevated);
-  border-radius: var(--radius-xl);
-  padding: var(--space-6);
+  border-radius: var(--space-md);
+  padding: var(--space-lg);
   width: 90%;
   max-width: 500px;
   max-height: 90vh;
@@ -319,14 +319,14 @@ export const ModalContent = styled.div`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: var(--space-4);
-  right: var(--space-4);
+  top: var(--space-md);
+  right: var(--space-md);
   background: none;
   border: none;
   color: var(--color-text-secondary);
   font-size: var(--font-size-lg);
   cursor: pointer;
-  padding: var(--space-1);
+  padding: var(--space-xs);
   border-radius: var(--radius-full);
   transition: var(--transition-colors);
 
@@ -342,9 +342,9 @@ export const DayEventsModal = styled(Modal)`
 
 export const DayEventItem = styled.div`
   background: var(--color-surface);
-  padding: var(--space-4);
-  border-radius: var(--radius-lg);
-  margin-bottom: var(--space-3);
+  padding: var(--space-md);
+  border-radius: var(--border-radius-md);
+  margin-bottom: 0.75rem;
   border-left: 4px solid;
   transition: var(--transition-all);
 
@@ -369,21 +369,21 @@ export const DayEventItem = styled.div`
   .event-time {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-xs);
   }
 
   .event-title {
     font-weight: var(--font-weight-medium);
-    margin-bottom: var(--space-1);
+    margin-bottom: var(--space-xs);
   }
 
   .event-type {
     display: inline-block;
-    padding: var(--space-1) var(--space-2);
-    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-xl);
+    border-radius: var(--border-radius-sm);
     font-size: var(--font-size-xs);
     background: var(--color-background-third);
-    margin-bottom: var(--space-2);
+    margin-bottom: var(--space-xl);
   }
 
   .event-reminder {
@@ -391,7 +391,7 @@ export const DayEventItem = styled.div`
     color: var(--color-text-secondary);
     display: flex;
     align-items: center;
-    gap: var(--space-1);
+    gap: var(--space-xs);
 
     &::before {
       content: '⏰';

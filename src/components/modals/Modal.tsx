@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { FaTimes, FaSpinner } from 'react-icons/fa';
+
+import { FormContainer } from '../../styles/containers';
+import { Button, CloseButton } from '../../styles/buttons';
 import {
   ModalContainer,
   ModalContent,
@@ -7,8 +10,6 @@ import {
   ModalBody,
   ModalFooter
 } from '../../styles/modals';
-import { Button, CloseButton } from '../../styles/buttons';
-import { FormContainer } from '../../styles/containers';
 
 interface ModalProps {
   isOpen: boolean;

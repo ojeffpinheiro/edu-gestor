@@ -6,7 +6,7 @@ export const Card = styled.div`
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-2xl);
+  border-radius: var(--border-radius-md);
   padding: 2rem;
   box-shadow: var(--shadow-xl);
   margin-bottom: 1.5rem;
@@ -45,7 +45,7 @@ export const CardTitle = styled.h3`
     width: 60px;
     height: 3px;
     background: var(--gradient-primary);
-    border-radius: var(--radius-full);
+    border-radius: var(--border-radius-full);
   }
 `;
 
@@ -57,7 +57,7 @@ export const EmptyState = styled.div`
   text-align: center;
   padding: 2rem;
   background: rgba(var(--glass-background-rgb), 0.4);
-  border-radius: var(--radius-xl);
+  border-radius: var(--space-md);
   border: 1px dashed var(--glass-border);
   
   h4 {
@@ -76,7 +76,7 @@ export const EmptyState = styled.div`
     color: var(--color-text-on-primary);
     border: none;
     padding: 0.75rem 1.5rem;
-    border-radius: var(--radius-full);
+    border-radius: var(--border-radius-full);
     font-weight: var(--font-weight-semibold);
     cursor: pointer;
     transition: all 0.3s ease;

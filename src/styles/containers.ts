@@ -1,4 +1,3 @@
-// containers.ts
 import styled from "styled-components";
 import { BaseCard } from "./baseComponents";
 import { slideUp } from "./animations";
@@ -9,6 +8,18 @@ export const FormContainer = styled(BaseCard)`
   background-color: var(--color-background-secondary);
   border: 1px solid var(--color-border-light);
   margin-bottom: 1.5rem;
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    
+    label {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      font-weight: var(--font-weight-medium);
+    }
+  }
 `;
 
 export const FormCard = styled.section`

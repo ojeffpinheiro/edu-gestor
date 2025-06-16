@@ -10,7 +10,7 @@ export const Header = styled.header`
   -webkit-backdrop-filter: blur(12px) saturate(180%);
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   color: var(--color-text-on-primary);
-  padding: var(--space-6) var(--space-4);
+  padding: var(--space-lg) var(--space-md);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
@@ -30,7 +30,7 @@ export const HeaderContainer = styled.div`
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
+  gap: var(--space-xl);
   
   @media (min-width: 768px) {
     flex-direction: row;

@@ -313,7 +313,7 @@ export const ModalBody = styled.div`
   
   &::-webkit-scrollbar-thumb {
     background: var(--color-border, rgba(0, 0, 0, 0.2));
-    border-radius: var(--radius-full, 9999px);
+    border-radius: var(--border-radius-full, 9999px);
     border: 2px solid transparent;
     background-clip: content-box;
     transition: background-color 0.2s ease;
@@ -352,6 +352,7 @@ export const ModalFooter = styled.div`
   
   .navigation-buttons {
     display: flex;
+    justify-content: flex-end;
     gap: var(--space-md, 1rem);
     width: 100%;
     align-items: center;
