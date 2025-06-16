@@ -1,5 +1,5 @@
 import { hasScheduleConflict } from "./scheduleUtils";
-import { Holiday, Lesson } from "./types/Planning";
+import { DayOfWeek, Holiday, Lesson } from "./types/Planning";
 
 interface ValidationRules {
   required?: boolean;
@@ -16,11 +16,11 @@ interface ValidationResult {
 }
 
 export function validateForm<T extends Record<string, any>>(
-  data: T, 
+  data: T,
   rules: Partial<Record<keyof T, ValidationRules>>
 ): ValidationResult {
   const errors: Record<string, string> = {};
-  
+
   Object.entries(data).forEach(([field, value]) => {
     const fieldRules = rules[field as keyof T];
     if (!fieldRules) return;
@@ -60,7 +60,7 @@ export function validateForm<T extends Record<string, any>>(
 }
 
 export const scheduleConflictRule = (existingLessons: Lesson[], newLesson: Lesson) => ({
-  custom: (value: any) => 
+  custom: (value: any) =>
     hasScheduleConflict(existingLessons, newLesson) ? 'Conflito de horário detectado' : null
 });
 
@@ -76,14 +76,30 @@ export const dateValidationRule = (holidays: Holiday[], date: Date) => ({
 });
 
 export const classLimitRule = (currentCount: number, max: number) => ({
-  custom: (value: any) => 
+  custom: (value: any) =>
     currentCount >= max ? `Limite máximo de ${max} aulas atingido` : null
 });
 
 export const maxStudentsRule = (current: number, max: number) => ({
-  custom: (value: any) => 
+  custom: (value: any) =>
     current > max ? `Turma excede limite de ${max} alunos` : null
 });
+
+
+export const daysOfWeek: DayOfWeek[] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+
+export const timeSlots = [
+  '07:00 - 08:00',
+  '08:00 - 09:00',
+  '09:00 - 10:00',
+  '10:00 - 11:00',
+  '11:00 - 12:00',
+  '13:00 - 14:00',
+  '14:00 - 15:00',
+  '15:00 - 16:00',
+  '16:00 - 17:00',
+  '17:00 - 18:00',
+];
 
 export const timeFormatRule = {
   pattern: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
@@ -91,6 +107,6 @@ export const timeFormatRule = {
 };
 
 export const futureDateRule = {
-  custom: (value: string) => 
+  custom: (value: string) =>
     new Date(value) < new Date() ? 'Data deve ser futura' : null
 };

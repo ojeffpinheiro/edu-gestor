@@ -1,121 +1,75 @@
 import React, { useContext, useState } from 'react';
-
+import LessonForm from '../../LessonForm';
+import { validateLesson } from './validation';
+import { DayOfWeek, Lesson } from '../../../../utils/types/Planning';
 import PlanningContext from '../../../../contexts/PlanningContext';
-import { Lesson } from '../../../../utils/types/Planning';
-import { classLimitRule, scheduleConflictRule, validateForm } from '../../../../utils/validationPlanning';
-
-import { LessonForm } from './LessonForm/LessonForm';
-import ScheduleHeader from './ScheduleHeader';
-
-import { ScheduleContainer } from './styles';
-import ScheduleGrid from './Schedule/ScheduleGrid';
-
-const timeSlots = [
-  '07:00 - 07:50',
-  '07:50 - 08:40',
-  '08:40 - 09:30',
-  '09:30 - 10:20',
-  '10:20 - 11:10',
-  '11:10 - 12:00',
-  '12:00 - 13:00', // Almoço
-  '13:00 - 13:50',
-  '13:50 - 14:40',
-  '14:40 - 15:30',
-  '15:30 - 16:20',
-  '16:20 - 17:10',
-  '17:10 - 18:00'
-];
-const daysOfWeek = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
+import ScheduleGrid from '../../ScheduleGrid';
+import { daysOfWeek, timeSlots } from '../../../../utils/validationPlanning';
 
 const ClassScheduleTab: React.FC = () => {
-  const { state, addLesson } = useContext(PlanningContext);
-  const { lessons } = state;
-  const [newLesson, setNewLesson] = useState<Lesson>({
-    id: 0,
-    team: '',
-    day: 'Segunda',
-    timeSlot: '',
-    discipline: ''
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCell, setSelectedCell] = useState<{ day: string, time: string } | null>(null);
+    const { state } = useContext(PlanningContext);
+    const { teams } = state;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentLesson, setCurrentLesson] = useState<Partial<Lesson>>({});
+    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+    const [selectedCell, setSelectedCell] = useState<{ day: DayOfWeek; time: string } | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const handleLessonChange = (updatedLesson: Partial<Lesson>) => {
+        setCurrentLesson(prev => ({ ...prev, ...updatedLesson }));
+        // Validação em tempo real opcional
+        const errors = validateLesson({ ...currentLesson, ...updatedLesson } as Lesson);
+        setFormErrors(errors);
+    };
 
-  const validationRules = {
-    team: { required: true },
-    day: { required: true },
-    timeSlot: {
-      required: true,
-      pattern: /^([01]?[0-9]|2[0-3]):[0-5][0-9] - ([01]?[0-9]|2[0-3]):[0-5][0-9]$/,
-      ...scheduleConflictRule(state.lessons, newLesson)
-    },
-    discipline: {
-      required: true,
-      minLength: 3,
-      ...classLimitRule(
-        state.lessons.filter(l => l.team === newLesson.team).length,
-        10
-      )
-    }
-  };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setIsLoading(true);
 
-  const handleAddLesson = () => {
-    const { isValid, errors } = validateForm(newLesson, validationRules);
-    setErrors(errors);
+        try {
+            const errors = validateLesson(currentLesson as Lesson);
+            if (Object.keys(errors).length > 0) {
+                setFormErrors(errors);
+                return;
+            }
 
-    if (!isValid) return;
+            // Aqui você faria a chamada API para salvar a aula
+            // await saveLesson(currentLesson as Lesson);
 
-    addLesson({
-      ...newLesson,
-      id: Date.now()
-    });
+            setIsModalOpen(false);
+            setCurrentLesson({});
+            setFormErrors({});
+        } catch (error) {
+            console.error('Erro ao salvar aula:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-    // Reset form and close modal
-    setNewLesson({
-      id: 0,
-      team: '',
-      day: 'Segunda',
-      timeSlot: '',
-      discipline: ''
-    });
-    setIsModalOpen(false);
-  };
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setCurrentLesson({});
+        setFormErrors({});
+    };
 
-  const openModal = (day: string, time: string) => {
-    setSelectedCell({ day, time });
-    setNewLesson(prev => ({
-      ...prev,
-      day: day as Lesson['day'],
-      timeSlot: time
-    }));
-    setIsModalOpen(true);
-  };
+    return (
+        <div>
+            <ScheduleGrid onAddLesson={() => setIsModalOpen(true)} />
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setErrors({});
-  };
-
-  return (
-    <ScheduleContainer>
-      <ScheduleHeader onAddClick={() => openModal('Segunda', '')} />
-      
-      <ScheduleGrid 
-        days={daysOfWeek} 
-        lessons={lessons} 
-        onCellClick={ openModal }
-        timeSlots={timeSlots} />
-      
-      {/* Modal de Adição */}
-      {isModalOpen &&
-        <LessonForm
-          isOpen={isModalOpen} lesson={newLesson}
-          errors={errors} teams={state.teams}
-          daysOfWeek={daysOfWeek} timeSlots={timeSlots}
-          onChange={() => setNewLesson} onClose={closeModal}
-          onSubmit={handleAddLesson} selectedCell={selectedCell} />}
-    </ScheduleContainer>
-  );
+            <LessonForm
+                isOpen={isModalOpen}
+                lesson={currentLesson as Lesson}
+                errors={formErrors}
+                teams={teams}
+                daysOfWeek={daysOfWeek}
+                timeSlots={timeSlots}
+                selectedCell={selectedCell}
+                onChange={handleLessonChange}
+                onSubmit={handleSubmit}
+                onClose={closeModal}
+                isLoading={isLoading}
+            />
+        </div>
+    );
 };
 
 export default ClassScheduleTab;
