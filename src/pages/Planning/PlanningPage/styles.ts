@@ -1,447 +1,310 @@
 import styled from 'styled-components';
 
-// Styled Components
+// Container principal com glassmorphism
 export const Container = styled.div`
   min-height: 100vh;
-  background-color: var(--color-background, #f3f4f6);
+  background: var(--color-background);
+  position: relative;
+  
+  /* Fundo gradiente sutil */
+  &::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, var(--color-primary-light) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, var(--color-secondary) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, var(--color-info-light) 0%, transparent 50%);
+    opacity: 0.4;
+    z-index: -1;
+    pointer-events: none;
+  }
 `;
 
+// Header com glassmorphism e gradient
 export const Header = styled.header`
-  background-color: var(--color-primary, #1d4ed8);
-  color: var(--color-text-on-primary, white);
-  padding: var(--space-md, 1rem);
+  background: var(--glass-background);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: 1px solid var(--glass-border);
+  color: var(--color-text-on-primary);
+  padding: var(--space-6) var(--space-4);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  
+  /* Overlay gradient */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-primary);
+    opacity: 0.9;
+    z-index: -1;
+  }
 `;
 
 export const HeaderContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  
+  @media (min-width: var(--breakpoint-md)) {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
 `;
 
 export const Title = styled.h1`
-  font-size: var(--font-size-xl, 1.5rem);
-  font-weight: 700;
+  font-size: clamp(var(--font-size-2xl), 4vw, var(--font-size-4xl));
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text-on-primary);
+  letter-spacing: -0.02em;
+  margin: 0;
+  
+  /* Gradient text effect */
+  background: linear-gradient(135deg, white, rgba(255,255,255,0.8));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 `;
 
 export const Subtitle = styled.p`
-  color: var(--color-text-secondary, #93c5fd);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-medium);
+  margin: 0;
+  opacity: 0.9;
 `;
 
+// Navegação moderna com indicadores fluidos
 export const Nav = styled.nav`
-  background-color: var(--color-background-secondary, white);
-  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
+  background: var(--color-surface);
+  backdrop-filter: var(--backdrop-blur);
+  -webkit-backdrop-filter: var(--backdrop-blur);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
 `;
 
 export const NavContainer = styled.div`
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 var(--space-4);
 `;
 
 export const NavList = styled.ul`
   display: flex;
   overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  gap: var(--space-1);
+  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  
+  @media (max-width: var(--breakpoint-md)) {
+    padding: var(--space-2) 0;
+  }
 `;
 
 export const NavItem = styled.li`
   list-style: none;
+  flex-shrink: 0;
 `;
 
 export const NavButton = styled.button<{ active: boolean }>`
   display: flex;
   align-items: center;
-  padding: var(--space-md, 0.75rem) var(--space-lg, 1rem);
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
   border: none;
-  background: transparent;
-  border-bottom: 2px solid;
-  border-bottom-color: ${props => props.active ? 'var(--color-primary, #1d4ed8)' : 'transparent'};
-  color: ${props => props.active ? 'var(--color-primary, #1d4ed8)' : 'inherit'};
+  background: ${props => props.active 
+    ? 'var(--gradient-primary)' 
+    : 'transparent'};
+  color: ${props => props.active 
+    ? 'var(--color-text-on-primary)' 
+    : 'var(--color-text)'};
+  border-radius: var(--radius-xl);
   cursor: pointer;
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  transition: var(--transition-all);
+  position: relative;
+  white-space: nowrap;
   
+  /* Hover effect */
   &:hover {
-    background-color: var(--color-background-third, #f9fafb);
+    background: ${props => props.active 
+      ? 'var(--gradient-primary)' 
+      : 'var(--color-primary-light)'};
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
   }
-`;
-
-export const IconWrapper = styled.span`
-  margin-right: var(--space-sm, 0.5rem);
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  /* Icon styling */
+  svg {
+    width: 18px;
+    height: 18px;
+    opacity: ${props => props.active ? 1 : 0.7};
+  }
+  
+  /* Active indicator */
+  ${props => props.active && `
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60%;
+      height: 2px;
+      background: var(--color-text-on-primary);
+      border-radius: var(--radius-full);
+      opacity: 0.8;
+    }
+  `}
 `;
 
 export const Main = styled.main`
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: var(--space-md, 1rem);
-`;
-
-export const Card = styled.div`
-  background-color: var(--color-background-secondary, white);
-  border-radius: var(--border-radius-md, 0.375rem);
-  padding: var(--space-lg, 1rem);
-  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgba(0, 0, 0, 0.05));
-  margin-bottom: var(--space-md, 1rem);
-  animation: slideUp 0.3s ease;
-  transition: all 0.2s ease-in-out;
+  padding: var(--space-8) var(--space-4);
+  min-height: calc(100vh - 200px);
   
-  &:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  @media (max-width: var(--breakpoint-md)) {
+    padding: var(--space-6) var(--space-4);
   }
 `;
 
-export const CardTitle = styled.h3`
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: 600;
-  margin-bottom: var(--space-sm, 0.5rem);
-  padding-bottom: var(--space-sm, 0.5rem);
-  border-bottom: 1px solid var(--color-border-light, #e5e7eb);
-`;
-
-export const SectionTitle = styled.h2`
-  font-size: var(--font-size-xl, 1.25rem);
-  font-weight: 700;
-  margin-bottom: var(--space-md, 1rem);
-`;
-
-export const CheckboxContainer = styled.div`
-  display: flex;
-  align-items: start;
-  cursor: pointer;
-`;
-
-export const Checkbox = styled.div<{ checked: boolean }>`
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 0.25rem;
-  margin-right: 0.5rem;
+// Container para ações do header (se necessário)
+export const HeaderActions = styled.div`
   display: flex;
   align-items: center;
+  gap: var(--space-3);
+`;
+
+// Badge para notificações ou status
+export const Badge = styled.span<{ variant?: 'primary' | 'success' | 'warning' | 'error' }>`
+  display: inline-flex;
+  align-items: center;
   justify-content: center;
-  background-color: ${props => props.checked ? 'var(--color-success, #22c55e)' : 'transparent'};
-  border: 1px solid ${props => props.checked ? 'var(--color-success, #22c55e)' : 'var(--color-border, #d1d5db)'};
-`;
-
-export const CheckboxLabel = styled.span<{ checked: boolean }>`
-  text-decoration: ${props => props.checked ? 'line-through' : 'none'};
-  color: ${props => props.checked ? 'var(--color-text-secondary, #6b7280)' : 'var(--color-text, #1f2937)'};
-`;
-
-export const Grid = styled.div<{ cols?: number }>`
-  display: grid;
-  grid-template-columns: repeat(${props => props.cols || 1}, 1fr);
-  gap: var(--space-sm, 0.5rem);
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const WeekGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--space-sm, 0.5rem);
-  
-  @media (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-`;
-
-export const DayCard = styled.div`
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  padding: var(--space-sm, 0.5rem);
-`;
-
-export const DayTitle = styled.h4`
-  font-weight: 500;
-  text-align: center;
-  padding-bottom: var(--space-xs, 0.25rem);
-  border-bottom: 1px solid var(--color-border-light, #e5e7eb);
-  margin-bottom: var(--space-sm, 0.5rem);
-`;
-
-export const ClassItem = styled.div`
-  background-color: var(--color-info-bg, #eff6ff);
-  padding: var(--space-xs, 0.25rem);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  margin-bottom: var(--space-xs, 0.25rem);
-  font-size: var(--font-size-sm, 0.875rem);
-`;
-
-export const ClassTitle = styled.div`
-  font-weight: 500;
-`;
-
-export const ClassInfo = styled.div`
-  color: var(--color-info, #3b82f6);
-`;
-
-export const ClassTime = styled.div`
-  color: var(--color-text-secondary, #6b7280);
-  font-size: var(--font-size-xs, 0.75rem);
-`;
-
-export const Table = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--color-background-secondary, white);
-  border-radius: var(--border-radius-md, 0.375rem);
-  overflow: hidden;
-`;
-
-export const Th = styled.th`
-  padding: var(--space-md, 0.75rem);
-  background-color: var(--color-background-third, #f9fafb);
-  text-align: left;
-  font-weight: 600;
-  border: 1px solid var(--color-border, #d1d5db);
-`;
-
-export const Td = styled.td`
-  padding: var(--space-md, 0.75rem);
-  border: 1px solid var(--color-border, #d1d5db);
-`;
-
-export const Tr = styled.tr`
-  &:nth-child(even) {
-    background-color: var(--color-background-third, #f9fafb);
-  }
-
-  &:hover {
-    background-color: var(--color-background-secondary, #f3f4f6);
-  }
-`;
-
-export const FormGroup = styled.div`
-  margin-bottom: var(--space-md, 1rem);
-`;
-
-export const Label = styled.label`
-  display: block;
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: 500;
-  margin-bottom: var(--space-xs, 0.25rem);
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  padding: var(--space-sm, 0.5rem);
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary, #1d4ed8);
-  }
-`;
-
-export const Select = styled.select`
-  width: 100%;
-  padding: var(--space-sm, 0.5rem);
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  
-  &:focus {
-    outline: none;
-    border-color: var(--color-primary, #1d4ed8);
-  }
-`;
-
-export const Button = styled.button`
-  background-color: var(--color-primary, #1d4ed8);
-  color: white;
-  padding: var(--space-sm, 0.5rem) var(--space-md, 1rem);
-  border: none;
-  border-radius: var(--border-radius-sm, 0.25rem);
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
-  
-  &:hover {
-    background-color: var(--color-primary-dark, #1e40af);
-  }
-`;
-
-export const TextButton = styled.button`
-  background: none;
-  border: none;
-  color: var(--color-primary, #1d4ed8);
-  font-size: var(--font-size-sm, 0.875rem);
-  cursor: pointer;
-  padding: 0;
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-export const FlexBox = styled.div<{ justify?: string; align?: string; gap?: string }>`
-  display: flex;
-  justify-content: ${props => props.justify || 'flex-start'};
-  align-items: ${props => props.align || 'center'};
-  gap: ${props => props.gap || 'var(--space-sm, 0.5rem)'};
-`;
-
-export const Badge = styled.span<{ variant?: 'feriado' | 'prazo' | 'reuniao' | 'evento' }>`
-  padding: var(--space-xs, 0.25rem) var(--space-sm, 0.5rem);
-  border-radius: var(--border-radius-full, 999px);
-  font-size: var(--font-size-xs, 0.75rem);
-  font-weight: 500;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
   
   ${props => {
     switch (props.variant) {
-      case 'feriado':
+      case 'success':
         return `
-          background-color: var(--color-error-bg, #fee2e2);
-          color: var(--color-error, #ef4444);
+          background: var(--color-success-light);
+          color: var(--color-success-dark);
         `;
-      case 'prazo':
+      case 'warning':
         return `
-          background-color: var(--color-warning-bg, #fef3c7);
-          color: var(--color-warning, #f59e0b);
+          background: var(--color-warning-light);
+          color: var(--color-warning-dark);
         `;
-      case 'reuniao':
-      case 'evento':
+      case 'error':
+        return `
+          background: var(--color-error-light);
+          color: var(--color-error-dark);
+        `;
       default:
         return `
-          background-color: var(--color-info-bg, #eff6ff);
-          color: var(--color-info, #3b82f6);
+          background: var(--color-primary-light);
+          color: var(--color-primary-dark);
         `;
     }
   }}
 `;
 
-export const CalendarContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md, 1rem);
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-  }
-`;
-
-export const CalendarMain = styled.div`
-  flex: 2;
-`;
-
-export const CalendarSidebar = styled.div`
-  flex: 1;
-`;
-
-export const CalendarGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: var(--space-xs, 0.25rem);
-`;
-
-export const CalendarHeader = styled.div`
-  text-align: center;
-  font-weight: 500;
-  font-size: var(--font-size-sm, 0.875rem);
-  padding: var(--space-xs, 0.25rem);
-`;
-
-export const CalendarDay = styled.div<{ isCurrentMonth?: boolean; hasEvent?: boolean }>`
-  border: 1px solid var(--color-border, #d1d5db);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  padding: var(--space-sm, 0.5rem);
-  min-height: 3.5rem;
-  background-color: ${props => props.isCurrentMonth ? 'var(--color-background-secondary, white)' : 'var(--color-background-third, #f9fafb)'};
-  color: ${props => props.isCurrentMonth ? 'var(--color-text, #1f2937)' : 'var(--color-text-secondary, #6b7280)'};
-  ${props => props.hasEvent ? 'box-shadow: 0 0 0 1px var(--color-info, #3b82f6);' : ''}
-`;
-
-export const CalendarDayNumber = styled.div`
-  text-align: right;
-  font-size: var(--font-size-sm, 0.875rem);
-  margin-bottom: var(--space-xs, 0.25rem);
-`;
-
-export const EventItem = styled.div<{ tipo: string }>`
-  font-size: var(--font-size-xs, 0.75rem);
-  padding: 0 var(--space-xs, 0.25rem);
-  border-radius: var(--border-radius-xs, 0.125rem);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-bottom: 2px;
-  
-  ${props => {
-    switch (props.tipo) {
-      case 'Feriado':
-        return `
-          background-color: var(--color-error-bg, #fee2e2);
-          color: var(--color-error, #ef4444);
-        `;
-      case 'Prazo':
-        return `
-          background-color: var(--color-warning-bg, #fef3c7);
-          color: var(--color-warning, #f59e0b);
-        `;
-      case 'Reunião':
-      default:
-        return `
-          background-color: var(--color-info-bg, #eff6ff);
-          color: var(--color-info, #3b82f6);
-        `;
-    }
-  }}
-`;
-
-export const EventCard = styled.div`
-  border-left: 4px solid var(--color-info, #3b82f6);
-  padding-left: var(--space-md, 0.75rem);
-  padding-top: var(--space-xs, 0.25rem);
-  padding-bottom: var(--space-xs, 0.25rem);
-  margin-bottom: var(--space-md, 0.75rem);
-`;
-
-export const EventTitle = styled.div`
-  font-weight: 500;
-`;
-
-export const EventDate = styled.div`
-  font-size: var(--font-size-sm, 0.875rem);
-  color: var(--color-text-secondary, #6b7280);
-`;
-
-export const EventTypeBadge = styled(Badge)`
-  display: inline-block;
-  margin-top: var(--space-xs, 0.25rem);
-`;
-
-export const Divider = styled.hr`
-  border: 0;
-  border-top: 1px solid var(--color-border, #d1d5db);
-  margin: var(--space-md, 1rem) 0;
-`;
-
-export const NewItemCard = styled.div`
-  background-color: var(--color-background-secondary, white);
-  border-radius: var(--border-radius-md, 0.375rem);
-  padding: var(--space-lg, 1rem);
-  border: 2px dashed var(--color-border, #d1d5db);
+// Floating Action Button (FAB) para ações rápidas
+export const FloatingActionButton = styled.button`
+  position: fixed;
+  bottom: var(--space-8);
+  right: var(--space-8);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background: var(--gradient-primary);
+  border: none;
+  color: var(--color-text-on-primary);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  transition: var(--transition-all);
+  z-index: var(--z-fixed);
   
   &:hover {
-    border-color: var(--color-primary, #1d4ed8);
-    background-color: var(--color-background-third, #f9fafb);
+    transform: scale(1.05);
+    box-shadow: var(--shadow-xl), var(--shadow-glow);
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+  
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  @media (max-width: var(--breakpoint-md)) {
+    bottom: var(--space-6);
+    right: var(--space-6);
+    width: 48px;
+    height: 48px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 `;
 
-export const IconCircle = styled.div`
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  background-color: var(--color-info-bg, #eff6ff);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: var(--space-sm, 0.5rem);
-`;
-
-export const NewItemText = styled.p`
-  color: var(--color-primary, #1d4ed8);
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: 500;
+// Loading skeleton para estados de carregamento
+export const Skeleton = styled.div<{ width?: string; height?: string }>`
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  width: ${props => props.width || '100%'};
+  height: ${props => props.height || '1rem'};
+  position: relative;
+  overflow: hidden;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-surface-elevated),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+  }
 `;

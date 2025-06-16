@@ -8,7 +8,7 @@ import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
 import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
 
-import { 
+import {
   Container,
   Header,
   HeaderContainer,
@@ -20,7 +20,7 @@ import {
   NavItem,
   NavButton,
   Main
- } from './styles'
+} from './styles'
 
 
 /**
@@ -56,7 +56,7 @@ const PlanejadorClasse = () => {
             <Subtitle>Sistema de planejamento e gerenciamento para professores</Subtitle>
           </HeaderContainer>
         </Header>
-       
+
         <Nav>
           <NavContainer>
             <NavList>
@@ -70,36 +70,36 @@ const PlanejadorClasse = () => {
                 </NavButton>
               </NavItem>
               <NavItem>
-              <NavButton
-                onClick={() => setActiveTab('horarios')}
-                active={activeTab === 'horarios'}
-              >
-                <FaClock size={18} />
-                <span>Horários</span>
-              </NavButton>
-            </NavItem>
-            <NavItem>
-              <NavButton
-                onClick={() => setActiveTab('turmas')}
-                active={activeTab === 'turmas'}
-              >
-                <FaUsers size={18} />
-                <span>Turmas</span>
-              </NavButton>
-            </NavItem>
-            <NavItem>
-              <NavButton
-                onClick={() => setActiveTab('calendario')}
-                active={activeTab === 'calendario'}
-              >
-                <FaCalendarAlt size={18} />
-                <span>Calendário</span>
-              </NavButton>
-            </NavItem>
+                <NavButton
+                  onClick={() => setActiveTab('horarios')}
+                  active={activeTab === 'horarios'}
+                >
+                  <FaClock size={18} />
+                  <span>Horários</span>
+                </NavButton>
+              </NavItem>
+              <NavItem>
+                <NavButton
+                  onClick={() => setActiveTab('turmas')}
+                  active={activeTab === 'turmas'}
+                >
+                  <FaUsers size={18} />
+                  <span>Turmas</span>
+                </NavButton>
+              </NavItem>
+              <NavItem>
+                <NavButton
+                  onClick={() => setActiveTab('calendario')}
+                  active={activeTab === 'calendario'}
+                >
+                  <FaCalendarAlt size={18} />
+                  <span>Calendário</span>
+                </NavButton>
+              </NavItem>
             </NavList>
           </NavContainer>
         </Nav>
-       
+
         <Main>
           {renderActiveTab()}
         </Main>

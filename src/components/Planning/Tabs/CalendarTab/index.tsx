@@ -1,165 +1,342 @@
 import React, { useContext, useState } from 'react';
-
-import { Container, Flex } from '../../../../styles/layoutUtils';
-import { Title } from '../../../../styles/typography';
-import { SectionTitle } from '../../../../styles/baseComponents';
-import { FormSection, FormSectionTitle } from '../../../../styles/formControls';
-import { Input, Select } from '../../../../styles/inputs';
-import { Button } from '../../../../styles/buttons';
-
-import { CalendarSection, DayCell, DayNumber, DaysGrid, EventDate, EventIndicator, EventItem, EventsList, EventsSection, EventTag, EventTagContainer, EventTitle, FormFields, WeekdayCell, WeekdaysGrid } from './styles';
+import { FaPlus, FaBell, FaCalendarAlt, FaTimes } from 'react-icons/fa';
+import { CalendarEvent, EventType } from '../../../../utils/types/CalendarEvent';
 import PlanningContext from '../../../../contexts/PlanningContext';
 import { validateForm } from '../../../../utils/validationPlanning';
+import NotificationService from '../../../../services/notificationService';
+
+import { 
+  Container, 
+  CalendarHeader, 
+  CalendarGrid, 
+  EventForm,
+  AddButton,
+  Modal,
+  ModalContent,
+  CloseButton,
+  DayEventsModal,
+  DayEventItem
+} from './styles';
 
 const CalendarTab = () => {
   const { state, dispatch } = useContext(PlanningContext);
   const { events } = state;
   const [newEvent, setNewEvent] = useState({
     title: '',
-    date: '',
-    type: 'Evento'
+    start: '',
+    end: '',
+    type: 'class' as EventType,
+    reminder: false,
+    recurrenceEnd: '',
+    recurrence: {
+      frequency: 'daily' as const,
+      interval: 1,
+      endDate: '',
+    },
+    reminders: [],
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [dayEvents, setDayEvents] = useState<CalendarEvent[]>([]);
 
-  const adicionarEvento = () => {
+  const handleAddEvent = () => {
     const validationRules = {
       title: { required: true, minLength: 3 },
       date: { required: true },
       type: { required: true }
     };
 
-    const { isValid, errors } = validateForm(newEvent, validationRules);
-    setErrors(errors);
-
+    const { isValid } = validateForm(newEvent, validationRules);
     if (!isValid) return;
 
-    dispatch({
-      type: 'ADD_EVENT',
-      payload: {
-        id: Date.now(),
-        ...newEvent
-      }
-    });
+    const eventPayload: CalendarEvent = {
+      id: Date.now().toString(),
+      title: newEvent.title,
+      type: newEvent.type,
+      start: newEvent.start,
+      end: newEvent.end,
+      ...(newEvent.recurrence && {
+        recurrence: {
+          frequency: newEvent.recurrence.frequency,
+          interval: 1,
+          endDate: newEvent.recurrenceEnd || undefined
+        }
+      }),
+      ...(newEvent.reminder && {
+        reminders: newEvent.reminder
+          ? [{ time: 10, unit: 'minutes' }]
+          : undefined
+      })
+    };
+
+    dispatch({ type: 'ADD_EVENT', payload: eventPayload });
+
+    if (newEvent.reminder) {
+      NotificationService.scheduleReminder(eventPayload);
+    }
 
     setNewEvent({
       title: '',
-      date: '',
-      type: 'Evento'
+      start: '',
+      end: '',
+      type: 'class',
+      reminder: false,
+      recurrence: {
+        frequency: 'daily',
+        interval: 1,
+        endDate: ''
+      },
+      recurrenceEnd: '',
+      reminders: []
     });
+    setShowModal(false);
+  };
+
+  const handleDayClick = (day: number) => {
+    const date = new Date();
+    date.setDate(day);
+    setSelectedDate(date);
+    
+    const dayEvents = events.filter(ev => {
+      const evDate = new Date(ev.start);
+      return evDate.getDate() === day && 
+             evDate.getMonth() === date.getMonth() && 
+             evDate.getFullYear() === date.getFullYear();
+    });
+    setDayEvents(dayEvents);
   };
 
   return (
     <Container>
-      <Title>Calendário Acadêmico</Title>
+      <CalendarHeader>
+        <h1>
+          <FaCalendarAlt /> Calendário Acadêmico
+        </h1>
+        <p>Organize suas atividades acadêmicas</p>
+      </CalendarHeader>
 
-      <Flex>
-        <CalendarSection>
-          <SectionTitle>Eventos do Calendário</SectionTitle>
-
-          <WeekdaysGrid>
-            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(dia => (
-              <WeekdayCell key={dia}>{dia}</WeekdayCell>
+      <CalendarGrid>
+        {/* Seção do Calendário */}
+        <div className="calendar-view">
+          <div className="weekdays">
+            {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map(day => (
+              <div key={day} className="weekday">{day}</div>
             ))}
-          </WeekdaysGrid>
-
-          <DaysGrid>
-            {/** Geração da grade do calendário */}
+          </div>
+          
+          <div className="days-grid">
             {Array.from({ length: 35 }, (_, i) => {
-              const day = i - 3; // Ajuste para começar em uma segunda-feira
+              const day = i - 3;
               const isCurrentMonth = day >= 0 && day < 30;
               const hasEvent = events.some(ev => {
-                const evDay = new Date(ev.date).getDate();
+                const evDay = new Date(ev.start).getDate();
                 return evDay === day + 1 && isCurrentMonth;
               });
 
               return (
-                <DayCell
-                  key={i}
-                  isCurrentMonth={isCurrentMonth}
-                  hasEvent={hasEvent}
+                <div 
+                  key={i} 
+                  className={`day-cell ${isCurrentMonth ? 'current-month' : ''} ${hasEvent ? 'has-event' : ''}`}
+                  onClick={() => isCurrentMonth && handleDayClick(day + 1)}
                 >
                   {isCurrentMonth && (
                     <>
-                      <DayNumber>{day + 1}</DayNumber>
+                      <span className="day-number">{day + 1}</span>
                       {hasEvent && (
-                        <div>
+                        <div className="event-indicators">
                           {events
-                            .filter(ev => new Date(ev.date).getDate() === day + 1)
+                            .filter(ev => new Date(ev.start).getDate() === day + 1)
+                            .slice(0, 3) // Mostra no máximo 3 indicadores
                             .map(ev => (
-                              <EventIndicator
-                                key={ev.id}
-                                type={ev.type}
+                              <span 
+                                key={ev.id} 
+                                className={`event-indicator ${ev.type.toLowerCase()}`}
+                                title={ev.title}
                               >
-                                {ev.type}
-                              </EventIndicator>
+                                {ev.title.substring(0, 1)}
+                              </span>
                             ))}
+                          {events.filter(ev => new Date(ev.start).getDate() === day + 1).length > 3 && (
+                            <span className="event-indicator more" title="Mais eventos">
+                              +{events.filter(ev => new Date(ev.start).getDate() === day + 1).length - 3}
+                            </span>
+                          )}
                         </div>
                       )}
                     </>
                   )}
-                </DayCell>
+                </div>
               );
             })}
-          </DaysGrid>
-        </CalendarSection>
+          </div>
+        </div>
 
-        <EventsSection>
-          <SectionTitle>Próximos Eventos</SectionTitle>
-
-          <EventsList>
-            {events
-              .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-              .map(event => (
-                <EventItem key={event.id}>
-                  <EventTitle>{event.title}</EventTitle>
-                  <EventDate>
-                    {new Date(event.date).toLocaleDateString('pt-BR')}
-                  </EventDate>
-                  <EventTagContainer>
-                    <EventTag type={event.type}>
+        {/* Seção de Eventos Próximos */}
+        <div className="events-sidebar">
+          <div className="upcoming-events">
+            <h3>
+              <FaBell /> Próximos Eventos
+            </h3>
+            <div className="events-list">
+              {events
+                .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
+                .slice(0, 5) // Mostra apenas os 5 próximos eventos
+                .map(event => (
+                  <div key={event.id} className="event-item">
+                    <div className="event-date">
+                      {new Date(event.start).toLocaleDateString('pt-BR', { 
+                        day: '2-digit', 
+                        month: '2-digit', 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </div>
+                    <div className="event-title">{event.title}</div>
+                    <div className={`event-type ${event.type.toLowerCase()}`}>
                       {event.type}
-                    </EventTag>
-                  </EventTagContainer>
-                </EventItem>
-              ))}
-          </EventsList>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
 
-          <FormSection>
-            <FormSectionTitle>Adicionar Evento</FormSectionTitle>
-            <FormFields>
-              <div>
-                <Input
+          <AddButton onClick={() => setShowModal(true)}>
+            <FaPlus /> Adicionar Evento
+          </AddButton>
+        </div>
+      </CalendarGrid>
+
+      {/* Modal de Adição de Evento */}
+      {showModal && (
+        <Modal>
+          <ModalContent>
+            <CloseButton onClick={() => setShowModal(false)}>
+              <FaTimes />
+            </CloseButton>
+            <h2>Adicionar Novo Evento</h2>
+            <EventForm>
+              <div className="form-group">
+                <label>Título</label>
+                <input
                   type="text"
-                  placeholder="Título do evento"
                   value={newEvent.title}
-                  onChange={e => setNewEvent({ ...newEvent, title: e.target.value })}
+                  onChange={e => setNewEvent({...newEvent, title: e.target.value})}
+                  placeholder="Nome do evento"
                 />
               </div>
-              <div>
-                <Input
-                  type="date"
-                  value={newEvent.date}
-                  onChange={e => setNewEvent({ ...newEvent, date: e.target.value })}
-                />
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Data Início</label>
+                  <input
+                    type="datetime-local"
+                    value={newEvent.start}
+                    onChange={e => setNewEvent({...newEvent, start: e.target.value})}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Data Fim</label>
+                  <input
+                    type="datetime-local"
+                    value={newEvent.end}
+                    onChange={e => setNewEvent({...newEvent, end: e.target.value})}
+                  />
+                </div>
               </div>
-              <div>
-                <Select
+
+              <div className="form-group">
+                <label>Tipo de Evento</label>
+                <select
                   value={newEvent.type}
-                  onChange={e => setNewEvent({ ...newEvent, type: e.target.value })}
+                  onChange={e => setNewEvent({...newEvent, type: e.target.value as EventType})}
                 >
-                  <option value="Evento">Evento</option>
-                  <option value="Prazo">Prazo</option>
-                  <option value="Reunião">Reunião</option>
-                  <option value="Feriado">Feriado</option>
-                </Select>
+                  <option value="class">Aula</option>
+                  <option value="holiday">Feriado</option>
+                  <option value="meeting">Reunião</option>
+                  <option value="reminder">Lembrete</option>
+                </select>
               </div>
-              <Button onClick={adicionarEvento}>
-                Adicionar
-              </Button>
-            </FormFields>
-          </FormSection>
-        </EventsSection>
-      </Flex>
+
+              <div className="form-group checkbox-group">
+                <input
+                  type="checkbox"
+                  id="reminder"
+                  checked={newEvent.reminder}
+                  onChange={e => setNewEvent({...newEvent, reminder: e.target.checked})}
+                />
+                <label htmlFor="reminder">Adicionar lembrete</label>
+              </div>
+
+              <AddButton onClick={handleAddEvent}>
+                <FaPlus /> Adicionar Evento
+              </AddButton>
+            </EventForm>
+          </ModalContent>
+        </Modal>
+      )}
+
+      {/* Modal de Eventos do Dia */}
+      {selectedDate && (
+        <DayEventsModal>
+          <ModalContent>
+            <CloseButton onClick={() => setSelectedDate(null)}>
+              <FaTimes />
+            </CloseButton>
+            <h2>
+              Eventos em {selectedDate.toLocaleDateString('pt-BR', { 
+                weekday: 'long', 
+                day: '2-digit', 
+                month: 'long' 
+              })}
+            </h2>
+            
+            {dayEvents.length > 0 ? (
+              <div className="events-list">
+                {dayEvents.map(event => (
+                  <DayEventItem key={event.id} className={event.type.toLowerCase()}>
+                    <div className="event-time">
+                      {new Date(event.start).toLocaleTimeString('pt-BR', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                      {event.end && (
+                        <>
+                          {' - '}
+                          {new Date(event.end).toLocaleTimeString('pt-BR', { 
+                            hour: '2-digit', 
+                            minute: '2-digit' 
+                          })}
+                        </>
+                      )}
+                    </div>
+                    <div className="event-title">{event.title}</div>
+                    <div className="event-type">{event.type}</div>
+                    {event.reminders && (
+                      <div className="event-reminder">
+                        Lembrete: {event.reminders[0].time} {event.reminders[0].unit} antes
+                      </div>
+                    )}
+                  </DayEventItem>
+                ))}
+              </div>
+            ) : (
+              <p>Nenhum evento agendado para este dia.</p>
+            )}
+            
+            <AddButton onClick={() => {
+              setSelectedDate(null);
+              setShowModal(true);
+              setNewEvent(prev => ({
+                ...prev,
+                start: selectedDate.toISOString().slice(0, 16),
+                end: selectedDate.toISOString().slice(0, 16)
+              }));
+            }}>
+              <FaPlus /> Adicionar Evento
+            </AddButton>
+          </ModalContent>
+        </DayEventsModal>
+      )}
     </Container>
   );
 };

@@ -9,22 +9,33 @@ import React, {
 } from "react";
 
 import { LessonPlan } from "../utils/types/DidacticSequence";
-
 import {
   Lesson,
   Task,
   Team,
-  Event,
   GradeSettings,
   LessonPlanTemplate,
   Holiday,
   NonSchoolDay
 } from "../utils/types/Planning";
+import { CalendarEvent } from "../utils/types/CalendarEvent";
+
+import { 
+  mockCalendarEvents, 
+  mockGradeSettings, 
+  mockHolidays, 
+  mockLessonPlans, 
+  mockLessonPlanTemplates, 
+  mockLessons, 
+  mockNonSchoolDays, 
+  mockTasks, 
+  mockTeams 
+} from "../mocks/plannigData";
 
 interface PlanningState {
   teams: Team[];
   lessons: Lesson[];
-  events: Event[];
+  events: CalendarEvent[];
   tasks: Task[];
   lessonPlans: LessonPlan[];
   holidays: Holiday[];
@@ -45,8 +56,8 @@ type PlanningAction =
   | { type: 'UPDATE_LESSON'; payload: Lesson }
   | { type: 'DELETE_LESSON'; payload: number }
   | { type: 'ADD_LESSON_PLAN'; payload: LessonPlan }
-  | { type: 'ADD_EVENT'; payload: Event }
-  | { type: 'UPDATE_EVENT'; payload: Event }
+  | { type: 'ADD_EVENT'; payload: CalendarEvent }
+  | { type: 'UPDATE_EVENT'; payload: CalendarEvent }
   | { type: 'DELETE_EVENT'; payload: number }
   | { type: 'ADD_TASK'; payload: Task }
   | { type: 'UPDATE_TASK'; payload: Task }
@@ -81,15 +92,15 @@ interface PlanningContextData {
 }
 
 const initialState: PlanningState = {
-  teams: [],
-  lessons: [],
-  events: [],
-  tasks: [],
-  lessonPlans: [],
-  holidays: [],
-  nonSchoolDays: [],
-  gradeSettings: [],
-  planningTemplates: [],
+  teams: mockTeams,
+  lessons: mockLessons,
+  events: mockCalendarEvents,
+  tasks: mockTasks,
+  lessonPlans: mockLessonPlans,
+  holidays: mockHolidays,
+  nonSchoolDays: mockNonSchoolDays,
+  gradeSettings: mockGradeSettings,
+  planningTemplates: mockLessonPlanTemplates,
   history: {
     past: [],
     future: []
@@ -164,7 +175,7 @@ function planningReducer(state: PlanningState, action: PlanningAction): Planning
     case 'DELETE_EVENT':
       return {
         ...state,
-        events: state.events.filter(event => event.id !== action.payload)
+        events: state.events.filter(event => Number(event.id) !== action.payload)
       };
 
     case 'ADD_TASK':
@@ -256,7 +267,6 @@ function historyReducer(state: PlanningState, action: PlanningAction) {
       };
   }
 }
-
 
 export const loadState = (): PlanningState | undefined => {
   try {

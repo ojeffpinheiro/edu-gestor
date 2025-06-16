@@ -1,4 +1,5 @@
 import { LessonPlan } from "./DidacticSequence";
+import { Event } from "./Event";
 
 export interface Task {
     id: number;
@@ -6,27 +7,28 @@ export interface Task {
     completed: boolean;
 }
 
-export interface Event {
-    id: number,
-    title: string;
-    date: string;
-    type: string;
-}
-
 export interface Lesson {
     id: number;
     team: string;
-    day: 'Segunda' | 'Terça' | 'Quarta' | 'Quinta' | 'Sexta';
+    day: DayOfWeek;
     timeSlot: string;
     discipline: string;
+    order?: number;
 }
 
 export interface Team {
-    id: number;
-    name: string;
-    session: 'Manhã' | 'Tarde' | 'Noite';
-    numStudent: number;
+  id: number;
+  name: string;
+  session: 'Manhã' | 'Tarde' | 'Noite';
+  numStudent: number;
+  gradeLevel?: string;
+  specificRequirements?: string;
+  schedule?: string[];
+  learningObjectives?: LearningObjective[];
+  studentList?: string;
 }
+
+export type DayOfWeek = 'Segunda' | 'Terça' | 'Quarta' | 'Quinta' | 'Sexta'
 
 export interface NonSchoolDay {
   id: number;
@@ -37,6 +39,7 @@ export interface NonSchoolDay {
 }
 
 export interface Holiday extends Event {
+  type: 'event';
   recurring: boolean;
   recurrencePattern?: string;
 }
@@ -53,4 +56,10 @@ export interface LessonPlanTemplate {
   name: string;
   template: Partial<LessonPlan>;
   applicableGrades: string[];
+}
+
+export interface LearningObjective {
+  id: number;
+  description: string;
+  completed: boolean;
 }
