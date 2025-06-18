@@ -1,106 +1,77 @@
-import React, { useContext } from 'react';
-import { FaPlus } from 'react-icons/fa';
+import React from 'react';
 
-import {
-  GridContainer,
-  TimeLabel,
-  DayHeader,
-  HourSlot,
-  LessonItem,
-  AddButton,
-  HeaderContent,
-  Title,
-  LessonTime,
-  LessonInfo,
-  LessonTitle,
-  EmptySlot
-} from './styles';
-import PlanningContext from '../../../contexts/PlanningContext';
+import { useLessons } from '../../../contexts/LessonsContext';
+import { useSchedule } from '../../../contexts/ScheduleContext';
+
+import { DayOfWeek, Lesson, Shift } from '../../../utils/types/Planning';
+import { Grid, Cell, HeaderCell, TimeCell } from './styles';
 
 interface ScheduleGridProps {
-  days?: string[];
-  timeSlots?: string[];
-  onAddLesson: (day: string, timeSlot: string) => void;
+    shift: Shift;
+    readOnly?: boolean;
+    onAddLesson?: (day: DayOfWeek, time: string) => void;
 }
 
-const ScheduleGrid: React.FC<ScheduleGridProps> = ({
-  days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'],
-  timeSlots = [
-    '07:00 - 08:00',
-    '08:00 - 09:00',
-    '09:00 - 10:00',
-    '10:00 - 11:00',
-    '11:00 - 12:00',
-    '13:00 - 14:00',
-    '14:00 - 15:00',
-    '15:00 - 16:00',
-    '16:00 - 17:00',
-    '17:00 - 18:00',
-  ],
-  onAddLesson
-}) => {
-  const { state } = useContext(PlanningContext);
-  const lessons = state.lessons;
-  const getLessonsForCell = (day: string, time: string) => {
-    return lessons.filter(lesson => lesson.day === day && lesson.timeSlot === time);
-  };
+interface GridLesson extends Lesson {
+    subject?: string;
+    teacher?: string;
+}
 
-  return (
-    <div>
-      <HeaderContent>
-        <Title>Grade Horária</Title>
-        <AddButton onClick={() => onAddLesson(days[0], timeSlots[0])}>
-          <FaPlus size={14} /> Adicionar Aula
-        </AddButton>
-      </HeaderContent>
+const ScheduleGrid: React.FC<ScheduleGridProps> = ({ shift, readOnly = false, onAddLesson }) => {
+    const { state: { lessons } } = useLessons();
+    const { state: { shiftSettings } } = useSchedule();
 
-      <GridContainer>
-        {/* Coluna de horários */}
-        <div>
-          <DayHeader style={{ visibility: 'hidden' }}>Horário</DayHeader>
-          {timeSlots.map(time => (
-            <TimeLabel key={time}>{time}</TimeLabel>
-          ))}
-        </div>
+    const periods = shiftSettings[shift]?.periods || [];
+    const days: DayOfWeek[] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
 
-        {/* Colunas de dias */}
-        {days.map(day => (
-          <div key={day}>
-            <DayHeader>{day}</DayHeader>
-            {timeSlots.map(time => {
-              const cellLessons = getLessonsForCell(day, time);
-              return (
-                <HourSlot key={`${day}-${time}`}>
-                  {cellLessons.length > 0 ? (
-                    cellLessons.map(lesson => (
-                      <LessonItem key={lesson.id}>
-                        <LessonTitle>{lesson.discipline}</LessonTitle>
-                        <LessonTime>{lesson.timeSlot}</LessonTime>
-                        <LessonInfo>{lesson.team}</LessonInfo>
-                        <button 
-                          className="add-button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            onAddLesson(day, time);
-                          }}
-                        >
-                          <FaPlus size={10} />
-                        </button>
-                      </LessonItem>
-                    ))
-                  ) : (
-                    <EmptySlot onClick={() => onAddLesson(day, time)}>
-                      <FaPlus size={14} />
-                    </EmptySlot>
-                  )}
-                </HourSlot>
-              );
-            })}
-          </div>
-        ))}
-      </GridContainer>
-    </div>
-  );
+    const handleCellClick = (day: DayOfWeek, time: string) => {
+        if (!readOnly && onAddLesson) {
+            onAddLesson(day, time);
+        }
+    };
+
+    return (
+        <Grid>
+            {/* Cabeçalho com dias da semana */}
+            <HeaderCell>Horário</HeaderCell>
+            {days.map(day => (
+                <HeaderCell key={day}>{day}</HeaderCell>
+            ))}
+
+            {/* Células de horário e aulas */}
+            {periods.map(period => (
+                <React.Fragment key={period.id}>
+                    <TimeCell>
+                        {period.startTime} - {period.endTime}
+                    </TimeCell>
+                    
+                    {days.map(day => {
+                        const lesson = lessons.find(l => 
+                            l.day === day && 
+                            l.timeSlot === period.startTime && 
+                            l.shift === shift
+                        ) as GridLesson;
+                        
+                        return (
+                            <Cell 
+                                key={`${day}-${period.startTime}`}
+                                onClick={() => handleCellClick(day, period.startTime)}
+                            >
+                                {lesson ? (
+                                    <div className="lesson-content">
+                                        {lesson.subject && <strong>{lesson.subject}</strong>}
+                                        {lesson.teacher && <span>{lesson.teacher}</span>}
+                                    </div>
+                                ) : (
+                                    !readOnly && <span className="add-lesson">+</span>
+                                )}
+                            </Cell>
+                        );
+                    })}
+                </React.Fragment>
+            ))}
+        </Grid>
+    );
 };
 
 export default ScheduleGrid;

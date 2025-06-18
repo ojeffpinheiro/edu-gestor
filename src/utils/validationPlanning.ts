@@ -1,5 +1,5 @@
 import { hasScheduleConflict } from "./scheduleUtils";
-import { DayOfWeek, Holiday, Lesson } from "./types/Planning";
+import { DayOfWeek, Holiday, Lesson, Period, Shift, ShiftSettings } from "./types/Planning";
 
 interface ValidationRules {
   required?: boolean;
@@ -85,21 +85,60 @@ export const maxStudentsRule = (current: number, max: number) => ({
     current > max ? `Turma excede limite de ${max} alunos` : null
 });
 
+export const generateTimeSlots = (shift: Shift, periods: Period[]): string[] => {
+  return periods
+    .filter(period => !period.isBreak)
+    .map(period => `${period.startTime} - ${period.endTime}`);
+};
+
+export const defaultShiftSettings: Record<Shift, ShiftSettings> = {
+  'Manhã': {
+    name: 'Manhã',
+    startTime: '07:00',
+    endTime: '12:00',
+    periodDuration: 60,
+    breakDuration: 15,
+    periods: [
+      { id: 1, name: '1º período', startTime: '07:00', endTime: '08:00' },
+      { id: 2, name: '2º período', startTime: '08:00', endTime: '09:00' },
+      { id: 3, name: 'Intervalo', startTime: '09:00', endTime: '09:15', isBreak: true },
+      { id: 4, name: '3º período', startTime: '09:15', endTime: '10:15' },
+      { id: 5, name: '4º período', startTime: '10:15', endTime: '11:15' },
+      { id: 6, name: '5º período', startTime: '11:15', endTime: '12:00' }
+    ]
+  },
+  'Tarde': {
+    name: 'Tarde',
+    startTime: '13:00',
+    endTime: '18:00',
+    periodDuration: 60,
+    breakDuration: 15,
+    periods: [
+      { id: 1, name: '1º período', startTime: '13:00', endTime: '14:00' },
+      { id: 2, name: '2º período', startTime: '14:00', endTime: '15:00' },
+      { id: 3, name: 'Intervalo', startTime: '15:00', endTime: '15:15', isBreak: true },
+      { id: 4, name: '3º período', startTime: '15:15', endTime: '16:15' },
+      { id: 5, name: '4º período', startTime: '16:15', endTime: '17:15' },
+      { id: 6, name: '5º período', startTime: '17:15', endTime: '18:00' }
+    ]
+  },
+  'Noite': {
+    name: 'Noite',
+    startTime: '19:00',
+    endTime: '22:30',
+    periodDuration: 50,
+    breakDuration: 10,
+    periods: [
+      { id: 1, name: '1º período', startTime: '19:00', endTime: '19:50' },
+      { id: 2, name: '2º período', startTime: '19:50', endTime: '20:40' },
+      { id: 3, name: 'Intervalo', startTime: '20:40', endTime: '20:50', isBreak: true },
+      { id: 4, name: '3º período', startTime: '20:50', endTime: '21:40' },
+      { id: 5, name: '4º período', startTime: '21:40', endTime: '22:30' }
+    ]
+  }
+};
 
 export const daysOfWeek: DayOfWeek[] = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta'];
-
-export const timeSlots = [
-  '07:00 - 08:00',
-  '08:00 - 09:00',
-  '09:00 - 10:00',
-  '10:00 - 11:00',
-  '11:00 - 12:00',
-  '13:00 - 14:00',
-  '14:00 - 15:00',
-  '15:00 - 16:00',
-  '16:00 - 17:00',
-  '17:00 - 18:00',
-];
 
 export const timeFormatRule = {
   pattern: /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/,

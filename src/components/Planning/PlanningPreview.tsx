@@ -17,8 +17,8 @@ const PlanningPreview: React.FC<PlanningPreviewProps> = ({ team, template }) => 
   const generatePreview = () => {
     // Simular combinação de template com horários da turma
     const mockSchedule: Lesson[] = [
-      { id: 1, day: 'Segunda', timeSlot: '08:00 - 09:40', discipline: 'Matemática', team: team.name },
-      { id: 2, day: 'Quarta', timeSlot: '10:00 - 11:40', discipline: 'Português', team: team.name },
+      { id: 1, day: 'Segunda', timeSlot: '08:00 - 09:40', discipline: 'Matemática', shift: 'Manhã',  team: team.name },
+      { id: 2, day: 'Quarta', timeSlot: '10:00 - 11:40', discipline: 'Português', shift: 'Manhã', team: team.name },
     ];
 
     const mockObjectives = [

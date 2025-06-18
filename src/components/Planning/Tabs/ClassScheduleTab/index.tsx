@@ -1,73 +1,77 @@
-import React, { useContext, useState } from 'react';
-import LessonForm from '../../LessonForm';
-import { validateLesson } from './validation';
-import { DayOfWeek, Lesson } from '../../../../utils/types/Planning';
-import PlanningContext from '../../../../contexts/PlanningContext';
+// src/components/Planning/Tabs/ClassScheduleTab/index.tsx
+import React from 'react';
+import { FaCog, FaPlus } from 'react-icons/fa';
+
+import { useModal } from '../../../../contexts/ModalContext';
+import { useSchedule } from '../../../../contexts/ScheduleContext';
+import { useLessons } from '../../../../contexts/LessonsContext';
+
+import { DayOfWeek, Shift } from '../../../../utils/types/Planning';
+
 import ScheduleGrid from '../../ScheduleGrid';
-import { daysOfWeek, timeSlots } from '../../../../utils/validationPlanning';
 
+import { 
+    HeaderContainer, 
+    Title, 
+    ShiftSelector, 
+    ActionButton, 
+    ActionsContainer 
+} from './styles';
 const ClassScheduleTab: React.FC = () => {
-    const { state } = useContext(PlanningContext);
-    const { teams } = state;
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentLesson, setCurrentLesson] = useState<Partial<Lesson>>({});
-    const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-    const [selectedCell, setSelectedCell] = useState<{ day: DayOfWeek; time: string } | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const handleLessonChange = (updatedLesson: Partial<Lesson>) => {
-        setCurrentLesson(prev => ({ ...prev, ...updatedLesson }));
-        // Validação em tempo real opcional
-        const errors = validateLesson({ ...currentLesson, ...updatedLesson } as Lesson);
-        setFormErrors(errors);
+    // Contextos
+    const { setCurrentLesson } = useLessons();
+    const { state: { shiftSettings, selectedShift }, setSelectedShift } = useSchedule();
+    const { actions: modalActions } = useModal();
+
+    const handleAddLesson = (day: DayOfWeek, time: string) => {
+        setCurrentLesson({
+            day,
+            timeSlot: time,
+            shift: selectedShift
+        });
+        modalActions.openModal('LESSON_FORM');
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-
-        try {
-            const errors = validateLesson(currentLesson as Lesson);
-            if (Object.keys(errors).length > 0) {
-                setFormErrors(errors);
-                return;
-            }
-
-            // Aqui você faria a chamada API para salvar a aula
-            // await saveLesson(currentLesson as Lesson);
-
-            setIsModalOpen(false);
-            setCurrentLesson({});
-            setFormErrors({});
-        } catch (error) {
-            console.error('Erro ao salvar aula:', error);
-        } finally {
-            setIsLoading(false);
-        }
+    const openLessonForm = () => {
+        setCurrentLesson({ shift: selectedShift });
+        modalActions.openModal('LESSON_FORM');
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setCurrentLesson({});
-        setFormErrors({});
+    const openShiftSettings = () => {
+        modalActions.openModal('SHIFT_SETTINGS', { shift: selectedShift });
     };
 
     return (
         <div>
-            <ScheduleGrid onAddLesson={() => setIsModalOpen(true)} />
+            <HeaderContainer>
+                <Title>Grade Horária</Title>
+                <ActionsContainer>
+                    <ShiftSelector
+                        value={selectedShift}
+                        onChange={(e) => setSelectedShift(e.target.value as Shift)}
+                    >
+                        {Object.keys(shiftSettings).map(shift => (
+                            <option key={shift} value={shift}>{shift}</option>
+                        ))}
+                    </ShiftSelector>
 
-            <LessonForm
-                isOpen={isModalOpen}
-                lesson={currentLesson as Lesson}
-                errors={formErrors}
-                teams={teams}
-                daysOfWeek={daysOfWeek}
-                timeSlots={timeSlots}
-                selectedCell={selectedCell}
-                onChange={handleLessonChange}
-                onSubmit={handleSubmit}
-                onClose={closeModal}
-                isLoading={isLoading}
+                    <ActionButton onClick={openShiftSettings}>
+                        <FaCog /> Turnos
+                    </ActionButton>
+
+                    <ActionButton primary onClick={openLessonForm}>
+                        <FaPlus /> Nova Aula
+                    </ActionButton>
+                </ActionsContainer>
+            </HeaderContainer>
+
+            <ScheduleGrid
+                shift={selectedShift}
+                onAddLesson={handleAddLesson}
+                readOnly={false}
             />
+
+            {/* Modais são gerenciados pelo ModalProvider no nível raiz */}
         </div>
     );
 };

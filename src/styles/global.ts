@@ -138,7 +138,15 @@ export const GlobalStyles = createGlobalStyle`
         --transition-normal: 0.3s ease;
         --transition-slow: 0.5s ease;
         
-        --z-index-dropdown: 1000;
+        /* Z-index system */
+        --z-dropdown: 1000;
+        --z-sticky: 1020;
+        --z-fixed: 1030;
+        --z-modal-backdrop: 1040;
+        --z-modal: 1050;
+        --z-popover: 1060;
+        --z-tooltip: 1070;
+        --z-toast: 1080;
         --z-index-modal: 2000;
         --z-index-tooltip: 3000;
       `;

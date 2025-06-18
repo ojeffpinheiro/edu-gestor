@@ -15,6 +15,7 @@ const mockLessons: Lesson[] = [
     day: "Segunda",
     timeSlot: "08:00 - 09:00",
     discipline: "Matemática",
+    shift: 'Manhã',
     order: 1,
   },
   {
@@ -23,6 +24,7 @@ const mockLessons: Lesson[] = [
     day: "Quarta",
     timeSlot: "10:00 - 11:00",
     discipline: "História",
+    shift: 'Tarde',
   },
 ];
 

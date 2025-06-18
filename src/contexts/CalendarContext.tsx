@@ -27,6 +27,11 @@ interface CalendarContextData {
   selectedEvent: CalendarEvent | null;
   events: CalendarEvent[];
   isLoading: boolean;
+  state: {
+    events: CalendarEvent[];
+    dayEvents: CalendarEvent[];
+  };
+  handleDayClick: (day: number) => void;
   error: Error | null;
   createEvent: (eventData: Partial<CalendarEvent>) => Promise<CalendarEvent>;
   updateEvent: (params: { id: string; data: Partial<CalendarEvent> }) => Promise<void>;
@@ -251,7 +256,16 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
         filterEvents,
         selectedEvent,
         onSelectEvent,
-        isEventSelected
+        isEventSelected,
+        state: {
+          events: calendar.events,
+          dayEvents: []
+        },
+        handleDayClick: (day: number) => {
+          const newDate = new Date(currentDate);
+          newDate.setDate(day);
+          setCurrentDate(newDate);
+        }
       }}
     >
       {children}

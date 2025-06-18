@@ -13,6 +13,7 @@ export interface Lesson {
     day: DayOfWeek;
     timeSlot: string;
     discipline: string;
+    shift: Shift;
     order?: number;
 }
 
@@ -62,4 +63,36 @@ export interface LearningObjective {
   id: number;
   description: string;
   completed: boolean;
+}
+
+// Add to Planning.ts
+export type Shift = 'Manhã' | 'Tarde' | 'Noite';
+
+export interface ShiftSettings {
+  name: Shift;
+  startTime: string;
+  endTime: string;
+  periodDuration: number;
+  breakDuration: number;
+  periods: Period[];
+}
+
+export interface Period {
+  id: number;
+  name: string;
+  startTime: string;
+  endTime: string;
+  isBreak?: boolean;
+}
+
+export interface Team {
+  id: number;
+  name: string;
+  session: Shift;
+  numStudent: number;
+  gradeLevel?: string;
+  specificRequirements?: string;
+  schedule?: string[];
+  learningObjectives?: LearningObjective[];
+  studentList?: string;
 }

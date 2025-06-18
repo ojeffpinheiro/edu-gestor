@@ -1,10 +1,7 @@
-import React, { useContext, useState } from 'react';
+// src/components/Planning/Tabs/CalendarTab/index.tsx
+import React, { useState } from 'react';
 import { FaPlus, FaBell, FaCalendarAlt, FaTimes } from 'react-icons/fa';
 import { CalendarEvent, EventType } from '../../../../utils/types/CalendarEvent';
-import PlanningContext from '../../../../contexts/PlanningContext';
-import { validateForm } from '../../../../utils/validationPlanning';
-import NotificationService from '../../../../services/notificationService';
-
 import { 
   Container, 
   CalendarHeader, 
@@ -17,10 +14,15 @@ import {
   DayEventsModal,
   DayEventItem
 } from './styles';
+import { useCalendar } from '../../../../contexts/CalendarContext';
 
-const CalendarTab = () => {
-  const { state, dispatch } = useContext(PlanningContext);
-  const { events } = state;
+const CalendarTab: React.FC = () => {
+  const { 
+    state: { events, dayEvents },
+    addEvent,
+    handleDayClick
+  } = useCalendar();
+  
   const [newEvent, setNewEvent] = useState({
     title: '',
     start: '',
@@ -31,50 +33,41 @@ const CalendarTab = () => {
     recurrence: {
       frequency: 'daily' as const,
       interval: 1,
-      endDate: '',
+      endDate: ''
     },
     reminders: [],
   });
+  
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
-  const [dayEvents, setDayEvents] = useState<CalendarEvent[]>([]);
 
   const handleAddEvent = () => {
-    const validationRules = {
-      title: { required: true, minLength: 3 },
-      date: { required: true },
-      type: { required: true }
-    };
+  const eventPayload: CalendarEvent = {
+    id: Date.now().toString(),
+    title: newEvent.title,
+    type: newEvent.type,
+    start: newEvent.start,
+    end: newEvent.end,
+    ...(newEvent.recurrence && {
+      recurrence: {
+        frequency: newEvent.recurrence.frequency,
+        interval: 1,
+        endDate: newEvent.recurrenceEnd || undefined
+      }
+    }),
+    ...(newEvent.reminder && {
+      reminders: newEvent.reminder
+        ? [{ time: 10, unit: 'minutes' }] // Make sure this matches your CalendarEvent type
+        : undefined
+    })
+  };
 
-    const { isValid } = validateForm(newEvent, validationRules);
-    if (!isValid) return;
+  addEvent(eventPayload);
+  resetEventForm();
+  setShowModal(false);
+};
 
-    const eventPayload: CalendarEvent = {
-      id: Date.now().toString(),
-      title: newEvent.title,
-      type: newEvent.type,
-      start: newEvent.start,
-      end: newEvent.end,
-      ...(newEvent.recurrence && {
-        recurrence: {
-          frequency: newEvent.recurrence.frequency,
-          interval: 1,
-          endDate: newEvent.recurrenceEnd || undefined
-        }
-      }),
-      ...(newEvent.reminder && {
-        reminders: newEvent.reminder
-          ? [{ time: 10, unit: 'minutes' }]
-          : undefined
-      })
-    };
-
-    dispatch({ type: 'ADD_EVENT', payload: eventPayload });
-
-    if (newEvent.reminder) {
-      NotificationService.scheduleReminder(eventPayload);
-    }
-
+  const resetEventForm = () => {
     setNewEvent({
       title: '',
       start: '',
@@ -89,21 +82,13 @@ const CalendarTab = () => {
       recurrenceEnd: '',
       reminders: []
     });
-    setShowModal(false);
   };
 
-  const handleDayClick = (day: number) => {
+  const handleDaySelection = (day: number) => {
     const date = new Date();
     date.setDate(day);
     setSelectedDate(date);
-    
-    const dayEvents = events.filter(ev => {
-      const evDate = new Date(ev.start);
-      return evDate.getDate() === day && 
-             evDate.getMonth() === date.getMonth() && 
-             evDate.getFullYear() === date.getFullYear();
-    });
-    setDayEvents(dayEvents);
+    handleDayClick(day);
   };
 
   return (
@@ -137,7 +122,7 @@ const CalendarTab = () => {
                 <div 
                   key={i} 
                   className={`day-cell ${isCurrentMonth ? 'current-month' : ''} ${hasEvent ? 'has-event' : ''}`}
-                  onClick={() => isCurrentMonth && handleDayClick(day + 1)}
+                  onClick={() => isCurrentMonth && handleDaySelection(day + 1)}
                 >
                   {isCurrentMonth && (
                     <>
@@ -146,7 +131,7 @@ const CalendarTab = () => {
                         <div className="event-indicators">
                           {events
                             .filter(ev => new Date(ev.start).getDate() === day + 1)
-                            .slice(0, 3) // Mostra no máximo 3 indicadores
+                            .slice(0, 3)
                             .map(ev => (
                               <span 
                                 key={ev.id} 
@@ -180,7 +165,7 @@ const CalendarTab = () => {
             <div className="events-list">
               {events
                 .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime())
-                .slice(0, 5) // Mostra apenas os 5 próximos eventos
+                .slice(0, 5)
                 .map(event => (
                   <div key={event.id} className="event-item">
                     <div className="event-date">

@@ -1,7 +1,6 @@
-import { useCallback, useContext } from "react";
+import { useCallback } from "react";
 import { LessonPlan } from "../utils/types/DidacticSequence";
-import { Team } from "../utils/types/Planning";
-import PlanningContext from "../contexts/PlanningContext";
+import { usePlanningContext } from "../contexts/PlanningContext";
 
 interface UsePlanTemplateReturn {
   generatePlanPreview: (templateId: string) => LessonPlan;
@@ -10,17 +9,10 @@ interface UsePlanTemplateReturn {
 }
 
 export function usePlanTemplate(teamId: number): UsePlanTemplateReturn {
-  const context = useContext(PlanningContext);
+  const { state, dispatch } = usePlanningContext();
 
-  if (!context) {
-    throw new Error('usePlanTemplate must be used within a PlanningProvider');
-  }
-
-  const { state, dispatch } = context;
-
-  const generatePlanPreview = (templateId: string): LessonPlan => {
-    const team = state.teams.find((t: Team) => t.id === teamId);
-
+  const generatePlanPreview = useCallback((templateId: string): LessonPlan => {
+    const team = state.teams.find(t => t.id === teamId);
     return {
       id: `preview-${Date.now()}`,
       sequenceId: templateId,
@@ -51,16 +43,13 @@ export function usePlanTemplate(teamId: number): UsePlanTemplateReturn {
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()
     };
-  };
+  }, [state.teams, teamId]);
 
-  const getTeamPlans = (teamId: number): LessonPlan[] => {
-    const team = state.teams.find((t: Team) => t.id === teamId);
+  const getTeamPlans = useCallback((teamId: number): LessonPlan[] => {
+    const team = state.teams.find(t => t.id === teamId);
     if (!team) return [];
-
-    return state.lessonPlans.filter((plan: LessonPlan) =>
-      plan.classGroup === team.name
-    );
-  };
+    return state.lessonPlans.filter(plan => plan.classGroup === team.name);
+  }, [state.teams, state.lessonPlans]);
 
   const saveLessonPlan = useCallback((plan: LessonPlan) => {
     dispatch({ type: 'ADD_LESSON_PLAN', payload: plan });

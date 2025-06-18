@@ -121,7 +121,7 @@ export const FilterPanel = styled.div<{ isOpen: boolean }>`
   border-radius: var(--border-radius-md);
   padding: var(--space-md);
   box-shadow: var(--shadow-md);
-  z-index: var(--z-index-dropdown);
+  z-index: var(--z-dropdown);
   display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
   min-width: 250px;
 `;
