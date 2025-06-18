@@ -87,3 +87,32 @@ export const EmptyState = styled.div`
     }
   }
 `;
+
+export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  gap: 1rem;
+  background: #f5f5f5;
+`;
+
+export const SelectContainer = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+
+export const ShiftSelect = styled.select`
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+`;
+
+export const GridContainer = styled.div`
+  flex: 1;
+  overflow: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+`;

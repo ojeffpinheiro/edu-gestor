@@ -32,7 +32,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
     openModal: (type: ModalType, props: any = null) => 
       setState({ type, props, isOpen: true }),
     closeModal: () => 
-      setState(prev => ({ ...prev, isOpen: false }))
+      setState({ type: null, props: null, isOpen: false })
   };
 
   return (

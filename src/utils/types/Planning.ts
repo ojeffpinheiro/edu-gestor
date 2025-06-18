@@ -14,6 +14,8 @@ export interface Lesson {
     timeSlot: string;
     discipline: string;
     shift: Shift;
+    room?: string; 
+    classGroup?: string;
     order?: number;
 }
 

@@ -1,4 +1,3 @@
-// src/components/Planning/Tabs/ClassScheduleTab/index.tsx
 import React from 'react';
 import { FaCog, FaPlus } from 'react-icons/fa';
 

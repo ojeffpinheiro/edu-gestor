@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shift, ShiftSettings, Period } from '../../../utils/types/Planning';
+import { ShiftSettings, Period } from '../../../utils/types/Planning';
 import { FormGroup, Label } from '../../../styles/formControls';
 import { Input } from '../../../styles/inputs';
 import { Button } from '../../../styles/buttons';
@@ -16,6 +16,8 @@ import {
   CenteredButtonContainer
 } from './styles';
 import Modal from '../../modals/Modal';
+import { useModal } from '../../../contexts/ModalContext';
+import { useSchedule } from '../../../contexts/ScheduleContext';
 
 const periodOptions = [
   { value: '1º período', label: '1º Período' },
@@ -30,20 +32,30 @@ const periodOptions = [
 ];
 
 interface ShiftSettingsEditorProps {
-  shift: Shift;
   settings: ShiftSettings;
   onChange: (settings: ShiftSettings) => void;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
+
 const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({ 
-  shift, 
   settings, 
-  onChange,
-  isOpen,
-  onClose
+  onChange
 }) => {
+  const { state: modalState, actions: modalActions } = useModal();
+  const { 
+    state: { shiftSettings, selectedShift },
+    updateShiftSettings
+  } = useSchedule();
+
+  if (modalState.type !== 'SHIFT_SETTINGS') return null;
+
+  const currentSettings = shiftSettings[selectedShift];
+
+  
+  const handleChange = (updated: Partial<ShiftSettings>) => {
+    updateShiftSettings(selectedShift, { ...currentSettings, ...updated });
+  };
+
   const handlePeriodChange = (index: number, field: keyof Period, value: string | boolean) => {
     const newPeriods = [...settings.periods];
     newPeriods[index] = { ...newPeriods[index], [field]: value };
@@ -64,34 +76,35 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
   };
 
   const removePeriod = (id: number) => {
-    onChange({ ...settings, periods: settings.periods.filter(p => p.id !== id) });
+    onChange({ ...settings, periods: settings.periods.filter((p: Period) => p.id !== id) });
   };
 
   return (
     <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title={`Configurações do Turno ${shift}`}
+      isOpen={modalState.isOpen && modalState.type === 'SHIFT_SETTINGS'}
+      onClose={modalActions.closeModal}
+      title={`Configurações do Turno ${selectedShift}`}
       size="xl"
       submitText="Salvar Configurações"
+      onSubmit={() => handleChange(currentSettings)}
     >
       <EnhancedModalContent size='lg' >
         <PeriodGrid>
           <FormGroup>
             <Label><FaClock /> Horário de Início</Label>
             <Input
-              type="time" 
-              value={settings.startTime} 
-              onChange={(e) => onChange({ ...settings, startTime: e.target.value })}
+              type="time"
+              value={settings.startTime}
+              onChange={(e) => handleChange({ ...settings, startTime: e.target.value })}
             />
           </FormGroup>
 
           <FormGroup>
             <Label><FaRegClock /> Duração (minutos)</Label>
             <Input
-              type="number" 
-              value={settings.periodDuration} 
-              onChange={(e) => onChange({ ...settings, periodDuration: parseInt(e.target.value) || 0 })}
+              type="number"
+              value={settings.periodDuration}
+              onChange={(e) => handleChange({ ...settings, periodDuration: parseInt(e.target.value) || 0 })}
               min="1"
             />
           </FormGroup>
@@ -100,7 +113,7 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
         <SectionTitle>
           <FaEdit /> Períodos Configurados
         </SectionTitle>
-        
+
         <ScrollableModalBody>
           {settings.periods.map((period, index) => (
             <PeriodItem key={period.id}>
@@ -118,11 +131,11 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
                     ))}
                   </PeriodSelect>
                 </FormGroup>
-                
+
                 <FormGroup>
                   <Label>
-                    <input 
-                      type="checkbox" 
+                    <input
+                      type="checkbox"
                       checked={period.isBreak || false}
                       onChange={(e) => handlePeriodChange(index, 'isBreak', e.target.checked)}
                     />
@@ -134,8 +147,8 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
               <PeriodGrid>
                 <FormGroup>
                   <Label>Horário de Início</Label>
-                  <Input 
-                    type="time" 
+                  <Input
+                    type="time"
                     value={period.startTime}
                     onChange={(e) => handlePeriodChange(index, 'startTime', e.target.value)}
                   />
@@ -143,8 +156,8 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
 
                 <FormGroup>
                   <Label>Horário de Término</Label>
-                  <Input 
-                    type="time" 
+                  <Input
+                    type="time"
                     value={period.endTime}
                     onChange={(e) => handlePeriodChange(index, 'endTime', e.target.value)}
                   />
@@ -152,8 +165,8 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
               </PeriodGrid>
 
               <PeriodActions>
-                <Button 
-                  variant="error" 
+                <Button
+                  variant="error"
                   onClick={() => removePeriod(period.id)}
                   style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
                 >
@@ -165,7 +178,7 @@ const ShiftSettingsEditor: React.FC<ShiftSettingsEditorProps> = ({
         </ScrollableModalBody>
 
         <CenteredButtonContainer>
-          <Button 
+          <Button
             onClick={addPeriod}
             style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >

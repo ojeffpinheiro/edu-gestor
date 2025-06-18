@@ -25,14 +25,60 @@ interface ScheduleContextType {
 
 const ScheduleContext = createContext<ScheduleContextType | undefined>(undefined);
 
+const initializeShiftSettings = (): Record<Shift, ShiftSettings> => ({
+    'Manhã': {
+        name: 'Manhã',
+        startTime: '07:00',
+        endTime: '12:00',
+        periodDuration: 50,
+        breakDuration: 20,
+        periods: [
+            { id: 1, name: '1º Aula', startTime: '07:00', endTime: '07:50' },
+            { id: 2, name: '2º Aula', startTime: '07:50', endTime: '08:40' },
+            { id: 3, name: 'Intervalo', startTime: '08:40', endTime: '09:00', isBreak: true },
+            { id: 4, name: '3º Aula', startTime: '09:00', endTime: '09:50' },
+            { id: 5, name: '4º Aula', startTime: '09:50', endTime: '10:40' },
+            { id: 6, name: '5º Aula', startTime: '10:40', endTime: '11:30' },
+            { id: 7, name: '6º Aula', startTime: '11:30', endTime: '12:00' }
+        ]
+    },
+    'Tarde': {
+        name: 'Tarde',
+        startTime: '13:00',
+        endTime: '18:00',
+        periodDuration: 50,
+        breakDuration: 20,
+        periods: [
+            { id: 8, name: '1º Aula', startTime: '13:00', endTime: '13:50' },
+            { id: 9, name: '2º Aula', startTime: '13:50', endTime: '14:40' },
+            { id: 10, name: 'Intervalo', startTime: '14:40', endTime: '15:00', isBreak: true },
+            { id: 11, name: '3º Aula', startTime: '15:00', endTime: '15:50' },
+            { id: 12, name: '4º Aula', startTime: '15:50', endTime: '16:40' },
+            { id: 13, name: '5º Aula', startTime: '16:40', endTime: '17:30' },
+            { id: 14, name: '6º Aula', startTime: '17:30', endTime: '18:00' }
+        ]
+    },
+    'Noite': {
+        name: 'Noite',
+        startTime: '19:00',
+        endTime: '22:00',
+        periodDuration: 50,
+        breakDuration: 10,
+        periods: [
+            { id: 15, name: '1º Aula', startTime: '19:00', endTime: '19:50' },
+            { id: 16, name: '2º Aula', startTime: '19:50', endTime: '20:40' },
+            { id: 17, name: 'Intervalo', startTime: '20:40', endTime: '20:50', isBreak: true },
+            { id: 18, name: '3º Aula', startTime: '20:50', endTime: '21:40' },
+            { id: 19, name: '4º Aula', startTime: '21:40', endTime: '22:00' }
+        ]
+    }
+});
+
 const initialState: ScheduleState = {
-  shiftSettings: {
-    'Manhã': { name: 'Manhã', periods: [], startTime: '07:00', endTime: '12:00', periodDuration: 0, breakDuration: 0 },
-    'Tarde': { name: 'Tarde', periods: [], startTime: '13:00', endTime: '18:00', periodDuration: 0, breakDuration: 0 },
-    'Noite': { name: 'Noite', periods: [], startTime: '19:00', endTime: '22:00', periodDuration: 0, breakDuration: 0 }
-  },
+  shiftSettings: initializeShiftSettings(),
   selectedShift: 'Manhã'
 };
+
 
 function scheduleReducer(state: ScheduleState, action: ScheduleAction): ScheduleState {
   switch (action.type) {
