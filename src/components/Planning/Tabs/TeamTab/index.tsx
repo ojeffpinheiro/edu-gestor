@@ -1,41 +1,57 @@
 import React, { useState } from 'react';
+import {
+  FaPlus,
+  FaUsers,
+  FaGraduationCap,
+  FaEdit,
+  FaTrash,
+  FaSun,
+  FaMoon,
+  FaClock
+} from 'react-icons/fa';
 
 import { useTeams } from '../../../../contexts/TeamsContext';
 import { useModal } from '../../../../contexts/ModalContext';
 
-import { LearningObjective, Team } from '../../../../utils/types/Planning';
+import { LearningObjective, Session, Team } from '../../../../utils/types/Planning';
 
 import PlanningPreview from '../../PlanningPreview';
 import { Button } from '../../../../styles/buttons';
 
-import { 
+import {
   ActionButton,
-  Container, 
-  DetailItem, 
-  DetailLabel, 
+  Container,
+  DetailItem,
+  DetailLabel,
   DetailValue,
-  Header, 
-  TeamActions, 
-  TeamCard, 
-  TeamDetails, 
-  TeamHeader, 
-  TeamSession, 
-  TeamsGrid, 
+  EmptyState,
+  Header,
+  TeamActions,
+  TeamCard,
+  TeamDetails,
+  TeamHeader,
+  TeamInfo,
+  TeamSession,
+  TeamsGrid,
   TeamTitle,
-  Title 
+  Title
 } from './styles';
-import { FaPlus } from 'react-icons/fa';
 
-const TeamTab: React.FC = () => {
+interface TeamTabProps {
+  onEditTeam?: (team: Team) => void;
+  onCreateTeam?: () => void;
+}
+
+const TeamTab: React.FC<TeamTabProps> = ({ onEditTeam, onCreateTeam }) => {
   const { state: { teams }, deleteTeam } = useTeams();
   const { actions: modalActions } = useModal();
-  
+
   const [studentsFile, setStudentsFile] = useState<File | null>(null);
   const [objectives, setObjectives] = useState<LearningObjective[]>([]);
 
   const [teamData, setTeamData] = useState<Omit<Team, 'id'>>({
     name: '',
-    session: 'Manhã',
+    session: Session.MORNING,
     numStudent: 0,
     gradeLevel: '',
     specificRequirements: '',
@@ -44,10 +60,19 @@ const TeamTab: React.FC = () => {
 
   const [editingTeam, setEditingTeam] = useState<Team | null>(null);
 
+  const getSessionIcon = (session: Session) => {
+    switch (session) {
+      case Session.MORNING: return <FaSun size={12} />;
+      case Session.AFTERNOON: return <FaClock size={12} />;
+      case Session.EVENING: return <FaMoon size={12} />;
+      default: return <FaClock size={12} />;
+    }
+  };
+
   const resetForm = () => {
     setTeamData({
       name: '',
-      session: 'Manhã',
+      session: Session.MORNING,
       numStudent: 0,
       gradeLevel: '',
       specificRequirements: '',
@@ -81,41 +106,68 @@ const TeamTab: React.FC = () => {
     <Container>
       <Header>
         <Title>Turmas</Title>
-        <Button onClick={openModal}>
-          <FaPlus/> Nova Turma
+        <Button onClick={onCreateTeam || openModal}>
+          <FaPlus /> Nova Turma
         </Button>
       </Header>
 
-      <TeamsGrid>
-        {teams.map(team => (
-          <TeamCard key={team.id}>
-            <TeamHeader>
-              <TeamTitle>{team.name}</TeamTitle>
-              <TeamSession>{team.session}</TeamSession>
-            </TeamHeader>
-            <TeamDetails>
-              <DetailItem>
-                <DetailLabel>Série:</DetailLabel>
-                <DetailValue>{team.gradeLevel || '-'}</DetailValue>
-              </DetailItem>
-              <DetailItem>
-                <DetailLabel>Alunos:</DetailLabel>
-                <DetailValue>{team.numStudent}</DetailValue>
-              </DetailItem>
-            </TeamDetails>
-            <TeamActions>
-              <ActionButton onClick={() => handleEdit(team)}>Editar</ActionButton>
-              <ActionButton 
-                variant="warning" 
-                onClick={() => deleteTeam(team.id)}
-              >
-                Remover
-              </ActionButton>
+      {teams.length === 0 ? (
+        <EmptyState>
+          <p>Nenhuma turma cadastrada ainda.</p>
+          <Button onClick={openModal}>
+            <FaPlus /> Criar primeira turma
+          </Button>
+        </EmptyState>
+      ) : (
+        <TeamsGrid>
+          {teams.map(team => (
+            <TeamCard key={team.id} $session={team.session} >
+              <TeamHeader>
+                <TeamInfo>
+                  <TeamTitle>
+                    <FaUsers /> {team.name}
+                  </TeamTitle>
+                  <TeamSession $session={team.session}>
+                    {getSessionIcon(team.session)}
+                    {team.session}
+                  </TeamSession>
+                </TeamInfo>
+
+                <TeamActions>
+                  <ActionButton
+                    variant='primary'
+                    onClick={() => onEditTeam ? onEditTeam(team) : handleEdit(team)}
+                    data-tooltip="Editar"
+                  >
+                    <FaEdit size={14} />
+                  </ActionButton>
+                  <ActionButton
+                    variant="error"
+                    onClick={() => deleteTeam(team.id)}
+                    data-tooltip="Remover"
+                  >
+                    <FaTrash size={14} />
+                  </ActionButton>
+                </TeamActions>
+              </TeamHeader>
+              <TeamDetails>
+                <DetailItem>
+                  <FaGraduationCap color="#718096" size={14} />
+                  <DetailLabel>Série:</DetailLabel>
+                  <DetailValue>{team.gradeLevel || '-'}</DetailValue>
+                </DetailItem>
+                <DetailItem>
+                  <FaUsers color="#718096" size={14} />
+                  <DetailLabel>Alunos:</DetailLabel>
+                  <DetailValue>{team.numStudent}</DetailValue>
+                </DetailItem>
+              </TeamDetails>
+
               <PlanningPreview team={team} />
-            </TeamActions>
-          </TeamCard>
-        ))}
-      </TeamsGrid>
+            </TeamCard>
+          ))}
+        </TeamsGrid>
+      )}
     </Container>
   );
 };

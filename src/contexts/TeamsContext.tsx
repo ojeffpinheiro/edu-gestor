@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { LearningObjective, Team } from '../utils/types/Planning';
+import { mockTeams } from '../mocks/plannigData';
 
 interface TeamsState {
   teams: Team[];
@@ -25,7 +26,7 @@ interface TeamsContextType {
 const TeamsContext = createContext<TeamsContextType | undefined>(undefined);
 
 const initialState: TeamsState = {
-  teams: [],
+  teams: mockTeams,
   objectives: []
 };
 

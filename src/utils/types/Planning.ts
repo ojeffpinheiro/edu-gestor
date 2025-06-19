@@ -1,6 +1,12 @@
 import { LessonPlan } from "./DidacticSequence";
 import { Event } from "./Event";
 
+export enum Session {
+  MORNING = 'Manhã',
+  AFTERNOON = 'Tarde',
+  EVENING = 'Noite'
+}
+
 export interface Task {
     id: number;
     text: string;
@@ -22,11 +28,11 @@ export interface Lesson {
 export interface Team {
   id: number;
   name: string;
-  session: 'Manhã' | 'Tarde' | 'Noite';
+  session: Session;
   numStudent: number;
   gradeLevel?: string;
   specificRequirements?: string;
-  schedule?: string[];
+  schedule?: Lesson[];
   learningObjectives?: LearningObjective[];
   studentList?: string;
 }
@@ -85,16 +91,4 @@ export interface Period {
   startTime: string;
   endTime: string;
   isBreak?: boolean;
-}
-
-export interface Team {
-  id: number;
-  name: string;
-  session: Shift;
-  numStudent: number;
-  gradeLevel?: string;
-  specificRequirements?: string;
-  schedule?: string[];
-  learningObjectives?: LearningObjective[];
-  studentList?: string;
 }

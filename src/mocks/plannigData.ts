@@ -1,6 +1,6 @@
 import { CalendarEvent } from "../utils/types/CalendarEvent";
 import { LessonPlan } from "../utils/types/DidacticSequence";
-import { GradeSettings, Holiday, LearningObjective, Lesson, LessonPlanTemplate, NonSchoolDay, Task, Team } from "../utils/types/Planning";
+import { GradeSettings, Holiday, LearningObjective, Lesson, LessonPlanTemplate, NonSchoolDay, Session, Task, Team } from "../utils/types/Planning";
 
 const mockTasks: Task[] = [
   { id: 1, text: "Preparar material didático", completed: false },
@@ -32,24 +32,94 @@ const mockLessons: Lesson[] = [
 const mockTeams: Team[] = [
   {
     id: 1,
-    name: "Turma A",
-    session: "Manhã",
+    name: 'Equipe Alpha',
+    session: Session.MORNING,
     numStudent: 25,
-    gradeLevel: "5º ano",
-    specificRequirements: "Alunos com dificuldade em leitura",
-    schedule: ["Segunda - 08:00", "Quarta - 10:00"],
-    learningObjectives: [
-      { id: 1, description: "Compreender frações", completed: false },
-      { id: 2, description: "Identificar períodos históricos", completed: true },
+    gradeLevel: '8º ano',
+    specificRequirements: 'Necessita apoio com inclusão digital',
+    studentList: 'João, Maria, Lucas, Ana, Pedro, ...',
+    schedule: [
+      {
+        id: 101,
+        team: 'Equipe Alpha',
+        day: 'Segunda',
+        timeSlot: '08:00 - 09:30',
+        discipline: 'Matemática',
+        shift: Session.MORNING,
+        room: 'Sala 101',
+        classGroup: '8A',
+        order: 1
+      },
+      {
+        id: 102,
+        team: 'Equipe Alpha',
+        day: 'Quarta',
+        timeSlot: '10:00 - 11:30',
+        discipline: 'Ciências',
+        shift: Session.MORNING,
+        room: 'Sala 102',
+        classGroup: '8A',
+        order: 2
+      }
     ],
-    studentList: "Ana, João, Maria, Lucas",
+    learningObjectives: [
+      {
+        id: 201,
+        description: 'Compreender frações e porcentagens',
+        completed: false
+      },
+      {
+        id: 202,
+        description: 'Aplicar o método científico em experimentos',
+        completed: true
+      }
+    ]
   },
   {
     id: 2,
-    name: "Turma B",
-    session: "Tarde",
-    numStudent: 28,
-  },
+    name: 'Equipe Beta',
+    session: Session.AFTERNOON,
+    numStudent: 30,
+    gradeLevel: '9º ano',
+    specificRequirements: 'Necessita suporte psicológico',
+    studentList: 'Carlos, Bruna, Rafael, Larissa, Tiago, ...',
+    schedule: [
+      {
+        id: 103,
+        team: 'Equipe Beta',
+        day: 'Terça',
+        timeSlot: '14:00 - 15:30',
+        discipline: 'História',
+        shift: Session.AFTERNOON,
+        room: 'Sala 201',
+        classGroup: '9B',
+        order: 1
+      },
+      {
+        id: 104,
+        team: 'Equipe Beta',
+        day: 'Quinta',
+        timeSlot: '15:45 - 17:15',
+        discipline: 'Geografia',
+        shift: Session.AFTERNOON,
+        room: 'Sala 202',
+        classGroup: '9B',
+        order: 2
+      }
+    ],
+    learningObjectives: [
+      {
+        id: 203,
+        description: 'Entender os eventos da Segunda Guerra Mundial',
+        completed: true
+      },
+      {
+        id: 204,
+        description: 'Analisar mapas políticos e físicos',
+        completed: false
+      }
+    ]
+  }
 ];
 
 // NonSchoolDay

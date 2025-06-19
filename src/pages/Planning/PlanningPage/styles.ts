@@ -37,28 +37,54 @@ export const Container = styled.div`
   }
 `;
 
-export const Main = styled.main`
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: calc(100vh - 200px);
-  background: rgba(var(--glass-background-rgb), 0.7);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-radius: 1rem;
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 1.5rem 1rem;
-    border-radius: 0.75rem;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-  }
+export const MainContent = styled.main`
+  display: flex;
+  flex: 1;
+  gap: 1.5rem;
+  padding: 1.5rem;
+`;
+
+export const Sidebar = styled.aside`
+  width: 280px;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+export const ContentArea = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+export const GridContainer = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+`;
+
+export const Section = styled.div<{ fullWidth?: boolean }>`
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  ${props => props.fullWidth && 'grid-column: 1 / -1;'}
+`;
+
+export const SectionTitle = styled.h2`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+export const SectionContent = styled.div`
+  // Estilos para o conteúdo da seção
 `;
