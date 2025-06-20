@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
+import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
+
 import { PlanningProvider } from '../../../contexts/PlannerContext';
 import { PlanningData, Session, ShiftSettings, Team } from '../../../utils/types/Planning';
+
+import { mockPlanningData } from '../../../mocks/planning';
 
 import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab';
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
@@ -9,13 +13,10 @@ import TeamModal from '../../../components/Planning/Tabs/TeamTab/AddTeamModal';
 import ShiftSettingsEditor from '../../../components/Planning/ShiftSettingsEditor';
 import LessonForm from '../../../components/Planning/LessonForm';
 import NavigationMenu from '../../../components/Planning/NavigationMenu';
-import PlanningTab from '../../../components/Planning/Tabs/PlanningTab';
 
 import PlanningModal from '../../../components/Planning/PlanningModal';
 
 import HeaderComponent from './HeaderComponent';
-import { mockPlanningData } from '../../../mocks/planning';
-
 
 import {
   Container,
@@ -33,7 +34,6 @@ import {
   Pill,
   Badge
 } from './styles';
-import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
 
 const PlanejadorClasse = () => {
   const [activeView, setActiveView] = useState<'overview' | 'teams' | 'schedule' | 'calendar'>('overview');
