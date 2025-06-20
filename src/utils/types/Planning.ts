@@ -92,3 +92,133 @@ export interface Period {
   endTime: string;
   isBreak?: boolean;
 }
+
+export interface SchoolInfo {
+  school: string;
+  discipline: string;
+  stage: string;
+  grade: string;
+  knowledgeArea: string;
+  studentCount: number;
+  classes: string[];
+  period: string;
+  trimester: string;
+}
+
+export interface GeneralObjective {
+  id: string;
+  description: string;
+}
+
+export interface Topic {
+  id: string;
+  title: string;
+  competencies: string[];
+  knowledgeObjects: string[];
+  transversalTopics: {
+    topics: string[];
+    skills: string[];
+  };
+  projects: string[];
+  research: {
+    topics: string[];
+    criteria: string[];
+    contents: string[];
+  };
+}
+
+export interface DetailedPlanning {
+  id: string;
+  topic: string;
+  thematicAxis: string;
+  stage: 'initial' | 'intermediate' | 'final';
+  skills: string[];
+  objectives: string[];
+  content: string;
+  justification: string;
+  methodology: string;
+  resources: string[];
+  duration: string;
+}
+
+export interface DidacticSequence {
+  introduction: string;
+  development: string;
+  application: string;
+  evaluationWeek: string;
+}
+
+export interface Activity {
+  id: string;
+  type: 'practice' | 'exercise' | 'list';
+  description: string;
+  research?: {
+    topics: string[];
+    content: string[];
+    evaluationCriteria: string[];
+  };
+  evaluative?: {
+    criteria: string[];
+  };
+  leveling?: string;
+  answerKey?: string;
+}
+
+export interface SupportMaterial {
+  slides: string[];
+  learningNotebook: string[];
+  exerciseLists: string[];
+  readingsAndMedia: {
+    films: string[];
+    books: string[];
+    simulators: string[];
+    mindMaps: string[];
+    infographics: string[];
+  };
+}
+
+export interface Evaluation {
+  criteria: string[];
+  instruments: string[];
+  selfEvaluation?: string;
+}
+
+export interface DiagnosticEvaluation {
+  initialEvaluation: string;
+  periodicEvaluations: string[];
+}
+
+export interface RegistrationAndFeedback {
+  registrationMethods: string[];
+  feedbackMethods: string[];
+}
+
+export interface InclusionAndAccessibility {
+  adaptations: string[];
+  strategies: string[];
+}
+
+export interface DigitalTechnologies {
+  platforms: string[];
+  activities: {
+    synchronous: string[];
+    asynchronous: string[];
+  };
+}
+
+export interface PlanningData {
+  schoolInfo: SchoolInfo;
+  generalObjectives: GeneralObjective[];
+  trimesterTopics: Topic[];
+  detailedPlanning: DetailedPlanning[];
+  didacticSequence: DidacticSequence;
+  activities: Activity[];
+  supportMaterials: SupportMaterial;
+  evaluation: Evaluation;
+  diagnosticEvaluation: DiagnosticEvaluation;
+  registrationAndFeedback: RegistrationAndFeedback;
+  inclusionAndAccessibility: InclusionAndAccessibility;
+  digitalTechnologies: DigitalTechnologies;
+  conclusions: string;
+  references: string[];
+}

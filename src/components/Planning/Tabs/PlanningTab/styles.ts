@@ -1,118 +1,157 @@
 import styled from 'styled-components';
-import { Grid } from '../../../../styles/layoutUtils';
+
+export const PlanningContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+`;
+
+export const TabsContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+`;
+
+export const TabButton = styled.button<{ active: boolean }>`
+  padding: 10px 15px;
+  background: ${({ active }) => (active ? '#4a6fa5' : '#f0f0f0')};
+  color: ${({ active }) => (active ? 'white' : '#333')};
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${({ active }) => (active ? '#3a5a80' : '#e0e0e0')};
+  }
+`;
+
+export const Section = styled.div`
+  background: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+`;
+
+export const FormGroup = styled.div`
+  margin-bottom: 15px;
+
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+
+  input, textarea, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+
+  textarea {
+    min-height: 100px;
+  }
+`;
 
 export const Card = styled.div`
-  background: rgba(var(--glass-background-rgb), 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
-  padding: 2rem;
-  box-shadow: var(--shadow-xl);
-  margin-bottom: 1.5rem;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    box-shadow: var(--shadow-2xl);
-  }
+  background: #f9f9f9;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 `;
 
-export const Content = styled(Grid)`
-  grid-template-columns: 1fr 2fr;
-  gap: 2rem;
-  padding: 1rem 0;
-  
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
+export const CardContent = styled.div`
+  padding: 1.5rem;
 `;
 
-export const CardTitle = styled.h3`
-  font-family: var(--font-family-display);
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
-  letter-spacing: -0.025em;
-  margin-bottom: 1.5rem;
-  color: var(--color-title-card);
-  position: relative;
-  padding-bottom: 0.5rem;
-  
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: var(--gradient-primary);
-    border-radius: var(--border-radius-full);
-  }
-`;
-
-export const EmptyState = styled.div`
+export const CardActions = styled.div`
+  padding: 1rem 1.5rem;
+  background: #f7fafc;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 2rem;
-  background: rgba(var(--glass-background-rgb), 0.4);
-  border-radius: var(--space-md);
-  border: 1px dashed var(--glass-border);
-  
-  h4 {
-    font-size: var(--font-size-lg);
-    margin-bottom: 0.5rem;
-    color: var(--color-text);
+  justify-content: flex-end;
+  gap: 0.75rem;
+`;
+
+export const Button = styled.button<{ secondary?: boolean }>`
+  padding: 0.75rem 1.5rem;
+  background: ${({ secondary }) => (secondary ? '#e2e8f0' : '#3182ce')};
+  color: ${({ secondary }) => (secondary ? '#4a5568' : 'white')};
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  &:hover {
+    background: ${({ secondary }) => (secondary ? '#cbd5e0' : '#2c5282')};
   }
-  
-  p {
-    color: var(--color-text-secondary);
-    margin-bottom: 1.5rem;
-  }
-  
-  .primary-button {
-    background: var(--gradient-primary);
-    color: var(--color-text-on-primary);
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: var(--border-radius-full);
-    font-weight: var(--font-weight-semibold);
-    cursor: pointer;
-    transition: all 0.3s ease;
-    
+
+  &.danger {
+    background: #d9534f;
+
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      background: #c9302c;
     }
   }
 `;
 
-export const Container = styled.div`
+export const ButtonGroup = styled.div`
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  padding: 1rem;
-  gap: 1rem;
-  background: #f5f5f5;
+  gap: 10px;
+  margin-top: 15px;
 `;
 
-export const SelectContainer = styled.div`
+export const ErrorMessage = styled.div`
+  color: #d9534f;
+  font-size: 0.9em;
+  margin-top: 5px;
+`;
+
+export const ConfirmationDialog = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  gap: 1rem;
+  justify-content: center;
   align-items: center;
+  z-index: 1000;
+
+  div {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
 `;
 
-export const ShiftSelect = styled.select`
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-`;
 
-export const GridContainer = styled.div`
-  flex: 1;
-  overflow: auto;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+export const TextArea = styled.textarea`
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-family: inherit;
+  min-height: 150px;
+  resize: vertical;
+
+  &:focus {
+    outline: none;
+    border-color: #3182ce;
+    box-shadow: 0 0 0 1px #3182ce;
+  }
 `;

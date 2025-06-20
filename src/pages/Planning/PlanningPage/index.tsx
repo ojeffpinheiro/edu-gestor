@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import { TeamsProvider } from '../../../contexts/TeamsContext';
 import { LessonsProvider } from '../../../contexts/LessonsContext';
 import { ScheduleProvider } from '../../../contexts/ScheduleContext';
@@ -12,6 +13,8 @@ import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
 import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
 import TabPlanning from '../../../components/Planning/Tabs/PlanningTab';
+
+import TeamModal from '../../../components/Planning/Tabs/TeamTab/AddTeamModal';
 
 import ShiftSettingsEditor from '../../../components/Planning/ShiftSettingsEditor';
 import LessonForm from '../../../components/Planning/LessonForm';
@@ -29,7 +32,6 @@ import {
   SectionTitle,
   SectionContent
 } from './styles';
-import TeamModal from '../../../components/Planning/Tabs/TeamTab/AddTeamModal';
 
 const PlanejadorClasse = () => {
   const [activeView, setActiveView] = useState<'overview' | 'teams' | 'schedule' | 'calendar'>('overview');
@@ -127,29 +129,6 @@ const PlanejadorClasse = () => {
                           <SectionTitle>Planejamento Didático</SectionTitle>
                           <SectionContent>
                             <TabPlanning />
-                          </SectionContent>
-                        </Section>
-
-                        <Section>
-                          <SectionTitle>Próximas Aulas</SectionTitle>
-                          <SectionContent>
-                            <ClassScheduleTab />
-                          </SectionContent>
-                        </Section>
-
-                        <Section>
-                          <SectionTitle>Turmas</SectionTitle>
-                          <SectionContent>
-                            <TeamTab
-                              onEditTeam={handleOpenEditModal}
-                              onCreateTeam={handleOpenCreateModal} />
-                          </SectionContent>
-                        </Section>
-
-                        <Section>
-                          <SectionTitle>Calendário</SectionTitle>
-                          <SectionContent>
-                            <CalendarTab />
                           </SectionContent>
                         </Section>
                       </GridContainer>
