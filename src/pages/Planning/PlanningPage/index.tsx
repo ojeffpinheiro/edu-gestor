@@ -10,6 +10,7 @@ import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
 import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
 import TeamModal from '../../../components/Planning/Tabs/TeamTab/AddTeamModal';
+
 import ShiftSettingsEditor from '../../../components/Planning/ShiftSettingsEditor';
 import LessonForm from '../../../components/Planning/LessonForm';
 import NavigationMenu from '../../../components/Planning/NavigationMenu';
@@ -110,7 +111,7 @@ const PlanejadorClasse = () => {
   const handleSavePlanning = (planningData: PlanningData) => {
     if (currentPlanning) {
       // Atualizar planejamento existente
-      setPlannings(prev => 
+      setPlannings(prev =>
         prev.map(p => p.id === planningData.id ? planningData : p)
       );
     } else {
@@ -150,7 +151,7 @@ const PlanejadorClasse = () => {
                 <Section fullWidth>
                   <SectionTitle>
                     Meus Planejamentos
-                    <button 
+                    <button
                       onClick={handleOpenCreatePlanning}
                       style={{
                         display: 'flex',
@@ -173,7 +174,7 @@ const PlanejadorClasse = () => {
                   <SectionContent>
                     <GridContainer>
                       {plannings.map(planning => (
-                        <Card key={planning.id} onClick={() => handleOpenEditPlanning(planning)}>
+                        <Card key={planning.id}>
                           <CardHeader>
                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                               <h3 style={{ fontWeight: '600', margin: 0 }}>
@@ -183,9 +184,9 @@ const PlanejadorClasse = () => {
                                 {planning.schoolInfo.trimester}
                               </Badge>
                             </div>
-                            <p style={{ 
-                              fontSize: '0.875rem', 
-                              color: '#64748b', 
+                            <p style={{
+                              fontSize: '0.875rem',
+                              color: '#64748b',
                               margin: '0.25rem 0 0',
                               display: 'flex',
                               alignItems: 'center',
@@ -195,8 +196,8 @@ const PlanejadorClasse = () => {
                             </p>
                           </CardHeader>
                           <CardBody>
-                            <div style={{ 
-                              display: 'flex', 
+                            <div style={{
+                              display: 'flex',
                               gap: '0.5rem',
                               marginBottom: '1rem',
                               flexWrap: 'wrap'
@@ -205,8 +206,8 @@ const PlanejadorClasse = () => {
                               <Pill>{planning.schoolInfo.studentCount} alunos</Pill>
                               <Pill>{planning.generalObjectives.length} objetivos</Pill>
                             </div>
-                            <p style={{ 
-                              fontSize: '0.875rem', 
+                            <p style={{
+                              fontSize: '0.875rem',
                               color: '#475569',
                               display: '-webkit-box',
                               WebkitLineClamp: 3,
@@ -218,29 +219,38 @@ const PlanejadorClasse = () => {
                             </p>
                           </CardBody>
                           <CardFooter>
-                            <button style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: '#64748b',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                              fontSize: '0.875rem'
-                            }}>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleOpenEditPlanning(planning);
+                              }}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#64748b',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                                fontSize: '0.875rem'
+                              }}
+                            >
                               <FiEdit2 size={14} />
                               Editar
                             </button>
-                            <button style={{
-                              background: 'transparent',
-                              border: 'none',
-                              color: '#ef4444',
-                              cursor: 'pointer',
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '0.25rem',
-                              fontSize: '0.875rem'
-                            }}>
+                            <button
+                              onClick={(e) => e.stopPropagation()}
+                              style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#ef4444',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.25rem',
+                                fontSize: '0.875rem'
+                              }}
+                            >
                               <FiTrash2 size={14} />
                               Remover
                             </button>
@@ -301,7 +311,7 @@ const PlanejadorClasse = () => {
         </MainContent>
 
         <LessonForm />
-        
+
         {/* Modal de Turma */}
         {isTeamModalOpen && (
           <TeamModal
@@ -311,7 +321,7 @@ const PlanejadorClasse = () => {
             onClose={() => setIsTeamModalOpen(false)}
           />
         )}
-        
+
         {/* Modal de Planejamento */}
         {isPlanningModalOpen && (
           <PlanningModal

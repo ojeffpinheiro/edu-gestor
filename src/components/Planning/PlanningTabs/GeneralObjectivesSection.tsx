@@ -85,19 +85,6 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
                   </CardActions>
                 </>
               )}
-              <CardContent>
-                <p>{obj.description}</p>
-              </CardContent>
-
-              <CardActions>
-                <Button onClick={() => onEdit(obj)}>Editar</Button>
-                <Button
-                  className="danger"
-                  onClick={() => onDelete('generalObjective', obj.id)}
-                >
-                  <FaTrash />
-                </Button>
-              </CardActions>
             </Card>
           ))}
           <Button onClick={onAdd}>Adicionar Objetivo</Button>

@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import {
   FiSearch, FiPlus, FiEdit2, FiTrash2, FiFilter,
-  FiDownload, FiUpload, FiDatabase, FiGrid, FiList
+  FiDownload, FiUpload, FiDatabase, FiGrid, FiList,
+  FiCopy, FiZoomIn,
+  FiBookmark
 } from 'react-icons/fi';
+import { v4 as uuidv4 } from 'uuid';
 import {
   QuestionBankContainer,
   Header,
@@ -50,7 +53,6 @@ const QuestionBank = () => {
     },
     // ... other questions
   ]);
-
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState({
     difficulty: '' as DifficultyLevelType | '',
@@ -58,8 +60,15 @@ const QuestionBank = () => {
     status: '' as QuestionStatus | '',
     hasImage: false,
     tags: [] as string[],
-    dateRange: { start: '', end: '' }
+    dateRange: { start: '', end: '' },
+    minUsage: 0,
+    minCorrectRate: 0,
   });
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof Question;
+    direction: 'asc' | 'desc';
+  }>();
+
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
@@ -84,6 +93,56 @@ const QuestionBank = () => {
       (filters.dateRange.end === '' || new Date(q.createdAt) <= new Date(filters.dateRange.end));
 
     return matchesSearch && matchesFilters;
+  });
+
+  const topicStats = questions.reduce((acc: Record<string, number>, q: Question) => {
+    const topic = q.discipline;
+    acc[topic] = (acc[topic] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
+
+  const combineQuestions = () => {
+    if (selectedQuestions.length < 2) return;
+
+    const combinedQuestion: Question = {
+      id: uuidv4(),
+      contentId: 'composite-' + Date.now(),
+      statement: `Questão composta:\n${selectedQuestions.map(id => {
+        const q = questions.find(q => q.id === id)!;
+        return `• ${q.statement}`;
+      }).join('\n')
+        }`,
+      questionType: 'multiple_choice',
+      difficultyLevel: 'medium',
+      discipline: questions.find(q => q.id === selectedQuestions[0])?.discipline || 'Geral',
+      alternatives: [],
+      explanation: 'Questão composta de múltiplas questões',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      status: 'active',
+      isComposite: true,
+      componentQuestions: selectedQuestions
+    };
+
+    setQuestions([...questions, combinedQuestion]);
+  };
+
+  const togglePin = (id: string) => {
+    setQuestions(questions.map(q =>
+      q.id === id ? { ...q, pinned: !q.pinned } : q
+    ));
+  };
+
+  const sortedQuestions = [...filteredQuestions].sort((a, b) => {
+    if (!sortConfig) return 0;
+    const aValue = a[sortConfig.key];
+    const bValue = b[sortConfig.key];
+
+    if (aValue === undefined && bValue === undefined) return 0;
+    if (aValue === undefined) return 1;
+    if (bValue === undefined) return -1;
+    if (aValue === bValue) return 0;
+    return (aValue < bValue ? -1 : 1) * (sortConfig.direction === 'asc' ? 1 : -1);
   });
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,6 +172,32 @@ const QuestionBank = () => {
         ? []
         : filteredQuestions.map(q => q.id!)
     );
+  };
+
+  const createVariation = (question: Question) => {
+    const variation = {
+      ...question,
+      id: uuidv4(),
+      isVariation: true,
+      originalQuestionId: question.id,
+      createdAt: new Date().toISOString(),
+    };
+    setQuestions([...questions, variation]);
+  };
+
+  const findSimilarQuestions = (question: Question) => {
+    return questions.filter(q =>
+      q.id !== question.id &&
+      (q.statement.includes(question.statement.substring(0, 20)) ||
+        q.tags?.some(tag => question.tags?.includes(tag)))
+    );
+  };
+
+  const handleSort = (key: keyof Question) => {
+    setSortConfig({
+      key,
+      direction: sortConfig?.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc'
+    });
   };
 
   return (
@@ -172,6 +257,21 @@ const QuestionBank = () => {
           </AddButton>
         </div>
       </ActionsBar>
+
+      <DifficultyChart questions={questions} />
+
+      <div className="topic-stats">
+        {Object.entries(topicStats).map(([topic, count]) => (
+          <div key={topic}>{topic}: {count}</div>
+        ))}
+      </div>
+
+      <button
+        onClick={combineQuestions}
+        disabled={selectedQuestions.length < 2}
+      >
+        Combinar Questões Selecionadas
+      </button>
 
       {showFilters && (
         <FilterPanel>
@@ -303,15 +403,15 @@ const QuestionBank = () => {
                 onChange={selectAllQuestions}
               />
             </div>
+            <div onClick={() => handleSort('discipline')}>DISCIPLINA</div>
+            <div onClick={() => handleSort('difficultyLevel')}>DIFICULDADE</div>
             <div>ENUNCIADO</div>
-            <div>DISCIPLINA</div>
-            <div>DIFICULDADE</div>
             <div>TIPO</div>
             <div>STATUS</div>
             <div>AÇÕES</div>
           </TableHeader>
 
-          {filteredQuestions.map(question => (
+          {sortedQuestions.map(question => (
             <TableRow key={question.id}>
               <div>
                 <input
@@ -341,8 +441,21 @@ const QuestionBank = () => {
                   question.status === 'inactive' ? 'Inativo' : 'Rascunho'}
               </div>
               <div>
+                <ActionButton onClick={() => createVariation(question)}>
+                  <FiCopy /> Criar Variação
+                </ActionButton>
+
+                <ActionButton onClick={() => {
+                  const similar = findSimilarQuestions(question);
+                  alert(`${similar.length} questões similares encontradas`);
+                }}>
+                  <FiZoomIn /> Encontrar Similares
+                </ActionButton>
+
                 <ActionButton><FiEdit2 /> Editar</ActionButton>
-                <ActionButton danger><FiTrash2 /> Excluir</ActionButton>
+                <ActionButton onClick={() => togglePin(question.id!)}>
+                  {question.pinned ? <FiBookmark /> : <FiBookmark />}
+                </ActionButton>
               </div>
             </TableRow>
           ))}
@@ -393,6 +506,26 @@ const QuestionBank = () => {
         </QuestionGrid>
       )}
     </QuestionBankContainer>
+  );
+};
+
+const DifficultyChart = ({ questions }: { questions: Question[] }) => {
+  const data = [
+    { level: 'Fácil', value: questions.filter(q => q.difficultyLevel === 'easy').length },
+    { level: 'Médio', value: questions.filter(q => q.difficultyLevel === 'medium').length },
+    { level: 'Difícil', value: questions.filter(q => q.difficultyLevel === 'hard').length },
+  ];
+
+  return (
+    <div className="chart">
+      {data.map(item => (
+        <div key={item.level} className="chart-item">
+          <span>{item.level}</span>
+          <div className="bar" style={{ width: `${(item.value / questions.length) * 100}%` }} />
+          <span>{item.value}</span>
+        </div>
+      ))}
+    </div>
   );
 };
 

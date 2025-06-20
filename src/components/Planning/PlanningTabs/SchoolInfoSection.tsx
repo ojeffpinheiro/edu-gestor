@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { SchoolInfo } from '../../../utils/types/Planning';
-import { Section } from '../../../styles/containers'
 import { FormGroup } from '../../../styles/formControls';
 import { ErrorMessage } from '../../../styles/feedback';
-import { Button } from '../../../styles/buttons';
 import { usePlanning } from '../../../contexts/PlannerContext';
+import { Section } from '../../../styles/layoutUtils';
 
 interface SchoolInfoProps {
   data: SchoolInfo;
@@ -15,25 +14,25 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
   const { state, dispatch } = usePlanning();
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedInfo = {
       ...state.schoolInfo,
       [name]: name === 'studentCount' ? parseInt(value) || 0 : value
     };
-    
-    dispatch({ 
-      type: 'UPDATE_SCHOOL_INFO', 
-      payload: updatedInfo 
+
+    dispatch({
+      type: 'UPDATE_SCHOOL_INFO',
+      payload: updatedInfo
     });
-    
+
     validateField(name, value);
   };
 
   const validateField = (name: string, value: string | number) => {
     let error = '';
-    
+
     if (typeof value === 'string' && value.trim() === '') {
       error = 'Este campo é obrigatório';
     } else if (name === 'studentCount' && (isNaN(Number(value)) || Number(value) <= 0)) {
@@ -41,7 +40,7 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
     } else if (name === 'classes' && typeof value === 'string' && value.split(',').length === 0) {
       error = 'Informe pelo menos uma turma';
     }
-    
+
     setErrors(prev => ({ ...prev, [name]: error }));
   };
 
@@ -50,10 +49,10 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
     validateField(name, value);
   };
 
-  const isValid = Object.values(errors).every(error => !error) && 
-    data.school.trim() !== '' && 
-    data.discipline.trim() !== '' && 
-    data.grade.trim() !== '' && 
+  const isValid = Object.values(errors).every(error => !error) &&
+    data.school.trim() !== '' &&
+    data.discipline.trim() !== '' &&
+    data.grade.trim() !== '' &&
     data.studentCount > 0;
 
   return (
@@ -61,10 +60,10 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
       <h2>Informações da Escola</h2>
       <FormGroup>
         <label>Escola:</label>
-        <input 
-          type="text" 
+        <input
+          type="text"
           name="school"
-          value={data.school} 
+          value={data.school}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -73,10 +72,10 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
 
       <FormGroup>
         <label>Disciplina:</label>
-        <input 
-          type="text" 
+        <input
+          type="text"
           name="discipline"
-          value={data.discipline} 
+          value={data.discipline}
           onChange={handleChange}
           onBlur={handleBlur}
         />
@@ -85,45 +84,87 @@ const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
 
       <FormGroup>
         <label>Etapa:</label>
-        <input type="text" value={data.stage} />
+        <input
+          type="text"
+          name="stage"
+          value={data.stage}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Série:</label>
-        <input type="text" value={data.grade} />
+        <input
+          type="text"
+          name="grade"
+          value={data.grade}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Área do Conhecimento:</label>
-        <input type="text" value={data.knowledgeArea} />
+        <input
+          type="text"
+          name="knowledgeArea"
+          value={data.knowledgeArea}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Quantidade de Alunos:</label>
-        <input type="number" value={data.studentCount} />
+        <input
+          type="number"
+          name="studentCount"
+          value={data.studentCount}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Turmas:</label>
-        <input type="text" value={data.classes.join(', ')} />
+        <input
+          type="text"
+          name="classes"
+          value={data.classes.join(', ')}
+          onChange={(e) => {
+            const classes = e.target.value.split(',').map(c => c.trim());
+            onChange({
+              ...data,
+              classes: classes.filter(c => c !== '')
+            });
+          }}
+          onBlur={(e) => validateField('classes', e.target.value)}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Período:</label>
-        <input type="text" value={data.period} />
+        <input
+          type="text"
+          name="period"
+          value={data.period}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
 
       <FormGroup>
         <label>Trimestre:</label>
-        <input type="text" value={data.trimester} />
+        <input
+          type="text"
+          name="trimester"
+          value={data.trimester}
+          onChange={handleChange}
+          onBlur={handleBlur}
+        />
       </FormGroup>
-      
-      <Button
-        onClick={() => console.log('Dados salvos:', data)}
-        disabled={!isValid}
-      >
-        Salvar Informações
-      </Button>
+
     </Section>
   );
 };

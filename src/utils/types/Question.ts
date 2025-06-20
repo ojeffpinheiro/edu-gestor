@@ -38,6 +38,11 @@ export interface Question {
   tags?: string[];source?: string;
   accessDate?: string;
   optionsLayout?: 'one-column' | 'two-columns' | 'three-columns';
+  timesUsed?: number;
+  correctRate?: number;
+  pinned?: boolean;
+  isComposite?: boolean;
+  componentQuestions?: string[];
 }
 
 // Interface para as props dos componentes de passo
@@ -103,4 +108,20 @@ export interface QuestionFilters {
   difficulty: DifficultyLevelType;
   questionType?: 'multiple_choice' | 'true_false' | 'essay' | '';
   status?: 'active' | 'inactive' | '';
+}
+
+export interface Feedback {
+  id: string;
+  questionId: string;
+  type: 'stylistic' | 'pedagogical';
+  comment: string;
+  severity: 'low' | 'medium' | 'high';
+};
+
+export interface Rubric {
+  criteria: string;
+  levels: {
+    description: string;
+    points: number;
+  }[];
 }

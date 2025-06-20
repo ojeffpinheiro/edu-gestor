@@ -16,11 +16,6 @@ export const Container = styled.div`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(
-      135deg,
-      ${rgba('#f0f4f8', 0.8)} 0%,
-      ${rgba('#e6f0fa', 0.6)} 100%
-    );
     z-index: -1;
     pointer-events: none;
   }
@@ -37,7 +32,6 @@ export const MainContent = styled.main`
 
 export const Sidebar = styled.aside`
   width: 280px;
-  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px ${rgba('#0a0a0a', 0.05)};
   padding: 1.5rem;
@@ -64,7 +58,6 @@ export const GridContainer = styled.div`
 `;
 
 export const Section = styled.div<{ fullWidth?: boolean }>`
-  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 6px ${rgba('#0a0a0a', 0.05)};
   padding: 2rem;
@@ -95,9 +88,7 @@ export const SectionContent = styled.div`
   gap: 1.5rem;
 `;
 
-// Novos componentes estilizados para modernização
 export const Card = styled.div`
-  background: white;
   border-radius: 12px;
   box-shadow: 0 2px 4px ${rgba('#0a0a0a', 0.05)};
   overflow: hidden;

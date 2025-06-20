@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaGraduationCap, FaClock, FaUpload } from 'react-icons/fa';
 
+import { Session, Team } from '../../../../../utils/types/Planning';
+import Modal from '../../../../modals/Modal';
+import { ModalBody } from '../../../../../styles/modals';
+import { FormGroup } from '../../../../../styles/formControls';
+
 import {
     Label,
     Input,
@@ -11,10 +16,6 @@ import {
     SessionOption,
     ErrorMessage
 } from './styles';
-import { Session, Team } from '../../../../../utils/types/Planning';
-import Modal from '../../../../modals/Modal';
-import { ModalBody } from '../../../../../styles/modals';
-import { FormGroup } from '../../../../../styles/formControls';
 
 interface TeamModalProps {
     teamData: Omit<Team, 'id'>;
