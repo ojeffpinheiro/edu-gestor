@@ -1,4 +1,8 @@
 import React from 'react';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface ConclusionsProps {
   conclusions: string;
@@ -6,12 +10,17 @@ interface ConclusionsProps {
 
 const ConclusionsSection: React.FC<ConclusionsProps> = ({ conclusions }) => {
   return (
-    <div className="section">
-      <h2>Conclusões e Reflexões</h2>
-      <div className="form-group">
-        <textarea value={conclusions} rows={10} />
-      </div>
-    </div>
+    <Section>
+      <SectionTitle>Conclusões e Reflexões</SectionTitle>
+      <FormGroup>
+        <TextArea
+          value={conclusions} 
+          rows={10} 
+          readOnly
+          style={{ lineHeight: '1.6' }}
+        />
+      </FormGroup>
+    </Section>
   );
 };
 

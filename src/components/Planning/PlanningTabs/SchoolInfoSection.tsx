@@ -4,6 +4,7 @@ import { Section } from '../../../styles/containers'
 import { FormGroup } from '../../../styles/formControls';
 import { ErrorMessage } from '../../../styles/feedback';
 import { Button } from '../../../styles/buttons';
+import { usePlanning } from '../../../contexts/PlannerContext';
 
 interface SchoolInfoProps {
   data: SchoolInfo;
@@ -11,16 +12,22 @@ interface SchoolInfoProps {
 }
 
 const SchoolInfoSection: React.FC<SchoolInfoProps> = ({ data, onChange }) => {
+  const { state, dispatch } = usePlanning();
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const updatedData = {
-      ...data,
+    const updatedInfo = {
+      ...state.schoolInfo,
       [name]: name === 'studentCount' ? parseInt(value) || 0 : value
     };
     
-    onChange(updatedData);
+    dispatch({ 
+      type: 'UPDATE_SCHOOL_INFO', 
+      payload: updatedInfo 
+    });
+    
     validateField(name, value);
   };
 

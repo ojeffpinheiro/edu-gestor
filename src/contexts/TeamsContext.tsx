@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { LearningObjective, Team } from '../utils/types/Planning';
 import { mockTeams } from '../mocks/plannigData';
+import { LessonsProvider } from './LessonsContext';
 
 interface TeamsState {
   teams: Team[];
@@ -104,7 +105,9 @@ export const TeamsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <TeamsContext.Provider value={value}>
-      {children}
+      <LessonsProvider>
+        {children}
+      </LessonsProvider>
     </TeamsContext.Provider>
   );
 };

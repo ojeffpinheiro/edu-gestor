@@ -1,5 +1,9 @@
 import React from 'react';
 import { SupportMaterial } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface SupportMaterialsProps {
   materials: SupportMaterial;
@@ -7,48 +11,48 @@ interface SupportMaterialsProps {
 
 const SupportMaterialsSection: React.FC<SupportMaterialsProps> = ({ materials }) => {
   return (
-    <div className="section">
-      <h2>Materiais de Apoio</h2>
-      
-      <div className="form-group">
+    <Section>
+      <SectionTitle>Materiais de Apoio</SectionTitle>
+
+      <FormGroup>
         <label>Slides:</label>
-        <textarea value={materials.slides.join('\n')} />
-      </div>
-      
-      <div className="form-group">
+        <TextArea value={materials.slides.join('\n')} rows={3} readOnly />
+      </FormGroup>
+
+      <FormGroup>
         <label>Caderno de Aprendizagem:</label>
-        <textarea value={materials.learningNotebook.join('\n')} />
-      </div>
-      
-      <div className="form-group">
+        <TextArea value={materials.learningNotebook.join('\n')} rows={3} readOnly />
+      </FormGroup>
+
+      <FormGroup>
         <label>Listas de Exercícios:</label>
-        <textarea value={materials.exerciseLists.join('\n')} />
-      </div>
-      
-      <div className="materials-subsection">
-        <h3>Leituras e Mídias</h3>
-        <div className="form-group">
+        <TextArea value={materials.exerciseLists.join('\n')} rows={3} readOnly />
+      </FormGroup>
+
+      <div style={{ marginTop: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.1rem', color: '#334155', marginBottom: '1rem' }}>Leituras e Mídias</h3>
+        <FormGroup>
           <label>Filmes:</label>
-          <textarea value={materials.readingsAndMedia.films.join('\n')} />
-        </div>
-        <div className="form-group">
+          <TextArea value={materials.readingsAndMedia.films.join('\n')} rows={2} readOnly />
+        </FormGroup>
+        <FormGroup>
           <label>Livros:</label>
-          <textarea value={materials.readingsAndMedia.books.join('\n')} />
-        </div>
-        <div className="form-group">
+          <TextArea value={materials.readingsAndMedia.books.join('\n')} rows={2} readOnly />
+        </FormGroup>
+        <FormGroup>
           <label>Simuladores:</label>
-          <textarea value={materials.readingsAndMedia.simulators.join('\n')} />
-        </div>
-        <div className="form-group">
+          <TextArea value={materials.readingsAndMedia.simulators.join('\n')} rows={2} readOnly />
+        </FormGroup>
+        <FormGroup>
           <label>Mapas Mentais:</label>
-          <textarea value={materials.readingsAndMedia.mindMaps.join('\n')} />
-        </div>
-        <div className="form-group">
+          <TextArea value={materials.readingsAndMedia.mindMaps.join('\n')} rows={2} readOnly />
+        </FormGroup>
+        <FormGroup>
           <label>Infográficos:</label>
-          <textarea value={materials.readingsAndMedia.infographics.join('\n')} />
-        </div>
+          <TextArea value={materials.readingsAndMedia.infographics.join('\n')} rows={2} readOnly />
+        </FormGroup>
       </div>
-    </div>
+    </Section>
   );
 };
 

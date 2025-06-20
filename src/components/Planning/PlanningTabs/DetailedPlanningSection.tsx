@@ -1,5 +1,9 @@
 import React from 'react';
 import { DetailedPlanning } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { Input, Select, TextArea } from '../../../styles/inputs';
 
 interface DetailedPlanningProps {
   planning: DetailedPlanning[];
@@ -7,71 +11,72 @@ interface DetailedPlanningProps {
 
 const DetailedPlanningSection: React.FC<DetailedPlanningProps> = ({ planning }) => {
   return (
-    <div className="section">
-      <h2>Planejamento Detalhado</h2>
+    <Section>
+      <SectionTitle>Planejamento Detalhado</SectionTitle>
       
       {planning.map((item) => (
-        <div key={item.id} className="planning-card">
-          <div className="form-group">
+        <div key={item.id} style={{ 
+          marginBottom: '1.5rem',
+          padding: '1.5rem',
+          border: '1px solid #e2e8f0',
+          borderRadius: '0.5rem'
+        }}>
+          <FormGroup>
             <label>Tópico:</label>
-            <input type="text" value={item.topic} />
-          </div>
+            <Input type="text" value={item.topic} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Eixo Temático:</label>
-            <input type="text" value={item.thematicAxis} />
-          </div>
+            <Input type="text" value={item.thematicAxis} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Etapa:</label>
-            <select value={item.stage}>
+            <Select value={item.stage}>
               <option value="initial">Inicial</option>
               <option value="intermediate">Intermediária</option>
               <option value="final">Final</option>
-            </select>
-          </div>
+            </Select>
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Habilidades:</label>
-            <textarea value={item.skills.join('\n')} />
-          </div>
+            <TextArea value={item.skills.join('\n')} rows={3} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Objetivos:</label>
-            <textarea value={item.objectives.join('\n')} />
-          </div>
+            <TextArea value={item.objectives.join('\n')} rows={3} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Conteúdo:</label>
-            <textarea value={item.content} />
-          </div>
+            <TextArea value={item.content} rows={5} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Justificativa:</label>
-            <textarea value={item.justification} />
-          </div>
+            <TextArea value={item.justification} rows={5} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Metodologia:</label>
-            <input type="text" value={item.methodology} />
-          </div>
+            <Input type="text" value={item.methodology} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Recursos:</label>
-            <textarea value={item.resources.join('\n')} />
-          </div>
+            <TextArea value={item.resources.join('\n')} rows={3} readOnly />
+          </FormGroup>
           
-          <div className="form-group">
+          <FormGroup>
             <label>Duração:</label>
-            <input type="text" value={item.duration} />
-          </div>
-          
-          <button>Remover</button>
+            <Input type="text" value={item.duration} readOnly />
+          </FormGroup>
         </div>
       ))}
-      
-      <button>Adicionar Planejamento</button>
-    </div>
+    </Section>
   );
 };
 

@@ -1,5 +1,9 @@
 import React from 'react';
 import { InclusionAndAccessibility } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface InclusionProps {
   inclusion: InclusionAndAccessibility;
@@ -7,19 +11,19 @@ interface InclusionProps {
 
 const InclusionSection: React.FC<InclusionProps> = ({ inclusion }) => {
   return (
-    <div className="section">
-      <h2>Inclusão e Acessibilidade</h2>
+    <Section>
+      <SectionTitle>Inclusão e Acessibilidade</SectionTitle>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Adaptações de Conteúdos:</label>
-        <textarea value={inclusion.adaptations.join('\n')} />
-      </div>
+        <TextArea value={inclusion.adaptations.join('\n')} rows={5} readOnly />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Estratégias para Estudantes com Necessidades Específicas:</label>
-        <textarea value={inclusion.strategies.join('\n')} />
-      </div>
-    </div>
+        <TextArea value={inclusion.strategies.join('\n')} rows={5} readOnly />
+      </FormGroup>
+    </Section>
   );
 };
 

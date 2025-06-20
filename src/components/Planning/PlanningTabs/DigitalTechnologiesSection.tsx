@@ -1,5 +1,9 @@
 import React from 'react';
 import { DigitalTechnologies } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface DigitalTechnologiesProps {
   tech: DigitalTechnologies;
@@ -7,26 +11,26 @@ interface DigitalTechnologiesProps {
 
 const DigitalTechnologiesSection: React.FC<DigitalTechnologiesProps> = ({ tech }) => {
   return (
-    <div className="section">
-      <h2>Tecnologias Digitais</h2>
+    <Section>
+      <SectionTitle>Tecnologias Digitais</SectionTitle>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Plataformas Utilizadas:</label>
-        <textarea value={tech.platforms.join('\n')} />
-      </div>
+        <TextArea value={tech.platforms.join('\n')} rows={3} readOnly />
+      </FormGroup>
       
-      <div className="tech-subsection">
-        <h3>Atividades</h3>
-        <div className="form-group">
+      <div style={{ marginTop: '1.5rem' }}>
+        <h3 style={{ fontSize: '1.1rem', color: '#334155', marginBottom: '1rem' }}>Atividades</h3>
+        <FormGroup>
           <label>Síncronas:</label>
-          <textarea value={tech.activities.synchronous.join('\n')} />
-        </div>
-        <div className="form-group">
+          <TextArea value={tech.activities.synchronous.join('\n')} rows={3} readOnly />
+        </FormGroup>
+        <FormGroup>
           <label>Assíncronas:</label>
-          <textarea value={tech.activities.asynchronous.join('\n')} />
-        </div>
+          <TextArea value={tech.activities.asynchronous.join('\n')} rows={3} readOnly />
+        </FormGroup>
       </div>
-    </div>
+    </Section>
   );
 };
 

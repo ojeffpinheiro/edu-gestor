@@ -1,5 +1,9 @@
 import React from 'react';
 import { Evaluation } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface EvaluationProps {
   evaluation: Evaluation;
@@ -7,26 +11,26 @@ interface EvaluationProps {
 
 const EvaluationSection: React.FC<EvaluationProps> = ({ evaluation }) => {
   return (
-    <div className="section">
-      <h2>Avaliação</h2>
+    <Section>
+      <SectionTitle>Avaliação</SectionTitle>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Critérios:</label>
-        <textarea value={evaluation.criteria.join('\n')} />
-      </div>
+        <TextArea value={evaluation.criteria.join('\n')} rows={5} readOnly />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Instrumentos:</label>
-        <textarea value={evaluation.instruments.join('\n')} />
-      </div>
+        <TextArea value={evaluation.instruments.join('\n')} rows={5} readOnly />
+      </FormGroup>
       
       {evaluation.selfEvaluation && (
-        <div className="form-group">
+        <FormGroup>
           <label>Autoavaliação/Avaliação Formativa:</label>
-          <textarea value={evaluation.selfEvaluation} />
-        </div>
+          <TextArea value={evaluation.selfEvaluation} rows={5} readOnly />
+        </FormGroup>
       )}
-    </div>
+    </Section>
   );
 };
 

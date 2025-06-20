@@ -1,5 +1,9 @@
 import React from 'react';
 import { DiagnosticEvaluation } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface DiagnosticEvaluationProps {
   evaluation: DiagnosticEvaluation;
@@ -7,19 +11,27 @@ interface DiagnosticEvaluationProps {
 
 const DiagnosticEvaluationSection: React.FC<DiagnosticEvaluationProps> = ({ evaluation }) => {
   return (
-    <div className="section">
-      <h2>Avaliação Diagnóstica e Formativa</h2>
+    <Section>
+      <SectionTitle>Avaliação Diagnóstica e Formativa</SectionTitle>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Avaliação Inicial (mapeamento prévio):</label>
-        <textarea value={evaluation.initialEvaluation} />
-      </div>
+        <TextArea
+          value={evaluation.initialEvaluation} 
+          rows={5}
+          readOnly
+        />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Autoavaliações e Coavaliações Periódicas:</label>
-        <textarea value={evaluation.periodicEvaluations.join('\n')} />
-      </div>
-    </div>
+        <TextArea 
+          value={evaluation.periodicEvaluations.join('\n')} 
+          rows={5}
+          readOnly
+        />
+      </FormGroup>
+    </Section>
   );
 };
 

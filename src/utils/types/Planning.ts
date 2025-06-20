@@ -94,6 +94,7 @@ export interface Period {
 }
 
 export interface SchoolInfo {
+  id: string;
   school: string;
   discipline: string;
   stage: string;
@@ -207,6 +208,7 @@ export interface DigitalTechnologies {
 }
 
 export interface PlanningData {
+  id: string;
   schoolInfo: SchoolInfo;
   generalObjectives: GeneralObjective[];
   trimesterTopics: Topic[];

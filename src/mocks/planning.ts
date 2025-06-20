@@ -2,6 +2,7 @@ import { Activity, DetailedPlanning, DiagnosticEvaluation, DidacticSequence, Dig
 
 const mockSchoolInfo: SchoolInfo[] = [
   {
+    id: '1',
     school: "Escola Estadual Monte Verde",
     discipline: "Matemática",
     stage: "Ensino Fundamental II",
@@ -13,6 +14,7 @@ const mockSchoolInfo: SchoolInfo[] = [
     trimester: "1º trimestre"
   },
   {
+    id: '2',
     school: "Colégio Municipal Sol Nascente",
     discipline: "História",
     stage: "Ensino Fundamental I",
@@ -24,6 +26,7 @@ const mockSchoolInfo: SchoolInfo[] = [
     trimester: "2º trimestre"
   },
   {
+    id: '3',
     school: "Instituto Educacional Nova Geração",
     discipline: "Língua Portuguesa",
     stage: "Ensino Médio",
@@ -35,6 +38,7 @@ const mockSchoolInfo: SchoolInfo[] = [
     trimester: "3º trimestre"
   },
   {
+    id: '4',
     school: "Centro de Ensino Paulo Freire",
     discipline: "Física",
     stage: "Ensino Médio",
@@ -46,6 +50,7 @@ const mockSchoolInfo: SchoolInfo[] = [
     trimester: "1º trimestre"
   },
   {
+    id: '5',
     school: "Escola Técnica Estadual",
     discipline: "Química",
     stage: "Ensino Médio Técnico",
@@ -358,7 +363,9 @@ const mockInclusionAndAccessibility: InclusionAndAccessibility = {
 };
 
 const mockPlanningData: PlanningData = {
+  id: '1',
   schoolInfo: {
+    id: '5',
     school: "Escola Estadual Monte Verde",
     discipline: "Matemática",
     stage: "Ensino Fundamental II",

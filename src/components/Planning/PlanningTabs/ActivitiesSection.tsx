@@ -1,5 +1,11 @@
 import React from 'react';
 import { Activity } from '../../../utils/types/Planning';
+import { Section } from '../../../styles/layoutUtils';
+import { SectionTitle } from '../../../styles/baseComponents';
+import { Card, CardBody, CardHeader } from '../../../styles/card';
+import { Badge } from '../../../styles/indicators';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
 
 interface ActivitiesProps {
   activities: Activity[];
@@ -7,73 +13,76 @@ interface ActivitiesProps {
 
 const ActivitiesSection: React.FC<ActivitiesProps> = ({ activities }) => {
   return (
-    <div className="section">
-      <h2>Atividades</h2>
+    <Section>
+      <SectionTitle>Atividades</SectionTitle>
       
       {activities.map((activity) => (
-        <div key={activity.id} className="activity-card">
-          <div className="form-group">
-            <label>Tipo:</label>
-            <select value={activity.type}>
-              <option value="practice">Prática</option>
-              <option value="exercise">Exercício</option>
-              <option value="list">Lista</option>
-            </select>
-          </div>
-          
-          <div className="form-group">
-            <label>Descrição:</label>
-            <textarea value={activity.description} />
-          </div>
-          
-          {activity.research && (
-            <div className="activity-subsection">
-              <h4>Pesquisa</h4>
-              <div className="form-group">
-                <label>Tópicos:</label>
-                <textarea value={activity.research.topics.join('\n')} />
-              </div>
-              <div className="form-group">
-                <label>Conteúdo:</label>
-                <textarea value={activity.research.content.join('\n')} />
-              </div>
-              <div className="form-group">
-                <label>Critérios de Avaliação:</label>
-                <textarea value={activity.research.evaluationCriteria.join('\n')} />
-              </div>
+        <Card key={activity.id} style={{ marginBottom: '1.5rem' }}>
+          <CardHeader>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, textTransform: 'capitalize' }}>
+                {activity.type}
+              </h3>
+              <Badge variant={
+                activity.type === 'practice' ? 'default' : 
+                activity.type === 'exercise' ? 'success' : 'success'
+              }>
+                {activity.type}
+              </Badge>
             </div>
-          )}
+          </CardHeader>
           
-          {activity.evaluative && (
-            <div className="activity-subsection">
-              <h4>Avaliativas</h4>
-              <div className="form-group">
-                <label>Critérios:</label>
-                <textarea value={activity.evaluative.criteria.join('\n')} />
+          <CardBody>
+            <FormGroup>
+              <label>Descrição:</label>
+              <TextArea value={activity.description} rows={3} readOnly />
+            </FormGroup>
+            
+            {activity.research && (
+              <div style={{ marginTop: '1rem' }}>
+                <h4 style={{ marginBottom: '0.5rem', color: '#334155' }}>Pesquisa</h4>
+                <FormGroup>
+                  <label>Tópicos:</label>
+                  <TextArea value={activity.research.topics.join('\n')} rows={2} readOnly />
+                </FormGroup>
+                <FormGroup>
+                  <label>Conteúdo:</label>
+                  <TextArea value={activity.research.content.join('\n')} rows={2} readOnly />
+                </FormGroup>
+                <FormGroup>
+                  <label>Critérios de Avaliação:</label>
+                  <TextArea value={activity.research.evaluationCriteria.join('\n')} rows={2} readOnly />
+                </FormGroup>
               </div>
-            </div>
-          )}
-          
-          {activity.leveling && (
-            <div className="form-group">
-              <label>Nivelamento (retomada):</label>
-              <textarea value={activity.leveling} />
-            </div>
-          )}
-          
-          {activity.answerKey && (
-            <div className="form-group">
-              <label>Gabarito:</label>
-              <textarea value={activity.answerKey} />
-            </div>
-          )}
-          
-          <button>Remover</button>
-        </div>
+            )}
+            
+            {activity.evaluative && (
+              <div style={{ marginTop: '1rem' }}>
+                <h4 style={{ marginBottom: '0.5rem', color: '#334155' }}>Avaliativas</h4>
+                <FormGroup>
+                  <label>Critérios:</label>
+                  <TextArea value={activity.evaluative.criteria.join('\n')} rows={2} readOnly />
+                </FormGroup>
+              </div>
+            )}
+            
+            {activity.leveling && (
+              <FormGroup>
+                <label>Nivelamento (retomada):</label>
+                <TextArea value={activity.leveling} rows={3} readOnly />
+              </FormGroup>
+            )}
+            
+            {activity.answerKey && (
+              <FormGroup>
+                <label>Gabarito:</label>
+                <TextArea value={activity.answerKey} rows={3} readOnly />
+              </FormGroup>
+            )}
+          </CardBody>
+        </Card>
       ))}
-      
-      <button>Adicionar Atividade</button>
-    </div>
+    </Section>
   );
 };
 

@@ -17,10 +17,6 @@ import DigitalTechnologiesSection from '../../PlanningTabs/DigitalTechnologiesSe
 import ConclusionsSection from '../../PlanningTabs/ConclusionsSection';
 import ReferencesSection from '../../PlanningTabs/ReferencesSection';
 
-import GeneralObjectiveModal from '../../PlanningModals/GeneralObjectiveForm';
-
-import Modal from '../../../modals/Modal';
-
 import {
   PlanningContainer,
   TabsContainer,
@@ -35,7 +31,7 @@ interface ModalState {
   data: GeneralObjective | SchoolInfo | null;
 }
 
-const PlanningPage: React.FC = () => {
+const PlanningTab: React.FC = () => {
   const [planningData, setPlanningData] = useState<PlanningData>(mockPlanningData);
   const [activeTab, setActiveTab] = useState('schoolInfo');
   const [modalState, setModalState] = useState<ModalState>({
@@ -156,27 +152,6 @@ const PlanningPage: React.FC = () => {
     setItemToDelete(null);
   };
 
-  const renderModalContent = () => {
-    switch (currentModal) {
-      case 'generalObjective':
-        return (
-          <GeneralObjectiveModal
-            isOpen={modalState.isOpen}
-            initialData={
-              modalState.data && 'description' in modalState.data
-                ? modalState.data
-                : undefined
-            }
-            onSave={handleSaveGeneralObjective}
-            onClose={() => setModalState({ ...modalState, isOpen: false })}
-          />
-        );
-      // Adicione outros casos para diferentes modais
-      default:
-        return null;
-    }
-  };
-
   // Funções de validação
   const validateSchoolInfo = (data: SchoolInfo): boolean => {
     return (
@@ -250,15 +225,6 @@ const PlanningPage: React.FC = () => {
         {activeTab === 'references' && <ReferencesSection references={planningData.references} />}
       </div>
 
-      <Modal 
-        isOpen={showAddModal}
-        title={`Adicionar ${currentModal === 'generalObjective' ? 'Objetivo Geral' : ''}`}
-        onClose={() => setShowAddModal(false)}
-        size="md" >
-          
-        {renderModalContent()}
-      </Modal>
-
       {showConfirmation && (
         <ConfirmationDialog>
           <div>
@@ -272,4 +238,4 @@ const PlanningPage: React.FC = () => {
   );
 };
 
-export default PlanningPage;
+export default PlanningTab;

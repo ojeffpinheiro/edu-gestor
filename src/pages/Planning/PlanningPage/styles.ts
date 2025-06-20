@@ -1,90 +1,164 @@
 import styled from 'styled-components';
+import { rgba } from 'polished';
 
 export const Container = styled.div`
   min-height: 100vh;
-  background: var(--color-background);
+  background: #f8fafc;
   position: relative;
   overflow-x: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   
-  /* Fundo gradiente animado moderno */
+  /* Fundo moderno com gradiente sutil */
   &::before {
     content: '';
     position: fixed;
-    top: -50%;
-    left: -50%;
-    right: -50%;
-    bottom: -50%;
-    background: 
-      radial-gradient(circle at 10% 20%, var(--color-primary-light) 0%, transparent 25%),
-      radial-gradient(circle at 90% 30%, var(--color-secondary) 0%, transparent 25%),
-      radial-gradient(circle at 30% 70%, var(--color-info-light) 0%, transparent 25%);
-    opacity: 0.15;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      ${rgba('#f0f4f8', 0.8)} 0%,
+      ${rgba('#e6f0fa', 0.6)} 100%
+    );
     z-index: -1;
     pointer-events: none;
-    animation: gradientMove 25s ease infinite alternate;
-  }
-    
-  @keyframes gradientMove {
-    0% {
-      transform: scale(1) rotate(0deg);
-    }
-    50% {
-      transform: scale(1.2) rotate(5deg);
-    }
-    100% {
-      transform: scale(1.1) rotate(-5deg);
-    }
   }
 `;
 
 export const MainContent = styled.main`
   display: flex;
   flex: 1;
-  gap: 1.5rem;
-  padding: 1.5rem;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1600px;
+  margin: 0 auto;
 `;
 
 export const Sidebar = styled.aside`
   width: 280px;
   background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px ${rgba('#0a0a0a', 0.05)};
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
 `;
 
 export const ContentArea = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 2rem;
+  min-width: 0; // Fix for flexbox overflow
 `;
 
 export const GridContainer = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
 `;
 
 export const Section = styled.div<{ fullWidth?: boolean }>`
   background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px ${rgba('#0a0a0a', 0.05)};
+  padding: 2rem;
   ${props => props.fullWidth && 'grid-column: 1 / -1;'}
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 10px 15px ${rgba('#0a0a0a', 0.1)};
+    transform: translateY(-2px);
+  }
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #2d3748;
-  margin: 0 0 1rem 0;
-  padding-bottom: 0.75rem;
+  color: #1e293b;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
   border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const SectionContent = styled.div`
-  // Estilos para o conteúdo da seção
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+// Novos componentes estilizados para modernização
+export const Card = styled.div`
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px ${rgba('#0a0a0a', 0.05)};
+  overflow: hidden;
+  transition: all 0.2s ease;
+  border: 1px solid #e2e8f0;
+  
+  &:hover {
+    box-shadow: 0 8px 12px ${rgba('#0a0a0a', 0.1)};
+    border-color: #cbd5e1;
+  }
+`;
+
+export const CardHeader = styled.div`
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+`;
+
+export const CardBody = styled.div`
+  padding: 1.5rem;
+`;
+
+export const CardFooter = styled.div`
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f1f5f9;
+  background: #f8fafc;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+`;
+
+export const Pill = styled.span`
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background: #e2e8f0;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #475569;
+`;
+
+export const Badge = styled.span<{ variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' }>`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  
+  ${({ variant = 'primary' }) => {
+    switch (variant) {
+      case 'primary':
+        return `background: #e0f2fe; color: #0369a1;`;
+      case 'secondary':
+        return `background: #e2e8f0; color: #475569;`;
+      case 'success':
+        return `background: #dcfce7; color: #166534;`;
+      case 'warning':
+        return `background: #fef9c3; color: #854d0e;`;
+      case 'danger':
+        return `background: #fee2e2; color: #991b1b;`;
+    }
+  }}
 `;

@@ -18,6 +18,8 @@ import {
   EventType,
   CalendarViewType,
 } from '../utils/types/CalendarEvent';
+import { TeamsProvider } from './TeamsContext';
+import { schoolCalendar } from '../mocks/events';
 
 interface CalendarContextData {
   currentDate: Date;
@@ -99,10 +101,10 @@ const CalendarContext = createContext<CalendarContextData | undefined>(undefined
  * @param {React.ReactNode} props.children - Componentes filhos
  * @param {SchoolCalendar} props.initialCalendar - Dados iniciais do calendário
  */
-export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalendar: SchoolCalendar }>> = ({
-  children,
-  initialCalendar
+export const CalendarProvider: React.FC<React.PropsWithChildren> = ({
+  children
 }) => {
+  const initialCalendar = schoolCalendar;
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [view, setView] = useState<CalendarViewType>('month');
   const [calendar, setCalendar] = useState<SchoolCalendar>(initialCalendar);
@@ -268,7 +270,9 @@ export const CalendarProvider: React.FC<React.PropsWithChildren<{ initialCalenda
         }
       }}
     >
-      {children}
+      <TeamsProvider>
+        {children}
+      </TeamsProvider>
     </CalendarContext.Provider>
   );
 };

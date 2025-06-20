@@ -1,6 +1,7 @@
 // src/contexts/planning/ScheduleContext.tsx
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { Shift, ShiftSettings, Period } from '../utils/types/Planning';
+import { ModalProvider } from './ModalContext';
 
 interface ScheduleState {
   shiftSettings: Record<Shift, ShiftSettings>;
@@ -135,7 +136,9 @@ export const ScheduleProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ScheduleContext.Provider value={value}>
-      {children}
+      <ModalProvider>
+        {children}
+      </ModalProvider>
     </ScheduleContext.Provider>
   );
 };

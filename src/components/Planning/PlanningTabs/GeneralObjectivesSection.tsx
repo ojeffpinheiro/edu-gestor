@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+
+import { usePlanning } from '../../../contexts/PlannerContext';
+
 import { GeneralObjective } from '../../../utils/types/Planning';
-import styled from 'styled-components';
+
 import { Card, CardContent } from '../../../styles/card';
 import { FormGroup } from '../../../styles/formControls';
 import { Button, ButtonGroup } from '../../../styles/buttons';
+
 import { CardActions } from '../Tabs/PlanningTab/styles';
-import { FaEdit, FaTrash } from 'react-icons/fa';
+import { Section } from '../../../styles/containers';
 
 interface GeneralObjectivesProps {
   objectives: GeneralObjective[];
@@ -20,8 +25,21 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
   onEdit,
   onDelete
 }) => {
+  const { state, dispatch } = usePlanning();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
+
+  const handleAddObjective = () => {
+    const newObjective = {
+      id: Date.now().toString(),
+      description: 'Novo objetivo'
+    };
+    dispatch({ type: 'ADD_GENERAL_OBJECTIVE', payload: newObjective });
+  };
+
+  const handleDeleteObjective = (id: string) => {
+    dispatch({ type: 'DELETE_GENERAL_OBJECTIVE', payload: id });
+  };
 
   const handleEdit = (obj: GeneralObjective) => {
     setEditingId(obj.id);
@@ -31,7 +49,6 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
   return (
     <Section>
       <h2>Objetivos Gerais da Unidade/Trimestre</h2>
-
       {objectives.length === 0 ? (
         <p>Nenhum objetivo cadastrado</p>
       ) : (
@@ -39,42 +56,43 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
           {objectives.map((obj) => (
             <Card key={obj.id}>
               {editingId === obj.id ? (
-            <>
-              <FormGroup>
-                <textarea 
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  rows={3}
-                />
-              </FormGroup>
-              <ButtonGroup>
-                <Button onClick={() => onAdd()}>Salvar</Button>
-                <Button onClick={() => setEditingId(null)}>Cancelar</Button>
-              </ButtonGroup>
-            </>
-          ) : (
-            <>
+                <>
+                  <FormGroup>
+                    <textarea
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      rows={3}
+                    />
+                  </FormGroup>
+                  <ButtonGroup>
+                    <Button onClick={() => onAdd()}>Salvar</Button>
+                    <Button onClick={() => setEditingId(null)}>Cancelar</Button>
+                  </ButtonGroup>
+                </>
+              ) : (
+                <>
+                  <CardContent>
+                    <p>{obj.description}</p>
+                  </CardContent>
+                  <CardActions>
+                    <Button onClick={() => handleEdit(obj)}><FaEdit /></Button>
+                    <Button
+                      className="danger"
+                      onClick={() => onDelete('generalObjective', obj.id)}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </CardActions>
+                </>
+              )}
               <CardContent>
                 <p>{obj.description}</p>
               </CardContent>
-              <CardActions>
-                <Button onClick={() => handleEdit(obj)}><FaEdit /></Button>
-                <Button 
-                  className="danger" 
-                  onClick={() => onDelete('generalObjective', obj.id)}
-                >
-                  Remover
-                </Button>
-              </CardActions>
-            </>
-          )}
-              <CardContent>
-                <p>{obj.description}</p>
-              </CardContent>
+
               <CardActions>
                 <Button onClick={() => onEdit(obj)}>Editar</Button>
-                <Button 
-                  className="danger" 
+                <Button
+                  className="danger"
                   onClick={() => onDelete('generalObjective', obj.id)}
                 >
                   <FaTrash />
@@ -82,54 +100,11 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
               </CardActions>
             </Card>
           ))}
+          <Button onClick={onAdd}>Adicionar Objetivo</Button>
         </div>
       )}
-
-      {objectives.map((obj) => (
-        <Card key={obj.id}>
-          {editingId === obj.id ? (
-            <>
-              <FormGroup>
-                <textarea 
-                  value={editValue}
-                  onChange={(e) => setEditValue(e.target.value)}
-                  rows={3}
-                />
-              </FormGroup>
-              <ButtonGroup>
-                <Button onClick={() => onAdd}>Salvar</Button>
-                <Button onClick={() => setEditingId(null)}>Cancelar</Button>
-              </ButtonGroup>
-            </>
-          ) : (
-            <>
-              <p>{obj.description}</p>
-              <ButtonGroup>
-                <Button onClick={() => handleEdit(obj)}>Editar</Button>
-                <Button 
-                  className="danger" 
-                  onClick={() => onDelete('generalObjective', obj.id)}
-                >
-                  Remover
-                </Button>
-              </ButtonGroup>
-            </>
-          )}
-        </Card>
-      ))}
-      
-      <Button onClick={onAdd}>Adicionar Objetivo</Button>
     </Section>
   );
 };
-
-
-const Section = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-`;
 
 export default GeneralObjectivesSection;

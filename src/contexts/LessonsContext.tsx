@@ -1,6 +1,7 @@
 // src/contexts/planning/LessonsContext.tsx
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { DayOfWeek, Lesson, Shift } from '../utils/types/Planning';
+import { ScheduleProvider } from './ScheduleContext';
 
 interface LessonsState {
   lessons: Lesson[];
@@ -108,7 +109,9 @@ export const LessonsProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <LessonsContext.Provider value={value}>
-      {children}
+      <ScheduleProvider>
+        {children}
+      </ScheduleProvider>
     </LessonsContext.Provider>
   );
 };

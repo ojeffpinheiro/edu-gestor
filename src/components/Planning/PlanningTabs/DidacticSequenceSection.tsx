@@ -1,35 +1,40 @@
 import React from 'react';
 import { DidacticSequence } from '../../../utils/types/Planning';
 
+import { SectionTitle } from '../../../styles/baseComponents';
+import { FormGroup } from '../../../styles/formControls';
+import { TextArea } from '../../../styles/inputs';
+import { Section } from '../../../styles/layoutUtils';
+
 interface DidacticSequenceProps {
   sequence: DidacticSequence;
 }
 
 const DidacticSequenceSection: React.FC<DidacticSequenceProps> = ({ sequence }) => {
   return (
-    <div className="section">
-      <h2>Cronograma e Sequência Didática</h2>
+    <Section>
+      <SectionTitle>Cronograma e Sequência Didática</SectionTitle>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Introdução:</label>
-        <textarea value={sequence.introduction} />
-      </div>
+        <TextArea value={sequence.introduction} rows={5} readOnly />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Desenvolvimento:</label>
-        <textarea value={sequence.development} />
-      </div>
+        <TextArea value={sequence.development} rows={8} readOnly />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Aplicação/Prática:</label>
-        <textarea value={sequence.application} />
-      </div>
+        <TextArea value={sequence.application} rows={5} readOnly />
+      </FormGroup>
       
-      <div className="form-group">
+      <FormGroup>
         <label>Semana de Avaliação:</label>
-        <textarea value={sequence.evaluationWeek} />
-      </div>
-    </div>
+        <TextArea value={sequence.evaluationWeek} rows={3} readOnly />
+      </FormGroup>
+    </Section>
   );
 };
 

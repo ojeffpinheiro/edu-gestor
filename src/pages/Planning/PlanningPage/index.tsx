@@ -1,26 +1,21 @@
 import React, { useState } from 'react';
-
-import { TeamsProvider } from '../../../contexts/TeamsContext';
-import { LessonsProvider } from '../../../contexts/LessonsContext';
-import { ScheduleProvider } from '../../../contexts/ScheduleContext';
-import { ModalProvider } from '../../../contexts/ModalContext';
-import { CalendarProvider } from '../../../contexts/CalendarContext';
-
-import { Session, ShiftSettings, Team } from '../../../utils/types/Planning';
-import { schoolCalendar } from '../../../mocks/events';
+import { PlanningProvider } from '../../../contexts/PlannerContext';
+import { PlanningData, Session, ShiftSettings, Team } from '../../../utils/types/Planning';
 
 import ClassScheduleTab from '../../../components/Planning/Tabs/ClassScheduleTab';
 import TeamTab from '../../../components/Planning/Tabs/TeamTab';
 import CalendarTab from '../../../components/Planning/Tabs/CalendarTab';
-import TabPlanning from '../../../components/Planning/Tabs/PlanningTab';
-
 import TeamModal from '../../../components/Planning/Tabs/TeamTab/AddTeamModal';
-
 import ShiftSettingsEditor from '../../../components/Planning/ShiftSettingsEditor';
 import LessonForm from '../../../components/Planning/LessonForm';
 import NavigationMenu from '../../../components/Planning/NavigationMenu';
+import PlanningTab from '../../../components/Planning/Tabs/PlanningTab';
+
+import PlanningModal from '../../../components/Planning/PlanningModal';
 
 import HeaderComponent from './HeaderComponent';
+import { mockPlanningData } from '../../../mocks/planning';
+
 
 import {
   Container,
@@ -30,8 +25,15 @@ import {
   GridContainer,
   Section,
   SectionTitle,
-  SectionContent
+  SectionContent,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Pill,
+  Badge
 } from './styles';
+import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
 
 const PlanejadorClasse = () => {
   const [activeView, setActiveView] = useState<'overview' | 'teams' | 'schedule' | 'calendar'>('overview');
@@ -44,7 +46,9 @@ const PlanejadorClasse = () => {
     periods: []
   });
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
+  const [isPlanningModalOpen, setIsPlanningModalOpen] = useState(false);
   const [currentTeam, setCurrentTeam] = useState<Team | null>(null);
+  const [currentPlanning, setCurrentPlanning] = useState<PlanningData | null>(null);
   const [teamFormData, setTeamFormData] = useState<Omit<Team, 'id'>>({
     name: '',
     session: Session.MORNING,
@@ -53,12 +57,12 @@ const PlanejadorClasse = () => {
     specificRequirements: '',
     schedule: []
   });
-
+  const [plannings, setPlannings] = useState<PlanningData[]>([mockPlanningData]);
   const handleSettingsChange = (newSettings: ShiftSettings) => {
     setShiftSettings(newSettings);
   };
-  // Função para abrir o modal para criação
-  const handleOpenCreateModal = () => {
+
+  const handleOpenCreateTeamModal = () => {
     setCurrentTeam(null);
     setTeamFormData({
       name: '',
@@ -71,8 +75,7 @@ const PlanejadorClasse = () => {
     setIsTeamModalOpen(true);
   };
 
-  // Função para abrir o modal para edição
-  const handleOpenEditModal = (team: Team) => {
+  const handleOpenEditTeamModal = (team: Team) => {
     setCurrentTeam(team);
     setTeamFormData({
       name: team.name,
@@ -85,102 +88,241 @@ const PlanejadorClasse = () => {
     setIsTeamModalOpen(true);
   };
 
-  // Função para salvar (criação ou edição)
   const handleSaveTeam = (teamData: Omit<Team, 'id'>) => {
     if (currentTeam) {
       // Lógica para editar a turma
-      // Exemplo: updateTeam({ ...teamData, id: currentTeam.id });
     } else {
       // Lógica para criar nova turma
-      // Exemplo: addTeam({ ...teamData, id: Date.now() });
     }
     setIsTeamModalOpen(false);
   };
 
+  const handleOpenCreatePlanning = () => {
+    setCurrentPlanning(null);
+    setIsPlanningModalOpen(true);
+  };
+
+  const handleOpenEditPlanning = (planning: PlanningData) => {
+    setCurrentPlanning(planning);
+    setIsPlanningModalOpen(true);
+  };
+
+  const handleSavePlanning = (planningData: PlanningData) => {
+    if (currentPlanning) {
+      // Atualizar planejamento existente
+      setPlannings(prev => 
+        prev.map(p => p.id === planningData.id ? planningData : p)
+      );
+    } else {
+      // Criar novo planejamento
+      setPlannings(prev => [...prev, {
+        ...planningData,
+        id: Date.now().toString()
+      }]);
+    }
+    setIsPlanningModalOpen(false);
+  };
+
   return (
-    <TeamsProvider>
-      <LessonsProvider>
-        <CalendarProvider initialCalendar={schoolCalendar}>
-          <ScheduleProvider>
-            <ModalProvider>
-              <Container>
-                <HeaderComponent
-                  title="Planejador de Classe"
-                  subtitle="Sistema de planejamento e gerenciamento para professores"
-                />
+    <PlanningProvider>
+      <Container>
+        <HeaderComponent
+          title="Planejador de Classe"
+          subtitle="Sistema de planejamento e gerenciamento para professores"
+        />
 
-                <MainContent>
-                  <Sidebar>
-                    <NavigationMenu
-                      activeView={activeView}
-                      onViewChange={setActiveView}
-                    />
+        <MainContent>
+          <Sidebar>
+            <NavigationMenu
+              activeView={activeView}
+              onViewChange={setActiveView}
+            />
 
-                    <ShiftSettingsEditor
-                      settings={shiftSettings}
-                      onChange={handleSettingsChange}
-                    />
-                  </Sidebar>
+            <ShiftSettingsEditor
+              settings={shiftSettings}
+              onChange={handleSettingsChange}
+            />
+          </Sidebar>
 
-                  <ContentArea>
-                    {activeView === 'overview' && (
-                      <GridContainer>
-                        <Section>
-                          <SectionTitle>Planejamento Didático</SectionTitle>
-                          <SectionContent>
-                            <TabPlanning />
-                          </SectionContent>
-                        </Section>
-                      </GridContainer>
-                    )}
+          <ContentArea>
+            {activeView === 'overview' && (
+              <>
+                <Section fullWidth>
+                  <SectionTitle>
+                    Meus Planejamentos
+                    <button 
+                      onClick={handleOpenCreatePlanning}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.5rem',
+                        padding: '0.5rem 1rem',
+                        background: '#3b82f6',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontWeight: '500',
+                        fontSize: '0.875rem'
+                      }}
+                    >
+                      <FiPlus size={16} />
+                      Novo Planejamento
+                    </button>
+                  </SectionTitle>
+                  <SectionContent>
+                    <GridContainer>
+                      {plannings.map(planning => (
+                        <Card key={planning.id} onClick={() => handleOpenEditPlanning(planning)}>
+                          <CardHeader>
+                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <h3 style={{ fontWeight: '600', margin: 0 }}>
+                                {planning.schoolInfo.discipline}
+                              </h3>
+                              <Badge variant="primary">
+                                {planning.schoolInfo.trimester}
+                              </Badge>
+                            </div>
+                            <p style={{ 
+                              fontSize: '0.875rem', 
+                              color: '#64748b', 
+                              margin: '0.25rem 0 0',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.5rem'
+                            }}>
+                              {planning.schoolInfo.school}
+                            </p>
+                          </CardHeader>
+                          <CardBody>
+                            <div style={{ 
+                              display: 'flex', 
+                              gap: '0.5rem',
+                              marginBottom: '1rem',
+                              flexWrap: 'wrap'
+                            }}>
+                              <Pill>{planning.schoolInfo.grade}</Pill>
+                              <Pill>{planning.schoolInfo.studentCount} alunos</Pill>
+                              <Pill>{planning.generalObjectives.length} objetivos</Pill>
+                            </div>
+                            <p style={{ 
+                              fontSize: '0.875rem', 
+                              color: '#475569',
+                              display: '-webkit-box',
+                              WebkitLineClamp: 3,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}>
+                              {planning.generalObjectives[0]?.description || 'Nenhum objetivo definido'}
+                            </p>
+                          </CardBody>
+                          <CardFooter>
+                            <button style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#64748b',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.25rem',
+                              fontSize: '0.875rem'
+                            }}>
+                              <FiEdit2 size={14} />
+                              Editar
+                            </button>
+                            <button style={{
+                              background: 'transparent',
+                              border: 'none',
+                              color: '#ef4444',
+                              cursor: 'pointer',
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: '0.25rem',
+                              fontSize: '0.875rem'
+                            }}>
+                              <FiTrash2 size={14} />
+                              Remover
+                            </button>
+                          </CardFooter>
+                        </Card>
+                      ))}
+                    </GridContainer>
+                  </SectionContent>
+                </Section>
 
-                    {activeView === 'teams' && (
-                      <Section fullWidth>
-                        <SectionTitle>Gestão de Turmas</SectionTitle>
-                        <SectionContent>
-                          <TeamTab
-                            onEditTeam={handleOpenEditModal}
-                            onCreateTeam={handleOpenCreateModal} />
-                        </SectionContent>
-                      </Section>
-                    )}
+                <Section fullWidth>
+                  <SectionTitle>Atividades Recentes</SectionTitle>
+                  <SectionContent>
+                    {/* Conteúdo das atividades recentes */}
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '1rem',
+                      color: '#64748b',
+                      fontSize: '0.875rem'
+                    }}>
+                      <p>Nenhuma atividade recente</p>
+                    </div>
+                  </SectionContent>
+                </Section>
+              </>
+            )}
 
-                    {activeView === 'schedule' && (
-                      <Section fullWidth>
-                        <SectionTitle>Grade Horária</SectionTitle>
-                        <SectionContent>
-                          <ClassScheduleTab />
-                        </SectionContent>
-                      </Section>
-                    )}
+            {activeView === 'teams' && (
+              <Section fullWidth>
+                <SectionTitle>Gestão de Turmas</SectionTitle>
+                <SectionContent>
+                  <TeamTab
+                    onEditTeam={handleOpenEditTeamModal}
+                    onCreateTeam={handleOpenCreateTeamModal} />
+                </SectionContent>
+              </Section>
+            )}
 
-                    {activeView === 'calendar' && (
-                      <Section fullWidth>
-                        <SectionTitle>Calendário Escolar</SectionTitle>
-                        <SectionContent>
-                          <CalendarTab />
-                        </SectionContent>
-                      </Section>
-                    )}
-                  </ContentArea>
-                </MainContent>
+            {activeView === 'schedule' && (
+              <Section fullWidth>
+                <SectionTitle>Grade Horária</SectionTitle>
+                <SectionContent>
+                  <ClassScheduleTab />
+                </SectionContent>
+              </Section>
+            )}
 
-                <LessonForm />
-                {/* Modal de Turma */}
-                {isTeamModalOpen && (
-                  <TeamModal
-                    teamData={teamFormData}
-                    editingTeam={currentTeam}
-                    onSave={handleSaveTeam}
-                    onClose={() => setIsTeamModalOpen(false)}
-                  />
-                )}
-              </Container>
-            </ModalProvider>
-          </ScheduleProvider>
-        </CalendarProvider>
-      </LessonsProvider>
-    </TeamsProvider>
+            {activeView === 'calendar' && (
+              <Section fullWidth>
+                <SectionTitle>Calendário Escolar</SectionTitle>
+                <SectionContent>
+                  <CalendarTab />
+                </SectionContent>
+              </Section>
+            )}
+          </ContentArea>
+        </MainContent>
+
+        <LessonForm />
+        
+        {/* Modal de Turma */}
+        {isTeamModalOpen && (
+          <TeamModal
+            teamData={teamFormData}
+            editingTeam={currentTeam}
+            onSave={handleSaveTeam}
+            onClose={() => setIsTeamModalOpen(false)}
+          />
+        )}
+        
+        {/* Modal de Planejamento */}
+        {isPlanningModalOpen && (
+          <PlanningModal
+            isOpen={isPlanningModalOpen}
+            initialData={currentPlanning || undefined}
+            onSave={handleSavePlanning}
+            onClose={() => setIsPlanningModalOpen(false)}
+          />
+        )}
+      </Container>
+    </PlanningProvider>
   );
 };
 
