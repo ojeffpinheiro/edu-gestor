@@ -111,6 +111,7 @@ export interface Filters {
 export interface QuestionFilters {
   contentId: string;
   difficulty: DifficultyLevelType;
+  discipline: DisciplineType;
   questionType?: 'multiple_choice' | 'true_false' | 'essay' | '';
   status?: 'active' | 'inactive' | '';
 }

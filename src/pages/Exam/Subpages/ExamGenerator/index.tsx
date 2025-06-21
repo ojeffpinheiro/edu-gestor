@@ -21,7 +21,6 @@ const ExamGenerator = () => {
     selectedQuestions,
     isFormValid,
     isReadyForPreview,
-    availableQuestions,
     updateExamConfig,
     handleTotalQuestionsChange,
     handleDifficultyChange,
