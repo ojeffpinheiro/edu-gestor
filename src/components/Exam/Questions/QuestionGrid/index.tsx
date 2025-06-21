@@ -2,6 +2,7 @@ import React from 'react'
 import { ActionButton, QuestionCard, QuestionGridContent } from './styles'
 import { Question } from '../../../../utils/types/Question'
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
+import QuestionStats from '../QuestionStats';
 
 interface QuestionGridProps {
     filteredQuestions: Question[];
@@ -43,6 +44,7 @@ const QuestionGrid: React.FC<QuestionGridProps> = ({
                                         question.questionType === 'essay' ? 'Dissertativa' : 'Lacunas'}
                             </span>
                         </div>
+                        <QuestionStats question={question} />
                         {question.tags && question.tags.length > 0 && (
                             <div className="tags">
                                 {question.tags.map(tag => (

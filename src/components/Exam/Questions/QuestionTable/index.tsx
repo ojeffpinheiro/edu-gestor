@@ -2,6 +2,7 @@ import React from 'react'
 import { ActionButton, QuestionTableContent, TableHeader, TableRow } from './styles';
 import { Question } from '../../../../utils/types/Question';
 import { FiBookmark, FiCopy, FiEdit2, FiZoomIn } from 'react-icons/fi';
+import QuestionStats from '../QuestionStats';
 
 interface QuestionTableProps {
     selectedQuestions: string[];
@@ -10,7 +11,7 @@ interface QuestionTableProps {
     createVariation: (question: Question) => void;
     findSimilarQuestions: (question: Question) => Question[];
     toggleQuestionSelection: (questionId: string) => void;
-    onQuestionSelectAll : () => void;
+    onQuestionSelectAll: () => void;
     onSort: (key: keyof Question) => void;
     togglePin: (questionId: string) => void;
 }
@@ -73,6 +74,7 @@ const QuestionTable: React.FC<QuestionTableProps> = ({
                         {question.status === 'active' ? 'Ativo' :
                             question.status === 'inactive' ? 'Inativo' : 'Rascunho'}
                     </div>
+                    <QuestionStats question={question} />
                     <div>
                         <ActionButton onClick={() => createVariation(question)}>
                             <FiCopy /> Criar Variação

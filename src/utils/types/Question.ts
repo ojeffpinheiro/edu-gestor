@@ -43,6 +43,11 @@ export interface Question {
   pinned?: boolean;
   isComposite?: boolean;
   componentQuestions?: string[];
+  correctAnswers?: number;
+  answerStats?: {
+    totalAttempts: number;
+    correctAttempts: number;
+  };
 }
 
 // Interface para as props dos componentes de passo

@@ -24,6 +24,7 @@ import {
   ViewOption
 } from './styles';
 import FiltersPanel from '../../../../components/Exam/Questions/FilterPanel';
+import GapReport from '../../../../components/Exam/Questions/GapReport';
 const QuestionBank = () => {
   const [currentFilters, setCurrentFilters] = useState<Filter>({
     difficulty: '',
@@ -71,6 +72,8 @@ const QuestionBank = () => {
     key: keyof Question;
     direction: 'asc' | 'desc';
   }>();
+  
+  const [showGapReport, setShowGapReport] = useState(false);
 
   const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [showFilters, setShowFilters] = useState(false);
@@ -290,6 +293,14 @@ const QuestionBank = () => {
       >
         Combinar Questões Selecionadas
       </button>
+
+      <div className="report-actions">
+        <button onClick={() => setShowGapReport(!showGapReport)}>
+          {showGapReport ? 'Ocultar' : 'Mostrar'} Relatório de Lacunas
+        </button>
+      </div>
+      
+      {showGapReport && <GapReport questions={questions} />}
 
       {showFilters && (
         <FiltersPanel
