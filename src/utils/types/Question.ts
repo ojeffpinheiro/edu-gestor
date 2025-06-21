@@ -125,3 +125,16 @@ export interface Rubric {
     points: number;
   }[];
 }
+
+
+export interface Filter {
+  difficulty: DifficultyLevelType | '';
+  questionType: QuestionType | '';
+  status: QuestionStatus | '';
+  hasImage: boolean;
+  tags: string[];
+  dateRange: { start: string; end: string };
+  minUsage?: number;
+  minCorrectRate?: number;
+  contentId?: string;
+}

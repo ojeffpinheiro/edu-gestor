@@ -62,6 +62,6 @@ export const MainContent = styled.main<{ collapsed: boolean }>`
   flex: 1;
   margin-left: ${props => props.collapsed ? '80px' : '250px'};
   padding: 20px;
-  background: #f5f7fa;
+  background: var(--color-background);
   transition: margin-left 0.3s ease;
 `;
