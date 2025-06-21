@@ -35,7 +35,8 @@ const DEFAULT_STUDENT_DATA: StudentData = {
           id: "",
           title: "",
           subject: "",
-          questions: []
+          questions: [],
+          status: 'published'
         },
     ],
     attendance: [

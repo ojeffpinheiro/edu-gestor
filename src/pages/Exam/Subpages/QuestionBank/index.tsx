@@ -11,6 +11,9 @@ import QuestionTable from '../../../../components/Exam/Questions/QuestionTable';
 import QuestionGrid from '../../../../components/Exam/Questions/QuestionGrid';
 import DifficultyChart from '../../../../components/Exam/Questions/DifficultyChart';
 
+import FiltersPanel from '../../../../components/Exam/Questions/FilterPanel';
+import GapReport from '../../../../components/Exam/Questions/GapReport';
+
 import {
   QuestionBankContainer,
   Header,
@@ -23,8 +26,7 @@ import {
   ViewToggle,
   ViewOption
 } from './styles';
-import FiltersPanel from '../../../../components/Exam/Questions/FilterPanel';
-import GapReport from '../../../../components/Exam/Questions/GapReport';
+
 const QuestionBank = () => {
   const [currentFilters, setCurrentFilters] = useState<Filter>({
     difficulty: '',

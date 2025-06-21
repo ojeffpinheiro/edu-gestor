@@ -9,6 +9,7 @@ export interface Assessment {
     questions: Question[];
     instrument: string;
     grade: number;
+    status: 'draft' | 'published' | 'archived';
 }
 
 // Student Score Interface

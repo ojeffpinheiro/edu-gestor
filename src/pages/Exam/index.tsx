@@ -11,6 +11,7 @@ import {
 import QuestionBank from './Subpages/QuestionBank';
 import ExamGenerator from './Subpages/ExamGenerator';
 import ExamDashboard from './Subpages/ExamDashboard';
+import AssessmentDashboard from '../../components/Exam/AssessmentDashboard';
 
 import { 
   LayoutContainer,
@@ -34,9 +35,9 @@ const MainTabs = () => {
         return <QuestionBank />;
       case 'exams':
         return <ExamGenerator />;
-      /* case 'assessments':
-        return <AssessmentList />;
-      case 'stats':
+      case 'assessments':
+        return <AssessmentDashboard />;
+      /* case 'stats':
         return <Statistics />;*/
       default:
         return <ExamDashboard />;
