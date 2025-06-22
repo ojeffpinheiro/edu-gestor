@@ -8,12 +8,20 @@ import ClassCards from '../ClassCards';
 import RecoveryView from '../RecoveryView';
 import FinalResults from '../FinalResults';
 
-import { ViewToggle, Container, Header } from './styles';
+import { ViewToggle, Container, Header, DashboardTitle } from './styles';
+
+interface DashboardState {
+  selectedClass: string | null;
+  selectedPeriod: string | null;
+}
 
 const AssessmentDashboard: React.FC = () => {
   const [periodType, setPeriodType] = useState<'bimester' | 'trimester' | 'semester'>('trimester');
   const [activeView, setActiveView] = useState<'classes' | 'recovery' | 'results'>('classes');
-
+  const [dashboardState, setDashboardState] = useState<DashboardState>({
+    selectedClass: null,
+    selectedPeriod: null
+  });
   // Dados mockados
   const mockClasses: ClassData[] = [
     {
@@ -32,46 +40,86 @@ const AssessmentDashboard: React.FC = () => {
     // ... mais turmas
   ];
 
+  // Filtra turmas com base no período selecionado
+  const filteredClasses = dashboardState.selectedPeriod 
+    ? mockClasses.filter(c => c.period.includes(dashboardState.selectedPeriod!))
+    : mockClasses;
+
+  // Filtra turma específica quando selecionada
+  const selectedClassData = dashboardState.selectedClass
+    ? mockClasses.find(c => c.id === dashboardState.selectedClass)
+    : null;
+
   return (
     <Container>
       <Header>
-        <PeriodSelector
-          periodType={periodType}
-          onChange={setPeriodType}
-        />
+        <DashboardTitle>
+          <h1>Avaliações Escolares</h1>
+          <p>Gerencie as avaliações e resultados dos alunos</p>
+        </DashboardTitle>
         
-        <ViewToggle>
-          <button 
-            className={activeView === 'classes' ? 'active' : ''}
-            onClick={() => setActiveView('classes')}
-          >
-            <FiGrid /> Turmas
-          </button>
-          <button 
-            className={activeView === 'recovery' ? 'active' : ''}
-            onClick={() => setActiveView('recovery')}
-          >
-            <FiPlusCircle /> Recuperação
-          </button>
-          <button 
-            className={activeView === 'results' ? 'active' : ''}
-            onClick={() => setActiveView('results')}
-          >
-            <FiBarChart2 /> Resultados
-          </button>
-        </ViewToggle>
+        <div className="controls">
+          <PeriodSelector
+            periodType={periodType}
+            onChange={(type) => {
+              setPeriodType(type);
+              setDashboardState(prev => ({
+                ...prev,
+                selectedPeriod: type === 'trimester' ? '1º Trimestre' : 
+                              type === 'bimester' ? '1º Bimestre' : '1º Semestre'
+              }));
+            }}
+          />
+          
+          <ViewToggle>
+            <button 
+              className={activeView === 'classes' ? 'active' : ''}
+              onClick={() => setActiveView('classes')}
+            >
+              <FiGrid /> Turmas
+            </button>
+            <button 
+              className={activeView === 'recovery' ? 'active' : ''}
+              onClick={() => setActiveView('recovery')}
+              disabled={!selectedClassData}
+            >
+              <FiPlusCircle /> Recuperação
+            </button>
+            <button 
+              className={activeView === 'results' ? 'active' : ''}
+              onClick={() => setActiveView('results')}
+            >
+              <FiBarChart2 /> Resultados
+            </button>
+          </ViewToggle>
+        </div>
       </Header>
 
       {activeView === 'classes' && (
         <ClassCards
-          classes={mockClasses} 
+          classes={filteredClasses} 
           periodType={periodType}
+          onSelectClass={(classId) => setDashboardState(prev => ({
+            ...prev,
+            selectedClass: classId
+          }))}
+          selectedClass={dashboardState.selectedClass}
         />
       )}
 
-      {activeView === 'recovery' && <RecoveryView classes={mockClasses} />}
+      {activeView === 'recovery' && selectedClassData && (
+        <RecoveryView 
+          classData={selectedClassData} 
+          onBack={() => setActiveView('classes')}
+        />
+      )}
       
-      {activeView === 'results' && <FinalResults classes={mockClasses} />}
+      {activeView === 'results' && (
+        <FinalResults 
+          classes={filteredClasses} 
+          periodType={periodType}
+        />
+      )}
     </Container>
   );
 };

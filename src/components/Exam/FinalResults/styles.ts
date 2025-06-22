@@ -1,15 +1,30 @@
-// src/components/Exam/FinalResults/styles.ts
 import styled from 'styled-components';
+
+export const ResultsHeader = styled.div`
+  margin-bottom: var(--space-xl);
+  
+  h2 {
+    font-size: var(--font-size-xl);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--space-xs) 0;
+  }
+  
+  p {
+    font-size: var(--font-size-md);
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+`;
 
 export const ResultsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  margin-top: var(--space-xl);
+  margin-top: var(--space-md);
   font-size: var(--font-size-md);
   color: var(--color-text);
   background-color: var(--color-background);
   box-shadow: var(--shadow-sm);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
   transition: var(--transition-all);
 
@@ -46,18 +61,9 @@ export const ResultsTable = styled.table`
   td {
     font-weight: var(--font-weight-normal);
     
-    &:nth-child(3) {
-      font-weight: var(--font-weight-medium);
-      color: var(--color-primary);
-    }
-
     &:nth-child(4) {
       font-weight: var(--font-weight-medium);
-      color: var(--color-success)};
-      
-      &:empty {
-        color: var(--color-warning);
-      }
+      color: var(--color-primary);
     }
   }
 
@@ -101,7 +107,6 @@ export const ResultsTable = styled.table`
     }
   }
 `;
-
 
 export const StatusBadge = styled.span<{ $approved: boolean }>`
   display: inline-block;
