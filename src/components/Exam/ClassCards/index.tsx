@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Assessment, ClassData, Student } from '../../../utils/types/ExamAssesments';
-import { 
+import {
   ClassGrid,
-  ClassCard, 
-  ClassHeader, 
-  AssessmentItem, 
+  ClassCard,
+  ClassHeader,
+  AssessmentItem,
   StudentScore,
   CollapseButton,
   ClassPeriod,
   ClassAverage,
-  AssessmentStats
+  AssessmentStats,
+  TrimesterHeader
 } from './styles';
 
 interface ClassCardsProps {
@@ -19,8 +20,8 @@ interface ClassCardsProps {
   selectedClass: string | null;
 }
 
-const ClassCards: React.FC<ClassCardsProps> = ({ 
-  classes, 
+const ClassCards: React.FC<ClassCardsProps> = ({
+  classes,
   periodType,
   onSelectClass,
   selectedClass
@@ -39,12 +40,24 @@ const ClassCards: React.FC<ClassCardsProps> = ({
 
   const calculateClassAverage = (assessments: Assessment[], students: Student[]) => {
     if (!assessments.length || !students.length) return 0;
-    
+
     const total = assessments.reduce((sum, assessment) => {
       return sum + (assessment.average || 0);
     }, 0);
-    
+
     return total / assessments.length;
+  };
+
+
+  const groupAssessmentsByTrimester = (assessments: Assessment[]) => {
+    return assessments.reduce((acc, assessment) => {
+      const trimester = assessment.trimester || 'Outros';
+      if (!acc[trimester]) {
+        acc[trimester] = [];
+      }
+      acc[trimester].push(assessment);
+      return acc;
+    }, {} as Record<string, Assessment[]>);
   };
 
   return (
@@ -52,14 +65,14 @@ const ClassCards: React.FC<ClassCardsProps> = ({
       {classes.map(classData => {
         const classAvg = calculateClassAverage(classData.assessments, classData.students);
         const isSelected = selectedClass === classData.id;
-        
+
         return (
-          <ClassCard 
-            key={classData.id} 
+          <ClassCard
+            key={classData.id}
             $selected={isSelected}
             onClick={() => onSelectClass(classData.id)}
           >
-            <ClassHeader 
+            <ClassHeader
               onClick={(e) => {
                 e.stopPropagation();
                 toggleClass(classData.id);
@@ -73,7 +86,7 @@ const ClassCards: React.FC<ClassCardsProps> = ({
                   Média da turma: <strong>{classAvg.toFixed(1)}</strong>
                 </ClassAverage>
               </div>
-              
+
               <CollapseButton>
                 {expandedClass === classData.id ? '−' : '+'}
               </CollapseButton>
@@ -81,48 +94,53 @@ const ClassCards: React.FC<ClassCardsProps> = ({
 
             {expandedClass === classData.id && (
               <div className="assessments-list">
-                {classData.assessments.map(assessment => (
-                  <AssessmentItem key={assessment.id}>
-                    <div 
-                      className="assessment-header"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleAssessment(assessment.id);
-                      }}
-                    >
-                      <div className="assessment-info">
-                        <strong>{assessment.title}</strong>
-                        <span>{new Date(assessment.date).toLocaleDateString()}</span>
-                        <span>Tipo: {assessment.type}</span>
-                      </div>
-                      
-                      <AssessmentStats>
-                        <span>Média: {assessment.average?.toFixed(1) || '-'}</span>
-                        <span>Max: {assessment.maxScore}</span>
-                        <CollapseButton small>
-                          {expandedAssessment === assessment.id ? '−' : '+'}
-                        </CollapseButton>
-                      </AssessmentStats>
-                    </div>
+                {Object.entries(groupAssessmentsByTrimester(classData.assessments)).map(([trimester, assessments]) => (
+                  <TrimesterHeader key={trimester}>
+                    <h4 className="trimester-header">{trimester}</h4>
+                    {assessments.map(assessment => (
+                      <AssessmentItem key={assessment.id}>
+                        <div
+                          className="assessment-header"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleAssessment(assessment.id);
+                          }}
+                        >
+                          <div className="assessment-info">
+                            <strong>{assessment.title}</strong>
+                            <span>{new Date(assessment.date).toLocaleDateString()}</span>
+                            <span>Tipo: {assessment.type}</span>
+                          </div>
 
-                    {expandedAssessment === assessment.id && (
-                      <div className="students-scores">
-                        <div className="score-header">
-                          <span>Aluno</span>
-                          <span>Nota</span>
+                          <AssessmentStats>
+                            <span>Média: {assessment.average?.toFixed(1) || '-'}</span>
+                            <span>Max: {assessment.maxScore}</span>
+                            <CollapseButton small>
+                              {expandedAssessment === assessment.id ? '−' : '+'}
+                            </CollapseButton>
+                          </AssessmentStats>
                         </div>
-                        {classData.students.map(student => (
-                          <StudentScore 
-                            key={student.id} 
-                            $lowScore={(student.scores[assessment.id] || 0) < (assessment.maxScore * 0.6)}
-                          >
-                            <span>{student.name}</span>
-                            <span>{student.scores[assessment.id] || '-'}</span>
-                          </StudentScore>
-                        ))}
-                      </div>
-                    )}
-                  </AssessmentItem>
+
+                        {expandedAssessment === assessment.id && (
+                          <div className="students-scores">
+                            <div className="score-header">
+                              <span>Aluno</span>
+                              <span>Nota</span>
+                            </div>
+                            {classData.students.map(student => (
+                              <StudentScore
+                                key={student.id}
+                                $lowScore={(student.scores[assessment.id] || 0) < (assessment.maxScore * 0.6)}
+                              >
+                                <span>{student.name}</span>
+                                <span>{student.scores[assessment.id] || '-'}</span>
+                              </StudentScore>
+                            ))}
+                          </div>
+                        )}
+                      </AssessmentItem>
+                    ))}
+                  </TrimesterHeader>
                 ))}
               </div>
             )}

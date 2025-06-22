@@ -154,3 +154,10 @@ export const CollapseButton = styled.button<{ small?: boolean }>`
     color: var(--color-primary);
   }
 `;
+
+export const TrimesterHeader = styled.h4`
+    margin: var(--space-md) var(--space-lg) var(--space-sm);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+  `;

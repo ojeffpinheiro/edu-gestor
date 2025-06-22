@@ -9,6 +9,7 @@ import RecoveryView from '../RecoveryView';
 import FinalResults from '../FinalResults';
 
 import { ViewToggle, Container, Header, DashboardTitle } from './styles';
+import FormulaModal from '../FormulaModal';
 
 interface DashboardState {
   selectedClass: string | null;
@@ -16,6 +17,9 @@ interface DashboardState {
 }
 
 const AssessmentDashboard: React.FC = () => {
+  const [isFormulaModalOpen, setIsFormulaModalOpen] = useState(false);
+  const [gradeFormula, setGradeFormula] = useState('');
+
   const [periodType, setPeriodType] = useState<'bimester' | 'trimester' | 'semester'>('trimester');
   const [activeView, setActiveView] = useState<'classes' | 'recovery' | 'results'>('classes');
   const [dashboardState, setDashboardState] = useState<DashboardState>({
@@ -29,19 +33,19 @@ const AssessmentDashboard: React.FC = () => {
       name: '9º Ano A',
       period: '1º Tri',
       assessments: [
-        { id: 'a1', title: 'Prova de Matemática', type: 'Prova', date: '2023-03-15', maxScore: 10, average: 7.2 },
-        { id: 'a2', title: 'Lista de Exercícios', type: 'Lista', date: '2023-03-22', maxScore: 5, average: 4.1 }
+        { id: 'a1', title: 'Prova de Matemática', type: 'Prova', trimester: '1 tri', date: '2023-03-15', maxScore: 10, average: 7.2 },
+        { id: 'a2', title: 'Lista de Exercícios', type: 'Lista', trimester: '1 tri', date: '2023-03-22', maxScore: 5, average: 4.1 }
       ],
       students: [
-        { id: 's1', name: 'Ana Silva', scores: { a1: 8, a2: 5 } },
-        { id: 's2', name: 'Carlos Oliveira', scores: { a1: 6, a2: 3 } }
+        { id: 's1', name: 'Ana Silva', recoveryScore: 3, scores: { a1: 8, a2: 5 } },
+        { id: 's2', name: 'Carlos Oliveira', recoveryScore: 7, scores: { a1: 6, a2: 3 } }
       ]
     },
     // ... mais turmas
   ];
 
   // Filtra turmas com base no período selecionado
-  const filteredClasses = dashboardState.selectedPeriod 
+  const filteredClasses = dashboardState.selectedPeriod
     ? mockClasses.filter(c => c.period.includes(dashboardState.selectedPeriod!))
     : mockClasses;
 
@@ -57,7 +61,7 @@ const AssessmentDashboard: React.FC = () => {
           <h1>Avaliações Escolares</h1>
           <p>Gerencie as avaliações e resultados dos alunos</p>
         </DashboardTitle>
-        
+
         <div className="controls">
           <PeriodSelector
             periodType={periodType}
@@ -65,27 +69,27 @@ const AssessmentDashboard: React.FC = () => {
               setPeriodType(type);
               setDashboardState(prev => ({
                 ...prev,
-                selectedPeriod: type === 'trimester' ? '1º Trimestre' : 
-                              type === 'bimester' ? '1º Bimestre' : '1º Semestre'
+                selectedPeriod: type === 'trimester' ? '1º Trimestre' :
+                  type === 'bimester' ? '1º Bimestre' : '1º Semestre'
               }));
             }}
           />
-          
+
           <ViewToggle>
-            <button 
+            <button
               className={activeView === 'classes' ? 'active' : ''}
               onClick={() => setActiveView('classes')}
             >
               <FiGrid /> Turmas
             </button>
-            <button 
+            <button
               className={activeView === 'recovery' ? 'active' : ''}
               onClick={() => setActiveView('recovery')}
               disabled={!selectedClassData}
             >
               <FiPlusCircle /> Recuperação
             </button>
-            <button 
+            <button
               className={activeView === 'results' ? 'active' : ''}
               onClick={() => setActiveView('results')}
             >
@@ -95,9 +99,13 @@ const AssessmentDashboard: React.FC = () => {
         </div>
       </Header>
 
+      <button onClick={() => setIsFormulaModalOpen(true)}>
+        Configurar Fórmula
+      </button>
+
       {activeView === 'classes' && (
         <ClassCards
-          classes={filteredClasses} 
+          classes={filteredClasses}
           periodType={periodType}
           onSelectClass={(classId) => setDashboardState(prev => ({
             ...prev,
@@ -105,21 +113,32 @@ const AssessmentDashboard: React.FC = () => {
           }))}
           selectedClass={dashboardState.selectedClass}
         />
+
       )}
 
       {activeView === 'recovery' && selectedClassData && (
-        <RecoveryView 
-          classData={selectedClassData} 
+        <RecoveryView
+          classData={selectedClassData}
           onBack={() => setActiveView('classes')}
         />
       )}
-      
+
       {activeView === 'results' && (
-        <FinalResults 
-          classes={filteredClasses} 
+        <FinalResults
+          classes={filteredClasses}
           periodType={periodType}
         />
       )}
+
+      <FormulaModal
+        isOpen={isFormulaModalOpen}
+        onClose={() => setIsFormulaModalOpen(false)}
+        onSave={(formula) => {
+          setGradeFormula(formula);
+          setIsFormulaModalOpen(false);
+        }}
+        currentFormula={gradeFormula}
+      />
     </Container>
   );
 };

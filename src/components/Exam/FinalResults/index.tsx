@@ -9,12 +9,20 @@ interface FinalResultsProps {
 
 const FinalResults: React.FC<FinalResultsProps> = ({ classes, periodType }) => {
   const calculateFinalGrade = (student: Student, assessments: Assessment[]) => {
-    if (!assessments.length) return 0;
+    if (!assessments.length) return { finalGrade: 0, recoveryGrade: null };
     
     const total = assessments.reduce((sum, assessment) => {
       return sum + (student.scores[assessment.id] || 0);
     }, 0);
-    return total / assessments.length;
+    
+    const average = total / assessments.length;
+    const recoveryGrade = student.recoveryScore || null;
+    
+    return {
+      finalGrade: recoveryGrade ? Math.max(average, recoveryGrade) : average,
+      originalGrade: average,
+      recoveryGrade
+    };
   };
 
   return (
@@ -31,6 +39,8 @@ const FinalResults: React.FC<FinalResultsProps> = ({ classes, periodType }) => {
             <th>Turma</th>
             <th>Período</th>
             <th>Aluno</th>
+            <th>Média Original</th>
+            <th>Recuperação</th>
             <th>Média Final</th>
             <th>Situação</th>
           </tr>
@@ -38,18 +48,21 @@ const FinalResults: React.FC<FinalResultsProps> = ({ classes, periodType }) => {
         <tbody>
           {classes.map(classData => (
             classData.students.map(student => {
-              const finalGrade = calculateFinalGrade(student, classData.assessments);
+              const { finalGrade, originalGrade, recoveryGrade } = 
+                calculateFinalGrade(student, classData.assessments);
               const isApproved = finalGrade >= 6;
               
               return (
                 <tr key={`${classData.id}-${student.id}`}>
-                  <td data-label="Turma">{classData.name}</td>
-                  <td data-label="Período">{classData.period}</td>
-                  <td data-label="Aluno">{student.name}</td>
-                  <td data-label="Média">{finalGrade.toFixed(1)}</td>
-                  <td data-label="Situação">
+                  <td>{classData.name}</td>
+                  <td>{classData.period}</td>
+                  <td>{student.name}</td>
+                  <td>{originalGrade !== undefined ? originalGrade.toFixed(1) : '-'}</td>
+                  <td>{recoveryGrade ? recoveryGrade.toFixed(1) : '-'}</td>
+                  <td>{finalGrade.toFixed(1)}</td>
+                  <td>
                     <StatusBadge $approved={isApproved}>
-                      {isApproved ? 'Aprovado' : 'Recuperação'}
+                      {isApproved ? 'Aprovado' : recoveryGrade ? 'Aprovado (Rec)' : 'Recuperação'}
                     </StatusBadge>
                   </td>
                 </tr>

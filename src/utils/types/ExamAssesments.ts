@@ -14,10 +14,12 @@ export interface Assessment {
   date: string;
   maxScore: number;
   average?: number;
+  trimester: string;
 }
 
 export interface Student {
   id: string;
   name: string;
   scores: Record<string, number>;
+  recoveryScore: number;
 }
