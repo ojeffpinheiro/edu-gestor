@@ -6,7 +6,8 @@ import { LayoutConfig } from '../utils/types/Team';
 
 export const useLayoutManager = () => {
   const { state, dispatch } = useClassroom();
-  
+  const errors: string[] = [];
+
   // Layout dimensions constraints
   const MIN_ROWS = 3;
   const MAX_ROWS = 10;
@@ -14,10 +15,11 @@ export const useLayoutManager = () => {
   const MAX_COLS = 8;
 
   const addRow = useCallback(() => {
-    if (state.layout.rows >= MAX_ROWS) return;
-    const newLayout = generateLayout(state.layout.rows + 1, state.layout.columns);
-    dispatch({ type: 'SET_LAYOUT', payload: newLayout });
-  }, [state.layout.rows, state.layout.columns, dispatch]);
+  if (state.layout.rows >= MAX_ROWS) return;
+  const newLayout = generateLayout(state.layout.rows + 1, state.layout.columns, 'rows');
+  dispatch({ type: 'SET_LAYOUT', payload: newLayout });
+  dispatch({ type: 'SET_CURRENT_TEMPLATE', payload: 'rows' });
+}, [state.layout.rows, state.layout.columns, dispatch]);
 
   const removeRow = useCallback(() => {
     if (state.layout.rows <= MIN_ROWS) return;
@@ -37,9 +39,10 @@ export const useLayoutManager = () => {
     dispatch({ type: 'SET_LAYOUT', payload: newLayout });
   }, [state.layout.rows, state.layout.columns, dispatch]);
 
-  const applyTemplate = useCallback((template: Template) => {
-    const newLayout = generateLayout(state.layout.rows, state.layout.columns, template);
+  const applyTemplate = useCallback((template: Template, config?: { groupSize?: number; numGroups?: number }) => {
+    const newLayout = generateLayout(state.layout.rows, state.layout.columns, template, config);
     dispatch({ type: 'SET_LAYOUT', payload: newLayout });
+    dispatch({ type: 'SET_CURRENT_TEMPLATE', payload: template });
   }, [state.layout.rows, state.layout.columns, dispatch]);
 
   const toggleEditLayout = useCallback(() => {
@@ -56,18 +59,32 @@ export const useLayoutManager = () => {
     dispatch({ type: 'SET_LAYOUT', payload: savedLayout });
   }, [dispatch]);
 
+
+
+  if (state.layout.rows < MIN_ROWS) errors.push(`Mínimo de ${MIN_ROWS} fileiras`);
+  if (state.layout.rows > MAX_ROWS) errors.push(`Máximo de ${MAX_ROWS} fileiras`);
+  if (state.layout.columns < MIN_COLS) errors.push(`Mínimo de ${MIN_COLS} colunas`);
+  if (state.layout.columns > MAX_COLS) errors.push(`Máximo de ${MAX_COLS} colunas`);
+
+  const seatIds = state.layout.seats.map(s => s.id);
+  if (new Set(seatIds).size !== seatIds.length) {
+    errors.push("IDs de assentos duplicados encontrados");
+  }
+
   return {
     canAddRow: state.layout.rows < MAX_ROWS,
     canRemoveRow: state.layout.rows > MIN_ROWS,
     canAddColumn: state.layout.columns < MAX_COLS,
     canRemoveColumn: state.layout.columns > MIN_COLS,
+    editMode: state.editMode,
+    isValid: errors.length === 0,
+    errors,
     addRow,
     removeRow,
     addColumn,
     removeColumn,
     applyTemplate,
     toggleEditLayout,
-    loadLayout,
-    editMode: state.editMode
+    loadLayout
   };
 };

@@ -13,6 +13,7 @@ export const ActionContainer = styled.div`
 interface ActionButtonProps {
   $active?: boolean;
   disabled?: boolean;
+  $mode?: 'edit' | 'swap';
 }
 
 export const ActionButton = styled.button<ActionButtonProps>`
@@ -127,6 +128,7 @@ export const TemplateSelect = styled.select`
   appearance: none;
   padding-left: 2rem;
   position: relative;
+  transition: all 0.2s;
 
   &::before {
     content: '';
@@ -134,5 +136,11 @@ export const TemplateSelect = styled.select`
     left: 0.5rem;
     top: 50%;
     transform: translateY(-50%);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
   }
 `;

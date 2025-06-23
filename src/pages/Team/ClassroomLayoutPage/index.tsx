@@ -45,6 +45,7 @@ const ClassroomLayoutPage: React.FC = () => {
         state: {
             layout,
             verifyMode,
+            currentTemplate,
             selectedSeat,
             studentList,
             swapMode,
@@ -226,6 +227,7 @@ const ClassroomLayoutPage: React.FC = () => {
                     ) : (
                         <LayoutContainer>
                             <LayoutView
+                                template={currentTemplate}
                                 conferenceMode={verifyMode}
                                 isChecked={checkedSeats.includes(selectedSeat?.id || '')}
                                 isMismatched={mismatchedSeats.includes(selectedSeat?.id || '')}

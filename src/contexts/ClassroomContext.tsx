@@ -1,11 +1,12 @@
 import React, { createContext, useCallback, useContext, useReducer } from 'react';
 import { LayoutConfig, SeatType } from '../utils/types/Team';
 import { StudentFormData } from '../utils/types/BasicUser';
-import { findBestSeatForStudent, initializeLayout } from '../utils/classroomUtils';
+import { findBestSeatForStudent, initializeLayout, Template } from '../utils/classroomUtils';
 import { mockStudentsTeam } from '../mocks/student';
 
 type ClassroomState = {
   layout: LayoutConfig;
+  currentTemplate: Template;
   studentList: StudentFormData[];
   editMode: boolean;
   verifyMode: boolean;
@@ -54,11 +55,12 @@ type ClassroomAction =
   | { type: 'SET_NOTIFICATION'; payload: { show: boolean; message: string; type: string } }
   | { type: 'SET_SAVED_LAYOUTS'; payload: { name: string; layout: LayoutConfig }[] }
   | { type: 'SET_LOADING'; payload: { loading: boolean; message: string } }
-  | { type: 'SET_SEARCH_TERM'; payload: string };
-;
+  | { type: 'SET_SEARCH_TERM'; payload: string }
+  | { type: 'SET_CURRENT_TEMPLATE'; payload: Template };
 
 const initialState: ClassroomState = {
   layout: { rows: 5, columns: 5, seats: initializeLayout(5, 5).seats, },
+  currentTemplate: 'rows',
   studentList: mockStudentsTeam,
   editMode: false,
   verifyMode: false,
@@ -143,6 +145,8 @@ const reducer = (state: ClassroomState, action: ClassroomAction): ClassroomState
         isLoading: action.payload.loading,
         loadingMessage: action.payload.message || ''
       };
+    case 'SET_CURRENT_TEMPLATE':
+      return { ...state, currentTemplate: action.payload };
     default:
       return state;
   }

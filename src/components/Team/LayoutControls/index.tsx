@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Tooltip } from '@mui/material';
 import {
   FaCheck,
   FaClipboardCheck,
@@ -10,12 +11,20 @@ import {
   FaShapes,
   FaTable,
   FaThLarge,
-  FaEdit
+  FaEdit,
+  FaTh,
+  FaCircle,
+  FaUsers,
+  FaGripLines,
+  FaUmbraco
 } from 'react-icons/fa';
-import { ActionContainer, TemplateSelect, ControlGroup, ActionButton } from "./styles";
-import { Template } from '../../../utils/classroomUtils';
-import { Tooltip } from '@mui/material';
+
 import { useClassroom } from '../../../contexts/ClassroomContext';
+import { Template } from '../../../utils/classroomUtils';
+
+import TemplateConfigModal from '../TemplateConfigModal';
+
+import { ActionContainer, TemplateSelect, ControlGroup, ActionButton } from "./styles";
 
 interface Props {
   conferenceMode: boolean;
@@ -32,9 +41,8 @@ interface Props {
   onRemoveRow: () => void;
   onAddColumn: () => void;
   onRemoveColumn: () => void;
-  onApplyTemplate: (template: Template) => void;
+  onApplyTemplate: (template: Template, config?: { groupSize?: number; numGroups?: number }) => void;
 }
-
 /**
  * Barra de controles para manipulação do layout da sala
  * Contém botões para adicionar/remover fileiras, colunas, templates e modos especiais
@@ -75,6 +83,8 @@ const LayoutControls: React.FC<Props> = ({
   const { state, dispatch, actions } = useClassroom();
   const { view } = state;
   const { toggleView, generateAutomaticLayout } = actions;
+
+  const [showTemplateConfig, setShowTemplateConfig] = useState(false);
   const [activeMode, setActiveMode] = useState<'none' | 'edit' | 'swap'>('none');
 
   const handleEditToggle = React.useCallback(() => {
@@ -131,18 +141,12 @@ const LayoutControls: React.FC<Props> = ({
   }, [activeMode, handleEditToggle, handleSwapToggle]);
 
   const templates = [
-    { value: 'default', label: 'Padrão' },
-    { value: 'U', label: 'Formato U' },
-    { value: 'circle', label: 'Círculo' },
-    { value: 'groups', label: 'Grupos' },
-    { value: 'rows', label: 'Fileiras' }
+    { value: 'default', label: 'Padrão', icon: <FaTh /> },
+    { value: 'U', label: 'Formato U', icon: <FaUmbraco /> },
+    { value: 'circle', label: 'Círculo', icon: <FaCircle /> },
+    { value: 'groups', label: 'Grupos', icon: <FaUsers /> },
+    { value: 'rows', label: 'Fileiras', icon: <FaGripLines /> }
   ];
-
-  const handleClick = () => {
-    dispatch({ type: 'SET_VIEW', payload: 'layout' });
-    console.log('view', view)
-  }
-
 
   useKeyboardShortcut('e', handleEditToggle, [activeMode]);
   useKeyboardShortcut('s', handleSwapToggle, [activeMode]);
@@ -151,6 +155,21 @@ const LayoutControls: React.FC<Props> = ({
     if (window.confirm('Tem certeza que deseja remover esta fileira?')) {
       onRemoveRow();
     }
+  };
+
+  const handleTemplateChange = (template: Template) => {
+    if (!template) return;
+
+    if (template === 'groups') {
+      setShowTemplateConfig(true);
+    } else {
+      onApplyTemplate(template);
+    }
+  };
+
+  const handleApplyGroupConfig = (config: { groupSize?: number; numGroups?: number }) => {
+    setShowTemplateConfig(false);
+    onApplyTemplate('groups', config);
   };
 
   return (
@@ -162,15 +181,11 @@ const LayoutControls: React.FC<Props> = ({
             {view === 'table' ? ' Layout' : ' Tabela'}
           </ActionButton>
         </Tooltip>
-
-        <button onClick={handleClick}>
-          Forçar Layout (Teste)
-        </button>
       </ControlGroup>
 
       <ControlGroup>
         <Tooltip title={canAddRow ? "Adicionar uma nova fileira" : "Número máximo de fileiras alcançado"}>
-          <span> {/* Envolva em span */}
+          <span>
             <ActionButton onClick={onAddRow} disabled={!canAddRow}>
               <FaPlus /> Fileira
             </ActionButton>
@@ -200,7 +215,9 @@ const LayoutControls: React.FC<Props> = ({
         <Tooltip title="Selecione um template pré-definido">
           <div style={{ position: 'relative' }}>
             <FaShapes style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
-            <TemplateSelect onChange={(e) => onApplyTemplate(e.target.value as Template)}>
+            <TemplateSelect
+              onChange={(e) => handleTemplateChange(e.target.value as Template)}
+            >
               <option value="">Selecione um Template</option>
               {templates.map(template => (
                 <option key={template.value} value={template.value}>
@@ -230,7 +247,11 @@ const LayoutControls: React.FC<Props> = ({
 
       <ControlGroup>
         <Tooltip title="Alternar modo de edição (Ctrl+E)">
-          <ActionButton onClick={handleEditToggle} $active={activeMode === 'edit'}>
+          <ActionButton
+            onClick={handleEditToggle}
+            $active={activeMode === 'edit'}
+            $mode="edit"
+          >
             <FaEdit /> {activeMode === 'edit' ? 'Salvar' : 'Editar'}
           </ActionButton>
         </Tooltip>
@@ -255,6 +276,13 @@ const LayoutControls: React.FC<Props> = ({
           </ActionButton>
         </Tooltip>
       </ControlGroup>
+
+      {showTemplateConfig && (
+        <TemplateConfigModal
+          onClose={() => setShowTemplateConfig(false)}
+          onApply={handleApplyGroupConfig}
+        />
+      )}
     </ActionContainer>
   );
 };

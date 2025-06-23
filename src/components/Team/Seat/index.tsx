@@ -176,7 +176,7 @@ const Seat: React.FC<SeatProps> = ({
 
         $isHighlighted={isHighlighted}
         $isInvalid={isInvalid}
-        attendanceColor={attendanceColor}
+        $attendanceColor={attendanceColor}
         $priority={seat.priority ?? undefined}
         $compactView={compactView}
         $verifyMode={verifyMode}

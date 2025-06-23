@@ -1,7 +1,7 @@
 import { StudentFormData } from "./types/BasicUser";
 import { LayoutConfig, SeatType } from "./types/Team";
 
-export type Template  = 'U' | 'circle' | 'groups' | 'rows';
+export type Template = 'U' | 'circle' | 'groups' | 'rows';
 
 /**
  * Inicializa o layout da sala de aula com um número específico de fileiras e colunas.
@@ -11,20 +11,20 @@ export type Template  = 'U' | 'circle' | 'groups' | 'rows';
  * @returns Um objeto LayoutConfig contendo o número de fileiras, colunas e uma lista de assentos.
  */
 export const initializeLayout = (rows: number, columns: number): LayoutConfig => {
-    const seats: SeatType[] = [];
-    
-    for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < columns; col++) {
-            seats.push({
-                id: `seat-${row}-${col}`,
-                position: { row, column: col },
-                studentId: undefined,
-                priority: null,
-            });
-        }
+  const seats: SeatType[] = [];
+
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      seats.push({
+        id: `seat-${row}-${col}`,
+        position: { row, column: col },
+        studentId: undefined,
+        priority: null,
+      });
     }
-    
-    return { rows, columns, seats };
+  }
+
+  return { rows, columns, seats };
 };
 
 /** 
@@ -35,11 +35,11 @@ export const initializeLayout = (rows: number, columns: number): LayoutConfig =>
  * @returns O assento mais adequado para o aluno, ou undefined se não houver assentos disponíveis.
  */
 export const findBestSeatForStudent = (student: StudentFormData, seats: SeatType[]): SeatType | undefined => {
-    if (student.specialNeeds === 'low_vision') {
-        return seats.find(s => !s.studentId && s.position.row === 0);
-    }
-    // Outras lógicas de prioridade...
-    return seats.find(s => !s.studentId);
+  if (student.specialNeeds === 'low_vision') {
+    return seats.find(s => !s.studentId && s.position.row === 0);
+  }
+  // Outras lógicas de prioridade...
+  return seats.find(s => !s.studentId);
 };
 
 /**
@@ -52,32 +52,32 @@ export const findBestSeatForStudent = (student: StudentFormData, seats: SeatType
  * @returns O layout atualizado com os alunos atribuídos aos assentos.
  */
 export const generateAutomaticLayout = (layout: LayoutConfig, studentList: StudentFormData[]): LayoutConfig => {
-    const newSeats = [...layout.seats];
-    const unassignedStudents = [...studentList]
-        .filter(student => !newSeats.some(s => s.studentId === student.id));
+  const newSeats = [...layout.seats];
+  const unassignedStudents = [...studentList]
+    .filter(student => !newSeats.some(s => s.studentId === student.id));
 
-    // 1. Atribuir alunos com prioridades primeiro
-    const priorityStudents = unassignedStudents.filter(student => student.specialNeeds);
-    priorityStudents.forEach(student => {
-        const bestSeat = findBestSeatForStudent(student, newSeats);
-        if (bestSeat) {
-            bestSeat.studentId = student.id;
-        }
-    });
+  // 1. Atribuir alunos com prioridades primeiro
+  const priorityStudents = unassignedStudents.filter(student => student.specialNeeds);
+  priorityStudents.forEach(student => {
+    const bestSeat = findBestSeatForStudent(student, newSeats);
+    if (bestSeat) {
+      bestSeat.studentId = student.id;
+    }
+  });
 
-    // 2. Atribuir alunos restantes
-    const remainingStudents = unassignedStudents.filter(student =>
-        !priorityStudents.includes(student)
-    );
+  // 2. Atribuir alunos restantes
+  const remainingStudents = unassignedStudents.filter(student =>
+    !priorityStudents.includes(student)
+  );
 
-    remainingStudents.forEach(student => {
-        const emptySeat = newSeats.find(s => !s.studentId);
-        if (emptySeat) {
-            emptySeat.studentId = student.id;
-        }
-    });
+  remainingStudents.forEach(student => {
+    const emptySeat = newSeats.find(s => !s.studentId);
+    if (emptySeat) {
+      emptySeat.studentId = student.id;
+    }
+  });
 
-    return { ...layout, seats: newSeats };
+  return { ...layout, seats: newSeats };
 };
 
 /**
@@ -88,8 +88,8 @@ export const generateAutomaticLayout = (layout: LayoutConfig, studentList: Stude
  * @return Uma string representando a posição do assento, ou uma string vazia se o assento não for encontrado.
  */
 export const getSeatPositionText = (seatId: string, seats: SeatType[]): string => {
-    const seat = seats.find(s => s.id === seatId);
-    return seat ? `F${seat.position.row + 1}C${seat.position.column + 1}` : '';
+  const seat = seats.find(s => s.id === seatId);
+  return seat ? `F${seat.position.row + 1}C${seat.position.column + 1}` : '';
 };
 
 /**
@@ -102,9 +102,9 @@ export const getSeatPositionText = (seatId: string, seats: SeatType[]): string =
  * @returns Uma string representando a cor correspondente à taxa de presença.
  */
 export const getStudentAttendanceColor = (attendance: number): string => {
-    if (attendance >= 90) return '#4CAF50';
-    if (attendance >= 75) return '#FFC107';
-    return '#F44336';
+  if (attendance >= 90) return '#4CAF50';
+  if (attendance >= 75) return '#FFC107';
+  return '#F44336';
 };
 
 /**
@@ -114,7 +114,8 @@ export const getStudentAttendanceColor = (attendance: number): string => {
 export const generateLayout = (
   rows: number,
   columns: number,
-  template?: 'U' | 'circle' | 'groups' | 'rows'
+  template?: Template,
+  templateConfig?: { groupSize?: number; numGroups?: number }
 ): LayoutConfig => {
   const seats: SeatType[] = [];
 
@@ -123,39 +124,84 @@ export const generateLayout = (
       // Layout em formato de U
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < columns; col++) {
+          // Primeira fileira ou colunas das extremidades
           if (row === 0 || col === 0 || col === columns - 1) {
             seats.push(createSeat(row, col));
           }
         }
       }
       break;
-    
+
     case 'circle':
       // Layout circular (aproximado)
-      const center = { x: columns / 2, y: rows / 2 };
+      const centerX = (columns - 1) / 2;
+      const centerY = (rows - 1) / 2;
+      const radius = Math.min(columns, rows) / 2 - 0.5;
+
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < columns; col++) {
           const distance = Math.sqrt(
-            Math.pow(col - center.x, 2) + Math.pow(row - center.y, 2)
+            Math.pow(col - centerX, 2) + Math.pow(row - centerY, 2)
           );
-          if (distance <= Math.min(columns, rows) / 2) {
+          if (distance <= radius) {
             seats.push(createSeat(row, col));
           }
         }
       }
       break;
-    
+
     case 'groups':
-      // Grupos de 4 assentos
-      for (let row = 0; row < rows; row++) {
-        for (let col = 0; col < columns; col++) {
-          if (col % 2 === 0 && row % 2 === 0) {
-            seats.push(createSeat(row, col));
+      // Configuração de grupos
+      let actualGroupSize = templateConfig?.groupSize || 4;
+      let actualNumGroups = templateConfig?.numGroups || Math.ceil((rows * columns) / actualGroupSize);
+
+      if (actualGroupSize * actualNumGroups > rows * columns) {
+        actualGroupSize = Math.floor((rows * columns) / actualNumGroups);
+      }
+
+      if (templateConfig?.groupSize) {
+        actualGroupSize = templateConfig.groupSize;
+        actualNumGroups = Math.ceil((rows * columns) / actualGroupSize);
+      } else if (templateConfig?.numGroups) {
+        actualNumGroups = templateConfig.numGroups;
+        actualGroupSize = Math.ceil((rows * columns) / actualNumGroups);
+      }
+
+      // Organizar grupos em blocos retangulares
+      const groupCols = Math.ceil(Math.sqrt(actualNumGroups));
+      const groupRows = Math.ceil(actualNumGroups / groupCols);
+
+      const seatsPerGroup = Math.ceil((rows * columns) / actualNumGroups);
+      const groupWidth = Math.floor(columns / groupCols);
+      const groupHeight = Math.floor(rows / groupRows);
+
+      let groupIndex = 0;
+      for (let groupRow = 0; groupRow < groupRows; groupRow++) {
+        for (let groupCol = 0; groupCol < groupCols; groupCol++) {
+          if (groupIndex >= actualNumGroups) break;
+
+          const startRow = groupRow * groupHeight;
+          const startCol = groupCol * groupWidth;
+
+          // Adicionar assentos para este grupo
+          let seatsAdded = 0;
+          for (let r = 0; r < groupHeight && seatsAdded < seatsPerGroup; r++) {
+            for (let c = 0; c < groupWidth && seatsAdded < seatsPerGroup; c++) {
+              const row = startRow + r;
+              const col = startCol + c;
+
+              if (row < rows && col < columns) {
+                seats.push(createSeat(row, col));
+                seatsAdded++;
+              }
+            }
           }
+
+          groupIndex++;
         }
       }
       break;
-    
+
     default:
       // Layout padrão retangular
       for (let row = 0; row < rows; row++) {
@@ -194,12 +240,12 @@ const createSeat = (row: number, column: number): SeatType => ({
  */
 export const validateLayout = (layout: LayoutConfig) => {
   const errors: string[] = [];
-  
+
   if (layout.rows < 3) errors.push("Mínimo de 3 fileiras");
   if (layout.rows > 10) errors.push("Máximo de 10 fileiras");
   if (layout.columns < 3) errors.push("Mínimo de 3 colunas");
   if (layout.columns > 8) errors.push("Máximo de 8 colunas");
-  
+
   return {
     isValid: errors.length === 0,
     errors

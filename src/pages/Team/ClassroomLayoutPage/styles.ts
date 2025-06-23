@@ -36,27 +36,27 @@ export const StudentItem = styled.div<{ isDragging: boolean; isSelected: boolean
 `;
 
 export const SeatContainer = styled.div<{ 
-  hasStudent: boolean; 
-  isSelected: boolean; 
-  attendanceColor?: string;
-  priority: 'low-vision' | 'intellectual-disability' | 'good-pair' | null;
-  verification: boolean;
-  isHighlighted?: boolean;
+  $hasStudent: boolean; 
+  $isSelected: boolean; 
+  $attendanceColor?: string;
+  $priority: 'low-vision' | 'intellectual-disability' | 'good-pair' | null;
+  $verification: boolean;
+  $isHighlighted?: boolean;
 }>`
   padding: 1rem;
   border-radius: var(--border-radius-md);
   background-color: ${props => {
-    if (props.hasStudent) {
-      return props.attendanceColor;
+    if (props.$hasStudent) {
+      return props.$attendanceColor;
     }
     
-    if (props.priority === 'low-vision') return '#03A9F4';
-    if (props.priority === 'intellectual-disability') return '#9C27B0';
-    if (props.priority === 'good-pair') return '#FF9800';
+    if (props.$priority === 'low-vision') return '#03A9F4';
+    if (props.$priority === 'intellectual-disability') return '#9C27B0';
+    if (props.$priority === 'good-pair') return '#FF9800';
     
     return 'var(--color-background-secondary)';
   }};
-  color: ${props => props.hasStudent ? 'white' : 'var(--color-text)'};
+  color: ${props => props.$hasStudent ? 'white' : 'var(--color-text)'};
   cursor: pointer;
   height: 80px;
   display: flex;
@@ -64,10 +64,10 @@ export const SeatContainer = styled.div<{
   justify-content: center;
   align-items: center;
   text-align: center;
-  border: ${props => props.isSelected ? '3px solid var(--color-primary)' : 'none'};
+  border: ${props => props.$isSelected ? '3px solid var(--color-primary)' : 'none'};
   position: relative;
   
-  ${props => props.verification && `
+  ${props => props.$verification && `
     &::after {
       content: '✓';
       position: absolute;
@@ -85,7 +85,7 @@ export const SeatContainer = styled.div<{
       transform: scale(0.98);
     }
   `}
-  ${props => props.isHighlighted && css`
+  ${props => props.$isHighlighted && css`
     box-shadow: 0 0 0 3px #ffeb3b;
     animation: pulse 1.5s infinite;
 

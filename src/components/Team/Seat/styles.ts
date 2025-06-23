@@ -23,7 +23,7 @@ interface SeatContainerProps {
   $verifyMode?: boolean;
   $editMode?: boolean;
   
-  attendanceColor?: string;
+  $attendanceColor?: string;
   $conferenceMode?: boolean;
   $isChecked?: boolean;
   $isMismatched?: boolean;
@@ -67,7 +67,7 @@ export const SeatContainer = styled.div<SeatContainerProps>`
   }
   
   ${props => props.$hasStudent && `
-    background: ${props.attendanceColor || '#eee'};
+    background: ${props.$attendanceColor || '#eee'};
     color: white;
   `}
   
