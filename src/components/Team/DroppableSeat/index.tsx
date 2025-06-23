@@ -43,15 +43,11 @@ const DroppableSeat: React.FC<DroppableSeatProps> = ({
     getPriorityInfo,
     onVerify
 }) => {
-    const { 
-        state: { 
-            filteredStudents,
-            selectedSeat,
-            editMode,
-            layout:{ seats } },
-        actions: { getStudentAttendance },
-        dispatch } = useClassroom();
+    const { state, actions, dispatch } = useClassroom();
 
+    const { filteredStudents, selectedSeat, editMode, layout:{ seats } } = state
+    const { getStudentAttendance } = actions
+    
     const handleDrop = useCallback((item: DraggableStudentItem) => {
         dispatch({
             type: 'UPDATE_SEAT',

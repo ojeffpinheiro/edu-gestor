@@ -37,15 +37,15 @@ const ConferencePanel: React.FC<ConferencePanelProps> = ({
   onFinish,
   onCancel
 }) => {
-
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isFinishing, setIsFinishing] = useState(false);
 
-
-  const handleFinishAttempt = () => {
-    if (checkedSeats === 0) {
-      setShowConfirmation(true);
-    } else {
-      onFinish();
+  const handleFinish = async () => {
+    setIsFinishing(true);
+    try {
+      await onFinish();
+    } finally {
+      setIsFinishing(false);
     }
   };
 
@@ -75,8 +75,13 @@ const ConferencePanel: React.FC<ConferencePanelProps> = ({
               Cancelar
             </CancelButton>
           )}
-          <ActionButton onClick={handleFinishAttempt}>
-            Finalizar Conferência
+
+          <ActionButton
+            onClick={handleFinish}
+            aria-busy={isFinishing}
+            disabled={isFinishing}
+          >
+            {isFinishing ? 'Finalizando...' : 'Finalizar Conferência'}
           </ActionButton>
 
           <CancelButton onClick={onCancel}>
@@ -97,8 +102,8 @@ const ConferencePanel: React.FC<ConferencePanelProps> = ({
           }}
           onClose={() => setShowConfirmation(false)}
         >
-            <h3>Nenhum aluno verificado</h3>
-            <p>Deseja realmente finalizar sem verificar nenhum aluno?</p>
+          <h3>Nenhum aluno verificado</h3>
+          <p>Deseja realmente finalizar sem verificar nenhum aluno?</p>
         </Modal>
       )}
     </>

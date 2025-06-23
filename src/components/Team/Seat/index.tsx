@@ -171,21 +171,22 @@ const Seat: React.FC<SeatProps> = ({
       onMouseLeave={() => setIsHovered(false)}
     >
       <SeatContainer
-        hasStudent={!!seat.studentId}
-        isSelected={selectedSeat?.id === seat.id}
-        isHighlighted={isHighlighted}
-        isInvalid={isInvalid}
+        $hasStudent={!!seat.studentId}
+        $isSelected={selectedSeat?.id === seat.id}
+
+        $isHighlighted={isHighlighted}
+        $isInvalid={isInvalid}
         attendanceColor={attendanceColor}
-        priority={seat.priority ?? null}
-        compactView={compactView}
-        verifyMode={verifyMode}
-        editMode={editMode}
+        $priority={seat.priority ?? undefined}
+        $compactView={compactView}
+        $verifyMode={verifyMode}
+        $editMode={editMode}
         onClick={handleClick}
         onDoubleClick={onDoubleClick ? handleDoubleClick : undefined}
         onContextMenu={onContextMenu ? handleContextMenu : undefined}
-        conferenceMode={conferenceMode}
-        isChecked={isChecked}
-        isMismatched={isMismatched}
+        $conferenceMode={conferenceMode}
+        $isChecked={isChecked}
+        $isMismatched={isMismatched}
 
         aria-label={`Assento ${seat.position.row}-${seat.position.column}`}
         aria-describedby={`tooltip-${seat.id}`} >
@@ -214,7 +215,7 @@ const Seat: React.FC<SeatProps> = ({
             )}
           </div>
         ) : (
-          <EmptySeatLabel editMode={editMode}>
+          <EmptySeatLabel $editMode={editMode}>
             {editMode ? (
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', marginBottom: '4px' }}>+</div>

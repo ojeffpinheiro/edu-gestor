@@ -13,7 +13,7 @@ export const Header = styled.header`
 
 export const LayoutContainer = styled.div`
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 5fr 2fr 1fr;
   gap: 2rem;
   
   @media (max-width: 992px) {

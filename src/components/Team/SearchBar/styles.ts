@@ -38,9 +38,9 @@ export const ClearButton = styled.button`
   }
 `;
 
-export const FiltersButton = styled.button<{ active?: boolean }>`
-  background: ${props => props.active ? '#4a90e2' : '#f5f5f5'};
-  color: ${props => props.active ? 'white' : '#333'};
+export const FiltersButton = styled.button<{ $active?: boolean }>`
+  background: ${props => props.$active ? '#4a90e2' : '#f5f5f5'};
+  color: ${props => props.$active ? 'white' : '#333'};
   border: none;
   border-radius: 8px;
   padding: 0 12px;
@@ -50,7 +50,7 @@ export const FiltersButton = styled.button<{ active?: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    background: ${props => props.active ? '#3a7bc8' : '#e0e0e0'};
+    background: ${props => props.$active ? '#3a7bc8' : '#e0e0e0'};
   }
 `;
 

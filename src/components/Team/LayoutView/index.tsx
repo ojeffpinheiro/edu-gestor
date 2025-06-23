@@ -43,12 +43,18 @@ const LayoutView: React.FC<LayoutViewProps> = ({
     state: { layout }
   } = useClassroom();
 
+  if (layout.rows === 0 || layout.columns === 0) {
+    return <div>Carregando layout...</div>;
+  }
+  
+
   return (
     <ClassroomLayout>
       <h3>Layout da Sala</h3>
       <TeacherDesk>
         <span>Mesa do Professor</span>
       </TeacherDesk>
+
       <GridContainer>
         {layout.seats.map(seat => (
           <DroppableSeat

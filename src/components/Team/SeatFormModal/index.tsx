@@ -113,9 +113,9 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
     }
   }, [formData.studentId, formData.priority, validateForm]);
 
-  const handleCloseModal = () => {
-    dispatch({ type: 'TOGGLE_MODAL', payload: false })
-  }
+  const handleCloseModal = useCallback(() => {
+    dispatch({ type: 'TOGGLE_MODAL', payload: false });
+  }, [dispatch]);
 
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
@@ -173,6 +173,7 @@ const SeatFormModal: React.FC<SeatFormModalProps> = ({
     const IconComponent = config.icon;
     return <IconComponent size={20} color={config.color} />;
   };
+
   if (!isModalOpen || !selectedSeat) return null;
 
   return (

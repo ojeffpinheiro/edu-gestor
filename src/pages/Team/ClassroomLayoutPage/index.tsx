@@ -1,8 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider } from 'react-dnd';
+import { DailyVerification, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo, PriorityType } from '../../../utils/types/Team';
 
-import { ClassroomProvider, useClassroom } from '../../../contexts/ClassroomContext';
+import { useClassroom } from '../../../contexts/ClassroomContext';
+
 import { useConferenceMode } from '../../../hooks/useConferenceMode';
 import { useLayoutManager } from '../../../hooks/useLayoutManager';
 import { useSeatOperations } from '../../../hooks/useSeatingOperations';
@@ -10,8 +12,6 @@ import { useSeatOperations } from '../../../hooks/useSeatingOperations';
 import { initializeLayout } from '../../../utils/classroomUtils';
 import { getAttendanceColor } from '../../../utils/attendanceUtils';
 import { getSeatPosition } from '../../../utils/seatUtils';
-
-import { DailyVerification, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo, PriorityType } from '../../../utils/types/Team';
 
 import Notification from '../../../components/shared/Notification';
 import ConferencePanel from '../../../components/Team/ConferencePanel';
@@ -21,6 +21,8 @@ import SearchBar from '../../../components/Team/SearchBar';
 import SeatFormModal from '../../../components/Team/SeatFormModal';
 import TableView from '../../../components/Team/TableView';
 import VerificationHistory from '../../../components/Team/VerificationHistory';
+import LoadLayoutModal from '../../../components/Team/LoadLayoutModal';
+import SaveLayoutModal from '../../../components/Team/SaveLayoutModal';
 
 import { Container } from '../../../styles/layoutUtils';
 import { ActionButton } from '../../../styles/buttons';
@@ -35,8 +37,6 @@ import {
     StatLabel,
     StatValue,
 } from './styles';
-import { LoadLayoutModal } from '../../../components/Team/LoadLayoutModal';
-import { SaveLayoutModal } from '../../../components/Team/SaveLayoutModal';
 
 const MAX_COLUMNS = 5;
 
@@ -44,6 +44,7 @@ const ClassroomLayoutPage: React.FC = () => {
     const {
         state: {
             layout,
+            verifyMode,
             selectedSeat,
             studentList,
             swapMode,
@@ -103,12 +104,10 @@ const ClassroomLayoutPage: React.FC = () => {
 
     const viewDayDetails = useCallback((day: DailyVerification) => {
         console.log('Visualizando detalhes do dia:', day.date);
-        // Implementação real viria aqui
     }, []);
 
     const { showNotification } = actions;
 
-    // Efeitos corrigidos
     useEffect(() => {
         const newLayout = initializeLayout(5, MAX_COLUMNS);
         dispatch({ type: 'SET_LAYOUT', payload: newLayout });
@@ -161,129 +160,141 @@ const ClassroomLayoutPage: React.FC = () => {
         );
     };
 
+    useEffect(() => {
+        console.log('Layout:', layout);
+        console.log('Students:', studentList);
+    }, [layout, studentList]);
+
+
+    const absenteesCount = useMemo(() => {
+        return layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length;
+    }, [layout.seats, checkedSeats]);
+
+
+    const renderConferenceStats = () => (
+        <ConferenceStats>
+            <StatItem>
+                <StatLabel>Verificados:</StatLabel>
+                <StatValue>{checkedSeats.length}</StatValue>
+            </StatItem>
+            <StatItem>
+                <StatLabel>Divergências:</StatLabel>
+                <StatValue>{mismatchedSeats.length}</StatValue>
+            </StatItem>
+            <StatItem>
+                <StatLabel>Faltantes:</StatLabel>
+                <StatValue>{absenteesCount}</StatValue>
+            </StatItem>
+        </ConferenceStats>
+    );
+
     return (
-        <ClassroomProvider>
-            <Container>
-                <Header>
-                    <h1>Gerenciamento de Alunos</h1>
-                    <SearchBar
-                        students={studentList}
-                        onSearchResults={(results) => dispatch({ type: 'SET_FILTERED_STUDENTS', payload: results })}
-                    />
-                    <LayoutControls
-                        conferenceMode={conferenceMode}
-                        canAddRow={canAddRow}
-                        canRemoveRow={canRemoveRow}
-                        canAddColumn={canAddColumn}
-                        canRemoveColumn={canRemoveColumn}
-                        onApplyTemplate={applyTemplate}
-                        onAddRow={addRow}
-                        onRemoveRow={removeRow}
-                        onFinishConference={finishDailyConference}
-                        onStartConference={startDailyConference}
-                        onToggleEditLayout={toggleEditLayout}
-                        onToggleSwapMode={handleSwapToggle}
-                        onSaveLayout={handleSaveLayout}
-                        onAddColumn={addColumn}
-                        onRemoveColumn={removeColumn}
-                    />
-                </Header>
+        <Container>
+            <Header>
+                <h1>Gerenciamento de Alunos</h1>
+                <SearchBar
+                    students={studentList}
+                    onSearchResults={(results) => dispatch({ type: 'SET_FILTERED_STUDENTS', payload: results })}
+                />
+                <LayoutControls
+                    conferenceMode={conferenceMode}
+                    canAddRow={canAddRow}
+                    canRemoveRow={canRemoveRow}
+                    canAddColumn={canAddColumn}
+                    canRemoveColumn={canRemoveColumn}
+                    onApplyTemplate={applyTemplate}
+                    onAddRow={addRow}
+                    onRemoveRow={removeRow}
+                    onFinishConference={finishDailyConference}
+                    onStartConference={startDailyConference}
+                    onToggleEditLayout={toggleEditLayout}
+                    onToggleSwapMode={handleSwapToggle}
+                    onSaveLayout={handleSaveLayout}
+                    onAddColumn={addColumn}
+                    onRemoveColumn={removeColumn}
+                />
+            </Header>
 
-                <ContentContainer>
-                    <DndProvider backend={HTML5Backend}>
-                        {view === 'table' ? (
-                            <TableView
-                                getAttendanceColor={getAttendanceColor}
-                                onSelectStudent={setSelectedStudent}
-                                highlightText={(text) => highlightText(text, searchTerm)}
+            <ContentContainer>
+                <DndProvider backend={HTML5Backend}>
+                    {view === 'table' ? (
+                        <TableView
+                            getAttendanceColor={getAttendanceColor}
+                            onSelectStudent={setSelectedStudent}
+                            highlightText={(text) => highlightText(text, searchTerm)}
+                        />
+                    ) : (
+                        <LayoutContainer>
+                            <LayoutView
+                                conferenceMode={verifyMode}
+                                isChecked={checkedSeats.includes(selectedSeat?.id || '')}
+                                isMismatched={mismatchedSeats.includes(selectedSeat?.id || '')}
+                                onSeatClick={handleSeatClick}
+                                getPriorityInfo={getPriorityInfo}
+                                getStudentName={getStudentName}
+                                onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
                             />
-                        ) : (
-                            <LayoutContainer>
-                                <LayoutView
-                                    conferenceMode={conferenceMode}
-                                    isChecked={checkedSeats.includes(selectedSeat?.id || '')}
-                                    isMismatched={mismatchedSeats.includes(selectedSeat?.id || '')}
-                                    onSeatClick={handleSeatClick}
-                                    getPriorityInfo={getPriorityInfo}
-                                    getStudentName={getStudentName}
-                                    onVerify={(seatId, isCorrect) => onVerifySeat(seatId, isCorrect)}
+
+                            <SettingsPanel>
+                                {verifyMode && (
+                                    <>
+                                        <ConferencePanel
+                                            conferenceDate={new Date().toISOString().split('T')[0]}
+                                            checkedSeats={checkedSeats.length}
+                                            mismatchedSeats={mismatchedSeats.length}
+                                            absentees={layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}
+                                            onFinish={finishDailyConference}
+                                        />
+                                        <ConferenceControlPanel>
+                                            <h4>Conferência do Dia: {new Date().toISOString().split('T')[0]}</h4>
+                                            {renderConferenceStats()}
+                                            <ActionButton
+                                                onClick={finishDailyConference}
+                                            >
+                                                Finalizar Conferência
+                                            </ActionButton>
+                                        </ConferenceControlPanel>
+                                    </>
+                                )}
+
+                                <VerificationHistory
+                                    history={verificationHistory}
+                                    viewDayDetails={viewDayDetails}
+                                    seats={layout.seats}
+                                    students={studentList}
+                                    getSeatPosition={(seatId: string) => getSeatPosition(seatId, layout.seats)}
                                 />
+                            </SettingsPanel>
+                        </LayoutContainer>
+                    )}
+                </DndProvider>
+            </ContentContainer>
 
-                                <SettingsPanel>
-                                    {conferenceMode && (
-                                        <>
-                                            <ConferencePanel
-                                                conferenceDate={new Date().toISOString().split('T')[0]}
-                                                checkedSeats={checkedSeats.length}
-                                                mismatchedSeats={mismatchedSeats.length}
-                                                absentees={layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}
-                                                onFinish={finishDailyConference}
-                                            />
-                                            <ConferenceControlPanel>
-                                                <h4>Conferência do Dia: {conferenceMode && new Date().toISOString().split('T')[0]}</h4>
-                                                <ConferenceStats>
-                                                    <StatItem>
-                                                        <StatLabel>Verificados:</StatLabel>
-                                                        <StatValue>{checkedSeats.length}</StatValue>
-                                                    </StatItem>
-                                                    <StatItem>
-                                                        <StatLabel>Divergências:</StatLabel>
-                                                        <StatValue>{mismatchedSeats.length}</StatValue>
-                                                    </StatItem>
-                                                    <StatItem>
-                                                        <StatLabel>Faltantes:</StatLabel>
-                                                        <StatValue>{layout.seats.filter(s => s.studentId && !checkedSeats.includes(s.id)).length}</StatValue>
-                                                    </StatItem>
-                                                </ConferenceStats>
+            {selectedSeat && (
+                <SeatFormModal
+                    onSave={handleSaveSeat}
+                    onDelete={() => {
+                        removeStudentFromSeat(selectedSeat.id);
+                        dispatch({ type: 'TOGGLE_MODAL', payload: false });
+                    }}
+                />
+            )}
 
-                                                <ActionButton
-                                                    onClick={finishDailyConference}
-                                                >
-                                                    Finalizar Conferência
-                                                </ActionButton>
-                                            </ConferenceControlPanel>
-                                        </>
-                                    )}
+            {notification.show && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                />
+            )}
 
-                                    <VerificationHistory
-                                        history={verificationHistory}
-                                        viewDayDetails={viewDayDetails}
-                                        seats={layout.seats}
-                                        students={studentList}
-                                        getSeatPosition={(seatId: string) => getSeatPosition(seatId, layout.seats)}
-                                    />
-                                </SettingsPanel>
-                            </LayoutContainer>
-                        )}
-                    </DndProvider>
-                </ContentContainer>
+            {saveModalOpen && <SaveLayoutModal />}
 
-                {selectedSeat && (
-                    <SeatFormModal
-                        onSave={handleSaveSeat}
-                        onDelete={() => {
-                            removeStudentFromSeat(selectedSeat.id);
-                            dispatch({ type: 'TOGGLE_MODAL', payload: false });
-                        }}
-                    />
-                )}
-
-                {notification.show && (
-                    <Notification
-                        message={notification.message}
-                        type={notification.type}
-                    />
-                )}
-
-                {saveModalOpen && <SaveLayoutModal /> }
-
-                {loadModalOpen && (
-                    <LoadLayoutModal 
-                        onClose={() => dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false })}
-                        loadLayout={loadLayout} />
-                )}
-            </Container>
-        </ClassroomProvider>
+            {loadModalOpen && (
+                <LoadLayoutModal
+                    onClose={() => dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: false })}
+                    loadLayout={loadLayout} />
+            )}
+        </Container>
     );
 };
 

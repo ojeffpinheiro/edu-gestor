@@ -1,7 +1,8 @@
 import React, { createContext, useCallback, useContext, useReducer } from 'react';
 import { LayoutConfig, SeatType } from '../utils/types/Team';
 import { StudentFormData } from '../utils/types/BasicUser';
-import { findBestSeatForStudent } from '../utils/classroomUtils';
+import { findBestSeatForStudent, initializeLayout } from '../utils/classroomUtils';
+import { mockStudentsTeam } from '../mocks/student';
 
 type ClassroomState = {
   layout: LayoutConfig;
@@ -57,8 +58,8 @@ type ClassroomAction =
 ;
 
 const initialState: ClassroomState = {
-  layout: { rows: 0, columns: 0, seats: [] },
-  studentList: [],
+  layout: { rows: 5, columns: 5, seats: initializeLayout(5, 5).seats, },
+  studentList: mockStudentsTeam,
   editMode: false,
   verifyMode: false,
   swapMode: false,
@@ -153,15 +154,31 @@ const ClassroomContext = createContext<{
   actions: ClassroomActions;
 }>({
   state: initialState,
-  dispatch: () => null,
+  dispatch: () => {
+    throw new Error('Dispatch não pode ser chamado fora do ClassroomProvider');
+  },
   actions: {
-    generateAutomaticLayout: () => { },
-    getStudentAttendance: () => 0,
-    toggleView: () => { },
-    showNotification: () => { },
-    saveCurrentLayout: () => { },
-    deleteLayout: () => { },
-    withLoading: async () => { }
+    generateAutomaticLayout: () => {
+      throw new Error('generateAutomaticLayout não pode ser chamado fora do ClassroomProvider');
+    },
+    getStudentAttendance: () => {
+      throw new Error('getStudentAttendance não pode ser chamado fora do ClassroomProvider');
+    },
+    toggleView: () => {
+      throw new Error('toggleView não pode ser chamado fora do ClassroomProvider');
+    },
+    showNotification(message, type) {
+      throw new Error('showNotification não pode ser chamado fora do ClassroomProvider');
+    },
+    saveCurrentLayout() {
+      throw new Error('saveCurrentLayout não pode ser chamado fora do ClassroomProvider');
+    },
+    deleteLayout(name) {
+      throw new Error('deleteLayout não pode ser chamado fora do ClassroomProvider');
+    },
+    withLoading(message, action) {
+      throw new Error('withLoading não pode ser chamado fora do ClassroomProvider');
+    },
   }
 });
 

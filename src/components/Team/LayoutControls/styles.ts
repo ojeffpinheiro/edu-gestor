@@ -11,7 +11,7 @@ export const ActionContainer = styled.div`
 `;
 
 interface ActionButtonProps {
-  active?: boolean;
+  $active?: boolean;
   disabled?: boolean;
 }
 
@@ -49,7 +49,7 @@ export const ActionButton = styled.button<ActionButtonProps>`
     box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
   }
 
-  ${({ active }) => active && css`
+  ${({ $active }) => $active && css`
     background-color: #3182ce;
     color: white;
     &:hover {

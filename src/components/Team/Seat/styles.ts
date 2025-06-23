@@ -2,59 +2,34 @@
 import styled, { css, keyframes } from 'styled-components';
 import { PriorityType, SeatStatus } from '../../../utils/types/Team';
 
-// Animações
-const pulseAnimation = keyframes`
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-`;
-
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 `;
 
-// Mapeamento de cores para status de frequência
-const getStatusColor = (status: SeatStatus) => {
-  switch (status) {
-    case 'excellent': return '#4caf50';
-    case 'good': return '#8bc34a';
-    case 'warning': return '#ff9800';
-    case 'critical': return '#f44336';
-    default: return '#e0e0e0';
-  }
-};
-
-const getStatusBackground = (status: SeatStatus) => {
-  switch (status) {
-    case 'excellent': return 'linear-gradient(135deg, #4caf50, #66bb6a)';
-    case 'good': return 'linear-gradient(135deg, #8bc34a, #9ccc65)';
-    case 'warning': return 'linear-gradient(135deg, #ff9800, #ffb74d)';
-    case 'critical': return 'linear-gradient(135deg, #f44336, #ef5350)';
-    default: return 'linear-gradient(135deg, #f5f5f5, #e0e0e0)';
-  }
-};
-
 interface SeatContainerProps {
   onClick?: (e: React.MouseEvent) => void;
   onDoubleClick?: (e: React.MouseEvent) => void;
   onContextMenu?: (e: React.MouseEvent) => void;
-  hasStudent: boolean;
-  isSelected: boolean;
-  isHighlighted?: boolean;
-  isInvalid?: boolean;
+  
+  $hasStudent?: boolean;
+  $isSelected?: boolean;
+  $isHighlighted?: boolean;
+  $isInvalid?: boolean;
+
+  
+  $priority?: PriorityType;
+  $compactView?: boolean;
+  $verifyMode?: boolean;
+  $editMode?: boolean;
+  
   attendanceColor?: string;
-  priority?: PriorityType | null;
-  compactView?: boolean;
-  verifyMode?: boolean;
-  editMode?: boolean;
-  conferenceMode?: boolean;
-  isChecked?: boolean;
-  isMismatched?: boolean;
+  $conferenceMode?: boolean;
+  $isChecked?: boolean;
+  $isMismatched?: boolean;
 }
 
 export const SeatContainer = styled.div<SeatContainerProps>`
-  padding: var(--space-md);
   border-radius: var(--border-radius-md);
   cursor: pointer;
   height: 80px;
@@ -66,26 +41,49 @@ export const SeatContainer = styled.div<SeatContainerProps>`
   transition: all var(--transition-fast);
   position: relative;
   width: 10vw;
+  padding: ${props => props.$compactView ? '8px' : '16px'};
+  border: ${props => props.$editMode ? '2px dashed #ccc' : '1px solid #eee'};
+  background-color: ${props => {
+    if (props.$verifyMode) return '#fff8e1';
+    return '#fff';
+  }};
   
-  // Estados
-  ${props => props.hasStudent && `
+  background: ${props => props.$hasStudent ? '#e3f2fd' : '#f5f5f5'};
+  border: 2px solid ${props => {
+    if (props.$isInvalid) return '#f44336';
+    if (props.$isHighlighted) return '#4a90e2';
+    if (props.$isSelected) return '#2196f3';
+    return '#e0e0e0';
+  }};
+
+  /* Ícone de prioridade */
+  &::before {
+    content: ${props => props.$priority ? `"${props.$priority}"` : '""'};
+    color: #fff;
+    background: #4a90e2;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  
+  ${props => props.$hasStudent && `
     background: ${props.attendanceColor || '#eee'};
     color: white;
   `}
   
-  ${props => !props.hasStudent && `
+  ${props => !props.$hasStudent && `
     background: #eee;
     color: var(--color-text);
   `}
   
-  ${props => props.isSelected && `
+  ${props => props.$isSelected && `
     border: 3px solid var(--color-primary);
     box-shadow: var(--shadow-focus);
     transform: scale(1.02);
   `}
   
   // Prioridades
-  ${props => props.priority === 'low_vision' && `
+  ${props => props.$priority === 'low_vision' && `
     &::before {
       content: '';
       position: absolute;
@@ -98,13 +96,13 @@ export const SeatContainer = styled.div<SeatContainerProps>`
     }
   `}
 
-  ${props => props.conferenceMode && css`
-    border: 2px solid ${props.isChecked ? '#4CAF50' : props.isMismatched ? '#F44336' : '#FFC107'};
-    box-shadow: ${props.isChecked ? '0 0 0 3px rgba(76, 175, 80, 0.3)' : 
-      props.isMismatched ? '0 0 0 3px rgba(244, 67, 54, 0.3)' : 'none'};
+  ${props => props.$conferenceMode && css`
+    border: 2px solid ${props.$isChecked ? '#4CAF50' : props.$isMismatched ? '#F44336' : '#FFC107'};
+    box-shadow: ${props.$isChecked ? '0 0 0 3px rgba(76, 175, 80, 0.3)' : 
+      props.$isMismatched ? '0 0 0 3px rgba(244, 67, 54, 0.3)' : 'none'};
   `}
   
-  ${props => props.isChecked && css`
+  ${props => props.$isChecked && css`
     &::after {
       content: '✓';
       position: absolute;
@@ -116,7 +114,7 @@ export const SeatContainer = styled.div<SeatContainerProps>`
     }
   `}
   
-  ${props => props.isMismatched && css`
+  ${props => props.$isMismatched && css`
     &::before {
       content: '!';
       position: absolute;
@@ -146,7 +144,6 @@ interface StudentNameProps {
 }
 
 export const StudentName = styled.div<StudentNameProps>`
-
   font-weight: var(--font-weight-medium);
   font-size: ${props => props.compactView ? 'var(--font-size-xs)' : 'var(--font-size-sm)'};
   text-align: center;
@@ -202,15 +199,15 @@ export const AttendanceIndicator = styled.div<AttendanceIndicatorProps>`
 `;
 
 interface EmptySeatLabelProps {
-  editMode?: boolean;
+  $editMode?: boolean;
 }
 
 export const EmptySeatLabel = styled.div<EmptySeatLabelProps>`
-  color: ${props => props.editMode ? '#2196f3' : '#999999'};
-  font-size: ${props => props.editMode ? '10px' : '11px'};
-  font-weight: ${props => props.editMode ? '600' : '400'};
+  color: ${props => props.$editMode ? '#2196f3' : '#999999'};
+  font-size: ${props => props.$editMode ? '10px' : '11px'};
+  font-weight: ${props => props.$editMode ? '600' : '400'};
   text-align: center;
-  opacity: ${props => props.editMode ? '0.8' : '0.6'};
+  opacity: ${props => props.$editMode ? '0.8' : '0.6'};
 `;
 
 interface PriorityIndicatorProps {

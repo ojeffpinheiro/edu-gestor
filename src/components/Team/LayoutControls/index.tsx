@@ -77,7 +77,7 @@ const LayoutControls: React.FC<Props> = ({
   const { toggleView, generateAutomaticLayout } = actions;
   const [activeMode, setActiveMode] = useState<'none' | 'edit' | 'swap'>('none');
 
-  const handleEditToggle = () => {
+  const handleEditToggle = React.useCallback(() => {
     if (activeMode === 'swap') {
       setActiveMode('edit');
       onToggleSwapMode();
@@ -85,9 +85,9 @@ const LayoutControls: React.FC<Props> = ({
     const next = activeMode === 'edit' ? 'none' : 'edit';
     setActiveMode(next);
     onToggleEditLayout();
-  };
+  }, [activeMode, onToggleEditLayout, onToggleSwapMode]);
 
-  const handleSwapToggle = () => {
+  const handleSwapToggle = React.useCallback(() => {
     if (activeMode === 'edit') {
       setActiveMode('swap');
       onToggleEditLayout();
@@ -95,11 +95,25 @@ const LayoutControls: React.FC<Props> = ({
     const next = activeMode === 'swap' ? 'none' : 'swap';
     setActiveMode(next);
     onToggleSwapMode();
-  };
+  }, [activeMode, onToggleEditLayout, onToggleSwapMode]);
 
   const handleLoadLayout = () => {
     dispatch({ type: 'TOGGLE_LOAD_MODAL', payload: true })
   }
+
+  const useKeyboardShortcut = (key: string, callback: () => void, deps: any[]) => {
+    useEffect(() => {
+      const handler = (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.key.toLowerCase() === key.toLowerCase()) {
+          e.preventDefault();
+          callback();
+        }
+      };
+
+      window.addEventListener('keydown', handler);
+      return () => window.removeEventListener('keydown', handler);
+    }, [key, callback, ...deps]);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -114,7 +128,7 @@ const LayoutControls: React.FC<Props> = ({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeMode]);
+  }, [activeMode, handleEditToggle, handleSwapToggle]);
 
   const templates = [
     { value: 'default', label: 'Padrão' },
@@ -123,6 +137,21 @@ const LayoutControls: React.FC<Props> = ({
     { value: 'groups', label: 'Grupos' },
     { value: 'rows', label: 'Fileiras' }
   ];
+
+  const handleClick = () => {
+    dispatch({ type: 'SET_VIEW', payload: 'layout' });
+    console.log('view', view)
+  }
+
+
+  useKeyboardShortcut('e', handleEditToggle, [activeMode]);
+  useKeyboardShortcut('s', handleSwapToggle, [activeMode]);
+
+  const handleRemoveRow = () => {
+    if (window.confirm('Tem certeza que deseja remover esta fileira?')) {
+      onRemoveRow();
+    }
+  };
 
   return (
     <ActionContainer>
@@ -133,13 +162,19 @@ const LayoutControls: React.FC<Props> = ({
             {view === 'table' ? ' Layout' : ' Tabela'}
           </ActionButton>
         </Tooltip>
+
+        <button onClick={handleClick}>
+          Forçar Layout (Teste)
+        </button>
       </ControlGroup>
 
       <ControlGroup>
-        <Tooltip title="Adicionar uma nova fileira">
-          <ActionButton onClick={onAddRow} disabled={!canAddRow}>
-            <FaPlus /> Fileira
-          </ActionButton>
+        <Tooltip title={canAddRow ? "Adicionar uma nova fileira" : "Número máximo de fileiras alcançado"}>
+          <span> {/* Envolva em span */}
+            <ActionButton onClick={onAddRow} disabled={!canAddRow}>
+              <FaPlus /> Fileira
+            </ActionButton>
+          </span>
         </Tooltip>
         <Tooltip title="Remover a última fileira">
           <ActionButton onClick={onRemoveRow} disabled={!canRemoveRow}>
@@ -163,15 +198,17 @@ const LayoutControls: React.FC<Props> = ({
 
       <ControlGroup>
         <Tooltip title="Selecione um template pré-definido">
-          <TemplateSelect onChange={(e) => onApplyTemplate(e.target.value as Template)}>
-            <FaShapes />
-            <option value="">Selecione um Template</option>
-            {templates.map(template => (
-              <option key={template.value} value={template.value}>
-                {template.label}
-              </option>
-            ))}
-          </TemplateSelect>
+          <div style={{ position: 'relative' }}>
+            <FaShapes style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)' }} />
+            <TemplateSelect onChange={(e) => onApplyTemplate(e.target.value as Template)}>
+              <option value="">Selecione um Template</option>
+              {templates.map(template => (
+                <option key={template.value} value={template.value}>
+                  {template.label}
+                </option>
+              ))}
+            </TemplateSelect>
+          </div>
         </Tooltip>
 
         <Tooltip title="Gerar um layout automático com os alunos disponíveis">
@@ -193,13 +230,13 @@ const LayoutControls: React.FC<Props> = ({
 
       <ControlGroup>
         <Tooltip title="Alternar modo de edição (Ctrl+E)">
-          <ActionButton onClick={handleEditToggle} active={activeMode === 'edit'}>
+          <ActionButton onClick={handleEditToggle} $active={activeMode === 'edit'}>
             <FaEdit /> {activeMode === 'edit' ? 'Salvar' : 'Editar'}
           </ActionButton>
         </Tooltip>
 
         <Tooltip title="Alternar modo de troca (Ctrl+S)">
-          <ActionButton onClick={handleSwapToggle} active={activeMode === 'swap'}>
+          <ActionButton onClick={handleSwapToggle} $active={activeMode === 'swap'}>
             <FaExchangeAlt /> {activeMode === 'swap' ? 'Cancelar Troca' : 'Trocar Assentos'}
           </ActionButton>
         </Tooltip>

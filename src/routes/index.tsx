@@ -28,15 +28,17 @@ import ScheduleView from '../components/Calendar/ScheduleView';
 import ClassroomLayoutPage from '../pages/Team/ClassroomLayoutPage';
 import DashboardPlanning from '../pages/Planning/DashboardPlanning';
 import DashboardResultViewer from '../pages/DashboardResultViewer';
+import { ClassroomProvider } from '../contexts/ClassroomContext';
 
 const AppRoutes: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Rota pública */}
-        <Route path="/login" element={<LoginPage />} />
-        
-        {/* Rotas protegidas */}
+    <ClassroomProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Rota pública */}
+          <Route path="/login" element={<LoginPage />} />
+
+          {/* Rotas protegidas */}
           <Route path='/' index element={<HomeTest />} />
           <Route path="/result-dashboard" element={<DashboardResultViewer />} />
           <Route path="/calendar" element={<CalendarView />} />
@@ -63,11 +65,12 @@ const AppRoutes: React.FC = () => {
           <Route path="/topic-content" element={<TopicContentManagement />} />
           <Route path="/not-found" element={<NotFound />} />
 
-        
-        {/* Rota para página não encontrada */}
-        {/* <Route path="*" element={<NotFound />} /> */}
-      </Routes>
-    </BrowserRouter>
+
+          {/* Rota para página não encontrada */}
+          {/* <Route path="*" element={<NotFound />} /> */}
+        </Routes>
+      </BrowserRouter>
+    </ClassroomProvider>
   );
 };
 

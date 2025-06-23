@@ -70,3 +70,33 @@ export const MismatchList = styled.div`
 export const MismatchItem = styled.div`
   margin-bottom: 0.2rem;
 `;
+
+export const EmptyState = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius-md);
+  margin: 1rem 0;
+
+  svg {
+    margin-bottom: 1rem;
+    color: #999;
+  }
+
+  p {
+    margin: 0.5rem 0 1rem;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    text-decoration: underline;
+  }
+`;
