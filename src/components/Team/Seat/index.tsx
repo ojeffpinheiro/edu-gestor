@@ -197,8 +197,8 @@ const Seat: React.FC<SeatProps> = ({
         {seat.studentId ? (
           <div style={{ textAlign: 'center', position: 'relative' }}>
             <StudentName
-              compactView={compactView}
-              attendanceStatus={seatStatus}
+              $compactView={compactView}
+              $attendanceStatus={seatStatus}
             >
               {compactView
                 ? getStudentName(seat.studentId).split(' ')[0]
@@ -207,7 +207,7 @@ const Seat: React.FC<SeatProps> = ({
             </StudentName>
             {!compactView && (
               <AttendanceIndicator
-                attendanceStatus={seatStatus}
+                $attendanceStatus={seatStatus}
                 color={attendanceColor}
               >
                 {attendance}%

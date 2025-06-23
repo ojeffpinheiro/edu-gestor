@@ -139,22 +139,22 @@ export const SeatContainer = styled.div<SeatContainerProps>`
 `;
 
 interface StudentNameProps {
-  compactView?: boolean;
-  attendanceStatus?: SeatStatus;
+  $compactView?: boolean;
+  $attendanceStatus?: SeatStatus;
 }
 
 export const StudentName = styled.div<StudentNameProps>`
   font-weight: var(--font-weight-medium);
-  font-size: ${props => props.compactView ? 'var(--font-size-xs)' : 'var(--font-size-sm)'};
+  font-size: ${props => props.$compactView ? 'var(--font-size-xs)' : 'var(--font-size-sm)'};
   text-align: center;
   line-height: 1.2;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: ${props => props.compactView ? 'nowrap' : 'normal'};
+  white-space: ${props => props.$compactView ? 'nowrap' : 'normal'};
 
   color: ${props => {
-    switch (props.attendanceStatus) {
+    switch (props.$attendanceStatus) {
       case 'excellent':
       case 'good':
         return '#ffffff';
@@ -169,12 +169,11 @@ export const StudentName = styled.div<StudentNameProps>`
 `;
 
 interface AttendanceIndicatorProps {
-  attendanceStatus?: SeatStatus;
-  color?: string;
+  $attendanceStatus?: SeatStatus;
+  $color?: string;
 }
 
 export const AttendanceIndicator = styled.div<AttendanceIndicatorProps>`
-
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   margin-top: var(--space-xs);
@@ -183,7 +182,7 @@ export const AttendanceIndicator = styled.div<AttendanceIndicatorProps>`
   background: rgba(255, 255, 255, 0.2);
   color: inherit;
   color: ${props => {
-    switch (props.attendanceStatus) {
+    switch (props.$attendanceStatus) {
       case 'excellent':
       case 'good':
         return '#ffffff';
