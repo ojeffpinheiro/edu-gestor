@@ -15,7 +15,12 @@ import {
   FaFileInvoice,
   FaUsers, 
   FaUserFriends, 
-  FaFlask 
+  FaFlask,
+  FaChalkboardTeacher,
+  FaCalendarDay,
+  FaClipboardList,
+  FaGraduationCap,
+  FaMagic
 } from 'react-icons/fa';
 
 interface CardProps {
@@ -107,6 +112,8 @@ const HomeTest: React.FC = () => {
           <Card to="/didactic-sequences" title="Sequências Didáticas" icon={<FaBook />} />
           <Card to="/topic-content" title="Gerenciamento de Conteúdo" icon={<FaList />} />
           <Card to="/planning" title="Painel de Planejamento" icon={<FaCalendarAlt />} />
+          <Card to="/planning-new" title="Novo Painel de Planejamento" icon={<FaCalendarDay />} />
+          <Card to="/plannig-page" title="Página de Planejamento" icon={<FaClipboardList />} />
         </div>
       </section>
 
@@ -115,8 +122,10 @@ const HomeTest: React.FC = () => {
         <div style={cardsContainerStyle}>
           <Card to="/questions" title="Banco de Questões" icon={<FaQuestion />} />
           <Card to="/exams" title="Gerenciador de Exames" icon={<FaFileAlt />} />
+          <Card to="/exam" title="Exames" icon={<FaFileAlt />} />
           <Card to="/evaluations" title="Gestão de Avaliações" icon={<FaClipboardCheck />} />
           <Card to="/results" title="Visualizador de Resultados" icon={<FaChartBar />} />
+          <Card to="/result-dashboard" title="Dashboard de Resultados" icon={<FaChartBar />} />
         </div>
       </section>
 
@@ -126,6 +135,7 @@ const HomeTest: React.FC = () => {
           <Card to="/digital-notebook" title="Caderno Digital" icon={<FaEdit />} />
           <Card to="/equation-system" title="Sistema de Equações" icon={<FaCalculator />} />
           <Card to="/daily-report" title="Relatório Diário" icon={<FaFileInvoice />} />
+          <Card to="/corrector-page" title="Corretor de Atividades" icon={<FaGraduationCap />} />
         </div>
       </section>
 
@@ -134,7 +144,10 @@ const HomeTest: React.FC = () => {
         <div style={cardsContainerStyle}>
           <Card to="/team-management" title="Gerenciamento de Equipes" icon={<FaUsers />} />
           <Card to="/team" title="Página de Equipe" icon={<FaUserFriends />} />
+          <Card to="/classroom-mapping" title="Mapeamento de Sala" icon={<FaChalkboardTeacher />} />
           <Card to="/test" title="Página de Testes" icon={<FaFlask />} />
+          <Card to="/calendar" title="Visualização de Calendário" icon={<FaCalendarAlt />} />
+          <Card to="/schedule" title="Visualização de Agenda" icon={<FaCalendarDay />} />
         </div>
       </section>
     </div>

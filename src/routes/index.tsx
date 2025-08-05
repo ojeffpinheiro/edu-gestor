@@ -29,6 +29,7 @@ import ClassroomLayoutPage from '../pages/Team/ClassroomLayoutPage';
 import DashboardPlanning from '../pages/Planning/DashboardPlanning';
 import DashboardResultViewer from '../pages/DashboardResultViewer';
 import { ClassroomProvider } from '../contexts/ClassroomContext';
+import EducationCorrectorPage from '../pages/EducationCorrectorPage';
 
 const AppRoutes: React.FC = () => {
   return (
@@ -64,7 +65,7 @@ const AppRoutes: React.FC = () => {
           <Route path="/test" element={<TestPage />} />
           <Route path="/topic-content" element={<TopicContentManagement />} />
           <Route path="/not-found" element={<NotFound />} />
-
+          <Route path="/corrector-page" element={<EducationCorrectorPage />} />
 
           {/* Rota para página não encontrada */}
           {/* <Route path="*" element={<NotFound />} /> */}
