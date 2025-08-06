@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const QuestionFormContainer = styled.div`
-  background-color: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
@@ -9,6 +8,7 @@ export const QuestionFormContainer = styled.div`
 export const QuestionFormHeader = styled.div`
   padding: 1.5rem;
   border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background-secondary);
 `;
 
 export const QuestionFormTitle = styled.h3`
@@ -24,6 +24,7 @@ export const QuestionFormDescription = styled.p`
 
 export const QuestionFormContent = styled.div`
   padding: 1.5rem;
+  background-color: var(--color-secondary);
 `;
 
 export const FormGrid = styled.div`
@@ -87,7 +88,7 @@ export const FormButton = styled.button`
   
   &.outline {
     border: 1px solid var(--color-border);
-    background-color: white;
+    background-color: var(--color-background-secondary);
     color: var(--color-text);
     
     &:hover {

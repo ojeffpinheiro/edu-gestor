@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const FoldersContainer = styled.div`
-  background-color: white;
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
@@ -11,6 +10,7 @@ export const FoldersHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
+  background-color: var(--color-secondary);
   border-bottom: 1px solid var(--color-border);
 `;
 
@@ -27,7 +27,7 @@ export const FoldersGrid = styled.div`
 `;
 
 export const FolderCard = styled.div`
-  background-color: white;
+  background-color: var(--color-background-secondary);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;
@@ -88,7 +88,6 @@ export const FolderActionsDropdown = styled.div`
   position: absolute;
   right: 0;
   top: 100%;
-  background-color: white;
   min-width: 160px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   z-index: 1;
@@ -120,7 +119,7 @@ export const FolderActionItem = styled.button`
   }
   
   &.delete {
-    background-color: var(--color-error);
+  
   }
 `;
 
@@ -130,7 +129,7 @@ export const AddFolderCard = styled.div`
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: white;
+  background-color: var(--color-secondary);
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 1.5rem;

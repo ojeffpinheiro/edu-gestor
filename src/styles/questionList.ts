@@ -7,7 +7,7 @@ export const QuestionsGrid = styled.div`
 `;
 
 export const QuestionCard = styled.div`
-  background-color: white;
+  background-color: var(--color-background-third);
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;

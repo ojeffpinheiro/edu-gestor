@@ -95,15 +95,13 @@ import {
   ModalActions,
   ModalButton
 } from '../../../styles/settingsModalStyles';
-import { 
+import {
   QuestionCard,
   QuestionsGrid,
   ActionItem, ActionsDropdown, MoreActionsButton,
   QuestionHeader, QuestionTitle, QuestionBadge, QuestionActions,
   QuestionContent, QuestionMeta, QuestionTags, QuestionTag,
 } from '../../../styles/questionList';
-
-// Icons
 
 const QuestionBankPage = () => {
   const [activeTab, setActiveTab] = useState('questions');
@@ -165,7 +163,7 @@ const QuestionBankPage = () => {
           <MenuButton>
             <FiMenu />
           </MenuButton>
-          
+
           <NavigationDropdown>
             <NavDropdownButton>
               Navegação <FiChevronDown />
@@ -189,22 +187,22 @@ const QuestionBankPage = () => {
             </NavDropdownContent>
           </NavigationDropdown>
         </NavLeft>
-        
+
         <SearchContainer>
           <SearchIcon as={FiSearch} />
-          <SearchInput 
-            placeholder="Buscar..." 
+          <SearchInput
+            placeholder="Buscar..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </SearchContainer>
-        
+
         <NavRight>
           <NotificationButton>
             <FiBell />
             <NotificationBadge>3</NotificationBadge>
           </NotificationButton>
-          
+
           <ProfileDropdown>
             <ProfileButton>
               <ProfileImage>
@@ -229,7 +227,7 @@ const QuestionBankPage = () => {
           </ProfileDropdown>
         </NavRight>
       </NavbarContainer>
-      
+
       {/* Conteúdo da Página */}
       <div style={{ padding: '0 2rem' }}>
         {/* Header da Página */}
@@ -238,7 +236,7 @@ const QuestionBankPage = () => {
             <h1>Banco de Questões</h1>
             <p>Gerencie suas questões, categorias e organize seu conteúdo</p>
           </PageTitleContainer>
-          
+
           <PageActions>
             <ActionButton>
               <FiUpload /> Importar
@@ -251,30 +249,30 @@ const QuestionBankPage = () => {
             </ActionButton>
           </PageActions>
         </PageHeaderContainer>
-        
+
         {/* Tabs */}
         <TabsContainer>
           <TabsList>
-            <TabTrigger 
+            <TabTrigger
               className={activeTab === 'questions' ? 'active' : ''}
               onClick={() => setActiveTab('questions')}
             >
               Lista de Questões
             </TabTrigger>
-            <TabTrigger 
+            <TabTrigger
               className={activeTab === 'new-question' ? 'active' : ''}
               onClick={() => setActiveTab('new-question')}
             >
               Nova Questão
             </TabTrigger>
-            <TabTrigger 
+            <TabTrigger
               className={activeTab === 'folders' ? 'active' : ''}
               onClick={() => setActiveTab('folders')}
             >
               Gestão de Pastas
             </TabTrigger>
           </TabsList>
-          
+
           {/* Conteúdo das Tabs */}
           <TabContent>
             {activeTab === 'questions' && (
@@ -292,17 +290,17 @@ const QuestionBankPage = () => {
                         <FilterLabel>Buscar</FilterLabel>
                         <SearchContainer>
                           <SearchIcon as={FiSearch} />
-                          <SearchInput 
-                            placeholder="Buscar questões..." 
+                          <SearchInput
+                            placeholder="Buscar questões..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                           />
                         </SearchContainer>
                       </FilterGroup>
-                      
+
                       <FilterGroup>
                         <FilterLabel>Categoria</FilterLabel>
-                        <FilterSelect 
+                        <FilterSelect
                           value={selectedCategory}
                           onChange={(e) => setSelectedCategory(e.target.value)}
                         >
@@ -314,10 +312,10 @@ const QuestionBankPage = () => {
                           ))}
                         </FilterSelect>
                       </FilterGroup>
-                      
+
                       <FilterGroup>
                         <FilterLabel>Dificuldade</FilterLabel>
-                        <FilterSelect 
+                        <FilterSelect
                           value={selectedDifficulty}
                           onChange={(e) => setSelectedDifficulty(e.target.value)}
                         >
@@ -327,7 +325,7 @@ const QuestionBankPage = () => {
                           <option value="hard">Difícil</option>
                         </FilterSelect>
                       </FilterGroup>
-                      
+
                       <FilterGroup>
                         <FilterLabel>&nbsp;</FilterLabel>
                         <AdvancedFiltersButton>
@@ -337,7 +335,7 @@ const QuestionBankPage = () => {
                     </FiltersGrid>
                   </FiltersContent>
                 </FiltersContainer>
-                
+
                 {/* Lista de Questões */}
                 <QuestionsGrid>
                   {questions.map(question => (
@@ -352,7 +350,7 @@ const QuestionBankPage = () => {
                             {question.type}
                           </QuestionBadge>
                         </div>
-                        
+
                         <QuestionActions>
                           <MoreActionsButton>
                             <FiMoreHorizontal />
@@ -370,15 +368,15 @@ const QuestionBankPage = () => {
                           </ActionsDropdown>
                         </QuestionActions>
                       </QuestionHeader>
-                      
+
                       <QuestionContent>{question.content}</QuestionContent>
-                      
+
                       <QuestionMeta>
                         <span>Categoria: {question.category}</span>
                         <span>Criada em: {question.createdAt}</span>
                         <span>Última utilização: {question.lastUsed}</span>
                       </QuestionMeta>
-                      
+
                       <QuestionTags>
                         {question.tags.map((tag, index) => (
                           <QuestionTag key={index}>
@@ -391,7 +389,7 @@ const QuestionBankPage = () => {
                 </QuestionsGrid>
               </>
             )}
-            
+
             {activeTab === 'new-question' && (
               <QuestionFormContainer>
                 <QuestionFormHeader>
@@ -400,7 +398,7 @@ const QuestionBankPage = () => {
                     Preencha os campos abaixo para adicionar uma nova questão ao banco
                   </QuestionFormDescription>
                 </QuestionFormHeader>
-                
+
                 <QuestionFormContent>
                   <FormGrid>
                     <div>
@@ -408,7 +406,7 @@ const QuestionBankPage = () => {
                         <FormLabel>Título da Questão</FormLabel>
                         <FormInput placeholder="Digite o título da questão" />
                       </FormGroup>
-                      
+
                       <FormGroup>
                         <FormLabel>Categoria</FormLabel>
                         <FormSelect>
@@ -420,7 +418,7 @@ const QuestionBankPage = () => {
                           ))}
                         </FormSelect>
                       </FormGroup>
-                      
+
                       <FormGroup>
                         <FormLabel>Dificuldade</FormLabel>
                         <FormSelect>
@@ -430,7 +428,7 @@ const QuestionBankPage = () => {
                           <option value="hard">Difícil</option>
                         </FormSelect>
                       </FormGroup>
-                      
+
                       <FormGroup>
                         <FormLabel>Tipo de Questão</FormLabel>
                         <FormSelect>
@@ -441,20 +439,20 @@ const QuestionBankPage = () => {
                         </FormSelect>
                       </FormGroup>
                     </div>
-                    
+
                     <div>
                       <FormGroup>
                         <FormLabel>Enunciado</FormLabel>
                         <FormTextarea placeholder="Digite o enunciado da questão..." />
                       </FormGroup>
-                      
+
                       <FormGroup>
                         <FormLabel>Tags (separadas por vírgula)</FormLabel>
                         <FormInput placeholder="álgebra, equações, 9º ano" />
                       </FormGroup>
                     </div>
                   </FormGrid>
-                  
+
                   <FormActions>
                     <FormButton className="outline">Cancelar</FormButton>
                     <FormButton className="primary">Salvar Questão</FormButton>
@@ -462,7 +460,7 @@ const QuestionBankPage = () => {
                 </QuestionFormContent>
               </QuestionFormContainer>
             )}
-            
+
             {activeTab === 'folders' && (
               <FoldersContainer>
                 <FoldersHeader>
@@ -471,7 +469,7 @@ const QuestionBankPage = () => {
                     <FiPlus /> Nova Pasta
                   </ActionButton>
                 </FoldersHeader>
-                
+
                 <FoldersGrid>
                   {categories.map(category => (
                     <FolderCard key={category.id}>
@@ -485,7 +483,7 @@ const QuestionBankPage = () => {
                             <FolderCount>{category.count} questões</FolderCount>
                           </div>
                         </div>
-                        
+
                         <FolderActions>
                           <FolderMoreButton>
                             <FiMoreVertical />
@@ -498,7 +496,7 @@ const QuestionBankPage = () => {
                       </FolderHeader>
                     </FolderCard>
                   ))}
-                  
+
                   <AddFolderCard>
                     <AddFolderIcon>
                       <FiPlus />
@@ -511,7 +509,7 @@ const QuestionBankPage = () => {
           </TabContent>
         </TabsContainer>
       </div>
-      
+
       {/* Modal de Configurações */}
       {showSettingsModal && (
         <ModalOverlay onClick={() => setShowSettingsModal(false)}>
@@ -522,11 +520,11 @@ const QuestionBankPage = () => {
                 <FiX />
               </ModalCloseButton>
             </ModalHeader>
-            
+
             <ModalContent>
               <SettingsSection>
                 <SettingsSectionTitle>Preferências</SettingsSectionTitle>
-                
+
                 <SettingsOption>
                   <SettingsOptionLabel>Tema</SettingsOptionLabel>
                   <SettingsOptionControl>
@@ -537,7 +535,7 @@ const QuestionBankPage = () => {
                     </select>
                   </SettingsOptionControl>
                 </SettingsOption>
-                
+
                 <SettingsOption>
                   <SettingsOptionLabel>Idioma</SettingsOptionLabel>
                   <SettingsOptionControl>
@@ -549,17 +547,17 @@ const QuestionBankPage = () => {
                   </SettingsOptionControl>
                 </SettingsOption>
               </SettingsSection>
-              
+
               <SettingsSection>
                 <SettingsSectionTitle>Notificações</SettingsSectionTitle>
-                
+
                 <SettingsOption>
                   <SettingsOptionLabel>Notificações por email</SettingsOptionLabel>
                   <SettingsOptionControl>
                     <input type="checkbox" />
                   </SettingsOptionControl>
                 </SettingsOption>
-                
+
                 <SettingsOption>
                   <SettingsOptionLabel>Notificações no sistema</SettingsOptionLabel>
                   <SettingsOptionControl>
@@ -568,7 +566,7 @@ const QuestionBankPage = () => {
                 </SettingsOption>
               </SettingsSection>
             </ModalContent>
-            
+
             <ModalActions>
               <ModalButton className="outline" onClick={() => setShowSettingsModal(false)}>
                 Cancelar

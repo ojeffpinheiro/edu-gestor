@@ -5,7 +5,6 @@ export const PageHeaderContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  background-color: white;
   border-bottom: 1px solid var(--color-border);
 `;
 
@@ -38,7 +37,7 @@ export const ActionButton = styled.button`
   cursor: pointer;
   transition: all 0.2s;
   border: 1px solid var(--color-border);
-  background-color: white;
+  background-color: var(--color-card);
   color: var(--color-text);
   
   &:hover {
