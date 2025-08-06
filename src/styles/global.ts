@@ -22,7 +22,9 @@ export const GlobalStyles = createGlobalStyle`
         --color-border-light: ${currentTheme.border.light};
         --color-border: ${currentTheme.border.medium};
         --color-border-dark: ${currentTheme.border.dark};
-
+        
+        --color-primary-light: ${transparentize(0.8, currentTheme.component.primaryButton)};
+        --color-border-light: ${currentTheme.border.light};
         --color-primary: ${currentTheme.component.primaryButton};
         --color-primary-hover: ${currentTheme.component.primaryButtonHover};
          --color-primary-dark: ${darken(0.15, currentTheme.component.primaryButton)};

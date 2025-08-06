@@ -1,6 +1,12 @@
 {
   "compilerOptions": {
-    "typeRoots": ["node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "typeRoots": [
+      "node_modules/@types"
+    ],
     "target": "es2015",
     "lib": [
       "dom",
