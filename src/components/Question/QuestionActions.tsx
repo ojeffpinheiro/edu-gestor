@@ -41,7 +41,7 @@ export const QuestionCardContainer = styled.div<{ selected?: boolean }>`
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   transition: all 0.2s;
-  border: 2px solid ${({ selected }) => 
+  border: 2px solid ${({ selected }) =>
     selected ? 'var(--color-primary)' : 'transparent'};
   
   &:hover {
@@ -162,9 +162,9 @@ export const SelectCheckbox = styled.input`
   cursor: pointer;
 `;
 
-export const QuestionActions = ({ 
-  onView, 
-  onEdit, 
+export const QuestionActions = ({
+  onView,
+  onEdit,
   onDelete,
   className
 }: QuestionActionsProps) => {
@@ -186,9 +186,14 @@ export const QuestionActions = ({
           content: (<><FiEdit2 /> Editar</>),
           onClick: onEdit
         },
-        { id: 'divider', divider: true },
-        { id: 'delete',
-          content: ( <><FiTrash2 /> Excluir</>),
+        {
+          id: 'divider',
+          divider: true,
+          content: <></> // Add empty content for divider
+        },
+        {
+          id: 'delete',
+          content: (<><FiTrash2 /> Excluir</>),
           onClick: onDelete,
           disabled: !onDelete
         }

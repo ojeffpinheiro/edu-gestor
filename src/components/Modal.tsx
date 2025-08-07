@@ -11,6 +11,7 @@ export interface ModalProps {
   className?: string;
   closeOnOverlayClick?: boolean;
   showCloseButton?: boolean;
+  isOpen: boolean; 
 }
 
 export const ModalOverlay = styled.div`
@@ -104,7 +105,8 @@ export const Modal = ({
   size = 'md',
   className,
   closeOnOverlayClick = true,
-  showCloseButton = true
+  showCloseButton = true,
+  isOpen 
 }: ModalProps) => {
   // Fechar modal ao pressionar ESC
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -123,6 +125,8 @@ export const Modal = ({
       onClose();
     }
   };
+  
+  if (!isOpen) return null;
 
   return (
     <ModalOverlay onClick={handleOverlayClick}>

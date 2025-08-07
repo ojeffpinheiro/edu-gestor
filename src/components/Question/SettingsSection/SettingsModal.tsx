@@ -12,6 +12,7 @@ export const SettingsModal = ({
 }: SettingsModalProps) => {
   return (
     <Modal
+      isOpen={true}
       title={title}
       onClose={onClose}
       actions={actions}

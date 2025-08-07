@@ -27,7 +27,7 @@ export const QuestionForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Validação simples
     const newErrors: Record<string, string> = {};
     fields.forEach(field => {
@@ -69,7 +69,9 @@ export const QuestionForm = ({
 
           <FormActions
             onCancel={onCancel}
-            onSubmit={handleSubmit}
+            onSubmit={(e) => {
+              if (e) handleSubmit(e);
+            }}
             submitText={submitText}
             cancelText={cancelText}
           />

@@ -2,6 +2,10 @@ import React, { Children, isValidElement } from 'react';
 import { TabsProps } from '../../utils/types/Question';
 import { TabContent, TabsContainer, TabsList, TabTrigger } from '../../styles/tab';
 
+interface TabChildProps {
+  id: string;
+}
+
 const Tabs = ({
   tabs,
   activeTab,
@@ -12,7 +16,9 @@ const Tabs = ({
 }: TabsProps) => {
   // Encontrar o conteúdo ativo baseado no activeTab
   const activeContent = Children.toArray(children).find(
-    (child) => isValidElement(child) && child.props.id === activeTab
+    (child) => 
+      isValidElement<TabChildProps>(child) && 
+      child.props.id === activeTab
   );
 
   return (
@@ -33,8 +39,7 @@ const Tabs = ({
       </TabsList>
 
       <TabContent>
-        {activeContent ||
-          (isValidElement(children) ? children : null)}
+        {activeContent || (isValidElement(children) ? children : null)}
       </TabContent>
     </TabsContainer>
   );

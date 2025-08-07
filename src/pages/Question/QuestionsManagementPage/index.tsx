@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiFolder, FiMoreVertical, FiX } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiFolder, FiMoreVertical } from 'react-icons/fi';
 
 import Navbar from '../../../../src/components/shared/Navbar'
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
 import Filters from '../../../components/Question/Filter/Filters';
 import AdvancedFilters from '../../../components/Results/AdvancedFilters';
+import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
+import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
+
+import { QuestionsGrid } from '../../../styles/questionList';
 
 import {
   SearchContainer,
@@ -39,14 +43,6 @@ import {
   QuestionFormTitle,
   QuestionFormDescription,
   QuestionFormContent,
-  FormGrid,
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormSelect,
-  FormTextarea,
-  FormActions,
-  FormButton
 } from '../../../styles/questionsForm';
 import {
   FoldersContainer,
@@ -66,32 +62,14 @@ import {
   AddFolderIcon,
   AddFolderText
 } from '../../../styles/folderManagementStyles';
-import {
-  ModalOverlay,
-  ModalContainer,
-  ModalHeader,
-  ModalTitle,
-  ModalCloseButton,
-  ModalContent,
-  SettingsSection,
-  SettingsSectionTitle,
-  SettingsOption,
-  SettingsOptionLabel,
-  SettingsOptionControl,
-  ModalActions,
-  ModalButton
-} from '../../../styles/settingsModalStyles';
-import { QuestionsGrid } from '../../../styles/questionList';
-import { QuestionCard } from '../../../components/Question/QuestionCard';
-import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
-import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
+import QuestionCard from '../../../components/Question/QuestionCard';
+import { FormField } from '../../../components/Question/QuestionForm/type';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('questions');
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
@@ -124,8 +102,8 @@ const QuestionBankPage = () => {
       title: 'Resolução de equações do 2º grau',
       content: 'Resolva a equação x² - 5x + 6 = 0',
       category: 'Matemática',
-      difficulty: 'Médio',
-      type: 'Múltipla escolha',
+      difficulty: 'medium' as const, // ou 'easy' | 'medium' | 'hard'
+      type: 'multiple_choice' as const,
       tags: ['álgebra', 'equações', '9º ano'],
       createdAt: '2024-01-15',
       lastUsed: '2024-01-20'
@@ -135,8 +113,8 @@ const QuestionBankPage = () => {
       title: 'Interpretação de texto',
       content: 'Com base no texto acima, analise as alternativas...',
       category: 'Português',
-      difficulty: 'Fácil',
-      type: 'Múltipla escolha',
+      difficulty: 'easy' as const, // ou 'easy' | 'medium' | 'hard'
+      type: 'multiple_choice' as const,
       tags: ['interpretação', 'leitura', '8º ano'],
       createdAt: '2024-01-14',
       lastUsed: '2024-01-18'
@@ -146,26 +124,25 @@ const QuestionBankPage = () => {
       title: 'Fotossíntese e respiração celular',
       content: 'Explique o processo de fotossíntese...',
       category: 'Ciências',
-      difficulty: 'Difícil',
-      type: 'Dissertativa',
+      difficulty: 'hard' as const, // ou 'easy' | 'medium' | 'hard'
+      type: 'multiple_choice' as const,
       tags: ['biologia', 'fotossíntese', '7º ano'],
       createdAt: '2024-01-13',
       lastUsed: '2024-01-19'
     }
   ];
-
-  const fields = [
+  const fields: FormField[] = [
     {
       name: 'title',
       label: 'Título da Questão',
-      type: 'text',
+      type: 'text' as const,
       required: true,
       placeholder: 'Digite o título'
     },
     {
       name: 'category',
       label: 'Categoria',
-      type: 'select',
+      type: 'select' as const,
       required: true,
       options: [
         { value: 'math', label: 'Matemática' },
@@ -175,12 +152,11 @@ const QuestionBankPage = () => {
     {
       name: 'content',
       label: 'Enunciado',
-      type: 'textarea',
+      type: 'textarea' as const,
       required: true
     }
   ];
 
-  
   const sections = [
     {
       title: 'Preferências',
@@ -218,12 +194,14 @@ const QuestionBankPage = () => {
     }
   ];
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (values: Record<string, unknown>) => {
     console.log('Dados do formulário:', values);
   };
 
-  const handleEdit = () => console.log('Edit clicked');
-  const handleDelete = () => console.log('Delete clicked');
+  const saveSettings = () => {
+    // Lógica para salvar configurações
+    console.log('Configurações salvas');
+  };
 
   return (
     <div>
@@ -433,7 +411,21 @@ const QuestionBankPage = () => {
       </div>
 
       {showAdvanced && (
-        <AdvancedFilters />
+        <AdvancedFilters
+          periods={[]}
+          subjects={[]}
+          classes={[]}
+          currentFilters={{
+            classId: '',
+            period: '',
+            subject: '',
+            searchTerm: searchValue,
+          }}
+          onFilterChange={() => { }}
+          onReset={() => { }}
+          onApply={() => { }}
+          isLoading={isOpen}
+        />
       )}
 
       {/* Modal de Configurações */}

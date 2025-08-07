@@ -1,21 +1,63 @@
-import React from 'react'
+import React, { memo } from 'react';
 import { FaTag } from 'react-icons/fa';
-import { BadgeContainer, QuestionActions, QuestionBadge, QuestionCardContainer, QuestionCardProps, QuestionHeader, QuestionMeta, QuestionTag, QuestionTags, QuestionTitle, QuestionTitleWrapper, SelectCheckbox } from './QuestionActions';
+import { 
+  BadgeContainer, 
+  QuestionActions, 
+  QuestionBadge, 
+  QuestionCardContainer, 
+  QuestionHeader, 
+  QuestionMeta, 
+  QuestionTag, 
+  QuestionTags, 
+  QuestionTitle, 
+  QuestionTitleWrapper, 
+  SelectCheckbox 
+} from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
+import { QuestionType } from '../../utils/types/Question';
 
-export const QuestionCard = ({ 
-  question, 
-  onView, 
-  onEdit, 
+interface QuestionCardProps {
+  question: Question | 'all'; // Permite o tipo 'all' para tratamento especial
+  onView?: () => void;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onTagClick?: (tag: string) => void;
+  className?: string;
+  selected?: boolean;
+  onSelect?: (id: string | number) => void; // Atualizado para aceitar string ou number
+}
+
+interface Question {
+  id: number | string;
+  title: string;
+  content: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  type: QuestionType;
+  tags: string[];
+  createdAt: string;
+  lastUsed?: string;
+  accuracy?: number;
+  usageCount?: number;
+}
+
+const QuestionCard: React.FC<QuestionCardProps> = memo(({
+  question,
+  onView,
+  onEdit,
   onDelete,
   onTagClick,
   className,
   selected = false,
   onSelect
-}: QuestionCardProps) => {
+}) => {
   const handleTagClick = (tag: string) => {
     onTagClick?.(tag);
   };
+  
+  if (question === 'all') {
+    return null; // ou tratamento especial para o caso 'all'
+  }
 
   return (
     <QuestionCardContainer className={className} selected={selected}>
@@ -27,6 +69,7 @@ export const QuestionCard = ({
               checked={selected}
               onChange={() => onSelect(question.id)}
               onClick={(e) => e.stopPropagation()}
+              aria-label={`Selecionar questão ${question.title}`}
             />
           )}
           <QuestionTitle title={question.title}>
@@ -39,9 +82,9 @@ export const QuestionCard = ({
               {question.difficulty === 'hard' && 'Difícil'}
             </QuestionBadge>
             <QuestionBadge $variant={`type-${question.type}`}>
-              {question.type === 'multiple-choice' && 'Múltipla escolha'}
+              {question.type === 'multiple_choice' && 'Múltipla escolha'}
               {question.type === 'essay' && 'Dissertativa'}
-              {question.type === 'true-false' && 'V/F'}
+              {question.type === 'true_false' && 'V/F'}
             </QuestionBadge>
           </BadgeContainer>
         </QuestionTitleWrapper>
@@ -61,16 +104,16 @@ export const QuestionCard = ({
         <span>Categoria: {question.category}</span>
         <span>Criada em: {new Date(question.createdAt).toLocaleDateString()}</span>
         {question.lastUsed && (
-          <span>Última uso: {new Date(question.lastUsed).toLocaleDateString()}</span>
+          <span>Último uso: {new Date(question.lastUsed).toLocaleDateString()}</span>
         )}
         {question.accuracy && (
           <span>Acertos: {question.accuracy}%</span>
         )}
       </QuestionMeta>
 
-      {question.tags?.length > 0 && (
+      {question.tags && question.tags.length > 0 && (
         <QuestionTags>
-          {question.tags.map((tag, index) => (
+          {question.tags.map((tag: string, index: number) => (
             <QuestionTag 
               key={index}
               onClick={() => handleTagClick(tag)}
@@ -83,4 +126,6 @@ export const QuestionCard = ({
       )}
     </QuestionCardContainer>
   );
-};
+});
+
+export default QuestionCard;

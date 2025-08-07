@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FormEvent } from 'react'
 import styled from 'styled-components';
 
 const FormActionsContainer = styled.div`
@@ -16,7 +16,7 @@ const FormButton = styled.button<{ $variant?: 'primary' | 'outline' }>`
   cursor: pointer;
   transition: all 0.2s;
 
-  ${({ $variant = 'outline' }) => 
+  ${({ $variant = 'outline' }) =>
     $variant === 'outline'
       ? `
           border: 1px solid var(--color-border);
@@ -40,7 +40,7 @@ const FormButton = styled.button<{ $variant?: 'primary' | 'outline' }>`
 
 interface FormActionsProps {
   onCancel?: () => void;
-  onSubmit?: () => void;
+  onSubmit?: (e?: FormEvent) => void;
   submitText?: string;
   cancelText?: string;
   className?: string;
@@ -58,8 +58,8 @@ export const FormActions = ({
   return (
     <FormActionsContainer className={className}>
       {onCancel && (
-        <FormButton 
-          type="button" 
+        <FormButton
+          type="button"
           onClick={onCancel}
           $variant="outline"
         >
@@ -68,7 +68,10 @@ export const FormActions = ({
       )}
       <FormButton
         type={onSubmit ? 'button' : 'submit'}
-        onClick={onSubmit}
+        onClick={(e) => {
+          e.preventDefault();
+          onSubmit?.(e);
+        }}
         $variant="primary"
         disabled={submitDisabled}
       >
