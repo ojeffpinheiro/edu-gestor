@@ -1,28 +1,10 @@
 import React, { useState } from 'react';
-import { FiMenu, FiSearch, FiBell, FiUser, FiChevronDown, FiFilter, FiUpload, FiDownload, FiPlus, FiEye, FiEdit2, FiTrash2, FiMoreHorizontal, FiFolder, FiMoreVertical, FiX } from 'react-icons/fi';
-import { MdDashboard, MdQuestionAnswer, MdAssignment, MdAssessment, MdBarChart } from 'react-icons/md';
-import { IoMdSettings, IoMdHelp } from 'react-icons/io';
-import { RiLogoutBoxLine } from 'react-icons/ri';
+import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiEye, FiEdit2, FiTrash2, FiMoreHorizontal, FiFolder, FiMoreVertical, FiX, FiEdit, FiTrash } from 'react-icons/fi';
 import { FaTag } from 'react-icons/fa';
 import {
-  NavbarContainer,
-  NavLeft,
-  MenuButton,
-  NavigationDropdown,
-  NavDropdownButton,
-  NavDropdownContent,
-  NavDropdownItem,
   SearchContainer,
   SearchInput,
-  SearchIcon,
-  NavRight,
-  NotificationButton,
-  NotificationBadge,
-  ProfileDropdown,
-  ProfileButton,
-  ProfileImage,
-  ProfileDropdownContent,
-  ProfileDropdownItem
+  SearchIconWrapper
 } from '../../../styles/navbar'
 import {
   PageHeaderContainer,
@@ -32,8 +14,6 @@ import {
 } from '../../../styles/header';
 import {
   TabsContainer,
-  TabsList,
-  TabTrigger,
   TabContent
 } from '../../../styles/tab';
 import {
@@ -102,6 +82,10 @@ import {
   QuestionHeader, QuestionTitle, QuestionBadge, QuestionActions,
   QuestionContent, QuestionMeta, QuestionTags, QuestionTag,
 } from '../../../styles/questionList';
+import Navbar from '../../../../src/components/shared/Navbar'
+import PageHeader from '../../../components/Question/PageHeader';
+import Tabs from '../../../components/Question/Tabs';
+import Dropdown from '../../../components/Question/Dropdown/Dropdown';
 
 const QuestionBankPage = () => {
   const [activeTab, setActiveTab] = useState('questions');
@@ -155,82 +139,34 @@ const QuestionBankPage = () => {
     }
   ];
 
+  const handleEdit = () => console.log('Edit clicked');
+  const handleDelete = () => console.log('Delete clicked');
+
   return (
     <div>
       {/* Navbar Superior */}
-      <NavbarContainer>
-        <NavLeft>
-          <MenuButton>
-            <FiMenu />
-          </MenuButton>
-
-          <NavigationDropdown>
-            <NavDropdownButton>
-              Navegação <FiChevronDown />
-            </NavDropdownButton>
-            <NavDropdownContent>
-              <NavDropdownItem>
-                <MdDashboard /> Dashboard
-              </NavDropdownItem>
-              <NavDropdownItem>
-                <MdQuestionAnswer /> Banco de Questões
-              </NavDropdownItem>
-              <NavDropdownItem>
-                <MdAssignment /> Geração de Prova
-              </NavDropdownItem>
-              <NavDropdownItem>
-                <MdAssessment /> Avaliação
-              </NavDropdownItem>
-              <NavDropdownItem>
-                <MdBarChart /> Estatísticas
-              </NavDropdownItem>
-            </NavDropdownContent>
-          </NavigationDropdown>
-        </NavLeft>
-
-        <SearchContainer>
-          <SearchIcon as={FiSearch} />
-          <SearchInput
-            placeholder="Buscar..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </SearchContainer>
-
-        <NavRight>
-          <NotificationButton>
-            <FiBell />
-            <NotificationBadge>3</NotificationBadge>
-          </NotificationButton>
-
-          <ProfileDropdown>
-            <ProfileButton>
-              <ProfileImage>
-                <FiUser />
-              </ProfileImage>
-              <FiChevronDown />
-            </ProfileButton>
-            <ProfileDropdownContent>
-              <ProfileDropdownItem>
-                <FiUser /> Perfil
-              </ProfileDropdownItem>
-              <ProfileDropdownItem onClick={() => setShowSettingsModal(true)}>
-                <IoMdSettings /> Configurações
-              </ProfileDropdownItem>
-              <ProfileDropdownItem>
-                <IoMdHelp /> Ajuda
-              </ProfileDropdownItem>
-              <ProfileDropdownItem>
-                <RiLogoutBoxLine /> Sair
-              </ProfileDropdownItem>
-            </ProfileDropdownContent>
-          </ProfileDropdown>
-        </NavRight>
-      </NavbarContainer>
+      <Navbar searchValue={searchTerm} onSearchChange={setSearchTerm} />
 
       {/* Conteúdo da Página */}
       <div style={{ padding: '0 2rem' }}>
         {/* Header da Página */}
+        <PageHeader title="Banco de Questões"
+          description="Gerencie suas questões, categorias e organize seu conteúdo"
+        />
+        {/* TABS */}
+        <Tabs
+          tabs={[
+            { id: 'questions', label: 'Lista de Questões' },
+            { id: 'new-question', label: 'Nova Questão' },
+            { id: 'folders', label: 'Pastas' }
+          ]}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        >
+          <div id="questions">Conteúdo da lista de questões</div>
+          <div id="new-question">Formulário de nova questão</div>
+          <div id="folders">Gerenciamento de pastas</div>
+        </Tabs>
         <PageHeaderContainer>
           <PageTitleContainer>
             <h1>Banco de Questões</h1>
@@ -251,28 +187,7 @@ const QuestionBankPage = () => {
         </PageHeaderContainer>
 
         {/* Tabs */}
-        <TabsContainer>
-          <TabsList>
-            <TabTrigger
-              className={activeTab === 'questions' ? 'active' : ''}
-              onClick={() => setActiveTab('questions')}
-            >
-              Lista de Questões
-            </TabTrigger>
-            <TabTrigger
-              className={activeTab === 'new-question' ? 'active' : ''}
-              onClick={() => setActiveTab('new-question')}
-            >
-              Nova Questão
-            </TabTrigger>
-            <TabTrigger
-              className={activeTab === 'folders' ? 'active' : ''}
-              onClick={() => setActiveTab('folders')}
-            >
-              Gestão de Pastas
-            </TabTrigger>
-          </TabsList>
-
+        <TabsContainer orientation='horizontal' >
           {/* Conteúdo das Tabs */}
           <TabContent>
             {activeTab === 'questions' && (
@@ -289,7 +204,7 @@ const QuestionBankPage = () => {
                       <FilterGroup>
                         <FilterLabel>Buscar</FilterLabel>
                         <SearchContainer>
-                          <SearchIcon as={FiSearch} />
+                          <SearchIconWrapper as={FiSearch} />
                           <SearchInput
                             placeholder="Buscar questões..."
                             value={searchTerm}
@@ -359,6 +274,22 @@ const QuestionBankPage = () => {
                             <ActionItem>
                               <FiEye /> Visualizar
                             </ActionItem>
+                            <Dropdown
+                              trigger={<FiMoreHorizontal />}
+                              items={[
+                                {
+                                  id: 'edit',
+                                  content: (<><FiEdit /> Editar</>),
+                                  onClick: handleEdit
+                                },
+                                { id: 'divider-1', divider: true },
+                                {
+                                  id: 'delete',
+                                  content: (<><FiTrash /> Excluir</>),
+                                  onClick: handleDelete
+                                }
+                              ]}
+                            />
                             <ActionItem>
                               <FiEdit2 /> Editar
                             </ActionItem>

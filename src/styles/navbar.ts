@@ -89,18 +89,19 @@ export const SearchInput = styled.input`
   padding: 0.5rem 1rem 0.5rem 2.5rem;
   border-radius: 4px;
   border: none;
-  background-color: var(--glass-background);
   color: white;
+  background-color: var(--glass-background);
   &::placeholder {
     color: rgba(255, 255, 255, 0.7);
   }
 `;
 
-export const SearchIcon = styled(FiSearch)`
+export const SearchIconWrapper = styled(FiSearch)`
   position: absolute;
   left: 0.75rem;
   top: 50%;
   transform: translateY(-50%);
+  color: white;
 `;
 
 // Right Side - Notifications and Profile
@@ -135,47 +136,6 @@ export const NotificationBadge = styled.span`
   font-weight: bold;
 `;
 
-export const ProfileDropdown = styled.div`
-  position: relative;
-  display: inline-block;
-`;
-
-export const ProfileButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-`;
-
-export const ProfileImage = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const ProfileDropdownContent = styled.div`
-  position: absolute;
-  right: 0;
-  background-color: white;
-  min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-  border-radius: 4px;
-  top: 100%;
-  margin-top: 0.5rem;
-  display: none;
-
-  ${ProfileDropdown}:hover & {
-    display: block;
-  }
-`;
 
 export const ProfileDropdownItem = styled.a`
   color: var(--color-text);

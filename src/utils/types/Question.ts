@@ -144,3 +144,19 @@ export interface Filter {
   minCorrectRate?: number;
   contentId?: string;
 }
+
+export interface TabItem {
+  id: string;
+  label: string;
+  disabled?: boolean;
+  icon?: React.ReactNode;
+}
+
+export interface TabsProps {
+  tabs: TabItem[];
+  activeTab: string;
+  onTabChange: (id: string) => void;
+  children: React.ReactNode;
+  variant?: 'default' | 'underline' | 'pills';
+  orientation?: 'horizontal' | 'vertical';
+}
