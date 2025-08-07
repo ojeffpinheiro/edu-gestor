@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
-import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiEye, FiEdit2, FiTrash2, FiMoreHorizontal, FiFolder, FiMoreVertical, FiX, FiEdit, FiTrash } from 'react-icons/fi';
-import { FaTag } from 'react-icons/fa';
+import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiFolder, FiMoreVertical, FiX } from 'react-icons/fi';
+
+import Navbar from '../../../../src/components/shared/Navbar'
+import PageHeader from '../../../components/Question/PageHeader';
+import Tabs from '../../../components/Question/Tabs';
+import Filters from '../../../components/Question/Filter/Filters';
+import AdvancedFilters from '../../../components/Results/AdvancedFilters';
+
 import {
   SearchContainer,
   SearchInput,
@@ -75,24 +81,33 @@ import {
   ModalActions,
   ModalButton
 } from '../../../styles/settingsModalStyles';
-import {
-  QuestionCard,
-  QuestionsGrid,
-  ActionItem, ActionsDropdown, MoreActionsButton,
-  QuestionHeader, QuestionTitle, QuestionBadge, QuestionActions,
-  QuestionContent, QuestionMeta, QuestionTags, QuestionTag,
-} from '../../../styles/questionList';
-import Navbar from '../../../../src/components/shared/Navbar'
-import PageHeader from '../../../components/Question/PageHeader';
-import Tabs from '../../../components/Question/Tabs';
-import Dropdown from '../../../components/Question/Dropdown/Dropdown';
+import { QuestionsGrid } from '../../../styles/questionList';
+import { QuestionCard } from '../../../components/Question/QuestionCard';
+import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
+import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
 
 const QuestionBankPage = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('questions');
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [searchValue, setSearchValue] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  const categoryOptions = [
+    { value: 'math', label: 'Matemática' },
+    { value: 'science', label: 'Ciências' }
+  ];
+
+  const difficultyOptions = [
+    { value: 'easy', label: 'Fácil' },
+    { value: 'medium', label: 'Médio' },
+    { value: 'hard', label: 'Difícil' }
+  ];
 
   // Dados de exemplo
   const categories = [
@@ -139,6 +154,74 @@ const QuestionBankPage = () => {
     }
   ];
 
+  const fields = [
+    {
+      name: 'title',
+      label: 'Título da Questão',
+      type: 'text',
+      required: true,
+      placeholder: 'Digite o título'
+    },
+    {
+      name: 'category',
+      label: 'Categoria',
+      type: 'select',
+      required: true,
+      options: [
+        { value: 'math', label: 'Matemática' },
+        { value: 'science', label: 'Ciências' }
+      ]
+    },
+    {
+      name: 'content',
+      label: 'Enunciado',
+      type: 'textarea',
+      required: true
+    }
+  ];
+
+  
+  const sections = [
+    {
+      title: 'Preferências',
+      options: [
+        {
+          id: 'dark-mode',
+          label: 'Modo Escuro',
+          description: 'Ativar tema escuro',
+          control: (
+            <input
+              type="checkbox"
+              checked={isDarkMode}
+              onChange={() => setIsDarkMode(!isDarkMode)}
+            />
+          )
+        }
+      ]
+    },
+    {
+      title: 'Notificações',
+      options: [
+        {
+          id: 'notifications',
+          label: 'Notificações',
+          description: 'Receber notificações por e-mail',
+          control: (
+            <input
+              type="checkbox"
+              checked={notificationsEnabled}
+              onChange={() => setNotificationsEnabled(!notificationsEnabled)}
+            />
+          )
+        }
+      ]
+    }
+  ];
+
+  const handleSubmit = (values) => {
+    console.log('Dados do formulário:', values);
+  };
+
   const handleEdit = () => console.log('Edit clicked');
   const handleDelete = () => console.log('Delete clicked');
 
@@ -167,6 +250,7 @@ const QuestionBankPage = () => {
           <div id="new-question">Formulário de nova questão</div>
           <div id="folders">Gerenciamento de pastas</div>
         </Tabs>
+
         <PageHeaderContainer>
           <PageTitleContainer>
             <h1>Banco de Questões</h1>
@@ -193,6 +277,18 @@ const QuestionBankPage = () => {
             {activeTab === 'questions' && (
               <>
                 {/* Filtros */}
+                <Filters
+                  searchValue={searchValue}
+                  onSearchChange={setSearchValue}
+                  categoryOptions={categoryOptions}
+                  difficultyOptions={difficultyOptions}
+                  selectedCategory={selectedCategory}
+                  selectedDifficulty={selectedDifficulty}
+                  onCategoryChange={setSelectedCategory}
+                  onDifficultyChange={setSelectedDifficulty}
+                  showAdvanced={showAdvanced}
+                  onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
+                />
                 <FiltersContainer>
                   <FiltersHeader>
                     <FiltersTitle>
@@ -254,68 +350,13 @@ const QuestionBankPage = () => {
                 {/* Lista de Questões */}
                 <QuestionsGrid>
                   {questions.map(question => (
-                    <QuestionCard key={question.id}>
-                      <QuestionHeader>
-                        <div>
-                          <QuestionTitle>{question.title}</QuestionTitle>
-                          <QuestionBadge className={question.difficulty.toLowerCase()}>
-                            {question.difficulty}
-                          </QuestionBadge>
-                          <QuestionBadge className={question.type.toLowerCase().replace(' ', '-')}>
-                            {question.type}
-                          </QuestionBadge>
-                        </div>
-
-                        <QuestionActions>
-                          <MoreActionsButton>
-                            <FiMoreHorizontal />
-                          </MoreActionsButton>
-                          <ActionsDropdown>
-                            <ActionItem>
-                              <FiEye /> Visualizar
-                            </ActionItem>
-                            <Dropdown
-                              trigger={<FiMoreHorizontal />}
-                              items={[
-                                {
-                                  id: 'edit',
-                                  content: (<><FiEdit /> Editar</>),
-                                  onClick: handleEdit
-                                },
-                                { id: 'divider-1', divider: true },
-                                {
-                                  id: 'delete',
-                                  content: (<><FiTrash /> Excluir</>),
-                                  onClick: handleDelete
-                                }
-                              ]}
-                            />
-                            <ActionItem>
-                              <FiEdit2 /> Editar
-                            </ActionItem>
-                            <ActionItem className="delete">
-                              <FiTrash2 /> Excluir
-                            </ActionItem>
-                          </ActionsDropdown>
-                        </QuestionActions>
-                      </QuestionHeader>
-
-                      <QuestionContent>{question.content}</QuestionContent>
-
-                      <QuestionMeta>
-                        <span>Categoria: {question.category}</span>
-                        <span>Criada em: {question.createdAt}</span>
-                        <span>Última utilização: {question.lastUsed}</span>
-                      </QuestionMeta>
-
-                      <QuestionTags>
-                        {question.tags.map((tag, index) => (
-                          <QuestionTag key={index}>
-                            <FaTag size={12} /> {tag}
-                          </QuestionTag>
-                        ))}
-                      </QuestionTags>
-                    </QuestionCard>
+                    <QuestionCard
+                      question={question}
+                      onView={() => console.log('Visualizar')}
+                      onEdit={() => console.log('Editar')}
+                      onDelete={() => console.log('Excluir')}
+                      onTagClick={(tag) => console.log('Tag clicada:', tag)}
+                    />
                   ))}
                 </QuestionsGrid>
               </>
@@ -331,63 +372,13 @@ const QuestionBankPage = () => {
                 </QuestionFormHeader>
 
                 <QuestionFormContent>
-                  <FormGrid>
-                    <div>
-                      <FormGroup>
-                        <FormLabel>Título da Questão</FormLabel>
-                        <FormInput placeholder="Digite o título da questão" />
-                      </FormGroup>
 
-                      <FormGroup>
-                        <FormLabel>Categoria</FormLabel>
-                        <FormSelect>
-                          <option value="">Selecione a categoria</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </FormSelect>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <FormLabel>Dificuldade</FormLabel>
-                        <FormSelect>
-                          <option value="">Selecione a dificuldade</option>
-                          <option value="easy">Fácil</option>
-                          <option value="medium">Médio</option>
-                          <option value="hard">Difícil</option>
-                        </FormSelect>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <FormLabel>Tipo de Questão</FormLabel>
-                        <FormSelect>
-                          <option value="">Selecione o tipo</option>
-                          <option value="multiple-choice">Múltipla escolha</option>
-                          <option value="essay">Dissertativa</option>
-                          <option value="true-false">Verdadeiro/Falso</option>
-                        </FormSelect>
-                      </FormGroup>
-                    </div>
-
-                    <div>
-                      <FormGroup>
-                        <FormLabel>Enunciado</FormLabel>
-                        <FormTextarea placeholder="Digite o enunciado da questão..." />
-                      </FormGroup>
-
-                      <FormGroup>
-                        <FormLabel>Tags (separadas por vírgula)</FormLabel>
-                        <FormInput placeholder="álgebra, equações, 9º ano" />
-                      </FormGroup>
-                    </div>
-                  </FormGrid>
-
-                  <FormActions>
-                    <FormButton className="outline">Cancelar</FormButton>
-                    <FormButton className="primary">Salvar Questão</FormButton>
-                  </FormActions>
+                  <QuestionForm
+                    title="Criar Nova Questão"
+                    description="Preencha os campos abaixo"
+                    fields={fields}
+                    onSubmit={handleSubmit}
+                  />
                 </QuestionFormContent>
               </QuestionFormContainer>
             )}
@@ -441,73 +432,26 @@ const QuestionBankPage = () => {
         </TabsContainer>
       </div>
 
+      {showAdvanced && (
+        <AdvancedFilters />
+      )}
+
       {/* Modal de Configurações */}
-      {showSettingsModal && (
-        <ModalOverlay onClick={() => setShowSettingsModal(false)}>
-          <ModalContainer onClick={(e) => e.stopPropagation()}>
-            <ModalHeader>
-              <ModalTitle>Configurações</ModalTitle>
-              <ModalCloseButton onClick={() => setShowSettingsModal(false)}>
-                <FiX />
-              </ModalCloseButton>
-            </ModalHeader>
-
-            <ModalContent>
-              <SettingsSection>
-                <SettingsSectionTitle>Preferências</SettingsSectionTitle>
-
-                <SettingsOption>
-                  <SettingsOptionLabel>Tema</SettingsOptionLabel>
-                  <SettingsOptionControl>
-                    <select>
-                      <option>Claro</option>
-                      <option>Escuro</option>
-                      <option>Sistema</option>
-                    </select>
-                  </SettingsOptionControl>
-                </SettingsOption>
-
-                <SettingsOption>
-                  <SettingsOptionLabel>Idioma</SettingsOptionLabel>
-                  <SettingsOptionControl>
-                    <select>
-                      <option>Português</option>
-                      <option>Inglês</option>
-                      <option>Espanhol</option>
-                    </select>
-                  </SettingsOptionControl>
-                </SettingsOption>
-              </SettingsSection>
-
-              <SettingsSection>
-                <SettingsSectionTitle>Notificações</SettingsSectionTitle>
-
-                <SettingsOption>
-                  <SettingsOptionLabel>Notificações por email</SettingsOptionLabel>
-                  <SettingsOptionControl>
-                    <input type="checkbox" />
-                  </SettingsOptionControl>
-                </SettingsOption>
-
-                <SettingsOption>
-                  <SettingsOptionLabel>Notificações no sistema</SettingsOptionLabel>
-                  <SettingsOptionControl>
-                    <input type="checkbox" defaultChecked />
-                  </SettingsOptionControl>
-                </SettingsOption>
-              </SettingsSection>
-            </ModalContent>
-
-            <ModalActions>
-              <ModalButton className="outline" onClick={() => setShowSettingsModal(false)}>
-                Cancelar
-              </ModalButton>
-              <ModalButton className="primary">
-                Salvar Configurações
-              </ModalButton>
-            </ModalActions>
-          </ModalContainer>
-        </ModalOverlay>
+      {isOpen && (
+        <SettingsModal
+          title="Configurações do Sistema"
+          sections={sections}
+          onClose={() => setIsOpen(false)}
+          actions={
+            <>
+              <button onClick={() => setIsOpen(false)}>Cancelar</button>
+              <button onClick={() => {
+                saveSettings();
+                setIsOpen(false);
+              }}>Salvar</button>
+            </>
+          }
+        />
       )}
     </div>
   );
