@@ -12,19 +12,21 @@ import {
 import { FiltersProps } from './types';
 import { SearchBar } from '../../shared/SearchBar';
 import FilterGroup from './FilterGroup';
+import { QuestionType } from '../../../utils/types/Question';
 
 const Filters = ({
   searchValue,
-  onSearchChange,
+  className,
   categoryOptions,
   difficultyOptions,
   selectedCategory,
   selectedDifficulty,
+  showAdvanced = false,
   onCategoryChange,
   onDifficultyChange,
-  showAdvanced = false,
+  onQuestionTypeFilter,
+  onSearchChange,
   onAdvancedToggle,
-  className
 }: FiltersProps) => {
   return (
     <FiltersContainer className={className}>
@@ -69,6 +71,16 @@ const Filters = ({
                   {option.label}
                 </option>
               ))}
+            </FilterSelect>
+          </FilterGroup>
+
+          <FilterGroup label="Tipo de Questão">
+            <FilterSelect onChange={(e) => onQuestionTypeFilter(e.target.value as QuestionType)}>
+              <option value="all">Todos</option>
+              <option value="multiple_choice">Múltipla Escolha</option>
+              <option value="true_false">Verdadeiro/Falso</option>
+              <option value="essay">Dissertativa</option>
+              <option value="fill_in_the_blank">Preenchimento</option>
             </FilterSelect>
           </FilterGroup>
 

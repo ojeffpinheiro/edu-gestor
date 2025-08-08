@@ -1,6 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Question } from './QuestionActions';
+import { QuestionBack } from '../../utils/types/Question';
+import { FaPencilAlt, FaRegEye } from 'react-icons/fa';
+import { FiTrash2 } from 'react-icons/fi';
 
 const Table = styled.table`
   width: 100%;
@@ -50,15 +52,15 @@ const ActionButton = styled.button`
 `;
 
 interface QuestionsTableProps {
-  questions: Question[];
-  onView: (question: Question) => void;
-  onEdit: (question: Question) => void;
-  onDelete: (question: Question) => void;
+  questions: QuestionBack[];
+  onView: (question: QuestionBack) => void;
+  onEdit: (question: QuestionBack) => void;
+  onDelete: (question: QuestionBack) => void;
   selectedQuestions: Set<string | number>;
   onSelect: (id: string | number) => void;
 }
 
-export const QuestionsTable: React.FC<QuestionsTableProps> = ({
+const QuestionsTable: React.FC<QuestionsTableProps> = ({
   questions,
   onView,
   onEdit,
@@ -113,19 +115,19 @@ export const QuestionsTable: React.FC<QuestionsTableProps> = ({
               </span>
             </TableCell>
             <TableCell>
-              {question.type === 'multiple-choice' && 'Múltipla escolha'}
+              {question.type === 'multiple_choice' && 'Múltipla escolha'}
               {question.type === 'essay' && 'Dissertativa'}
-              {question.type === 'true-false' && 'V/F'}
+              {question.type === 'true_false' && 'V/F'}
             </TableCell>
             <TableCell>
               <ActionButton onClick={() => onView(question)} title="Visualizar">
-                👁️
+                <FaRegEye />
               </ActionButton>
               <ActionButton onClick={() => onEdit(question)} title="Editar">
-                ✏️
+                <FaPencilAlt /> 
               </ActionButton>
               <ActionButton onClick={() => onDelete(question)} title="Excluir">
-                🗑️
+                <FiTrash2 />
               </ActionButton>
             </TableCell>
           </TableRow>
@@ -134,3 +136,5 @@ export const QuestionsTable: React.FC<QuestionsTableProps> = ({
     </Table>
   );
 };
+
+export default QuestionsTable;

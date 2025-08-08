@@ -9,7 +9,7 @@ import {
 import { QuestionDetailModalProps } from './types';
 import { Modal } from '../../Modal';
 
-export const QuestionDetailModal = ({
+const QuestionDetailModal = ({
   question,
   isOpen,
   onClose,
@@ -103,3 +103,5 @@ export const QuestionDetailModal = ({
     </Modal>
   );
 };
+
+export default QuestionDetailModal;

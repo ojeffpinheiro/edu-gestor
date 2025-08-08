@@ -40,7 +40,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = (
     tags: ['', ''],
     dateRange: { start: '', end: '' },
     minCorrectRate: undefined,
-    maxCorrectRate: undefined
+    maxCorrectRate: undefined,
+    discipline: '',
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -83,7 +84,8 @@ const FiltersPanel: React.FC<FiltersPanelProps> = (
       tags: [],
       dateRange: { start: '', end: '' },
       minCorrectRate: undefined,
-      maxCorrectRate: undefined
+      maxCorrectRate: undefined,
+      discipline: '',
     });
     onApply({} as QuestionFilters);
   };

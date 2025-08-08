@@ -1,3 +1,5 @@
+import { QuestionType } from "../../../utils/types/Question";
+
 export interface FilterOption {
   value: string;
   label: string;
@@ -14,5 +16,6 @@ export interface FiltersProps {
   onDifficultyChange: (value: string) => void;
   showAdvanced?: boolean;
   onAdvancedToggle?: () => void;
+  onQuestionTypeFilter: (value: QuestionType) => void;
   className?: string;
 }

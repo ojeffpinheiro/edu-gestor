@@ -4,10 +4,11 @@ import { QuestionsGrid } from '../../../styles/questionList';
 import QuestionCard from '../QuestionCard';
 import Filters from '../Filter/Filters';
 import { Category } from '../QuestionForm/type';
-import { QuestionViewModeToggle } from '../QuestionView/QuestionViewModeToggle';
-import { QuestionDetailModal } from '../QuestionView/QuestionDetailModal';
+import QuestionViewModeToggle from '../QuestionView/QuestionViewModeToggle';
+import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
 import Modal from '../../modals/Modal';
-import { QuestionsTable } from '../QuestionsTable';
+import QuestionsTable from '../QuestionsTable';
+import { QuestionBack as Question, QuestionType } from '../../../utils/types/Question';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -22,6 +23,7 @@ interface QuestionsViewProps {
     sortField: string;
     sortDirection: 'asc' | 'desc';
     onSortChange: (field: string, direction: 'asc' | 'desc') => void;
+    onFindSimilar?: (questionId: string | number) => void;
 }
 
 const QuestionsView: React.FC<QuestionsViewProps> = ({
@@ -36,7 +38,8 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     sortOptions,
     sortField,
     sortDirection,
-    onSortChange
+    onSortChange,
+    onFindSimilar
 }) => {
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
@@ -91,6 +94,38 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         setSelectedQuestions(new Set());
     };
 
+    const handleFindSimilar = (question: Question) => {
+        console.log('Buscando similares a:', question.id);
+        // Lógica para buscar questões similares (por tags, conteúdo, etc.)
+    };
+
+    const handleCreateVariant = (question: Question) => {
+        console.log('Criando variação de:', question);
+        // Lógica para criar variação (copiar questão com modificações)
+    };
+
+    const handleQuestionTypeFilter = (type: QuestionType | 'all') => {
+        console.log('Filtrando por tipo:', type);
+        // Implemente a filtragem por tipo
+    };
+
+    const renderAnswerPreview = (question: Question) => {
+        switch (question.type) {
+            case 'multiple_choice':
+                return question.answers?.map(a => (
+                    <div key={a.id}>
+                        {a.content} {a.isCorrect && '✓'}
+                    </div>
+                ));
+            case 'true_false':
+                return <div>Resposta: {question.answers?.[0]?.content}</div>;
+            case 'essay':
+                return <div>Modelo de resposta: {question.explanation}</div>;
+            default:
+                return null;
+        }
+    };
+
     return (
         <>
             <Filters
@@ -98,12 +133,13 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 onSearchChange={onSearchChange}
                 categoryOptions={categoryOptions}
                 difficultyOptions={difficultyOptions}
+                showAdvanced={showAdvanced}
+                onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
                 selectedCategory={selectedCategory}
                 selectedDifficulty={selectedDifficulty}
                 onCategoryChange={onCategoryChange}
                 onDifficultyChange={onDifficultyChange}
-                showAdvanced={showAdvanced}
-                onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
+                onQuestionTypeFilter={handleQuestionTypeFilter}
             />
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>

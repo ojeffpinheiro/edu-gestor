@@ -1,8 +1,7 @@
 import React, { memo } from 'react';
 import { FaTag } from 'react-icons/fa';
-import { 
+import QuestionActions, { 
   BadgeContainer, 
-  QuestionActions, 
   QuestionBadge, 
   QuestionCardContainer, 
   QuestionHeader, 
@@ -14,10 +13,10 @@ import {
   SelectCheckbox 
 } from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
-import { QuestionType } from '../../utils/types/Question';
+import { QuestionBack } from '../../utils/types/Question';
 
 interface QuestionCardProps {
-  question: Question | 'all'; // Permite o tipo 'all' para tratamento especial
+  question: QuestionBack | 'all'; // Permite o tipo 'all' para tratamento especial
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -27,19 +26,6 @@ interface QuestionCardProps {
   onSelect?: (id: string | number) => void; // Atualizado para aceitar string ou number
 }
 
-interface Question {
-  id: number | string;
-  title: string;
-  content: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  type: QuestionType;
-  tags: string[];
-  createdAt: string;
-  lastUsed?: string;
-  accuracy?: number;
-  usageCount?: number;
-}
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
   question,
@@ -93,6 +79,7 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
           onView={onView}
           onEdit={onEdit}
           onDelete={onDelete}
+          question={question}
         />
       </QuestionHeader>
 

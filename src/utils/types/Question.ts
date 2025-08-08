@@ -112,6 +112,7 @@ export interface QuestionFilters {
   contentId: string;
   difficulty: DifficultyLevelType | '';
   questionType: QuestionType | '';
+  discipline: DisciplineType | '';
   status: QuestionStatus | '';
   tags: string[];
   dateRange: { start: string; end: string };
@@ -168,4 +169,29 @@ export interface SavedFilter {
   name: string;
   filters: QuestionFilters;
   isDefault?: boolean;
+}
+
+
+export type Answer = {
+  id: string;
+  isCorrect: boolean;
+  type: 'text' | 'single_select' | 'multi_select' | 'boolean';
+  content: string | string[] | boolean;
+}
+
+export interface QuestionBack {
+  id: number | string;
+  title: string;
+  content: string;
+  category: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+  type: QuestionType;
+  tags: string[];
+  createdAt: string;
+  lastUsed?: string;
+  accuracy?: number;
+  usageCount?: number;
+  answers?: Answer[];
+  explanation?: string;
+  correctAnswers?: number[];
 }

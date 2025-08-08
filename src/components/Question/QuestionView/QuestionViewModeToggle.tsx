@@ -3,7 +3,7 @@ import { FiGrid, FiList } from 'react-icons/fi';
 import { ViewModeContainer, ViewModeButton } from './styles';
 import { QuestionViewModeToggleProps } from './types';
 
-export const QuestionViewModeToggle = ({
+const QuestionViewModeToggle = ({
   mode,
   onChange,
   className
@@ -27,3 +27,5 @@ export const QuestionViewModeToggle = ({
     </ViewModeContainer>
   );
 };
+
+export default QuestionViewModeToggle;

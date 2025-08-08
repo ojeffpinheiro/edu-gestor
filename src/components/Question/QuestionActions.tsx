@@ -1,31 +1,22 @@
 import React from 'react'
-import { FiEye, FiEdit2, FiTrash2, FiMoreHorizontal } from 'react-icons/fi';
+import { FiTrash2, FiMoreHorizontal } from 'react-icons/fi';
 import styled from 'styled-components';
 import Dropdown from './Dropdown/Dropdown';
+import { QuestionBack } from '../../utils/types/Question';
+import { FaCopy, FaPencilAlt, FaRegEye, FaSearch } from 'react-icons/fa';
 
 interface QuestionActionsProps {
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onCreateVariant?: (question: QuestionBack) => void;
+  onFindSimilar?: (question: QuestionBack) => void;
   className?: string;
-}
-
-export interface Question {
-  id: string | number;
-  title: string;
-  content: string;
-  category: string;
-  difficulty: 'easy' | 'medium' | 'hard';
-  type: 'multiple-choice' | 'essay' | 'true-false';
-  tags: string[];
-  createdAt: string;
-  lastUsed?: string;
-  accuracy?: number;
-  usageCount?: number;
+  question: QuestionBack;
 }
 
 export interface QuestionCardProps {
-  question: Question;
+  question: QuestionBack;
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -162,34 +153,53 @@ export const SelectCheckbox = styled.input`
   cursor: pointer;
 `;
 
-export const QuestionActions = ({
+const QuestionActions = ({
   onView,
   onEdit,
   onDelete,
-  className
+  onCreateVariant,
+  onFindSimilar,
+  className,
+  question
 }: QuestionActionsProps) => {
+  const handleCreateVariantWrapper = () => {
+    if (onCreateVariant) {
+      // Aqui você precisará ter acesso à questão atual
+      // Isso pode ser resolvido de diferentes formas (contexto, prop adicional, etc.)
+      // Exemplo simplificado:
+      onCreateVariant(question); // Você precisará ter acesso à 'question'
+    }
+  };
+
+  const handleFindSimilarWrapper = () => {
+    if (onFindSimilar) {
+      onFindSimilar(question); // Você precisará ter acesso à 'question'
+    }
+  };
+  
   return (
     <Dropdown
       trigger={<FiMoreHorizontal className={className} />}
       items={[
         {
           id: 'view',
-          content: (
-            <>
-              <FiEye /> Visualizar
-            </>
-          ),
+          content: (<><FaRegEye /> Visualizar</>),
           onClick: onView
         },
         {
           id: 'edit',
-          content: (<><FiEdit2 /> Editar</>),
+          content: (<><FaPencilAlt /> Editar</>),
           onClick: onEdit
         },
         {
-          id: 'divider',
-          divider: true,
-          content: <></> // Add empty content for divider
+          id: 'create-variant',
+          content: (<><FaCopy /> Criar Variação</>),
+          onClick: handleCreateVariantWrapper
+        },
+        {
+          id: 'find-similar',
+          content: (<><FaSearch /> Encontrar Similares</>),
+          onClick: handleFindSimilarWrapper
         },
         {
           id: 'delete',
@@ -202,3 +212,5 @@ export const QuestionActions = ({
     />
   );
 };
+
+export default QuestionActions;
