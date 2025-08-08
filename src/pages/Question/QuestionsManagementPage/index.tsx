@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiPlus, FiFolder, FiMoreVertical } from 'react-icons/fi';
+import { FiPlus } from 'react-icons/fi';
 
 import Navbar from '../../../../src/components/shared/Navbar'
 import PageHeader from '../../../components/Question/PageHeader';
@@ -9,7 +9,7 @@ import AdvancedFilters from '../../../components/Results/AdvancedFilters';
 import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
 import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
 import QuestionCard from '../../../components/Question/QuestionCard';
-import { FormField } from '../../../components/Question/QuestionForm/type';
+import { Category, FormField } from '../../../components/Question/QuestionForm/type';
 import { SortControls } from '../../../components/Sort/SortControls';
 import { SortOption } from '../../../components/Sort/types';
 
@@ -34,19 +34,11 @@ import {
   FoldersHeader,
   FoldersTitle,
   FoldersGrid,
-  FolderCard,
-  FolderHeader,
-  FolderIcon,
-  FolderTitle,
-  FolderCount,
-  FolderActions,
-  FolderMoreButton,
-  FolderActionsDropdown,
-  FolderActionItem,
   AddFolderCard,
   AddFolderIcon,
   AddFolderText
 } from '../../../styles/folderManagementStyles';
+import FolderCard from '../../../components/Question/FolderCard';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -86,12 +78,12 @@ const QuestionBankPage = () => {
   };
 
   // Dados de exemplo
-  const categories = [
-    { id: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
-    { id: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
-    { id: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
-    { id: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
-    { id: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
+  const categories: Category[] = [
+    { i: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
+    { i: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
+    { i: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
+    { i: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
+    { i: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
   ];
 
   const questions = [
@@ -316,29 +308,8 @@ const QuestionBankPage = () => {
 
                 <FoldersGrid>
                   {categories.map(category => (
-                    <FolderCard key={category.id}>
-                      <FolderHeader>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                          <FolderIcon>
-                            <FiFolder />
-                          </FolderIcon>
-                          <div>
-                            <FolderTitle>{category.name}</FolderTitle>
-                            <FolderCount>{category.count} questões</FolderCount>
-                          </div>
-                        </div>
-
-                        <FolderActions>
-                          <FolderMoreButton>
-                            <FiMoreVertical />
-                          </FolderMoreButton>
-                          <FolderActionsDropdown>
-                            <FolderActionItem>Editar</FolderActionItem>
-                            <FolderActionItem className="delete">Excluir</FolderActionItem>
-                          </FolderActionsDropdown>
-                        </FolderActions>
-                      </FolderHeader>
-                    </FolderCard>
+                    <FolderCard i={category.i} name={category.name} 
+                      color={category.color} count={category.count} />
                   ))}
 
                   <AddFolderCard>

@@ -26,7 +26,7 @@ export const FoldersGrid = styled.div`
   padding: 1.5rem;
 `;
 
-export const FolderCard = styled.div`
+export const FolderCardContent = styled.div`
   background-color: var(--color-background-secondary);
   border: 1px solid var(--color-border);
   border-radius: 8px;

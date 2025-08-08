@@ -18,3 +18,10 @@ export interface QuestionFormProps {
   cancelText?: string;
   className?: string;
 }
+
+export interface Category {
+  i: string;
+  name: string;
+  count: number;
+  color: string;
+}
