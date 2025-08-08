@@ -1,26 +1,26 @@
 import React, { useState } from 'react';
 
-import Navbar from '../../../../src/components/shared/Navbar'
-import PageHeader from '../../../components/Question/PageHeader';
-import Tabs from '../../../components/Question/Tabs';
-import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
 import { Category, FormField } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
 
-import QuestionsView from '../../../components/Question/views/QuestionsView';
+import Navbar from '../../../../src/components/shared/Navbar'
+import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
+
 import NewQuestionView from '../../../components/Question/views/NewQuestionView';
+import QuestionsView from '../../../components/Question/views/QuestionsView';
 import FoldersView from '../../../components/Question/views/FoldersView';
+import PageHeader from '../../../components/Question/PageHeader';
+import Tabs from '../../../components/Question/Tabs';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('questions');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [searchValue, setSearchValue] = useState('');
-
   const [sortField, setSortField] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 

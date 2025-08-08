@@ -110,12 +110,14 @@ export interface Filters {
 
 export interface QuestionFilters {
   contentId: string;
-  difficulty: DifficultyLevelType;
-  discipline: DisciplineType;
-  questionType?: 'multiple_choice' | 'true_false' | 'essay' | '';
-  status?: 'active' | 'inactive' | '';
+  difficulty: DifficultyLevelType | '';
+  questionType: QuestionType | '';
+  status: QuestionStatus | '';
+  tags: string[];
+  dateRange: { start: string; end: string };
+  minCorrectRate?: number;
+  maxCorrectRate?: number;
 }
-
 export interface Feedback {
   id: string;
   questionId: string;
@@ -159,4 +161,11 @@ export interface TabsProps {
   children: React.ReactNode;
   variant?: 'default' | 'underline' | 'pills';
   orientation?: 'horizontal' | 'vertical';
+}
+
+export interface SavedFilter {
+  id: string;
+  name: string;
+  filters: QuestionFilters;
+  isDefault?: boolean;
 }
