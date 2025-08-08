@@ -1,44 +1,15 @@
 import React, { useState } from 'react';
-import { FiPlus } from 'react-icons/fi';
 
 import Navbar from '../../../../src/components/shared/Navbar'
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
-import Filters from '../../../components/Question/Filter/Filters';
-import AdvancedFilters from '../../../components/Results/AdvancedFilters';
-import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
 import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
-import QuestionCard from '../../../components/Question/QuestionCard';
 import { Category, FormField } from '../../../components/Question/QuestionForm/type';
-import { SortControls } from '../../../components/Sort/SortControls';
 import { SortOption } from '../../../components/Sort/types';
 
-import { QuestionsGrid } from '../../../styles/questionList';
-
-import {
-  ActionButton
-} from '../../../styles/header';
-import {
-  TabsContainer,
-  TabContent
-} from '../../../styles/tab';
-import {
-  QuestionFormContainer,
-  QuestionFormHeader,
-  QuestionFormTitle,
-  QuestionFormDescription,
-  QuestionFormContent,
-} from '../../../styles/questionsForm';
-import {
-  FoldersContainer,
-  FoldersHeader,
-  FoldersTitle,
-  FoldersGrid,
-  AddFolderCard,
-  AddFolderIcon,
-  AddFolderText
-} from '../../../styles/folderManagementStyles';
-import FolderCard from '../../../components/Question/FolderCard';
+import QuestionsView from '../../../components/Question/views/QuestionsView';
+import NewQuestionView from '../../../components/Question/views/NewQuestionView';
+import FoldersView from '../../../components/Question/views/FoldersView';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -49,18 +20,6 @@ const QuestionBankPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedDifficulty, setSelectedDifficulty] = useState('all');
   const [searchValue, setSearchValue] = useState('');
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
-  const categoryOptions = [
-    { value: 'math', label: 'Matemática' },
-    { value: 'science', label: 'Ciências' }
-  ];
-
-  const difficultyOptions = [
-    { value: 'easy', label: 'Fácil' },
-    { value: 'medium', label: 'Médio' },
-    { value: 'hard', label: 'Difícil' }
-  ];
 
   const [sortField, setSortField] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -216,113 +175,37 @@ const QuestionBankPage = () => {
           activeTab={activeTab}
           onTabChange={setActiveTab}
         >
-          <div id="questions">Conteúdo da lista de questões</div>
-          <div id="new-question">Formulário de nova questão</div>
-          <div id="folders">Gerenciamento de pastas</div>
+          <div id="questions">
+            <QuestionsView
+              searchTerm={searchValue}
+              onSearchChange={setSearchValue}
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onCategoryChange={setSelectedCategory}
+              selectedDifficulty={selectedDifficulty}
+              onDifficultyChange={setSelectedDifficulty}
+              questions={questions}
+              sortOptions={sortOptions}
+              sortField={sortField}
+              sortDirection={sortDirection}
+              onSortChange={handleSortChange}
+            />
+          </div>
+
+          <div id="new-question">
+            <NewQuestionView
+              fields={fields}
+              onSubmit={handleSubmit}
+            />
+          </div>
+
+          <div id="folders">
+            <FoldersView
+              categories={categories}
+              onAddFolder={() => console.log('Adicionar pasta')}
+            />
+          </div>
         </Tabs>
-
-        {/* Tabs */}
-        <TabsContainer orientation='horizontal' >
-          {/* Conteúdo das Tabs */}
-          <TabContent>
-            {activeTab === 'questions' && (
-              <>
-                {/* Filtros */}
-                <Filters
-                  searchValue={searchValue}
-                  onSearchChange={setSearchValue}
-                  categoryOptions={categoryOptions}
-                  difficultyOptions={difficultyOptions}
-                  selectedCategory={selectedCategory}
-                  selectedDifficulty={selectedDifficulty}
-                  onCategoryChange={setSelectedCategory}
-                  onDifficultyChange={setSelectedDifficulty}
-                  showAdvanced={showAdvanced}
-                  onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
-                />
-                {showAdvanced && (
-                  <AdvancedFilters
-                    isLoading={isOpen} periods={[]} subjects={[]}
-                    classes={[]} onFilterChange={() => { }}
-                    onReset={() => { }} onApply={() => { }}
-                    currentFilters={{
-                      classId: '',
-                      period: '',
-                      subject: '',
-                      searchTerm: searchValue,
-                    }}
-                  />
-                )}
-
-                {/* Lista de Questões */}
-                <QuestionsGrid>
-                  <SortControls
-                    options={sortOptions}
-                    value={sortField}
-                    direction={sortDirection}
-                    onChange={() => handleSortChange(sortField, sortDirection)}
-                    variant="dropdown"
-                  />
-                  {questions.map(question => (
-                    <QuestionCard
-                      question={question}
-                      onView={() => console.log('Visualizar')}
-                      onEdit={() => console.log('Editar')}
-                      onDelete={() => console.log('Excluir')}
-                      onTagClick={(tag) => console.log('Tag clicada:', tag)}
-                    />
-                  ))}
-                </QuestionsGrid>
-              </>
-            )}
-
-            {activeTab === 'new-question' && (
-              <QuestionFormContainer>
-                <QuestionFormHeader>
-                  <QuestionFormTitle>Criar Nova Questão</QuestionFormTitle>
-                  <QuestionFormDescription>
-                    Preencha os campos abaixo para adicionar uma nova questão ao banco
-                  </QuestionFormDescription>
-                </QuestionFormHeader>
-
-                <QuestionFormContent>
-
-                  <QuestionForm
-                    title="Criar Nova Questão"
-                    description="Preencha os campos abaixo"
-                    fields={fields}
-                    onSubmit={handleSubmit}
-                  />
-                </QuestionFormContent>
-              </QuestionFormContainer>
-            )}
-
-            {activeTab === 'folders' && (
-              <FoldersContainer>
-                <FoldersHeader>
-                  <FoldersTitle>Gestão de Pastas</FoldersTitle>
-                  <ActionButton className="primary">
-                    <FiPlus /> Nova Pasta
-                  </ActionButton>
-                </FoldersHeader>
-
-                <FoldersGrid>
-                  {categories.map(category => (
-                    <FolderCard i={category.i} name={category.name} 
-                      color={category.color} count={category.count} />
-                  ))}
-
-                  <AddFolderCard>
-                    <AddFolderIcon>
-                      <FiPlus />
-                    </AddFolderIcon>
-                    <AddFolderText>Adicionar Pasta</AddFolderText>
-                  </AddFolderCard>
-                </FoldersGrid>
-              </FoldersContainer>
-            )}
-          </TabContent>
-        </TabsContainer>
       </div>
 
       {/* Modal de Configurações */}
