@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiSearch, FiFilter, FiUpload, FiDownload, FiPlus, FiFolder, FiMoreVertical } from 'react-icons/fi';
+import { FiPlus, FiFolder, FiMoreVertical } from 'react-icons/fi';
 
 import Navbar from '../../../../src/components/shared/Navbar'
 import PageHeader from '../../../components/Question/PageHeader';
@@ -8,35 +8,20 @@ import Filters from '../../../components/Question/Filter/Filters';
 import AdvancedFilters from '../../../components/Results/AdvancedFilters';
 import { QuestionForm } from '../../../components/Question/QuestionForm/QuestionForm';
 import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
+import QuestionCard from '../../../components/Question/QuestionCard';
+import { FormField } from '../../../components/Question/QuestionForm/type';
+import { SortControls } from '../../../components/Sort/SortControls';
+import { SortOption } from '../../../components/Sort/types';
 
 import { QuestionsGrid } from '../../../styles/questionList';
 
 import {
-  SearchContainer,
-  SearchInput,
-  SearchIconWrapper
-} from '../../../styles/navbar'
-import {
-  PageHeaderContainer,
-  PageTitleContainer,
-  PageActions,
   ActionButton
 } from '../../../styles/header';
 import {
   TabsContainer,
   TabContent
 } from '../../../styles/tab';
-import {
-  FiltersContainer,
-  FiltersHeader,
-  FiltersTitle,
-  FiltersContent,
-  FiltersGrid,
-  FilterGroup,
-  FilterLabel,
-  FilterSelect,
-  AdvancedFiltersButton
-} from '../../../styles/filters';
 import {
   QuestionFormContainer,
   QuestionFormHeader,
@@ -62,8 +47,6 @@ import {
   AddFolderIcon,
   AddFolderText
 } from '../../../styles/folderManagementStyles';
-import QuestionCard from '../../../components/Question/QuestionCard';
-import { FormField } from '../../../components/Question/QuestionForm/type';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -86,6 +69,21 @@ const QuestionBankPage = () => {
     { value: 'medium', label: 'Médio' },
     { value: 'hard', label: 'Difícil' }
   ];
+
+  const [sortField, setSortField] = useState('createdAt');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  const sortOptions: SortOption[] = [
+    { value: 'title', label: 'Título', direction: 'asc', },
+    { value: 'createdAt', label: 'Data de criação', direction: 'desc' },
+    { value: 'lastUsed', label: 'Último uso', direction: 'desc' },
+    { value: 'difficulty', label: 'Dificuldade', direction: 'asc' }
+  ];
+
+  const handleSortChange = (value: string, direction: 'asc' | 'desc') => {
+    setSortField(value);
+    setSortDirection(direction);
+  };
 
   // Dados de exemplo
   const categories = [
@@ -131,6 +129,7 @@ const QuestionBankPage = () => {
       lastUsed: '2024-01-19'
     }
   ];
+
   const fields: FormField[] = [
     {
       name: 'title',
@@ -213,6 +212,7 @@ const QuestionBankPage = () => {
         {/* Header da Página */}
         <PageHeader title="Banco de Questões"
           description="Gerencie suas questões, categorias e organize seu conteúdo"
+          onSetView={(setView) => setActiveTab(setView)}
         />
         {/* TABS */}
         <Tabs
@@ -228,25 +228,6 @@ const QuestionBankPage = () => {
           <div id="new-question">Formulário de nova questão</div>
           <div id="folders">Gerenciamento de pastas</div>
         </Tabs>
-
-        <PageHeaderContainer>
-          <PageTitleContainer>
-            <h1>Banco de Questões</h1>
-            <p>Gerencie suas questões, categorias e organize seu conteúdo</p>
-          </PageTitleContainer>
-
-          <PageActions>
-            <ActionButton>
-              <FiUpload /> Importar
-            </ActionButton>
-            <ActionButton>
-              <FiDownload /> Exportar
-            </ActionButton>
-            <ActionButton className="primary" onClick={() => setActiveTab('new-question')}>
-              <FiPlus /> Nova Questão
-            </ActionButton>
-          </PageActions>
-        </PageHeaderContainer>
 
         {/* Tabs */}
         <TabsContainer orientation='horizontal' >
@@ -267,66 +248,29 @@ const QuestionBankPage = () => {
                   showAdvanced={showAdvanced}
                   onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
                 />
-                <FiltersContainer>
-                  <FiltersHeader>
-                    <FiltersTitle>
-                      <FiFilter /> Filtros e Busca
-                    </FiltersTitle>
-                  </FiltersHeader>
-                  <FiltersContent>
-                    <FiltersGrid>
-                      <FilterGroup>
-                        <FilterLabel>Buscar</FilterLabel>
-                        <SearchContainer>
-                          <SearchIconWrapper as={FiSearch} />
-                          <SearchInput
-                            placeholder="Buscar questões..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                        </SearchContainer>
-                      </FilterGroup>
-
-                      <FilterGroup>
-                        <FilterLabel>Categoria</FilterLabel>
-                        <FilterSelect
-                          value={selectedCategory}
-                          onChange={(e) => setSelectedCategory(e.target.value)}
-                        >
-                          <option value="all">Todas as categorias</option>
-                          {categories.map(category => (
-                            <option key={category.id} value={category.id}>
-                              {category.name}
-                            </option>
-                          ))}
-                        </FilterSelect>
-                      </FilterGroup>
-
-                      <FilterGroup>
-                        <FilterLabel>Dificuldade</FilterLabel>
-                        <FilterSelect
-                          value={selectedDifficulty}
-                          onChange={(e) => setSelectedDifficulty(e.target.value)}
-                        >
-                          <option value="all">Todas as dificuldades</option>
-                          <option value="easy">Fácil</option>
-                          <option value="medium">Médio</option>
-                          <option value="hard">Difícil</option>
-                        </FilterSelect>
-                      </FilterGroup>
-
-                      <FilterGroup>
-                        <FilterLabel>&nbsp;</FilterLabel>
-                        <AdvancedFiltersButton>
-                          <FiFilter /> Filtros Avançados
-                        </AdvancedFiltersButton>
-                      </FilterGroup>
-                    </FiltersGrid>
-                  </FiltersContent>
-                </FiltersContainer>
+                {showAdvanced && (
+                  <AdvancedFilters
+                    isLoading={isOpen} periods={[]} subjects={[]}
+                    classes={[]} onFilterChange={() => { }}
+                    onReset={() => { }} onApply={() => { }}
+                    currentFilters={{
+                      classId: '',
+                      period: '',
+                      subject: '',
+                      searchTerm: searchValue,
+                    }}
+                  />
+                )}
 
                 {/* Lista de Questões */}
                 <QuestionsGrid>
+                  <SortControls
+                    options={sortOptions}
+                    value={sortField}
+                    direction={sortDirection}
+                    onChange={() => handleSortChange(sortField, sortDirection)}
+                    variant="dropdown"
+                  />
                   {questions.map(question => (
                     <QuestionCard
                       question={question}
@@ -409,24 +353,6 @@ const QuestionBankPage = () => {
           </TabContent>
         </TabsContainer>
       </div>
-
-      {showAdvanced && (
-        <AdvancedFilters
-          periods={[]}
-          subjects={[]}
-          classes={[]}
-          currentFilters={{
-            classId: '',
-            period: '',
-            subject: '',
-            searchTerm: searchValue,
-          }}
-          onFilterChange={() => { }}
-          onReset={() => { }}
-          onApply={() => { }}
-          isLoading={isOpen}
-        />
-      )}
 
       {/* Modal de Configurações */}
       {isOpen && (
