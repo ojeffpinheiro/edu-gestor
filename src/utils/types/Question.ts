@@ -194,4 +194,6 @@ export interface QuestionBack {
   answers?: Answer[];
   explanation?: string;
   correctAnswers?: number[];
+  rating?: number; // 0-5
+  isFavorite?: boolean;
 }

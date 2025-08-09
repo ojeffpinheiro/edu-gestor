@@ -103,6 +103,15 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         console.log('Criando variação de:', question);
         // Lógica para criar variação (copiar questão com modificações)
     };
+    const handleRateQuestion = (id: string | number, rating: number) => {
+        // Atualize o estado ou faça chamada API
+        console.log(`Avaliando questão ${id} com ${rating} estrelas`);
+    };
+
+    const handleToggleFavorite = (id: string | number) => {
+        // Atualize o estado ou faça chamada API
+        console.log(`Alternando favorito para questão ${id}`);
+    };
 
     const handleQuestionTypeFilter = (type: QuestionType | 'all') => {
         console.log('Filtrando por tipo:', type);
@@ -185,6 +194,8 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                             onTagClick={(tag) => console.log('Tag clicada:', tag)}
                             selected={selectedQuestions.has(question.id)}
                             onSelect={handleQuestionSelect}
+                            onRate={handleRateQuestion}
+                            onToggleFavorite={handleToggleFavorite}
                         />
                     ))}
                 </QuestionsGrid>

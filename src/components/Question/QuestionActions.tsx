@@ -26,17 +26,25 @@ export interface QuestionCardProps {
   onSelect?: (id: string | number) => void;
 }
 
-export const QuestionCardContainer = styled.div<{ selected?: boolean }>`
+export const QuestionCardContainer = styled.div<{
+  selected?: boolean;
+  $isFavorite?: boolean;
+  $usageCount?: number;
+}>`
   background-color: var(--color-background-secondary);
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
   transition: all 0.2s;
   border: 2px solid ${({ selected }) =>
     selected ? 'var(--color-primary)' : 'transparent'};
+  border-left: 4px solid ${({ $isFavorite }) => $isFavorite ? '#FF4081' : 'transparent'};
+  box-shadow: ${({ $usageCount }) =>
+    $usageCount && $usageCount > 10 ? '0 4px 8px rgba(0,0,0,0.1)' : '0 1px 3px rgba(0,0,0,0.1)'};
   
   &:hover {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transform: ${({ $usageCount }) =>
+    $usageCount && $usageCount > 10 ? 'translateY(-2px)' : 'none'};
   }
 `;
 
@@ -176,7 +184,7 @@ const QuestionActions = ({
       onFindSimilar(question); // Você precisará ter acesso à 'question'
     }
   };
-  
+
   return (
     <Dropdown
       trigger={<FiMoreHorizontal className={className} />}

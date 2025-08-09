@@ -1,16 +1,16 @@
 import React, { memo } from 'react';
-import { FaTag } from 'react-icons/fa';
-import QuestionActions, { 
-  BadgeContainer, 
-  QuestionBadge, 
-  QuestionCardContainer, 
-  QuestionHeader, 
-  QuestionMeta, 
-  QuestionTag, 
-  QuestionTags, 
-  QuestionTitle, 
-  QuestionTitleWrapper, 
-  SelectCheckbox 
+import { FaHeart, FaRegHeart, FaTag } from 'react-icons/fa';
+import QuestionActions, {
+  BadgeContainer,
+  QuestionBadge,
+  QuestionCardContainer,
+  QuestionHeader,
+  QuestionMeta,
+  QuestionTag,
+  QuestionTags,
+  QuestionTitle,
+  QuestionTitleWrapper,
+  SelectCheckbox
 } from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
 import { QuestionBack } from '../../utils/types/Question';
@@ -23,9 +23,10 @@ interface QuestionCardProps {
   onTagClick?: (tag: string) => void;
   className?: string;
   selected?: boolean;
-  onSelect?: (id: string | number) => void; // Atualizado para aceitar string ou number
+  onSelect?: (id: string | number) => void;
+  onRate?: (id: string | number, rating: number) => void;
+  onToggleFavorite?: (id: string | number) => void;
 }
-
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
   question,
@@ -35,18 +36,60 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   onTagClick,
   className,
   selected = false,
-  onSelect
+  onSelect,
+  onRate,
+  onToggleFavorite
 }) => {
   const handleTagClick = (tag: string) => {
     onTagClick?.(tag);
   };
-  
+
   if (question === 'all') {
     return null; // ou tratamento especial para o caso 'all'
   }
 
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleFavorite?.(question.id);
+  };
+
+  const getUsageBadge = (usageCount?: number) => {
+    if (!usageCount) return null;
+
+    let color = '#ccc';
+    if (usageCount > 50) color = '#FF5722';
+    else if (usageCount > 20) color = '#FF9800';
+    else if (usageCount > 5) color = '#FFC107';
+
+    return (
+      <span style={{
+        position: 'absolute',
+        top: '-8px',
+        right: '-8px',
+        backgroundColor: color,
+        color: 'white',
+        borderRadius: '50%',
+        width: '24px',
+        height: '24px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '0.75rem',
+        fontWeight: 'bold',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+      }}>
+        {usageCount > 99 ? '99+' : usageCount}
+      </span>
+    );
+  };
+
   return (
-    <QuestionCardContainer className={className} selected={selected}>
+<QuestionCardContainer
+  className={className}
+  selected={selected}
+  style={{ position: 'relative' }}
+>
+  {getUsageBadge(question.usageCount)}
       <QuestionHeader>
         <QuestionTitleWrapper>
           {onSelect && (
@@ -73,9 +116,21 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
               {question.type === 'true_false' && 'V/F'}
             </QuestionBadge>
           </BadgeContainer>
+          <button
+            onClick={handleToggleFavorite}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: question.isFavorite ? '#FF4081' : '#ccc',
+              marginLeft: 'auto'
+            }}
+          >
+            {question.isFavorite ? <FaHeart /> : <FaRegHeart />}
+          </button>
         </QuestionTitleWrapper>
 
-        <QuestionActions 
+        <QuestionActions
           onView={onView}
           onEdit={onEdit}
           onDelete={onDelete}
@@ -101,7 +156,7 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
       {question.tags && question.tags.length > 0 && (
         <QuestionTags>
           {question.tags.map((tag: string, index: number) => (
-            <QuestionTag 
+            <QuestionTag
               key={index}
               onClick={() => handleTagClick(tag)}
               title={`Filtrar por: ${tag}`}
