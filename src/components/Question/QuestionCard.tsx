@@ -14,6 +14,7 @@ import QuestionActions, {
 } from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
 import { QuestionBack } from '../../utils/types/Question';
+import StarRating from './StarRating';
 
 interface QuestionCardProps {
   question: QuestionBack | 'all'; // Permite o tipo 'all' para tratamento especial
@@ -84,12 +85,12 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   };
 
   return (
-<QuestionCardContainer
-  className={className}
-  selected={selected}
-  style={{ position: 'relative' }}
->
-  {getUsageBadge(question.usageCount)}
+    <QuestionCardContainer
+      className={className}
+      selected={selected}
+      style={{ position: 'relative' }}
+    >
+      {getUsageBadge(question.usageCount)}
       <QuestionHeader>
         <QuestionTitleWrapper>
           {onSelect && (
@@ -151,6 +152,10 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
         {question.accuracy && (
           <span>Acertos: {question.accuracy}%</span>
         )}
+        <StarRating
+          rating={question.rating || 0}
+          onRate={(rating) => onRate?.(question.id, rating)}
+        />
       </QuestionMeta>
 
       {question.tags && question.tags.length > 0 && (

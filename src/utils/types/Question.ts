@@ -44,6 +44,7 @@ export interface Question {
   isComposite?: boolean;
   componentQuestions?: string[];
   correctAnswers?: number;
+  rating?: number;
   answerStats?: {
     totalAttempts: number;
     correctAttempts: number;
