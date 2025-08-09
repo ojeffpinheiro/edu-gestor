@@ -45,6 +45,8 @@ export interface Question {
   componentQuestions?: string[];
   correctAnswers?: number;
   rating?: number;
+  isFavorite?: boolean;
+  usageCount?: number;
   answerStats?: {
     totalAttempts: number;
     correctAttempts: number;

@@ -55,7 +55,7 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   };
 
   const getUsageBadge = (usageCount?: number) => {
-    if (!usageCount) return null;
+    if (!usageCount || usageCount <= 0) return null;
 
     let color = '#ccc';
     if (usageCount > 50) color = '#FF5722';
@@ -156,6 +156,21 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
           rating={question.rating || 0}
           onRate={(rating) => onRate?.(question.id, rating)}
         />
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleFavorite?.(question.id);
+          }}
+          style={{
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
+            color: question.isFavorite ? '#FF4081' : '#ccc',
+            marginLeft: 'auto'
+          }}
+        >
+          {question.isFavorite ? <FaHeart /> : <FaRegHeart />}
+        </button>
       </QuestionMeta>
 
       {question.tags && question.tags.length > 0 && (

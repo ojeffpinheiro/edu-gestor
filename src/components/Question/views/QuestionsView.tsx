@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQuestionFilters } from '../../../hooks/useQuestionFilters';
 import { useQuestionSelection } from '../../../hooks/useQuestionSelection';
 
@@ -172,13 +172,15 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         });
     };
 
-    const handleRateQuestion = (id: string | number, rating: number) => {
+    const handleRateQuestion = useCallback((id: string | number, rating: number) => {
         console.log(`Avaliando questão ${id} com ${rating} estrelas`);
-    };
+        // Lógica para atualizar a avaliação no backend/estado
+    }, []);
 
-    const handleToggleFavorite = (id: string | number) => {
+    const handleToggleFavorite = useCallback((id: string | number) => {
         console.log(`Alternando favorito para questão ${id}`);
-    };
+        // Lógica para atualizar o favorito no backend/estado
+    }, []);
 
     const handleQuestionTypeFilter = (type: QuestionType | 'all') => {
         setActiveFilters(prev => ({
@@ -257,15 +259,15 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     {processedQuestions.map(question => (
                         <QuestionCard
                             key={question.id}
-                            question={adaptToQuestionBack(question)} // Converter para QuestionBack
+                            question={adaptToQuestionBack(question)}
                             onView={() => handleViewQuestion(question)}
                             onEdit={() => handleEditQuestion(question)}
                             onDelete={() => handleDeleteQuestion(question)}
-                            onTagClick={(tag) => console.log('Tag clicada:', tag)}
                             selected={selectedQuestions.has(question.id)}
                             onSelect={handleQuestionSelect}
                             onRate={handleRateQuestion}
                             onToggleFavorite={handleToggleFavorite}
+                            onTagClick={(tag) => console.log('Tag clicada:', tag)}
                         />
                     ))}
                 </QuestionsGrid>
