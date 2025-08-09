@@ -164,13 +164,24 @@ export interface TabsProps {
   orientation?: 'horizontal' | 'vertical';
 }
 
+export interface FilterOptions {
+  searchTerm: string;
+  categories: string[];
+  difficulties: ('easy' | 'medium' | 'hard')[];
+  types: QuestionType[];
+  ratingRange: [number, number];
+  usageRange: [number, number];
+  createdAtRange: [string, string];
+  tags: string[];
+  discipline: string[];
+}
+
 export interface SavedFilter {
   id: string;
   name: string;
-  filters: QuestionFilters;
+  filters: Partial<FilterOptions>;
   isDefault?: boolean;
 }
-
 
 export type Answer = {
   id: string;

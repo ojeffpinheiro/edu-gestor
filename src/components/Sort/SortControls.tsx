@@ -44,7 +44,7 @@ export const SortControls = ({
             </SortButton>
           ))}
         </SortButtonGroup>
-        
+
         {selectedOption.direction !== undefined && (
           <DirectionButton
             $active={true}
@@ -64,6 +64,7 @@ export const SortControls = ({
       <SortSelect
         value={value}
         onChange={(e) => handleSortChange(e.target.value)}
+        aria-label="Ordenar por"
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>

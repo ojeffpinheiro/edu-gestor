@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Category, FormField } from '../../../components/Question/QuestionForm/type';
+import { Category, CategoryWithId, FormField } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
 
 import Navbar from '../../../../src/components/shared/Navbar'
@@ -18,8 +18,8 @@ const QuestionBankPage = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [activeTab, setActiveTab] = useState('questions');
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState('all');  // 'all' em vez de ''
+  const [selectedDifficulty, setSelectedDifficulty] = useState('all');  // 'all' em vez de ''
   const [searchValue, setSearchValue] = useState('');
   const [sortField, setSortField] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
@@ -43,6 +43,14 @@ const QuestionBankPage = () => {
     { i: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
     { i: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
     { i: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
+  ];
+
+  const categoriesWithID: CategoryWithId[] = [
+    { i: '', id: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
+    { i: '', id: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
+    { i: '', id: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
+    { i: '', id: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
+    { i: '', id: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
   ];
 
   const questions = [
@@ -179,7 +187,7 @@ const QuestionBankPage = () => {
             <QuestionsView
               searchTerm={searchValue}
               onSearchChange={setSearchValue}
-              categories={categories}
+              categories={categoriesWithID}
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
               selectedDifficulty={selectedDifficulty}

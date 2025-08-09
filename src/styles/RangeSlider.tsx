@@ -8,7 +8,10 @@ interface RangeSliderProps {
   onChange: (value: [number, number]) => void;
 }
 
-const Content = styled.input.attrs({ type: 'range' })`
+const RangeSliderContainer = styled.div`SliderInput 
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
   height: 8px;
   border-radius: 4px;
@@ -34,30 +37,44 @@ const Content = styled.input.attrs({ type: 'range' })`
   }
 `;
 
+const SliderInput = styled.input.attrs({ type: 'range' })`
+  width: 100%;
+  
+  background: ${props => props.theme.colors.background};
+  &::-webkit-slider-thumb {
+    background: ${props => props.theme.colors.primary};
+  }
+`;
+
 const RangeSlider: React.FC<RangeSliderProps> = ({ min, max, value, onChange }) => {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const newValue = [...value] as [number, number];
-    newValue[index] = Number(e.target.value);
-    onChange(newValue);
+  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMin = Math.min(Number(e.target.value), value[1]);
+    onChange([newMin, value[1]]);
+  };
+
+  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMax = Math.max(Number(e.target.value), value[0]);
+    onChange([value[0], newMax]);
   };
 
   return (
-    <Content>
-      <input
-        type="range"
+    <RangeSliderContainer>
+      <SliderInput
         min={min}
         max={max}
         value={value[0]}
-        onChange={(e) => handleChange(e, 0)}
+        onChange={handleMinChange}
       />
-      <input
-        type="range"
+      <SliderInput
         min={min}
         max={max}
         value={value[1]}
-        onChange={(e) => handleChange(e, 1)}
+        onChange={handleMaxChange}
       />
-    </Content>
+      <div>
+        {value[0]} - {value[1]}
+      </div>
+    </RangeSliderContainer>
   );
 };
 

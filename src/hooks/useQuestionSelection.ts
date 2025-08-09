@@ -1,4 +1,3 @@
-// hooks/useQuestionSelection.ts
 import { useCallback, useMemo } from 'react';
 import { Question } from '../utils/types/Question';
 

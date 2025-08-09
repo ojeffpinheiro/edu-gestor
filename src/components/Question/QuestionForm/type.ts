@@ -25,3 +25,7 @@ export interface Category {
   count: number;
   color: string;
 }
+
+export interface CategoryWithId extends Category {
+    id: string;
+}
