@@ -41,7 +41,8 @@ const mockAssessments: Assessment[] = [{
       pinned: false,
       isComposite: false,
       componentQuestions: [],
-      correctAnswers: 1,
+      correctAnswers: [''],
+      answers: [],
       answerStats: {
         totalAttempts: 100,
         correctAttempts: 80,
@@ -72,7 +73,8 @@ const mockAssessments: Assessment[] = [{
       pinned: false,
       isComposite: false,
       componentQuestions: [],
-      correctAnswers: 1,
+      answers: [],
+      correctAnswers: [''],
       answerStats: {
         totalAttempts: 50,
         correctAttempts: 35,

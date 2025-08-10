@@ -214,6 +214,11 @@ const QuestionActions = ({
           content: (<><FiTrash2 /> Excluir</>),
           onClick: onDelete,
           disabled: !onDelete
+        },
+        {
+          id: 'find-similar',
+          content: (<><FaSearch /> Encontrar Similares</>),
+          onClick: () => onFindSimilar?.(question)
         }
       ]}
       position="right"

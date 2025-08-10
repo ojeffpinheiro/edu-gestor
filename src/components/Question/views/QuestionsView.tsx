@@ -16,15 +16,18 @@ import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
 import { QuestionsGrid } from '../../../styles/questionList';
 import { useQuestionSort } from '../../../hooks/useQuestionSort';
 import { CategoryWithId } from '../QuestionForm/type';
+import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
+import { useSortPreferences } from '../../../hooks/useSortPreferences';
 
 // Função para converter QuestionBack para Question
 const convertQuestionBackToQuestion = (questionBack: QuestionBack): Question => {
-    const id = typeof questionBack.id === 'number' ? questionBack.id.toString() : questionBack.id;
-
     return {
         ...questionBack,
-        id,
-        contentId: id,
+        id: typeof questionBack.id === 'number' ? questionBack.id.toString() : questionBack.id,
+        contentId: typeof questionBack.id === 'number' ? questionBack.id.toString() : questionBack.id,
+        correctAnswers: questionBack.correctAnswers
+            ? questionBack.correctAnswers.map(String)
+            : undefined,
         statement: questionBack.content,
         questionType: questionBack.type as QuestionType,
         difficultyLevel: questionBack.difficulty,
@@ -34,7 +37,7 @@ const convertQuestionBackToQuestion = (questionBack: QuestionBack): Question => 
         createdAt: questionBack.createdAt,
         updatedAt: questionBack.lastUsed || questionBack.createdAt,
         status: 'active',
-        correctAnswers: questionBack.correctAnswers?.[0],
+        answers: questionBack.answers || [], // Garantir array vazio se não existir
     };
 };
 
@@ -52,14 +55,14 @@ interface QuestionsViewProps {
     sortDirection: 'asc' | 'desc';
     onSortChange: (field: string, direction: 'asc' | 'desc') => void;
     onFindSimilar?: (questionId: string | number) => void;
+    initialSortField?: string;
+    initialSortDirection?: 'asc' | 'desc';
 }
 
 const QuestionsView: React.FC<QuestionsViewProps> = ({
     searchTerm,
     questions: questionBacks,
     sortOptions,
-    sortField,
-    sortDirection,
     categories,
     selectedCategory,
     selectedDifficulty,
@@ -67,17 +70,41 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     onCategoryChange,
     onDifficultyChange,
     onSortChange,
+    initialSortField = 'createdAt',
+    initialSortDirection = 'desc',
 }) => {
+    const [similarQuestions, setSimilarQuestions] = useState<QuestionBack[]>([]);
+    const [currentQuestionType, setCurrentQuestionType] = useState<QuestionType | 'all'>('all');
+    const [showSimilarModal, setShowSimilarModal] = useState(false);
+    const [currentQuestionForSimilarity, setCurrentQuestionForSimilarity] = useState<QuestionBack | null>(null);
+
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
     const [showCombineModal, setShowCombineModal] = useState(false);
     const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+
     // Converter QuestionBack[] para Question[]
     const questions = useMemo(() =>
         questionBacks.map(convertQuestionBackToQuestion),
         [questionBacks]
     );
+    const {
+        sortField,
+        sortDirection,
+        setSortField,
+        setSortDirection
+    } = useSortPreferences(
+        'questionSortPreferences',
+        initialSortField,
+        initialSortDirection
+    );
+
+    const handleSortChange = useCallback((field: string, direction: 'asc' | 'desc') => {
+        setSortField(field);
+        setSortDirection(direction);
+        onSortChange?.(field, direction);
+    }, [onSortChange, setSortField, setSortDirection]);
 
     const {
         setActiveFilters,
@@ -94,12 +121,13 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     const {
         sortField: currentSortField,
         sortDirection: currentSortDirection,
-        handleSortChange,
+        handleSortChange: handleInternalSortChange,
         sortQuestions
     } = useQuestionSort({
         initialField: sortField,
         initialDirection: sortDirection,
-        sortOptions
+        sortOptions,
+        onSortChange: handleSortChange
     });
 
     const {
@@ -114,6 +142,21 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             setSelectedQuestions(new Set(selected.filter(q => q && q.id !== undefined).map(q => q.id ? q.id.toString() : '')));
         }
     });
+
+    const handleSort = useCallback((field: string, direction: 'asc' | 'desc') => {
+        handleInternalSortChange(field, direction);
+    }, [handleInternalSortChange]);
+
+    const SimilarQuestionsModalContent = useMemo(() => (
+        currentQuestionForSimilarity && (
+            <SimilarQuestionsModal
+                question={currentQuestionForSimilarity}
+                similarQuestions={similarQuestions}
+                isOpen={showSimilarModal}
+                onClose={() => setShowSimilarModal(false)}
+            />
+        )
+    ), [currentQuestionForSimilarity, similarQuestions, showSimilarModal]);
 
     useEffect(() => {
         setActiveFilters({
@@ -182,12 +225,13 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         // Lógica para atualizar o favorito no backend/estado
     }, []);
 
-    const handleQuestionTypeFilter = (type: QuestionType | 'all') => {
+    const handleQuestionTypeFilter = useCallback((type: QuestionType | 'all') => {
+        setCurrentQuestionType(type === 'all' ? 'multiple_choice' : type);
         setActiveFilters(prev => ({
             ...prev,
             types: type === 'all' ? [] : [type]
         }));
-    };
+    }, [setActiveFilters]);
 
     // Função de adaptador para converter Question para QuestionBack
     const adaptToQuestionBack = (question: Question): QuestionBack => ({
@@ -206,6 +250,16 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         explanation: question.explanation,
         isFavorite: question.pinned,
     });
+
+    const handleFindSimilar = useCallback(async (question: QuestionBack) => {
+        setCurrentQuestionForSimilarity(question);
+        try {
+            console.log(`QuestionView: Buscando questões similares para ${question.title}`);
+            setShowSimilarModal(true);
+        } catch (error) {
+            console.error('Erro ao buscar questões similares:', error);
+        }
+    }, []);
 
     return (
         <>
@@ -267,6 +321,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                             onSelect={handleQuestionSelect}
                             onRate={handleRateQuestion}
                             onToggleFavorite={handleToggleFavorite}
+                            onFindSimilar={handleFindSimilar}
                             onTagClick={(tag) => console.log('Tag clicada:', tag)}
                         />
                     ))}
@@ -305,6 +360,8 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     onCancel={() => setShowCombineModal(false)}
                 />
             )}
+
+            {currentQuestionForSimilarity && SimilarQuestionsModalContent}
         </>
     );
 };

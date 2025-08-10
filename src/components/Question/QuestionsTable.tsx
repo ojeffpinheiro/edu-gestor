@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { QuestionBack } from '../../utils/types/Question';
+import { QUESTION_TYPE_LABELS, QuestionBack } from '../../utils/types/Question';
 import { FaPencilAlt, FaRegEye } from 'react-icons/fa';
 import { FiTrash2 } from 'react-icons/fi';
 
@@ -16,7 +16,7 @@ const TableHeader = styled.thead`
 
 const TableRow = styled.tr<{ selected?: boolean }>`
   border-bottom: 1px solid var(--color-border);
-  background-color: ${({ selected }) => 
+  background-color: ${({ selected }) =>
     selected ? 'var(--color-primary-light)' : 'transparent'};
   
   &:hover {
@@ -115,16 +115,14 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
               </span>
             </TableCell>
             <TableCell>
-              {question.type === 'multiple_choice' && 'Múltipla escolha'}
-              {question.type === 'essay' && 'Dissertativa'}
-              {question.type === 'true_false' && 'V/F'}
+              {QUESTION_TYPE_LABELS[question.type]}
             </TableCell>
             <TableCell>
               <ActionButton onClick={() => onView(question)} title="Visualizar">
                 <FaRegEye />
               </ActionButton>
               <ActionButton onClick={() => onEdit(question)} title="Editar">
-                <FaPencilAlt /> 
+                <FaPencilAlt />
               </ActionButton>
               <ActionButton onClick={() => onDelete(question)} title="Excluir">
                 <FiTrash2 />

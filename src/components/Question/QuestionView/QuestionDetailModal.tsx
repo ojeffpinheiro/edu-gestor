@@ -1,6 +1,6 @@
 import React from 'react'
 import { FaTag, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
-import { 
+import {
   ModalContentGrid,
   QuestionDetailSection,
   DetailLabel,
@@ -8,6 +8,7 @@ import {
 } from './styles';
 import { QuestionDetailModalProps } from './types';
 import { Modal } from '../../Modal';
+import { AnswerRenderer } from '../AnswerRenderer';
 
 const QuestionDetailModal = ({
   question,
@@ -45,8 +46,8 @@ const QuestionDetailModal = ({
             </DetailLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
               {question.tags.map((tag, index) => (
-                <span 
-                  key={index} 
+                <span
+                  key={index}
                   style={{
                     padding: '0.25rem 0.5rem',
                     backgroundColor: 'var(--color-background-tertiary)',
@@ -56,6 +57,18 @@ const QuestionDetailModal = ({
                 >
                   {tag}
                 </span>
+              ))}
+            </div>
+          </QuestionDetailSection>
+          <QuestionDetailSection>
+            <DetailLabel>Respostas</DetailLabel>
+            <div style={{ display: 'grid', gap: '0.5rem' }}>
+              {question.answers?.map((answer, index) => (
+                <AnswerRenderer
+                  key={answer.id || index}
+                  answer={answer}
+                  questionType={question.type}
+                />
               ))}
             </div>
           </QuestionDetailSection>

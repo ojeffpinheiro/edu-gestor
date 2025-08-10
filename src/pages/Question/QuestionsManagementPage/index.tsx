@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Category, CategoryWithId, FormField } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
@@ -31,10 +31,13 @@ const QuestionBankPage = () => {
     { value: 'difficulty', label: 'Dificuldade', direction: 'asc' }
   ];
 
-  const handleSortChange = (value: string, direction: 'asc' | 'desc') => {
-    setSortField(value);
+  const handleSortChange = useCallback((field: string, direction: 'asc' | 'desc') => {
+    console.log('Ordenação alterada:', field, direction);
+    setSortField(field);
     setSortDirection(direction);
-  };
+    // Aqui você pode adicionar lógica adicional do componente pai
+    // como atualizar uma API, analytics, etc.
+  }, []);
 
   // Dados de exemplo
   const categories: Category[] = [
@@ -197,6 +200,8 @@ const QuestionBankPage = () => {
               sortField={sortField}
               sortDirection={sortDirection}
               onSortChange={handleSortChange}
+              initialSortField={sortField}
+              initialSortDirection={sortDirection}
             />
           </div>
 

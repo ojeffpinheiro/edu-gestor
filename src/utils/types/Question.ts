@@ -9,7 +9,32 @@ export interface Content {
   name: string;
 }
 
-export type QuestionType = 'multiple_choice' | 'true_false' | 'essay' | 'fill_in_the_blank' | 'all';
+export type QuestionType =
+  | 'multiple_choice'
+  | 'true_false'
+  | 'essay'
+  | 'fill_in_the_blank'
+  | 'short_answer'
+  | 'matching'
+  | 'ordering';
+
+export type AnswerType =
+  | 'single_select'
+  | 'multi_select'
+  | 'text'
+  | 'boolean'
+  | 'code'
+  | 'formula';
+
+export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
+  multiple_choice: 'Múltipla Escolha',
+  true_false: 'Verdadeiro/Falso',
+  essay: 'Dissertativa',
+  fill_in_the_blank: 'Preenchimento',
+  short_answer: 'Resposta Curta',
+  matching: 'Correspondência',
+  ordering: 'Ordenação'
+};
 
 export type DifficultyLevelType = 'easy' | 'medium' | 'hard';
 
@@ -35,7 +60,7 @@ export interface Question {
   updatedAt: string;
   status: QuestionStatus;
   imageUrl?: string;
-  tags?: string[];source?: string;
+  tags?: string[]; source?: string;
   accessDate?: string;
   optionsLayout?: 'one-column' | 'two-columns' | 'three-columns';
   timesUsed?: number;
@@ -43,7 +68,6 @@ export interface Question {
   pinned?: boolean;
   isComposite?: boolean;
   componentQuestions?: string[];
-  correctAnswers?: number;
   rating?: number;
   isFavorite?: boolean;
   usageCount?: number;
@@ -51,19 +75,21 @@ export interface Question {
     totalAttempts: number;
     correctAttempts: number;
   };
+  answers: Answer[];
+  correctAnswers?: string[];
 }
 
 // Interface para as props dos componentes de passo
 export interface StepProps {
-    formData: Question;
-    updateFormData: (updates: Partial<Question>) => void;
-    validationErrors: { [key: string]: string };
-    topics: Topic[];
-    contents?: Content[];
-    selectedTopicId: string;
-    setSelectedTopicId: (id: string) => void;
-    filteredContents: Content[];
-    setValidationErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
+  formData: Question;
+  updateFormData: (updates: Partial<Question>) => void;
+  validationErrors: { [key: string]: string };
+  topics: Topic[];
+  contents?: Content[];
+  selectedTopicId: string;
+  setSelectedTopicId: (id: string) => void;
+  filteredContents: Content[];
+  setValidationErrors: React.Dispatch<React.SetStateAction<{ [key: string]: string }>>;
 }
 
 export interface Variable {
@@ -186,11 +212,12 @@ export interface SavedFilter {
   isDefault?: boolean;
 }
 
-export type Answer = {
+export interface Answer {
   id: string;
-  isCorrect: boolean;
-  type: 'text' | 'single_select' | 'multi_select' | 'boolean';
+  type: AnswerType;
   content: string | string[] | boolean;
+  isCorrect: boolean;
+  feedback?: string;
 }
 
 export interface QuestionBack {
@@ -210,4 +237,9 @@ export interface QuestionBack {
   correctAnswers?: number[];
   rating?: number; // 0-5
   isFavorite?: boolean;
+}
+export interface QuestionSimilarity {
+  questionId: string;
+  similarityScore: number;
+  matchedFields: string[];
 }

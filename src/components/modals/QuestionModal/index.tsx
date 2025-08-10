@@ -44,7 +44,8 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     id: question?.id || Date.now().toString(),
-    discipline: ''
+    discipline: '',
+    answers: [],
   });
 
   const [selectedTopicId, setSelectedTopicId] = useState<string>('');
@@ -79,7 +80,8 @@ const QuestionModal: React.FC<QuestionModalProps> = ({
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         id: Date.now().toString(),
-        discipline: ''
+        discipline: '',
+        answers: []
       });
       setSelectedTopicId('');
       setFilteredContents([]);

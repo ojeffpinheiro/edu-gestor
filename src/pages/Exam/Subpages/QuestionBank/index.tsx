@@ -47,6 +47,7 @@ const QuestionBank = () => {
       questionType: 'multiple_choice',
       difficultyLevel: 'medium',
       discipline: 'Matemática',
+      answers: [],
       alternatives: [
         { id: '1', text: 'x = 2 e x = 3', isCorrect: true },
         { id: '2', text: 'x = 1 e x = 6', isCorrect: false }
@@ -121,6 +122,7 @@ const QuestionBank = () => {
       }).join('\n')
         }`,
       questionType: 'multiple_choice',
+      answers: [],
       difficultyLevel: 'medium',
       discipline: questions.find(q => q.id === selectedQuestions[0])?.discipline || 'Geral',
       alternatives: [],

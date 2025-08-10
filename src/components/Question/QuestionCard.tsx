@@ -13,7 +13,7 @@ import QuestionActions, {
   SelectCheckbox
 } from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
-import { QuestionBack } from '../../utils/types/Question';
+import { QUESTION_TYPE_LABELS, QuestionBack } from '../../utils/types/Question';
 import StarRating from './StarRating';
 
 interface QuestionCardProps {
@@ -27,6 +27,7 @@ interface QuestionCardProps {
   onSelect?: (id: string | number) => void;
   onRate?: (id: string | number, rating: number) => void;
   onToggleFavorite?: (id: string | number) => void;
+  onFindSimilar?: (question: QuestionBack) => void;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
@@ -112,9 +113,7 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
               {question.difficulty === 'hard' && 'Difícil'}
             </QuestionBadge>
             <QuestionBadge $variant={`type-${question.type}`}>
-              {question.type === 'multiple_choice' && 'Múltipla escolha'}
-              {question.type === 'essay' && 'Dissertativa'}
-              {question.type === 'true_false' && 'V/F'}
+              {QUESTION_TYPE_LABELS[question.type]}
             </QuestionBadge>
           </BadgeContainer>
           <button
