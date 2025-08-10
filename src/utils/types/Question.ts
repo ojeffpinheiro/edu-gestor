@@ -49,7 +49,7 @@ export interface Alternative {
 }
 
 export interface Question {
-  id?: string;
+  id: string;
   contentId: string;
   statement: string;
   questionType: QuestionType;

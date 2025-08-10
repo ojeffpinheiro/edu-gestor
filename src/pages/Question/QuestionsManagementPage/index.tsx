@@ -11,6 +11,8 @@ import QuestionsView from '../../../components/Question/views/QuestionsView';
 import FoldersView from '../../../components/Question/views/FoldersView';
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
+import { Question } from '../../../utils/types/Question';
+import { mockQuestions } from '../../../mocks/question';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -23,11 +25,12 @@ const QuestionBankPage = () => {
   const [searchValue, setSearchValue] = useState('');
   const [sortField, setSortField] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [questions, setQuestions] = useState<Question[]>(mockQuestions);
 
   const sortOptions: SortOption[] = [
     { value: 'title', label: 'Título', direction: 'asc', },
     { value: 'createdAt', label: 'Data de criação', direction: 'desc' },
-    { value: 'lastUsed', label: 'Último uso', direction: 'desc' },
+    { value: 'updatedAt', label: 'Último uso', direction: 'desc' },
     { value: 'difficulty', label: 'Dificuldade', direction: 'asc' }
   ];
 
@@ -54,42 +57,6 @@ const QuestionBankPage = () => {
     { i: '', id: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
     { i: '', id: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
     { i: '', id: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
-  ];
-
-  const questions = [
-    {
-      id: 1,
-      title: 'Resolução de equações do 2º grau',
-      content: 'Resolva a equação x² - 5x + 6 = 0',
-      category: 'Matemática',
-      difficulty: 'medium' as const, // ou 'easy' | 'medium' | 'hard'
-      type: 'multiple_choice' as const,
-      tags: ['álgebra', 'equações', '9º ano'],
-      createdAt: '2024-01-15',
-      lastUsed: '2024-01-20'
-    },
-    {
-      id: 2,
-      title: 'Interpretação de texto',
-      content: 'Com base no texto acima, analise as alternativas...',
-      category: 'Português',
-      difficulty: 'easy' as const, // ou 'easy' | 'medium' | 'hard'
-      type: 'multiple_choice' as const,
-      tags: ['interpretação', 'leitura', '8º ano'],
-      createdAt: '2024-01-14',
-      lastUsed: '2024-01-18'
-    },
-    {
-      id: 3,
-      title: 'Fotossíntese e respiração celular',
-      content: 'Explique o processo de fotossíntese...',
-      category: 'Ciências',
-      difficulty: 'hard' as const, // ou 'easy' | 'medium' | 'hard'
-      type: 'multiple_choice' as const,
-      tags: ['biologia', 'fotossíntese', '7º ano'],
-      createdAt: '2024-01-13',
-      lastUsed: '2024-01-19'
-    }
   ];
 
   const fields: FormField[] = [
@@ -202,6 +169,7 @@ const QuestionBankPage = () => {
               onSortChange={handleSortChange}
               initialSortField={sortField}
               initialSortDirection={sortDirection}
+              onQuestionChange={(question) => setQuestions(question)}
             />
           </div>
 

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Modal } from '../Modal';
-import { QuestionBack } from '../../utils/types/Question';
+import { Question } from '../../utils/types/Question';
 
 interface SimilarQuestionsModalProps {
-  question: QuestionBack;
-  similarQuestions: QuestionBack[];
+  question: Question;
+  similarQuestions: Question[];
   isOpen: boolean;
   onClose: () => void;
 }
@@ -15,15 +15,15 @@ export const SimilarQuestionsModal: React.FC<SimilarQuestionsModalProps> = ({
   isOpen,
   onClose
 }) => (
-  <Modal title={`Questões similares a: ${question.title}`} isOpen={isOpen} onClose={onClose} size="lg">
+  <Modal title={`Questões similares a: ${question.statement}`} isOpen={isOpen} onClose={onClose} size="lg">
     <div style={{ maxHeight: '60vh', overflowY: 'auto' }}>
       {similarQuestions.map(similar => (
         <div key={similar.id} style={{ marginBottom: '1rem', padding: '1rem', borderBottom: '1px solid #eee' }}>
-          <h4>{similar.title}</h4>
-          <p>{similar.content}</p>
+          <h4>{similar.statement}</h4>
+          <p>{similar.discipline}</p>
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <span>Categoria: {similar.category}</span>
-            <span>Tipo: {similar.type}</span>
+            <span>Disciplina: {similar.discipline}</span>
+            <span>Tipo: {similar.questionType}</span>
           </div>
         </div>
       ))}

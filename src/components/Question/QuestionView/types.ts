@@ -1,4 +1,4 @@
-import { QuestionBack } from "../../../utils/types/Question";
+import { Question } from "../../../utils/types/Question";
 
 export type ViewMode = 'cards' | 'table';
 
@@ -9,7 +9,7 @@ export interface QuestionViewModeToggleProps {
 }
 
 export interface QuestionDetailModalProps {
-  question: QuestionBack;
+  question: Question;
   isOpen: boolean;
   onClose: () => void;
   onEdit?: () => void;

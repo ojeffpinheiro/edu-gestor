@@ -2,21 +2,21 @@ import React from 'react'
 import { FiTrash2, FiMoreHorizontal } from 'react-icons/fi';
 import styled from 'styled-components';
 import Dropdown from './Dropdown/Dropdown';
-import { QuestionBack } from '../../utils/types/Question';
+import { Question } from '../../utils/types/Question';
 import { FaCopy, FaPencilAlt, FaRegEye, FaSearch } from 'react-icons/fa';
 
 interface QuestionActionsProps {
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
-  onCreateVariant?: (question: QuestionBack) => void;
-  onFindSimilar?: (question: QuestionBack) => void;
+  onCreateVariant?: (question: Question) => void;
+  onFindSimilar?: (question: Question) => void;
   className?: string;
-  question: QuestionBack;
+  question: Question;
 }
 
 export interface QuestionCardProps {
-  question: QuestionBack;
+  question: Question;
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;

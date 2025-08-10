@@ -20,7 +20,7 @@ const QuestionDetailModal = ({
 }: QuestionDetailModalProps) => {
   return (
     <Modal
-      title={question.title}
+      title={question.statement}
       isOpen={isOpen}
       onClose={onClose}
       size="lg"
@@ -37,7 +37,7 @@ const QuestionDetailModal = ({
         <div>
           <QuestionDetailSection>
             <DetailLabel>Enunciado</DetailLabel>
-            <DetailValue>{question.content}</DetailValue>
+            <DetailValue>{question.statement}</DetailValue>
           </QuestionDetailSection>
 
           <QuestionDetailSection>
@@ -45,7 +45,7 @@ const QuestionDetailModal = ({
               <FaTag /> Tags
             </DetailLabel>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {question.tags.map((tag, index) => (
+              {question?.tags?.map((tag, index) => (
                 <span
                   key={index}
                   style={{
@@ -67,7 +67,7 @@ const QuestionDetailModal = ({
                 <AnswerRenderer
                   key={answer.id || index}
                   answer={answer}
-                  questionType={question.type}
+                  questionType={question.questionType}
                 />
               ))}
             </div>
@@ -81,11 +81,11 @@ const QuestionDetailModal = ({
             </DetailLabel>
             <div style={{ display: 'grid', gap: '0.5rem' }}>
               <DetailValue>
-                Dificuldade: {question.difficulty}
+                Dificuldade: {question.difficultyLevel}
               </DetailValue>
-              {question.accuracy && (
+              {question.correctRate && (
                 <DetailValue>
-                  Taxa de acerto: {question.accuracy}%
+                  Taxa de acerto: {question.correctRate}%
                 </DetailValue>
               )}
               {question.usageCount && (
@@ -104,9 +104,9 @@ const QuestionDetailModal = ({
               <DetailValue>
                 Criada em: {new Date(question.createdAt).toLocaleDateString()}
               </DetailValue>
-              {question.lastUsed && (
+              {question.updatedAt && (
                 <DetailValue>
-                  Último uso: {new Date(question.lastUsed).toLocaleDateString()}
+                  Último uso: {new Date(question.updatedAt).toLocaleDateString()}
                 </DetailValue>
               )}
             </div>

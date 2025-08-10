@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { QUESTION_TYPE_LABELS, QuestionBack } from '../../utils/types/Question';
+import { Question, QUESTION_TYPE_LABELS } from '../../utils/types/Question';
 import { FaPencilAlt, FaRegEye } from 'react-icons/fa';
 import { FiTrash2 } from 'react-icons/fi';
 
@@ -52,10 +52,10 @@ const ActionButton = styled.button`
 `;
 
 interface QuestionsTableProps {
-  questions: QuestionBack[];
-  onView: (question: QuestionBack) => void;
-  onEdit: (question: QuestionBack) => void;
-  onDelete: (question: QuestionBack) => void;
+  questions: Question[];
+  onView: (question: Question) => void;
+  onEdit: (question: Question) => void;
+  onDelete: (question: Question) => void;
   selectedQuestions: Set<string | number>;
   onSelect: (id: string | number) => void;
 }
@@ -90,32 +90,32 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
                 onChange={() => onSelect(question.id)}
               />
             </SelectCell>
-            <TableCell>{question.title}</TableCell>
-            <TableCell>{question.category}</TableCell>
+            <TableCell>{question.statement}</TableCell>
+            <TableCell>{question.discipline}</TableCell>
             <TableCell>
               <span style={{
                 padding: '0.25rem 0.5rem',
                 borderRadius: '4px',
-                ...(question.difficulty === 'easy' && {
+                ...(question.difficultyLevel === 'easy' && {
                   backgroundColor: '#e6f7e6',
                   color: '#52c41a'
                 }),
-                ...(question.difficulty === 'medium' && {
+                ...(question.difficultyLevel === 'medium' && {
                   backgroundColor: '#fff7e6',
                   color: '#fa8c16'
                 }),
-                ...(question.difficulty === 'hard' && {
+                ...(question.difficultyLevel === 'hard' && {
                   backgroundColor: '#fff1f0',
                   color: '#f5222d'
                 })
               }}>
-                {question.difficulty === 'easy' && 'Fácil'}
-                {question.difficulty === 'medium' && 'Médio'}
-                {question.difficulty === 'hard' && 'Difícil'}
+                {question.difficultyLevel === 'easy' && 'Fácil'}
+                {question.difficultyLevel === 'medium' && 'Médio'}
+                {question.difficultyLevel === 'hard' && 'Difícil'}
               </span>
             </TableCell>
             <TableCell>
-              {QUESTION_TYPE_LABELS[question.type]}
+              {QUESTION_TYPE_LABELS[question.questionType]}
             </TableCell>
             <TableCell>
               <ActionButton onClick={() => onView(question)} title="Visualizar">

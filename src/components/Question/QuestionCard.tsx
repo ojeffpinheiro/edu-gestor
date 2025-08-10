@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { FaHeart, FaRegHeart, FaTag } from 'react-icons/fa';
 import QuestionActions, {
   BadgeContainer,
@@ -13,11 +13,11 @@ import QuestionActions, {
   SelectCheckbox
 } from './QuestionActions';
 import { QuestionContent } from './QuestionPreviewStyles';
-import { QUESTION_TYPE_LABELS, QuestionBack } from '../../utils/types/Question';
+import { QUESTION_TYPE_LABELS, Question } from '../../utils/types/Question';
 import StarRating from './StarRating';
 
 interface QuestionCardProps {
-  question: QuestionBack | 'all'; // Permite o tipo 'all' para tratamento especial
+  question: Question | 'all'; // Permite o tipo 'all' para tratamento especial
   onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -27,8 +27,9 @@ interface QuestionCardProps {
   onSelect?: (id: string | number) => void;
   onRate?: (id: string | number, rating: number) => void;
   onToggleFavorite?: (id: string | number) => void;
-  onFindSimilar?: (question: QuestionBack) => void;
-  onCreateVariant?: (question: QuestionBack) => void;
+  onFindSimilar?: (question: Question) => void;
+  onCreateVariant?: (question: Question) => void;
+  showActionsOnClick: boolean;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
@@ -42,8 +43,11 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   onSelect,
   onRate,
   onToggleFavorite,
-  onCreateVariant
+  onCreateVariant,
+  showActionsOnClick = false,
 }) => {
+  const [showActions, setShowActions] = useState(false);
+
   const handleTagClick = (tag: string) => {
     onTagClick?.(tag);
   };
@@ -92,6 +96,9 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
       className={className}
       selected={selected}
       style={{ position: 'relative' }}
+      $isFavorite={question.isFavorite}
+      $usageCount={question.usageCount}
+      onClick={() => showActionsOnClick && setShowActions(!showActions)}
     >
       {getUsageBadge(question.usageCount)}
       <QuestionHeader>
@@ -102,20 +109,20 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
               checked={selected}
               onChange={() => onSelect(question.id)}
               onClick={(e) => e.stopPropagation()}
-              aria-label={`Selecionar questão ${question.title}`}
+              aria-label={`Selecionar questão ${question.statement}`}
             />
           )}
-          <QuestionTitle title={question.title}>
-            {question.title}
+          <QuestionTitle title={question.statement}>
+            {question.statement}
           </QuestionTitle>
           <BadgeContainer>
-            <QuestionBadge $variant={`difficulty-${question.difficulty}`}>
-              {question.difficulty === 'easy' && 'Fácil'}
-              {question.difficulty === 'medium' && 'Médio'}
-              {question.difficulty === 'hard' && 'Difícil'}
+            <QuestionBadge $variant={`difficulty-${question.difficultyLevel}`}>
+              {question.difficultyLevel === 'easy' && 'Fácil'}
+              {question.difficultyLevel === 'medium' && 'Médio'}
+              {question.difficultyLevel === 'hard' && 'Difícil'}
             </QuestionBadge>
-            <QuestionBadge $variant={`type-${question.type}`}>
-              {QUESTION_TYPE_LABELS[question.type]}
+            <QuestionBadge $variant={`type-${question.questionType}`}>
+              {QUESTION_TYPE_LABELS[question.questionType]}
             </QuestionBadge>
           </BadgeContainer>
           <button
@@ -141,18 +148,18 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
         />
       </QuestionHeader>
 
-      <QuestionContent title={question.content}>
-        {question.content}
+      <QuestionContent title={question.explanation}>
+        {question.explanation}
       </QuestionContent>
 
       <QuestionMeta>
-        <span>Categoria: {question.category}</span>
+        <span>Categoria: {question.discipline}</span>
         <span>Criada em: {new Date(question.createdAt).toLocaleDateString()}</span>
-        {question.lastUsed && (
-          <span>Último uso: {new Date(question.lastUsed).toLocaleDateString()}</span>
+        {question.updatedAt && (
+          <span>Último uso: {new Date(question.updatedAt).toLocaleDateString()}</span>
         )}
-        {question.accuracy && (
-          <span>Acertos: {question.accuracy}%</span>
+        {question.correctRate && (
+          <span>Acertos: {question.correctRate}%</span>
         )}
         <StarRating
           rating={question.rating || 0}

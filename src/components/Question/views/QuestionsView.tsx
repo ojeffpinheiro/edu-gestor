@@ -4,7 +4,7 @@ import { useQuestionSelection } from '../../../hooks/useQuestionSelection';
 import { useSortPreferences } from '../../../hooks/useSortPreferences';
 import { useQuestionSort } from '../../../hooks/useQuestionSort';
 
-import { DifficultyLevelType, Question, QuestionBack, QuestionType } from '../../../utils/types/Question';
+import { DifficultyLevelType, Question, QuestionType } from '../../../utils/types/Question';
 
 import LoadingSpinner from '../../shared/LoadingSpinner';
 
@@ -23,28 +23,9 @@ import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
 import { QuestionsGrid } from '../../../styles/questionList';
 import { shuffleAlternatives } from '../../../utils/questionUtils';
 import LoadingIndicator from '../../shared/LoadingIndicator';
-
-// Função para converter QuestionBack para Question
-const convertQuestionBackToQuestion = (questionBack: QuestionBack): Question => {
-    return {
-        ...questionBack,
-        id: typeof questionBack.id === 'number' ? questionBack.id.toString() : questionBack.id,
-        contentId: typeof questionBack.id === 'number' ? questionBack.id.toString() : questionBack.id,
-        correctAnswers: questionBack.correctAnswers
-            ? questionBack.correctAnswers.map(String)
-            : undefined,
-        statement: questionBack.content,
-        questionType: questionBack.type as QuestionType,
-        difficultyLevel: questionBack.difficulty,
-        discipline: questionBack.category || '',
-        alternatives: [],
-        explanation: questionBack.explanation || '',
-        createdAt: questionBack.createdAt,
-        updatedAt: questionBack.lastUsed || questionBack.createdAt,
-        status: 'active',
-        answers: questionBack.answers || [], // Garantir array vazio se não existir
-    };
-};
+import { BulkStatusModal } from '../BulkStatusModal';
+import { BulkMoveModal } from '../BulkMoveModal';
+import { FiDownload, FiFlag, FiFolder, FiTrash2 } from 'react-icons/fi';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -54,7 +35,7 @@ interface QuestionsViewProps {
     onCategoryChange: (value: string) => void;
     selectedDifficulty: string;
     onDifficultyChange: (value: string) => void;
-    questions: QuestionBack[];
+    questions: Question[];
     sortOptions: { value: string; label: string }[];
     sortField: string;
     sortDirection: 'asc' | 'desc';
@@ -62,42 +43,43 @@ interface QuestionsViewProps {
     onFindSimilar?: (questionId: string | number) => void;
     initialSortField?: string;
     initialSortDirection?: 'asc' | 'desc';
+    onQuestionChange: (questions: Question[] | ((prev: Question[]) => Question[])) => void;
 }
 
 const QuestionsView: React.FC<QuestionsViewProps> = ({
     searchTerm,
-    questions: questionBacks,
+    questions,
+    initialSortField = 'createdAt',
+    initialSortDirection = 'desc',
     sortOptions,
     categories,
     selectedCategory,
     selectedDifficulty,
+    onQuestionChange,
     onSearchChange,
     onCategoryChange,
     onDifficultyChange,
     onSortChange,
-    initialSortField = 'createdAt',
-    initialSortDirection = 'desc',
 }) => {
+    const [showStatusModal, setShowStatusModal] = useState(false);
+    const [showMoveModal, setShowMoveModal] = useState(false);
+    const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
+    const [isSelectAll, setIsSelectAll] = useState(false);
     const [isCreatingVariant, setIsCreatingVariant] = useState(false);
     const [compositeQuestions, setCompositeQuestions] = useState<Question[]>([]);
     const [isCombining, setIsCombining] = useState(false);
     const [combineError, setCombineError] = useState<string | null>(null);
     const [showCombineModal, setShowCombineModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [similarQuestions, setSimilarQuestions] = useState<QuestionBack[]>([]);
+    const [similarQuestions, setSimilarQuestions] = useState<Question[]>([]);
     const [currentQuestionType, setCurrentQuestionType] = useState<QuestionType | 'all'>('all');
     const [showSimilarModal, setShowSimilarModal] = useState(false);
-    const [currentQuestionForSimilarity, setCurrentQuestionForSimilarity] = useState<QuestionBack | null>(null);
+    const [currentQuestionForSimilarity, setCurrentQuestionForSimilarity] = useState<Question | null>(null);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
     const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
-    const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
-
-    // Converter QuestionBack[] para Question[]
-    const questions = useMemo(() =>
-        questionBacks.map(convertQuestionBackToQuestion),
-        [questionBacks]
-    );
+    const [isBulkEditing, setIsBulkEditing] = useState(false);
+    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
     useEffect(() => {
         const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -136,7 +118,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     const {
         sortField: currentSortField,
         sortDirection: currentSortDirection,
-        handleSortChange: handleInternalSortChange,
         sortQuestions
     } = useQuestionSort({
         initialField: sortField,
@@ -157,10 +138,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             setSelectedQuestions(new Set(selected.filter(q => q && q.id !== undefined).map(q => q.id ? q.id.toString() : '')));
         }
     });
-
-    const handleSort = useCallback((field: string, direction: 'asc' | 'desc') => {
-        handleInternalSortChange(field, direction);
-    }, [handleInternalSortChange]);
 
     const SimilarQuestionsModalContent = useMemo(() => (
         currentQuestionForSimilarity && (
@@ -241,7 +218,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         const allTags = questions.flatMap(q => q.tags || []);
         return Array.from(new Set(allTags));
     };
-    
+
     const combineQuestions = useCallback((questionIds: string[]): Question => {
         // Obter as questões selecionadas
         const selectedQuestionsData = questions.filter(q => q.id !== undefined && questionIds.includes(q.id.toString()));
@@ -354,7 +331,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         try {
             const newQuestion = combineQuestions(Array.from(selectedQuestions));
             // Aqui você pode adicionar a nova questão ao estado
-            // setQuestions(prev => [...prev, newQuestion]);
+            // onQuestionChange(prev => [...prev, newQuestion]);
 
             // Ou usar um callback para o componente pai
             // onCreateCompositeQuestion?.(newQuestion);
@@ -396,33 +373,20 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         }));
     }, [setActiveFilters]);
 
-    // Função de adaptador para converter Question para QuestionBack
-    const adaptToQuestionBack = (question: Question): QuestionBack => ({
-        id: question.contentId,
-        title: question.statement,
-        content: question.statement,
-        category: question.discipline,
-        difficulty: question.difficultyLevel,
-        type: question.questionType,
-        tags: question.tags || [],
-        createdAt: question.createdAt,
-        lastUsed: question.updatedAt,
-        accuracy: question.correctRate,
-        usageCount: question.timesUsed,
-        answers: [],
-        explanation: question.explanation,
-        isFavorite: question.pinned,
-    });
-
-    const handleFindSimilar = useCallback(async (question: QuestionBack) => {
+    const handleFindSimilar = useCallback(async (question: Question) => {
         setCurrentQuestionForSimilarity(question);
         try {
-            console.log(`QuestionView: Buscando questões similares para ${question.title}`);
+            console.log(`QuestionView: Buscando questões similares para ${question.statement}`);
+            const similar = questions.filter(q =>
+                q.discipline === question.discipline &&
+                q.id !== question.id
+            );
+            setSimilarQuestions(similar);
             setShowSimilarModal(true);
         } catch (error) {
             console.error('Erro ao buscar questões similares:', error);
         }
-    }, []);
+    }, [questions]);
 
     const createQuestionVariant = useCallback((baseQuestion: Question): Question => {
         return {
@@ -452,6 +416,75 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             setIsCreatingVariant(false);
         }
     }, [createQuestionVariant]);
+
+    // Toggle seleção individual
+    const toggleQuestionSelection = (id: string) => {
+        setSelectedQuestions(prev => {
+            const newSet = new Set(prev);
+            newSet.has(id) ? newSet.delete(id) : newSet.add(id);
+            return newSet;
+        });
+    };
+
+    // Selecionar todas/deselecionar todas
+    const toggleSelectAll = () => {
+        if (isSelectAll) {
+            setSelectedQuestions(new Set());
+        } else {
+            const allIds = new Set(filteredQuestions.map(q => q.id));
+            setSelectedQuestions(allIds);
+        }
+        setIsSelectAll(!isSelectAll);
+    };
+
+    const handleBulkDelete = async () => {
+        if (selectedQuestions.size === 0) return;
+
+        setIsBulkDeleting(true);
+        try {
+            onQuestionChange(prev => prev.filter(q => !selectedQuestions.has(q.id)));
+            setSelectedQuestions(new Set());
+        } catch (error) {
+            console.error('Erro ao excluir questões');
+        } finally {
+            setIsBulkDeleting(false);
+        }
+    };
+
+    const handleBulkEdit = (updates: Partial<Question>) => {
+        setIsBulkEditing(true);
+        try {
+            onQuestionChange(prev => prev.map(q =>
+                selectedQuestions.has(q.id) ? { ...q, ...updates } : q
+            ));
+        } catch (error) {
+            console.error('Erro ao editar questões');
+        } finally {
+            setIsBulkEditing(false);
+        }
+    };
+
+    const handleBulkExport = () => {
+        if (selectedQuestions.size === 0) return;
+
+        const questionsToExport = questions.filter(q => selectedQuestions.has(q.id));
+        const exportData = {
+            version: '1.0',
+            generatedAt: new Date().toISOString(),
+            count: questionsToExport.length,
+            questions: questionsToExport
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `questoes-exportadas-${new Date().toLocaleDateString()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        console.log(`${selectedQuestions.size} questões exportadas`);
+    };
 
     if (isLoading) {
         return (
@@ -501,6 +534,35 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                             Combinar ({selectedQuestions.size})
                         </button>
                     )}
+                    {selectedQuestions.size > 0 && (
+                        <div className="bulk-actions-bar">
+                            <div className="selected-count">
+                                {selectedQuestions.size} selecionadas
+                            </div>
+
+                            <button
+                                onClick={handleBulkDelete}
+                                disabled={isBulkDeleting}
+                            >
+                                {isBulkDeleting
+                                    ? (<LoadingSpinner size='medium' />)
+                                    : (<FiTrash2 />)}
+                                Excluir
+                            </button>
+
+                            <button onClick={() => setShowStatusModal(true)}>
+                                <FiFlag /> Status
+                            </button>
+
+                            <button onClick={() => setShowMoveModal(true)}>
+                                <FiFolder /> Mover
+                            </button>
+
+                            <button onClick={handleBulkExport}>
+                                <FiDownload /> Exportar
+                            </button>
+                        </div>
+                    )}
                     <QuestionTypeIndicator type={currentQuestionType} />
                     <QuestionViewModeToggle
                         mode={viewMode}
@@ -514,7 +576,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     {processedQuestions.map(question => (
                         <QuestionCard
                             key={question.id}
-                            question={adaptToQuestionBack(question)}
+                            question={question}
                             onView={() => handleViewQuestion(question)}
                             onEdit={() => handleEditQuestion(question)}
                             onDelete={() => handleDeleteQuestion(question)}
@@ -524,16 +586,18 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                             onToggleFavorite={handleToggleFavorite}
                             onFindSimilar={handleFindSimilar}
                             onTagClick={(tag) => console.log('Tag clicada:', tag)}
-                            onCreateVariant={(questionBack) => handleCreateVariant(convertQuestionBackToQuestion(questionBack))}
+                            onCreateVariant={() => handleCreateVariant(question)}
+                            showActionsOnClick={true}
                         />
                     ))}
                 </QuestionsGrid>
             ) : (
+
                 <QuestionsTable
-                    questions={processedQuestions.map(adaptToQuestionBack)} // Converter para QuestionBack
-                    onView={(question) => handleViewQuestion(convertQuestionBackToQuestion(question))}
-                    onEdit={(question) => handleEditQuestion(convertQuestionBackToQuestion(question))}
-                    onDelete={(question) => handleDeleteQuestion(convertQuestionBackToQuestion(question))}
+                    questions={processedQuestions}
+                    onView={handleViewQuestion}
+                    onEdit={handleEditQuestion}
+                    onDelete={handleDeleteQuestion}
                     selectedQuestions={selectedQuestions}
                     onSelect={handleQuestionSelect}
                 />
@@ -541,7 +605,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
             {selectedQuestion && (
                 <QuestionDetailModal
-                    question={adaptToQuestionBack(selectedQuestion)} // Converter para QuestionBack
+                    question={selectedQuestion}
                     isOpen={!!selectedQuestion}
                     onClose={() => setSelectedQuestion(null)}
                     onEdit={() => {
@@ -553,6 +617,15 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                         setSelectedQuestion(null);
                     }}
                 />
+            )}
+
+            {compositeQuestions.length > 0 && (
+                <div>
+                    <h3>Questões Compostas</h3>
+                    {compositeQuestions.map(q => (
+                        <QuestionCard key={q.id} question={q} showActionsOnClick />
+                    ))}
+                </div>
             )}
 
             {showCombineModal && isCombining ? (
@@ -567,11 +640,38 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     onCancel={() => setShowCombineModal(false)}
                 />
             )}
+
+            {combineError && <div className="error-message">{combineError}</div>}
+
             {isCreatingVariant && (
                 <LoadingIndicator message="Criando variação..." />
             )}
 
             {currentQuestionForSimilarity && SimilarQuestionsModalContent}
+
+            {isBulkEditing && <LoadingSpinner message="Atualizando questões..." />}
+
+            {/* Modais */}
+            <BulkStatusModal
+                isOpen={showStatusModal}
+                onClose={() => setShowStatusModal(false)}
+                onConfirm={(status) => {
+                    handleBulkEdit({ status });
+                    setShowStatusModal(false);
+                }}
+                count={selectedQuestions.size}
+            />
+
+            <BulkMoveModal
+                isOpen={showMoveModal}
+                onClose={() => setShowMoveModal(false)}
+                onConfirm={(discipline) => {
+                    handleBulkEdit({ discipline });
+                    setShowMoveModal(false);
+                }}
+                categories={categories}
+                count={selectedQuestions.size}
+            />
         </>
     );
 };
