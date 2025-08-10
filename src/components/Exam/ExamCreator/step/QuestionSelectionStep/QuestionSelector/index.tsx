@@ -36,14 +36,15 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   onQuestionsSelected,
 }) => {
   const [showSelectedList, setShowSelectedList] = useState(false);
-  
+
   const {
     searchTerm,
     setSearchTerm,
     setFilters,
     filteredQuestions,
-  } = useQuestionFilters(questions, { 
-    discipline: examData.discipline
+  } = useQuestionFilters({
+    questions,
+    initialDiscipline: examData.discipline
   });
 
   const {
@@ -61,18 +62,15 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   const selectedCount = selectedQuestions.length;
 
   const handleFilterChange = (newFilters: any) => {
-    setFilters(prev => ({
-      ...prev,
+    setFilters({
       ...newFilters,
-    }));
+    });
   };
 
   useEffect(() => {
-    // Filtrar questões por disciplina
-    setFilters(prev => ({
-      ...prev,
+    setFilters({
       discipline: examData.discipline
-    }));
+    });
   }, [examData.discipline, setFilters]);
 
   return (
