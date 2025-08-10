@@ -8,11 +8,12 @@ export const SettingsModal = ({
   sections,
   onClose,
   actions,
-  className
+  className,
+  isOpen
 }: SettingsModalProps) => {
   return (
     <Modal
-      isOpen={true}
+      isOpen={isOpen}
       title={title}
       onClose={onClose}
       actions={actions}

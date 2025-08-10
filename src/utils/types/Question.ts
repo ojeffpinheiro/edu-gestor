@@ -16,7 +16,8 @@ export type QuestionType =
   | 'fill_in_the_blank'
   | 'short_answer'
   | 'matching'
-  | 'ordering';
+  | 'ordering'
+  | 'composite';
 
 export type AnswerType =
   | 'single_select'
@@ -33,7 +34,8 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   fill_in_the_blank: 'Preenchimento',
   short_answer: 'Resposta Curta',
   matching: 'Correspondência',
-  ordering: 'Ordenação'
+  ordering: 'Ordenação',
+  composite: 'Composto',
 };
 
 export type DifficultyLevelType = 'easy' | 'medium' | 'hard';

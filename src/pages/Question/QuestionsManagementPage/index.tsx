@@ -15,7 +15,7 @@ import Tabs from '../../../components/Question/Tabs';
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('questions');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');  // 'all' em vez de ''
@@ -225,6 +225,7 @@ const QuestionBankPage = () => {
       {isOpen && (
         <SettingsModal
           title="Configurações do Sistema"
+          isOpen={isOpen}
           sections={sections}
           onClose={() => setIsOpen(false)}
           actions={

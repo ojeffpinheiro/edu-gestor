@@ -15,6 +15,7 @@ export interface SettingsSection {
 export interface SettingsModalProps {
   title: string;
   sections: SettingsSection[];
+  isOpen: boolean;
   onClose: () => void;
   actions?: ReactNode;
   className?: string;

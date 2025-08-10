@@ -35,7 +35,7 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContainer = styled.div<{ size: string }>`
-  background-color: white;
+  background-color: var(--color-background-secondary);
   border-radius: 8px;
   width: 100%;
   max-width: ${({ size }) => {
