@@ -68,8 +68,6 @@ export interface Question {
   timesUsed?: number;
   correctRate?: number;
   pinned?: boolean;
-  isComposite?: boolean;
-  componentQuestions?: string[];
   rating?: number;
   isFavorite?: boolean;
   usageCount?: number;
@@ -79,6 +77,10 @@ export interface Question {
   };
   answers: Answer[];
   correctAnswers?: string[];
+  isComposite?: boolean;
+  componentQuestions?: string[];
+  isVariant?: boolean;
+  sourceQuestionId?: string;
 }
 
 // Interface para as props dos componentes de passo

@@ -1,25 +1,28 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useQuestionFilters } from '../../../hooks/useQuestionFilters';
 import { useQuestionSelection } from '../../../hooks/useQuestionSelection';
+import { useSortPreferences } from '../../../hooks/useSortPreferences';
+import { useQuestionSort } from '../../../hooks/useQuestionSort';
 
-import { DifficultyLevelType, Question, QUESTION_TYPE_LABELS, QuestionBack, QuestionType } from '../../../utils/types/Question';
+import { DifficultyLevelType, Question, QuestionBack, QuestionType } from '../../../utils/types/Question';
+
+import LoadingSpinner from '../../shared/LoadingSpinner';
 
 import { SortControls } from '../../Sort/SortControls';
 
 import Filters from '../Filter/Filters';
-
 import QuestionCard from '../QuestionCard';
 import QuestionsTable from '../QuestionsTable';
 import CombineQuestionsModal from '../CombineQuestionsModal';
-import QuestionViewModeToggle from '../QuestionView/QuestionViewModeToggle';
-import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
-import { QuestionsGrid } from '../../../styles/questionList';
-import { useQuestionSort } from '../../../hooks/useQuestionSort';
 import { CategoryWithId } from '../QuestionForm/type';
 import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
-import { useSortPreferences } from '../../../hooks/useSortPreferences';
-import LoadingSpinner from '../../shared/LoadingSpinner';
-import styled from 'styled-components';
+import QuestionTypeIndicator from '../QuestionTypeIndicator'
+import QuestionViewModeToggle from '../QuestionView/QuestionViewModeToggle';
+import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
+
+import { QuestionsGrid } from '../../../styles/questionList';
+import { shuffleAlternatives } from '../../../utils/questionUtils';
+import LoadingIndicator from '../../shared/LoadingIndicator';
 
 // Função para converter QuestionBack para Question
 const convertQuestionBackToQuestion = (questionBack: QuestionBack): Question => {
@@ -75,8 +78,10 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     initialSortField = 'createdAt',
     initialSortDirection = 'desc',
 }) => {
-    const [combineError, setCombineError] = useState<string | null>(null);
+    const [isCreatingVariant, setIsCreatingVariant] = useState(false);
+    const [compositeQuestions, setCompositeQuestions] = useState<Question[]>([]);
     const [isCombining, setIsCombining] = useState(false);
+    const [combineError, setCombineError] = useState<string | null>(null);
     const [showCombineModal, setShowCombineModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [similarQuestions, setSimilarQuestions] = useState<QuestionBack[]>([]);
@@ -236,6 +241,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         const allTags = questions.flatMap(q => q.tags || []);
         return Array.from(new Set(allTags));
     };
+    
     const combineQuestions = useCallback((questionIds: string[]): Question => {
         // Obter as questões selecionadas
         const selectedQuestionsData = questions.filter(q => q.id !== undefined && questionIds.includes(q.id.toString()));
@@ -272,7 +278,8 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             contentId: `composite-${Date.now()}`,
 
             // Conteúdo principal
-            statement: `QUESTÃO COMPOSTA (${questionIds.length} partes)`,
+            statement: `Questão composta (${questionIds.length} partes):\n\n${selectedQuestionsData.map((q, i) => `${i + 1}. ${q.statement}`).join('\n\n')
+                }`,
             questionType: 'composite',
             explanation: 'Esta é uma questão composta criada a partir de outras questões.',
 
@@ -282,7 +289,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
             // Metadados
             discipline: getMostCommonDiscipline(selectedQuestionsData),
-            tags: getCombinedTags(selectedQuestionsData),
+            tags: Array.from(new Set(selectedQuestionsData.flatMap(q => q.tags || []))),
             source: 'Sistema (Combinada)',
             accessDate: new Date().toISOString(),
 
@@ -316,19 +323,29 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             pinned: selectedQuestionsData.every(q => q.pinned),
 
             // Questão composta
-            isComposite: false,
+            isComposite: true,
             componentQuestions: questionIds
         };
 
         return newCompositeQuestion;
     }, [questions]);
 
+    const handleCombineQuestions = useCallback(async () => {
+        if (selectedQuestions.size < 2) return;
 
-    const handleCombineQuestions = () => {
-        if (selectedQuestions.size > 1) {
-            setShowCombineModal(true);
+        setIsCombining(true);
+        try {
+            const newQuestion = combineQuestions(Array.from(selectedQuestions));
+            setCompositeQuestions(prev => [...prev, newQuestion]);
+            clearSelection();
+            setShowCombineModal(false);
+            console.log('Questões combinadas com sucesso!');
+        } catch (error) {
+            console.log('Erro ao combinar questões');
+        } finally {
+            setIsCombining(false);
         }
-    };
+    }, [selectedQuestions, combineQuestions, clearSelection]);
 
     const confirmCombineQuestions = useCallback(async () => {
         setIsCombining(true);
@@ -407,6 +424,35 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         }
     }, []);
 
+    const createQuestionVariant = useCallback((baseQuestion: Question): Question => {
+        return {
+            ...baseQuestion,
+            id: `variant-${Date.now()}-${baseQuestion.id}`,
+            contentId: `variant-${Date.now()}-${baseQuestion.contentId}`,
+            statement: `${baseQuestion.statement} (Variação)`,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+            isVariant: true,
+            sourceQuestionId: baseQuestion.id,
+            // Modifique outros campos conforme necessário para a variação
+            alternatives: shuffleAlternatives(baseQuestion.alternatives), // Exemplo: embaralhar alternativas
+        };
+    }, []);
+
+    const handleCreateVariant = useCallback(async (question: Question) => {
+        setIsCreatingVariant(true);
+        try {
+            const variant = createQuestionVariant(question);
+            // Adicione a nova variação ao estado ou banco de dados
+            console.log('Nova variação criada:', variant);
+            console.log('Variação criada com sucesso!');
+        } catch (error) {
+            console.error('Erro ao criar variação');
+        } finally {
+            setIsCreatingVariant(false);
+        }
+    }, [createQuestionVariant]);
+
     if (isLoading) {
         return (
             <LoadingSpinner
@@ -478,6 +524,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                             onToggleFavorite={handleToggleFavorite}
                             onFindSimilar={handleFindSimilar}
                             onTagClick={(tag) => console.log('Tag clicada:', tag)}
+                            onCreateVariant={(questionBack) => handleCreateVariant(convertQuestionBackToQuestion(questionBack))}
                         />
                     ))}
                 </QuestionsGrid>
@@ -511,12 +558,17 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             {showCombineModal && isCombining ? (
                 <LoadingSpinner message="Combinando questões..." />
             ) : (
-                showCombineModal && <CombineQuestionsModal
+                showCombineModal &&
+                <CombineQuestionsModal
+                    isOpen={showCombineModal}
                     count={selectedQuestions.size}
                     isCombining={isCombining}
                     onConfirm={confirmCombineQuestions}
                     onCancel={() => setShowCombineModal(false)}
                 />
+            )}
+            {isCreatingVariant && (
+                <LoadingIndicator message="Criando variação..." />
             )}
 
             {currentQuestionForSimilarity && SimilarQuestionsModalContent}
@@ -525,38 +577,3 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 };
 
 export default QuestionsView;
-
-
-interface QuestionTypeIndicatorProps {
-    type: QuestionType | 'all';
-}
-
-const QuestionTypeIndicator: React.FC<QuestionTypeIndicatorProps> = ({ type }) => {
-    const getTypeColor = () => {
-        switch (type) {
-            case 'multiple_choice': return 'var(--color-primary)';
-            case 'true_false': return 'var(--color-success)';
-            case 'essay': return 'var(--color-warning)';
-            case 'fill_in_the_blank': return 'var(--color-info)';
-            default: return 'var(--color-text)';
-        }
-    };
-
-    return (
-        <TypeIndicatorContainer style={{ color: getTypeColor() }}>
-            {type === 'all' ? '📊 Todos os Tipos' : `📝 ${QUESTION_TYPE_LABELS[type]}`}
-        </TypeIndicatorContainer>
-    );
-};
-
-const TypeIndicatorContainer = styled.div`
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  background-color: var(--color-background-secondary);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-left: auto;
-  margin-right: 1rem;
-`

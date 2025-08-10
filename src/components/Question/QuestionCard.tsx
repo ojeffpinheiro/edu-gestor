@@ -28,6 +28,7 @@ interface QuestionCardProps {
   onRate?: (id: string | number, rating: number) => void;
   onToggleFavorite?: (id: string | number) => void;
   onFindSimilar?: (question: QuestionBack) => void;
+  onCreateVariant?: (question: QuestionBack) => void;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
@@ -40,7 +41,8 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   selected = false,
   onSelect,
   onRate,
-  onToggleFavorite
+  onToggleFavorite,
+  onCreateVariant
 }) => {
   const handleTagClick = (tag: string) => {
     onTagClick?.(tag);
@@ -135,6 +137,7 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
           onEdit={onEdit}
           onDelete={onDelete}
           question={question}
+          onCreateVariant={onCreateVariant && (() => onCreateVariant(question))}
         />
       </QuestionHeader>
 
