@@ -1,12 +1,17 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+
 import { useQuestionFilters } from '../../../hooks/useQuestionFilters';
 import { useQuestionSelection } from '../../../hooks/useQuestionSelection';
 import { useSortPreferences } from '../../../hooks/useSortPreferences';
 import { useQuestionSort } from '../../../hooks/useQuestionSort';
+import { useBulkActions } from '../../../hooks/useBulkActions';
+import { useQuestionCombination } from '../../../hooks/useQuestionCombination';
+import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
 
 import { Question, QuestionType } from '../../../utils/types/Question';
 
 import LoadingSpinner from '../../shared/LoadingSpinner';
+import LoadingIndicator from '../../shared/LoadingIndicator';
 
 import { SortControls } from '../../Sort/SortControls';
 
@@ -16,19 +21,16 @@ import QuestionsTable from '../QuestionsTable';
 import CombineQuestionsModal from '../CombineQuestionsModal';
 import { CategoryWithId } from '../QuestionForm/type';
 import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
+import { BulkStatusModal } from '../BulkStatusModal';
+import { BulkMoveModal } from '../BulkMoveModal';
+import QuestionTypeFilter from '../QuestionTypeFilter';
+import { AdvancedFilters } from '../AdvancedFilters';
+
 import QuestionViewModeToggle from '../QuestionView/QuestionViewModeToggle';
 import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
 
 import { QuestionsGrid } from '../../../styles/questionList';
-import LoadingIndicator from '../../shared/LoadingIndicator';
-import { BulkStatusModal } from '../BulkStatusModal';
-import { BulkMoveModal } from '../BulkMoveModal';
 import { createQuestionVariant } from '../../../utils/questionUtils';
-import { useQuestionCombination } from '../../../hooks/useQuestionCombination';
-import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
-import QuestionTypeFilter from '../QuestionTypeFilter';
-import { useBulkActions } from '../../../hooks/useBulkActions';
-import { AdvancedFilters } from '../AdvancedFilters';
 
 interface QuestionsViewProps {
     searchTerm: string;
