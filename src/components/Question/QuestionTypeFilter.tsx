@@ -47,7 +47,7 @@ const Select = styled.select`
   padding: 0.5rem 1rem;
   border-radius: 4px;
   border: 1px solid #ddd;
-  background-color: white;
+  background-color: var(--color-background-secondary);
   font-size: 0.9rem;
   cursor: pointer;
 

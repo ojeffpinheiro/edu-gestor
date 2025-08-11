@@ -57,7 +57,7 @@ const Dropdown = styled.div<{ isOpen: boolean }>`
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background-color: white;
+  background-color: var(--color-background-secondary);
   border-radius: 4px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 250px;
@@ -98,7 +98,7 @@ const Select = styled.select`
   border: 1px solid #e1e4e8;
   border-radius: 4px;
   font-size: 0.875rem;
-  background-color: white;
+  background-color: var(--color-background-secondary);
 `;
 
 const ButtonGroup = styled.div`
@@ -126,7 +126,7 @@ const Button = styled.button`
   }
   
   &.secondary {
-    background-color: white;
+    background-color: var(--color-background-secondary);
     color: #2c3e50;
     border: 1px solid #e1e4e8;
     

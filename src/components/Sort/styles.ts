@@ -17,7 +17,7 @@ export const SortSelect = styled.select`
   border-radius: 4px;
   font-size: 0.875rem;
   cursor: pointer;
-  background-color: white;
+  background-color: var(--color-background-secondary);
 `;
 
 export const SortButtonGroup = styled.div`

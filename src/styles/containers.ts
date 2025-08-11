@@ -56,7 +56,7 @@ export const PageContainer = styled.div`
 `;
 
 export const Section = styled.div`
-  background: white;
+  background: var(--color-background-secondary);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);

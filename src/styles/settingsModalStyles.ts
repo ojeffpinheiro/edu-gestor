@@ -14,7 +14,7 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContainer = styled.div`
-  background-color: white;
+  background-color: var(--color-background-secondary);
   border-radius: 8px;
   width: 90%;
   max-width: 600px;
@@ -102,7 +102,7 @@ export const ModalButton = styled.button`
   
   &.outline {
     border: 1px solid var(--color-border);
-    background-color: white;
+    background-color: var(--color-background-secondary);
     color: var(--color-text);
     
     &:hover {

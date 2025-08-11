@@ -44,7 +44,9 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
     filteredQuestions,
   } = useQuestionFilters({
     questions,
-    initialDiscipline: examData.discipline
+    initialFilters: {
+      disciplines: examData.discipline ? [examData.discipline] : []
+    }
   });
 
   const {
@@ -68,10 +70,10 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   };
 
   useEffect(() => {
-    setFilters({
-      discipline: examData.discipline
-    });
-  }, [examData.discipline, setFilters]);
+  setFilters({
+    disciplines: examData.discipline ? [examData.discipline] : []
+  });
+}, [examData.discipline, setFilters]);
 
   return (
     <Container>

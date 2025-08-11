@@ -32,7 +32,7 @@ const ProfileImage = styled.div`
 const DropdownContent = styled.div`
   position: absolute;
   right: 0;
-  background-color: white;
+  background-color: var(--color-background-secondary);
   min-width: 200px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   z-index: 1;

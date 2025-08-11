@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
 import { AdvancedFilters } from './AdvancedFilters';
-import { Category } from './QuestionForm/type';
-import { SavedFilter } from '../../utils/types/Question';
+import { CategoryWithId } from './QuestionForm/type';
+import { SavedFilter, FilterOptions } from '../../utils/types/Question';
+
+// Definindo valores padrão para FilterOptions
+const defaultFilters: FilterOptions = {
+  searchTerm: '',
+  categories: [],
+  difficulties: [],
+  types: [],
+  disciplines: [],
+  ratingRange: [0, 5],
+  createdAtRange: ['', ''],
+  tags: []
+};
 
 interface AdvancedSearchBarProps {
-  categories: Category[];
+  categories: CategoryWithId[];
   savedFilters: SavedFilter[];
-  onApplyFilters: (filters: any) => void;
+  onApplyFilters: (filters: FilterOptions) => void;
   onSaveFilter: (name: string) => void;
 }
 
@@ -18,6 +30,23 @@ export const AdvancedSearchBar: React.FC<AdvancedSearchBarProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState<FilterOptions>(defaultFilters);
+
+  const handleApply = () => {
+    // Combina o termo de busca com os filtros atuais
+    const filtersToApply: FilterOptions = {
+      ...currentFilters,
+      searchTerm: searchTerm
+    };
+    onApplyFilters(filtersToApply);
+  };
+
+  const handleFiltersChange = (filters: Partial<FilterOptions>) => {
+    setCurrentFilters(prev => ({
+      ...prev,
+      ...filters
+    }));
+  };
 
   return (
     <div className="search-container">
@@ -26,7 +55,10 @@ export const AdvancedSearchBar: React.FC<AdvancedSearchBarProps> = ({
           type="text"
           placeholder="Buscar questões..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            handleFiltersChange({ searchTerm: e.target.value });
+          }}
         />
         <button onClick={() => setShowAdvanced(!showAdvanced)}>
           {showAdvanced ? 'Filtrar ▲' : 'Filtrar ▼'}
@@ -36,9 +68,9 @@ export const AdvancedSearchBar: React.FC<AdvancedSearchBarProps> = ({
       {showAdvanced && (
         <AdvancedFilters
           categories={categories}
-          onApply={onApplyFilters}
-          savedFilters={savedFilters}
-          onSaveFilter={onSaveFilter}
+          filters={currentFilters}
+          onFiltersChange={handleFiltersChange}
+          onApply={handleApply}
         />
       )}
     </div>

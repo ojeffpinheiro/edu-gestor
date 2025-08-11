@@ -200,13 +200,14 @@ export interface TabsProps {
 export interface FilterOptions {
   searchTerm: string;
   categories: string[];
-  difficulties: ('easy' | 'medium' | 'hard')[];
+  difficulties: DifficultyLevelType[];
   types: QuestionType[];
-  ratingRange: [number, number];
-  usageRange: [number, number];
-  createdAtRange: [string, string];
-  tags: string[];
-  discipline: string[];
+  discipline?: string[];
+  disciplines?: string[];
+  ratingRange?: [number, number];
+  usageRange?: [number, number];
+  createdAtRange?: [string, string];
+  tags?: string[];
 }
 
 export interface SavedFilter {

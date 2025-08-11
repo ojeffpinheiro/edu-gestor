@@ -51,7 +51,7 @@ const Filters = ({
               value={selectedCategory}
               onChange={(e) => onCategoryChange(e.target.value)}
             >
-              <option value="">Todas as categorias</option>
+              <option value="all">Todas as categorias</option>
               {categoryOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -64,8 +64,8 @@ const Filters = ({
             <FilterSelect
               value={selectedDifficulty}
               onChange={(e) => onDifficultyChange(e.target.value)}
-            >
-              <option value="">Todas as dificuldades</option>
+              >
+              <option value="all">Todas as dificuldades</option>
               {difficultyOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -86,7 +86,7 @@ const Filters = ({
 
           <FilterGroup label=" ">
             <AdvancedFiltersButton onClick={onAdvancedToggle}>
-              <FiFilter /> Filtros Avançados
+              <FiFilter /> {showAdvanced ? 'Ocultar Avançados' : 'Filtros Avançados'}
             </AdvancedFiltersButton>
           </FilterGroup>
         </FiltersGrid>

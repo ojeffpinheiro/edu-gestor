@@ -28,6 +28,7 @@ import { useQuestionCombination } from '../../../hooks/useQuestionCombination';
 import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
 import QuestionTypeFilter from '../QuestionTypeFilter';
 import { useBulkActions } from '../../../hooks/useBulkActions';
+import { AdvancedFilters } from '../AdvancedFilters';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -139,14 +140,13 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     }, [onSortChange, setSortField, setSortDirection]);
 
     const {
-        setActiveFilters,
-        filteredQuestions
+        activeFilters, setActiveFilters, filteredQuestions
     } = useQuestionFilters({
         questions,
         initialFilters: {
             searchTerm: searchTerm,
             categories: selectedCategory !== 'all' ? [selectedCategory] : [],
-            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : []
+            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : [],
         }
     });
 
@@ -162,11 +162,12 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     });
 
     useEffect(() => {
-        setActiveFilters({
+        setActiveFilters(prev => ({
+            ...prev,
             searchTerm: searchTerm,
             categories: selectedCategory !== 'all' ? [selectedCategory] : [],
-            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : []
-        });
+            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : [],
+        }));
     }, [searchTerm, selectedCategory, selectedDifficulty, setActiveFilters]);
 
     const difficultyOptions = [
@@ -179,6 +180,22 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         value: category.id,
         label: category.name
     }));
+
+    const handleApplyAdvancedFilters = useCallback(() => {
+        // Atualiza a lista de questões filtradas
+        // O estado filteredQuestions já será atualizado automaticamente
+        setShowAdvanced(false);
+    }, []);
+
+    const handleResetAdvancedFilters = useCallback(() => {
+        setActiveFilters(prev => ({
+            ...prev,
+            tags: [],
+            disciplines: [],
+            ratingRange: [0, 5],
+            createdAtRange: ['', ''],
+        }));
+    }, [setActiveFilters]);
 
     const handleBulkEdit = useCallback((updates: Partial<Question>) => {
         editQuestions(updates);
@@ -226,7 +243,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             types: type === 'all' ? [] : [type]
         }));
     }, [setActiveFilters]);
-
 
     const confirmCombineQuestions = useCallback(async () => {
         if (selectedQuestions.size < 2) return;
@@ -277,6 +293,15 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 onDifficultyChange={onDifficultyChange}
                 onQuestionTypeFilter={handleQuestionTypeFilter}
             />
+            {showAdvanced && (
+                <AdvancedFilters
+                    categories={categories}
+                    filters={activeFilters}
+                    onFiltersChange={(updates) => setActiveFilters(prev => ({ ...prev, ...updates }))}
+                    onApply={handleApplyAdvancedFilters}
+                    onReset={handleResetAdvancedFilters}
+                />
+            )}
 
             <div style={{
                 display: 'flex',

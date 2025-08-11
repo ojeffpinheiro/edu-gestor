@@ -327,7 +327,7 @@ export const FormSwitch = styled.label`
       width: 18px;
       left: 4px;
       bottom: 4px;
-      background-color: white;
+      background-color: var(--color-background-secondary);
       transition: .4s;
       border-radius: 50%;
     }

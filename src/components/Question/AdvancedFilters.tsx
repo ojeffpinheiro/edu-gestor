@@ -1,158 +1,147 @@
-import React, { useState } from 'react';
-import { Category } from './QuestionForm/type';
-import { FilterOptions, SavedFilter } from '../../utils/types/Question';
-import RangeSlider from '../../styles/RangeSlider';
-import MultiSelect from '../shared/MultiSelect';
+import React from 'react';
 import styled from 'styled-components';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import { CategoryWithId } from './QuestionForm/type';
+import { FilterOptions } from '../../utils/types/Question';
+import RangeSlider from '../../styles/RangeSlider';
+import { MultiSelect } from '../shared/MultiSelect';
 
 interface AdvancedFiltersProps {
-  categories: Category[];
-  onApply: (filters: Partial<FilterOptions>) => void;
-  savedFilters?: SavedFilter[];
-  onSaveFilter?: (name: string) => void;
+  categories: CategoryWithId[];
+  filters: FilterOptions;
+  onFiltersChange: (filters: Partial<FilterOptions>) => void;
+  onApply: () => void;
+  onReset?: () => void;
 }
 
-
 const Container = styled.div`
-  background: #f5f5f5;
-  padding: 1rem;
-  border-radius: 4px;
+  background: var(--color-background-secondary);
+  padding: 1.5rem;
+  border-radius: 8px;
   margin-top: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const FilterGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
 `;
 
 const FilterSection = styled.div`
-  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const FilterLabel = styled.label`
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
 `;
 
 const FilterActions = styled.div`
   display: flex;
+  justify-content: flex-end;
   gap: 1rem;
-  align-items: center;
-  margin-top: 1rem;
-`;
-
-const SaveFilter = styled.div`
-  display: flex;
-  gap: 0.5rem;
-`;
-
-const SavedFilters = styled.div`
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-`;
-
-const Button = styled.button`
-  background: #e0e0e0;
-  border: none;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  cursor: pointer;
-`;
-
-const Input = styled.input`
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
 `;
 
 export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
   categories,
+  filters,
+  onFiltersChange,
   onApply,
-  savedFilters = [],
-  onSaveFilter
+  onReset,
 }) => {
-  const [isApplying, setIsApplying] = useState(false);
-  const [filterError, setFilterError] = useState('');
-  const [filters, setFilters] = useState<Partial<FilterOptions>>({});
-  const [filterName, setFilterName] = useState('');
-  
-  const handleApply = async () => {
-    setIsApplying(true);
-    try {
-      await onApply(filters);
-    } finally {
-      setIsApplying(false);
+  const handleDateChange = (type: 'start' | 'end', date: Date | null) => {
+    const newDateRange = [...(filters.createdAtRange || ['', ''])] as [string, string];
+
+    if (type === 'start') {
+      newDateRange[0] = date ? date.toISOString() : '';
+    } else {
+      newDateRange[1] = date ? date.toISOString() : '';
     }
+
+    onFiltersChange({ createdAtRange: newDateRange });
   };
 
-  const handleSaveFilter = () => {
-    if (!filterName.trim()) {
-      setFilterError('Nome do filtro é obrigatório');
-      return;
-    }
-    if (savedFilters.some(f => f.name === filterName)) {
-      setFilterError('Já existe um filtro com este nome');
-      return;
-    }
-    onSaveFilter?.(filterName);
-    setFilterName('');
-    setFilterError('');
+  const handleRatingChange = (range: [number, number]) => {
+    onFiltersChange({ ratingRange: range });
   };
 
   return (
     <Container>
-      <FilterSection>
-        <h4>Categorias</h4>
-        <MultiSelect
-          options={categories.map(c => ({ value: c.i, label: c.name }))}
-          onChange={(selected: string[]) => setFilters({ ...filters, categories: selected })}
-        />
-      </FilterSection>
+      <FilterGrid>
+        <FilterSection>
+          <FilterLabel>Período de Criação</FilterLabel>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <DatePicker
+              selected={filters.createdAtRange?.[0] ? new Date(filters.createdAtRange[0]) : undefined}
+              onChange={(date: Date | null) => handleDateChange('start', date)}
+              placeholderText="Data inicial"
+              selectsStart
+              startDate={filters.createdAtRange?.[0] ? new Date(filters.createdAtRange[0]) : undefined}
+              endDate={filters.createdAtRange?.[1] ? new Date(filters.createdAtRange[1]) : undefined}
+            />
+            <DatePicker
+              selected={filters.createdAtRange?.[1] ? new Date(filters.createdAtRange[1]) : undefined}
+              onChange={(date: Date | null) => handleDateChange('end', date)}
+              placeholderText="Data final"
+              selectsEnd
+              startDate={filters.createdAtRange?.[0] ? new Date(filters.createdAtRange[0]) : undefined}
+              endDate={filters.createdAtRange?.[1] ? new Date(filters.createdAtRange[1]) : undefined}
+              minDate={filters.createdAtRange?.[0] ? new Date(filters.createdAtRange[0]) : undefined}
+            />
+          </div>
+        </FilterSection>
 
-      <FilterSection>
-        <h4>Dificuldade</h4>
-        <MultiSelect
-          options={[
-            { value: 'easy', label: 'Fácil' },
-            { value: 'medium', label: 'Médio' },
-            { value: 'hard', label: 'Difícil' }
-          ]}
-          onChange={(selected: string[]) => setFilters({ ...filters, difficulties: selected as ('easy' | 'medium' | 'hard')[] })}
-        />
-      </FilterSection>
+        <FilterSection>
+          <FilterLabel>Avaliação (0-5)</FilterLabel>
+          <RangeSlider
+            min={0}
+            max={5}
+            value={filters.ratingRange || [0, 5]}
+            onChange={handleRatingChange}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span>{filters.ratingRange?.[0]?.toFixed(1) || 0}</span>
+            <span>{filters.ratingRange?.[1]?.toFixed(1) || 5}</span>
+          </div>
+        </FilterSection>
 
-      <FilterSection>
-        <h4>Avaliação</h4>
-        <RangeSlider
-          min={0}
-          max={5}
-          value={filters.ratingRange || [0, 5]}
-          onChange={(range: [number, number]) => setFilters({ ...filters, ratingRange: range })}
-        />
-      </FilterSection>
+        <FilterSection>
+          <FilterLabel>Tags</FilterLabel>
+          <MultiSelect
+            options={categories.map(c => ({
+              value: c.id,
+              label: c.name,
+            }))}
+            selectedValues={filters.disciplines || filters.discipline || []}
+            onChange={(selected) => onFiltersChange({ disciplines: selected })}
+            placeholder="Selecione disciplinas..."
+          />
+        </FilterSection>
+
+        <FilterSection>
+          <FilterLabel>Disciplinas</FilterLabel>
+          <MultiSelect
+            options={Array.from(new Set(categories.map(c => (c as any).discipline || c.name))).map(d => ({
+              value: d,
+              label: d,
+            }))}
+            selectedValues={filters.disciplines || []}
+            onChange={(selected) => onFiltersChange({ disciplines: selected })}
+            placeholder="Selecione disciplinas..."
+          />
+        </FilterSection>
+      </FilterGrid>
 
       <FilterActions>
-        <Button onClick={handleApply}>Aplicar Filtros</Button>
-
-        <SaveFilter>
-          <Input
-            type="text"
-            placeholder="Nome do filtro"
-            value={filterName}
-            onChange={(e) => setFilterName(e.target.value)}
-          />
-          <Button
-            onClick={handleSaveFilter}
-            disabled={!filterName}
-          >
-            Salvar
-          </Button>
-        </SaveFilter>
-
-        {savedFilters.length > 0 && (
-          <SavedFilters>
-            <h4>Filtros Salvos</h4>
-            {savedFilters.map(filter => (
-              <Button
-                key={filter.id}
-                onClick={() => onApply(filter.filters)}
-              >
-                {filter.name}
-              </Button>
-            ))}
-          </SavedFilters>
-        )}
+        <button onClick={onReset}>Limpar Filtros</button>
+        <button onClick={onApply} style={{ backgroundColor: '#4CAF50', color: 'white' }}>
+          Aplicar Filtros
+        </button>
       </FilterActions>
     </Container>
   );

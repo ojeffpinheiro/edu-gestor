@@ -29,7 +29,7 @@ export const DropdownContent = styled.div<{
   ${({ position }) => (position === 'right' ? 'right: 0' : 'left: 0')};
   top: 100%;
   min-width: 160px;
-  background-color: white;
+  background-color: var(--color-background-secondary);
   border-radius: 6px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 100;

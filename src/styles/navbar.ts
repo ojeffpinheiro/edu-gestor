@@ -49,7 +49,7 @@ export const NavDropdownButton = styled.button`
 
 export const NavDropdownContent = styled.div`
   position: absolute;
-  background-color: white;
+  background-color: var(--color-background-secondary);
   min-width: 200px;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   z-index: 1;

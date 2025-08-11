@@ -1,136 +1,84 @@
 import { useState, useMemo, useCallback } from 'react';
-import { Question, FilterOptions, QuestionType, DifficultyLevelType, QuestionStatus } from '../utils/types/Question';
-
-interface DateRange {
-  start: string;
-  end: string;
-}
-
-// Interface estendida para incluir propriedades de compatibilidade
-interface ExtendedFilterOptions extends Partial<FilterOptions> {
-  discipline?: string[];
-  type?: QuestionType | '';
-  difficulty?: DifficultyLevelType | '';
-  status?: QuestionStatus | '';
-  dateStart?: string;
-  dateEnd?: string;
-  disciplines?: string[];
-  dateRange?: DateRange; // Usando o tipo definido
-  categories?: string[];
-  ratingRange?: [number, number];
-}
+import { FilterOptions, Question } from '../utils/types/Question';
 
 interface UseQuestionFiltersProps {
   questions: Question[];
-  initialFilters?: ExtendedFilterOptions;
-  // Parâmetros antigos para compatibilidade
-  initialSearchTerm?: string;
-  initialDiscipline?: string;
-  initialType?: QuestionType | '';
-  initialDifficulty?: DifficultyLevelType | '';
-  initialStatus?: QuestionStatus | '';
-  initialDateStart?: string;
-  initialDateEnd?: string;
+  initialFilters?: Partial<FilterOptions>;
 }
 
 export const useQuestionFilters = ({
   questions,
   initialFilters = {},
-  // Parâmetros antigos para compatibilidade
-  initialSearchTerm = '',
-  initialDiscipline = '',
-  initialType = '',
-  initialDifficulty = '',
-  initialStatus = '',
-  initialDateStart = '',
-  initialDateEnd = '',
 }: UseQuestionFiltersProps) => {
-  const [searchTerm, setSearchTerm] = useState(initialFilters.searchTerm || initialSearchTerm);
-  const [activeFilters, setActiveFilters] = useState<ExtendedFilterOptions>({
-    ...initialFilters,
-    // Mapeando os parâmetros antigos para a nova estrutura
-    searchTerm: initialFilters.searchTerm || initialSearchTerm,
-    disciplines: initialFilters.disciplines || (initialDiscipline ? [initialDiscipline] : []),
-    types: initialFilters.types || (initialType ? [initialType as QuestionType] : []),
-    difficulties: initialFilters.difficulties || (initialDifficulty ? [initialDifficulty as DifficultyLevelType] : []),
-    status: initialFilters.status || initialStatus,
-    dateRange: initialFilters.dateRange || (initialDateStart || initialDateEnd ? {
-      start: initialDateStart,
-      end: initialDateEnd
-    } : undefined)
-  });
-  const [filters, setFilters] = useState({
-    discipline: initialDiscipline,
-    type: initialType,
-    difficulty: initialDifficulty,
-    status: initialStatus,
-    dateStart: initialDateStart,
-    dateEnd: initialDateEnd,
+  const [activeFilters, setActiveFilters] = useState<FilterOptions>({
+    searchTerm: initialFilters.searchTerm || '',
+    categories: initialFilters.categories || [],
+    difficulties: initialFilters.difficulties || [],
+    types: initialFilters.types || [],
+    discipline: initialFilters.discipline || [],
+    disciplines: initialFilters.disciplines || [],
+    ratingRange: initialFilters.ratingRange || [0, 5],
+    usageRange: initialFilters.usageRange || [0, 100],
+    createdAtRange: initialFilters.createdAtRange || ['', ''],
+    tags: initialFilters.tags || [],
   });
 
-  const applyFilters = useCallback((questions: Question[], filters: ExtendedFilterOptions) => {
+  const applyFilters = useCallback((questions: Question[], filters: FilterOptions) => {
     return questions.filter(question => {
       // Filtro por termo de busca
-      const searchTermFilter = filters.searchTerm || '';
-      if (searchTermFilter) {
+      if (filters.searchTerm) {
         const searchContent = [
           question.statement,
-          (question as any).content, // Propriedade opcional
-          question.explanation
-        ].filter(Boolean).join(' ').toLowerCase();
-
-        if (!searchContent.includes(searchTermFilter.toLowerCase())) {
+          question.explanation,
+          ...(question.tags || []),
+        ].join(' ').toLowerCase();
+        
+        if (!searchContent.includes(filters.searchTerm.toLowerCase())) {
           return false;
         }
       }
 
-      // Filtro por disciplina
-      const disciplineFilter = filters.disciplines?.[0] || filters.discipline;
-      if (disciplineFilter && question.discipline !== disciplineFilter) {
-        return false;
-      }
-
-      // Filtro por tipo
-      const typeFilter = filters.types?.[0] || filters.type;
-      if (typeFilter && question.questionType !== typeFilter) {
+      // Filtro por categoria
+      if (filters.categories.length > 0 && !filters.categories.includes(question.discipline)) {
         return false;
       }
 
       // Filtro por dificuldade
-      const difficultyFilter = filters.difficulties?.[0] || filters.difficulty;
-      if (difficultyFilter && question.difficultyLevel !== difficultyFilter) {
+      if (filters.difficulties.length > 0 && !filters.difficulties.includes(question.difficultyLevel)) {
         return false;
       }
 
-      // Filtro por status
-      const statusFilter = filters.status;
-      if (statusFilter && question.status !== statusFilter) {
+      // Filtro por tipo
+      if (filters.types.length > 0 && !filters.types.includes(question.questionType)) {
         return false;
       }
 
-      // Filtro por data
-      const dateStart = filters.dateRange?.start || filters.dateStart;
-      const dateEnd = filters.dateRange?.end || filters.dateEnd;
-
-      if (dateStart && new Date(question.createdAt) < new Date(dateStart)) {
-        return false;
-      }
-      if (dateEnd && new Date(question.createdAt) > new Date(dateEnd)) {
-        return false;
-      }
-
-      // Filtro por categoria (se existir na questão)
-      if (filters.categories?.length && (question as any).category &&
-        !filters.categories.includes((question as any).category)) {
-        return false;
-      }
-
-      // Filtro por rating (se existir na questão)
-      if (filters.ratingRange && (question as any).rating !== undefined) {
-        const rating = (question as any).rating;
-        if (rating < filters.ratingRange[0] || rating > filters.ratingRange[1]) {
+      // Filtro por rating
+      if (filters.ratingRange && question.rating !== undefined) {
+        if (question.rating < filters.ratingRange[0] || question.rating > filters.ratingRange[1]) {
           return false;
         }
+      }
+
+      // Filtro por data de criação
+      if (filters.createdAtRange) {
+        const [start, end] = filters.createdAtRange;
+        const questionDate = new Date(question.createdAt).getTime();
+        
+        if (start && new Date(start).getTime() > questionDate) {
+          return false;
+        }
+        if (end && new Date(end).getTime() < questionDate) {
+          return false;
+        }
+      }
+
+      // Filtro por tags
+      if (filters.tags && filters.tags.length > 0 && question.tags) {
+        const hasMatchingTag = filters.tags.some(tag => 
+          question.tags?.includes(tag)
+        );
+        if (!hasMatchingTag) return false;
       }
 
       return true;
@@ -141,52 +89,12 @@ export const useQuestionFilters = ({
     return applyFilters(questions, activeFilters);
   }, [questions, activeFilters, applyFilters]);
 
-  // Funções de compatibilidade
-  const setSearchTermCompat = useCallback((term: string) => {
-    setSearchTerm(term);
-    setActiveFilters(prev => ({ ...prev, searchTerm: term }));
-  }, []);
-
-
-  const setFiltersCompat = useCallback((newFilters: {
-    discipline?: string;
-    type?: QuestionType | '';
-    difficulty?: DifficultyLevelType | '';
-    status?: QuestionStatus | '';
-    dateStart?: string;
-    dateEnd?: string;
-  }) => {
-    setFilters(prev => ({ ...prev, ...newFilters }));
-
-    setActiveFilters(prev => {
-      const newDateRange = newFilters.dateStart || newFilters.dateEnd
-        ? {
-          start: newFilters.dateStart ?? prev.dateRange?.start ?? '',
-          end: newFilters.dateEnd ?? prev.dateRange?.end ?? ''
-        }
-        : prev.dateRange;
-
-      return {
-        ...prev,
-        disciplines: newFilters.discipline ? [newFilters.discipline] : prev.disciplines,
-        types: newFilters.type ? [newFilters.type as QuestionType] : prev.types,
-        difficulties: newFilters.difficulty ? [newFilters.difficulty as DifficultyLevelType] : prev.difficulties,
-        status: newFilters.status || prev.status,
-        dateRange: newDateRange
-      };
-    });
-  }, []);
-
   return {
-    // Novas propriedades
     activeFilters,
     setActiveFilters,
     filteredQuestions,
-
-    // Propriedades antigas para compatibilidade
-    searchTerm,
-    setSearchTerm: setSearchTermCompat,
-    filters,
-    setFilters: setFiltersCompat,
+    searchTerm: activeFilters.searchTerm,
+    setSearchTerm: (term: string) => setActiveFilters(prev => ({ ...prev, searchTerm: term })),
+    setFilters: (newFilters: Partial<FilterOptions>) => setActiveFilters(prev => ({ ...prev, ...newFilters }))
   };
 };
