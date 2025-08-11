@@ -47,7 +47,7 @@ export const DirectionButton = styled.button<{ $active: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
+  width: 3rem;
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background-color: ${({ $active }) => 

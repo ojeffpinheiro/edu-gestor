@@ -89,7 +89,7 @@ const FilterLabel = styled.label`
   font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--color-text);
 `;
 
 const Select = styled.select`
@@ -127,11 +127,12 @@ const Button = styled.button`
   
   &.secondary {
     background-color: var(--color-background-secondary);
-    color: #2c3e50;
+    color: var(--color-text);
     border: 1px solid #e1e4e8;
     
     &:hover {
-      background-color: #f5f7fa;
+      background-color: var(--color-secondary-hover);
+      }
     }
   }
 `;
@@ -140,7 +141,7 @@ interface SearchInputProps {
   placeholder?: string;
   value: string;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearch?: (searchTerm: string, 
+  onSearch?: (searchTerm: string,
     filters: { disciplina: string; dificuldade: string; tipo: string; }) => void;
 }
 
@@ -152,9 +153,9 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
     dificuldade: '',
     tipo: ''
   });
-  
+
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
+
   // Implement debounce
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -162,12 +163,12 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
         onSearch(searchTerm, filters);
       }
     }, 300);
-    
+
     return () => {
       clearTimeout(handler);
     };
   }, [searchTerm, filters, onSearch]);
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -175,18 +176,18 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
         setIsDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-  
+
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const clearFilters = () => {
     setFilters({
       disciplina: '',
@@ -194,7 +195,7 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
       tipo: ''
     });
   };
-  
+
   return (
     <SearchWrapper ref={dropdownRef}>
       <Input
@@ -213,7 +214,7 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
         </svg>
       </DropdownButton>
-      
+
       <Dropdown isOpen={isDropdownOpen}>
         <DropdownHeader>Filtros Avançados</DropdownHeader>
         <DropdownContent>
@@ -228,7 +229,7 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
               <option value="geografia">Geografia</option>
             </Select>
           </FilterGroup>
-          
+
           <FilterGroup>
             <FilterLabel>Nível de Dificuldade</FilterLabel>
             <Select name="dificuldade" value={filters.dificuldade} onChange={handleFilterChange}>
@@ -238,7 +239,7 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
               <option value="dificil">Difícil</option>
             </Select>
           </FilterGroup>
-          
+
           <FilterGroup>
             <FilterLabel>Tipo de Questão</FilterLabel>
             <Select name="tipo" value={filters.tipo} onChange={handleFilterChange}>
@@ -248,7 +249,7 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
               <option value="dissertativa">Dissertativa</option>
             </Select>
           </FilterGroup>
-          
+
           <ButtonGroup>
             <Button className="secondary" onClick={clearFilters}>Limpar</Button>
             <Button className="primary" onClick={() => setIsDropdownOpen(false)}>Aplicar</Button>

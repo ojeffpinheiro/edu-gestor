@@ -46,7 +46,7 @@ const FilterLabel = styled.label`
   font-size: 0.75rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #2c3e50;
+  color: var(--color-text);
 `;
 
 const Select = styled.select`
