@@ -53,26 +53,36 @@ const ActionButton = styled.button`
 
 interface QuestionsTableProps {
   questions: Question[];
+  selectedQuestions: Set<string | number>;
+  isSelectAll: boolean;
   onView: (question: Question) => void;
   onEdit: (question: Question) => void;
   onDelete: (question: Question) => void;
-  selectedQuestions: Set<string | number>;
   onSelect: (id: string | number) => void;
+  onSelectAll: () => void;
 }
 
 const QuestionsTable: React.FC<QuestionsTableProps> = ({
   questions,
+  selectedQuestions,
+  isSelectAll,
   onView,
   onEdit,
   onDelete,
-  selectedQuestions,
-  onSelect
+  onSelect,
+  onSelectAll,
 }) => {
   return (
     <Table>
       <TableHeader>
         <tr>
-          <TableHeaderCell></TableHeaderCell>
+          <TableHeaderCell>
+            <input
+              type="checkbox"
+              checked={isSelectAll}
+              onChange={onSelectAll}
+            />
+          </TableHeaderCell>
           <TableHeaderCell>Título</TableHeaderCell>
           <TableHeaderCell>Categoria</TableHeaderCell>
           <TableHeaderCell>Dificuldade</TableHeaderCell>

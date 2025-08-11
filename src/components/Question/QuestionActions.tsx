@@ -32,6 +32,7 @@ export const QuestionCardContainer = styled.div<{
   $usageCount?: number;
 }>`
   background-color: var(--color-background-secondary);
+  position: 'relative'
   border-radius: 8px;
   padding: 1.5rem;
   transition: all 0.2s;

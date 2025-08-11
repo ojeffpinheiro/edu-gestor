@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Question } from '../utils/types/Question';
 
 interface SortOptions {
   value: string;
@@ -36,22 +37,22 @@ export const useQuestionSort = ({
     onSortChange?.(field, newDirection);
   };
 
-  const sortQuestions = (questions: any[]) => {
+  const sortQuestions = (questions: Question[]) => {
     return [...questions].sort((a, b) => {
-      let comparison = 0;
+        let comparison = 0;
 
-      if (sortField === 'title') {
-        comparison = a.title.localeCompare(b.title);
-      } else if (sortField === 'createdAt') {
-        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      } else if (sortField === 'difficulty') {
-        const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
-        comparison = difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
-      }
+        if (sortField === 'statement') {
+            comparison = a.statement.localeCompare(b.statement);
+        } else if (sortField === 'createdAt') {
+            comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        } else if (sortField === 'difficultyLevel') {
+            const difficultyOrder: Record<string, number> = { easy: 1, medium: 2, hard: 3 };
+            comparison = difficultyOrder[a.difficultyLevel] - difficultyOrder[b.difficultyLevel];
+        }
 
-      return sortDirection === 'asc' ? comparison : -comparison;
+        return sortDirection === 'asc' ? comparison : -comparison;
     });
-  };
+};
 
   return {
     sortField,

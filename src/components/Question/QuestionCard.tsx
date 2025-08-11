@@ -95,7 +95,6 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
     <QuestionCardContainer
       className={className}
       selected={selected}
-      style={{ position: 'relative' }}
       $isFavorite={question.isFavorite}
       $usageCount={question.usageCount}
       onClick={() => showActionsOnClick && setShowActions(!showActions)}
