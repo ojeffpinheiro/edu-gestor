@@ -13,9 +13,6 @@ import { Question, QuestionType } from '../../../utils/types/Question';
 import LoadingSpinner from '../../shared/LoadingSpinner';
 import LoadingIndicator from '../../shared/LoadingIndicator';
 
-import { SortControls } from '../../Sort/SortControls';
-
-import Filters from '../Filter/Filters';
 import QuestionCard from '../QuestionCard';
 import QuestionsTable from '../QuestionsTable';
 import CombineQuestionsModal from '../CombineQuestionsModal';
@@ -23,14 +20,13 @@ import { CategoryWithId } from '../QuestionForm/type';
 import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
 import { BulkStatusModal } from '../BulkStatusModal';
 import { BulkMoveModal } from '../BulkMoveModal';
-import QuestionTypeFilter from '../QuestionTypeFilter';
-import { AdvancedFilters } from '../AdvancedFilters';
 
-import QuestionViewModeToggle from '../QuestionView/QuestionViewModeToggle';
 import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
 
 import { QuestionsGrid } from '../../../styles/questionList';
 import { createQuestionVariant } from '../../../utils/questionUtils';
+import FilterBar from '../FilterBar';
+import ViewControls from '../ViewControls';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -282,61 +278,33 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
     return (
         <>
-            <Filters
+            <FilterBar
                 searchValue={searchTerm}
                 onSearchChange={onSearchChange}
                 categoryOptions={categoryOptions}
                 difficultyOptions={difficultyOptions}
-                showAdvanced={showAdvanced}
-                onAdvancedToggle={() => setShowAdvanced(!showAdvanced)}
                 selectedCategory={selectedCategory}
                 selectedDifficulty={selectedDifficulty}
                 onCategoryChange={onCategoryChange}
                 onDifficultyChange={onDifficultyChange}
                 onQuestionTypeFilter={handleQuestionTypeFilter}
+                currentType={questionTypeFilter}
+                categories={categories}
+                filters={activeFilters}
+                onFiltersChange={(updates) => setActiveFilters(prev => ({ ...prev, ...updates }))}
+                onApplyAdvancedFilters={handleApplyAdvancedFilters}
+                onResetAdvancedFilters={handleResetAdvancedFilters}
             />
-            {showAdvanced && (
-                <AdvancedFilters
-                    categories={categories}
-                    filters={activeFilters}
-                    onFiltersChange={(updates) => setActiveFilters(prev => ({ ...prev, ...updates }))}
-                    onApply={handleApplyAdvancedFilters}
-                    onReset={handleResetAdvancedFilters}
-                />
-            )}
-
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                marginBottom: '1rem'
-            }}>
-                <SortControls
-                    options={sortOptions}
-                    value={currentSortField}
-                    direction={currentSortDirection}
-                    onChange={handleSortChange}
-                    variant="dropdown"
-                />
-                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    <QuestionTypeFilter
-                        currentType={questionTypeFilter}
-                        onTypeChange={(type) => {
-                            setQuestionTypeFilter(type);
-                            setActiveFilters(prev => ({
-                                ...prev,
-                                types: type === 'all' ? [] : [type]
-                            }));
-                        }}
-                    />
-
-                    {/* Toggle de visualização (cards/table) */}
-                    <QuestionViewModeToggle
-                        mode={viewMode}
-                        onChange={setViewMode}
-                    />
-                </div>
-            </div>
+            <ViewControls
+                sortOptions={sortOptions}
+                sortValue={currentSortField}
+                sortDirection={currentSortDirection}
+                onSortChange={handleSortChange}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                align="space-between"
+                gap={1}
+            />
 
             {viewMode === 'cards' ? (
                 <QuestionsGrid>
