@@ -1,5 +1,6 @@
 import React from 'react';
 import { Question } from '../../utils/types/Question';
+import { Button } from '../shared/Button.styles';
 
 interface PaginationControlsProps {
   filteredQuestions: Question[]; // Ou use o tipo específico das suas questões
@@ -17,27 +18,31 @@ const PaginationControls: React.FC<PaginationControlsProps> = ({
   setItemsPerPage
 }) => {
   const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
-  
+
   return (
     <div className="pagination-controls">
-      <button 
-        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+      <Button
+        $variant="text"
+        $size="sm"
         disabled={currentPage === 1}
+        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
       >
         Anterior
-      </button>
-      
+      </Button>
+
       <span>Página {currentPage} de {totalPages}</span>
-      
-      <button
+
+      <Button
+        $variant="text"
+        $size="sm"
         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
         disabled={currentPage === totalPages}
       >
         Próxima
-      </button>
-      
-      <select 
-        value={itemsPerPage} 
+      </Button>
+
+      <select
+        value={itemsPerPage}
         onChange={(e) => {
           setItemsPerPage(Number(e.target.value));
           setCurrentPage(1);

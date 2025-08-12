@@ -15,6 +15,7 @@ import QuestionActions, {
 import { QuestionContent } from './QuestionPreviewStyles';
 import { QUESTION_TYPE_LABELS, Question } from '../../utils/types/Question';
 import StarRating from './StarRating';
+import { QuestionTypeBadge } from '../shared/Badges';
 
 interface QuestionCardProps {
   question: Question | 'all'; // Permite o tipo 'all' para tratamento especial
@@ -120,9 +121,12 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
               {question.difficultyLevel === 'medium' && 'Médio'}
               {question.difficultyLevel === 'hard' && 'Difícil'}
             </QuestionBadge>
-            <QuestionBadge $variant={`type-${question.questionType}`}>
-              {QUESTION_TYPE_LABELS[question.questionType]}
-            </QuestionBadge>
+            <QuestionTypeBadge
+              type={question.questionType}
+              className={`type-${question.questionType}`}
+            >
+                {QUESTION_TYPE_LABELS[question.questionType]}
+            </QuestionTypeBadge>
           </BadgeContainer>
           <button
             onClick={handleToggleFavorite}

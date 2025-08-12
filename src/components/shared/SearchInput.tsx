@@ -1,24 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
+import { Input } from '../../styles/inputs';
 
 const SearchWrapper = styled.div`
   position: relative;
   width: 100%;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 0.5rem 1rem 0.5rem 2.5rem;
-  border: 1px solid #e1e4e8;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  transition: all 0.2s;
-  
-  &:focus {
-    outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
-  }
 `;
 
 const SearchIcon = styled.div`

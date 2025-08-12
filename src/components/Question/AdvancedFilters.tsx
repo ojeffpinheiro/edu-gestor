@@ -6,6 +6,7 @@ import { CategoryWithId } from './QuestionForm/type';
 import { FilterOptions } from '../../utils/types/Question';
 import RangeSlider from '../../styles/RangeSlider';
 import { MultiSelect } from '../shared/MultiSelect';
+import { Button } from '../shared/Button.styles';
 
 interface AdvancedFiltersProps {
   categories: CategoryWithId[];
@@ -138,10 +139,8 @@ export const AdvancedFilters: React.FC<AdvancedFiltersProps> = ({
       </FilterGrid>
 
       <FilterActions>
-        <button onClick={onReset}>Limpar Filtros</button>
-        <button onClick={onApply} style={{ backgroundColor: '#4CAF50', color: 'white' }}>
-          Aplicar Filtros
-        </button>
+        <Button $variant="primary" $size="md" $active={false}>Limpar Filtros</Button>	
+        <Button $variant="primary" $size="md" $active={true}>Aplicar Filtros</Button>	
       </FilterActions>
     </Container>
   );

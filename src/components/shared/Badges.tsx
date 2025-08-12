@@ -1,14 +1,13 @@
-import React from 'react'
 import { DifficultyLevelType, QuestionStatus, QuestionType } from "../../utils/types/Question";
 import styled from 'styled-components';
-
+import { badgeVariants, sizeVariants } from '../../styles/variants';
 
 const BaseBadge = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0.25rem 0.75rem;
-  border-radius: var(--border-radius-full);
+  border-radius: var(--border-radius-xl);
   font-size: 0.75rem;
   font-weight: 500;
   text-transform: capitalize;
@@ -97,3 +96,20 @@ export function getStatusLabel(status: QuestionStatus): string {
   };
   return labels[status];
 }
+
+export interface BadgeProps {
+  $variant?: keyof typeof badgeVariants;
+  $size?: keyof typeof sizeVariants;
+  $rounded?: boolean;
+}
+
+export const Badge = styled.span<BadgeProps>`
+  display: inline-flex;
+  align-items: center;
+  font-weight: var(--font-weight-medium);
+  border-radius: ${({ $rounded }) => 
+    $rounded ? 'var(--border-radius-full)' : 'var(--border-radius-md)'};
+  
+  ${({ $variant = 'default' }) => badgeVariants[$variant]}
+  ${({ $size = 'sm' }) => sizeVariants[$size]}
+`;

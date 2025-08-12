@@ -1,5 +1,5 @@
 import React from 'react'
-import { FaTag, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
+import { FaTag, FaChartLine, FaCalendarAlt, FaPencilAlt, FaTrash } from 'react-icons/fa';
 import {
   ModalContentGrid,
   QuestionDetailSection,
@@ -9,6 +9,8 @@ import {
 import { QuestionDetailModalProps } from './types';
 import { Modal } from '../../Modal';
 import { AnswerRenderer } from '../AnswerRenderer';
+import { Button } from '../../shared/Button.styles';
+import { CardContainer } from '../../shared/Card.styles';
 
 const QuestionDetailModal = ({
   question,
@@ -26,11 +28,10 @@ const QuestionDetailModal = ({
       size="lg"
       className={className}
       actions={
-        <>
-          <button onClick={onClose}>Fechar</button>
-          {onEdit && <button onClick={onEdit}>Editar</button>}
-          {onDelete && <button onClick={onDelete}>Excluir</button>}
-        </>
+        <CardContainer $variant="default">
+          {onEdit && <Button $variant="primary" onClick={onEdit}><FaPencilAlt /></Button>}
+          {onDelete && <Button $variant="danger" onClick={onDelete}><FaTrash /></Button>}
+        </CardContainer>
       }
     >
       <ModalContentGrid>
