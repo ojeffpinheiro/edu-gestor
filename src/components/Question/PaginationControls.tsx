@@ -1,60 +1,91 @@
 import React from 'react';
-import { Question } from '../../utils/types/Question';
 import { Button } from '../shared/Button.styles';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import styled from 'styled-components';
 
 interface PaginationControlsProps {
-  filteredQuestions: Question[]; // Ou use o tipo específico das suas questões
+  totalItems: number;
   itemsPerPage: number;
   currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  setItemsPerPage: React.Dispatch<React.SetStateAction<number>>;
+  onPageChange: (page: number) => void;
+  onItemsPerPageChange: (itemsPerPage: number) => void;
 }
 
+
 const PaginationControls: React.FC<PaginationControlsProps> = ({
-  filteredQuestions,
+  totalItems,
   itemsPerPage,
   currentPage,
-  setCurrentPage,
-  setItemsPerPage
+  onPageChange,
+  onItemsPerPageChange
 }) => {
-  const totalPages = Math.ceil(filteredQuestions.length / itemsPerPage);
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
 
   return (
-    <div className="pagination-controls">
+    <PaginationContainer>
       <Button
         $variant="text"
         $size="sm"
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+        onClick={() => onPageChange(currentPage - 1)}
       >
-        Anterior
+        <FaChevronLeft /> Anterior
       </Button>
 
-      <span>Página {currentPage} de {totalPages}</span>
+      <PageInfo>
+        Página {currentPage} de {totalPages}
+      </PageInfo>
 
       <Button
         $variant="text"
         $size="sm"
-        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+        onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
       >
-        Próxima
+        Próxima <FaChevronRight />
       </Button>
 
-      <select
+      <ItemsPerPageSelect
         value={itemsPerPage}
         onChange={(e) => {
-          setItemsPerPage(Number(e.target.value));
-          setCurrentPage(1);
+          onItemsPerPageChange(Number(e.target.value));
+          onPageChange(1);
         }}
       >
-        <option value={5}>5 itens</option>
-        <option value={10}>10 itens</option>
-        <option value={20}>20 itens</option>
-        <option value={50}>50 itens</option>
-      </select>
-    </div>
+        {[5, 10, 20, 50].map(size => (
+          <option key={size} value={size}>
+            {size} itens
+          </option>
+        ))}
+      </ItemsPerPageSelect>
+    </PaginationContainer>
   );
 };
 
 export default PaginationControls;
+
+const PaginationContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+`;
+
+export const PageInfo = styled.span`
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+`;
+
+export const ItemsPerPageSelect = styled.select`
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-background);
+`;
+
+export const PaginationSummary = styled.div`
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  margin: var(--space-md) 0;
+`;

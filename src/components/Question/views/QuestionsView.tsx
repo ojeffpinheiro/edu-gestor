@@ -13,11 +13,13 @@ import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
 import BulkActionModals from '../BulkActionModals';
 import LoadingModal from '../LoadingModal';
 
-import QuestionCard from '../QuestionCard';
 import FilterBar from '../FilterBar';
 import ViewControls from '../ViewControls';
 import QuestionsRenderer from '../QuestionsRenderer';
 import PaginationControls from '../PaginationControls';
+import styled from 'styled-components';
+import { FaCheckCircle, FaExclamationCircle, FaFileExport, FaObjectGroup, FaTimes, FaTrash, FaUpload } from 'react-icons/fa';
+import { Button } from '../../shared/Button.styles';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -54,7 +56,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     onSortChange,
 }) => {
     const [newStatus, setNewStatus] = useState<QuestionStatus>('draft');
-    const [selectedDiscipline, setSelectedDiscipline] = useState<string>('');
     const [compositeQuestions, setCompositeQuestions] = useState<Question[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [questionTypeFilter, setQuestionTypeFilter] = useState<QuestionType | 'all'>('all');
@@ -147,15 +148,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         setSelectedQuestion(question);
     }, []);
 
-    const handleStatusChange = (status: QuestionStatus) => {
-        setNewStatus(status);
-        setModalStates(prev => ({ ...prev, status: true }));
-    };
-
-    const handleApplyAdvancedFilters = useCallback(() => {
-        console.log(`QUESTIONVIEW: click filtros avançados`);
-    }, []);
-
     const handleResetAdvancedFilters = useCallback(() => {
         setFilters(prev => ({
             ...prev,
@@ -207,6 +199,12 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         }
     }, [combineQuestions, selectedQuestions]);
 
+    const openModal = (modal: keyof typeof modalStates) =>
+        setModalStates(prev => ({ ...prev, [modal]: true }));
+
+    const closeModal = (modal: keyof typeof modalStates) =>
+        setModalStates(prev => ({ ...prev, [modal]: false }));
+
     if (isLoading) {
         return <LoadingSpinner message="Carregando questões..." />;
     }
@@ -242,43 +240,67 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             />
 
             {selectedQuestionsCount > 0 && (
-                <div className="action-toolbar">
-                    <div className="selection-info">
-                        <span>{selectedQuestionsCount} selecionadas</span>
-                        <button onClick={clearSelection}>Limpar</button>
-                    </div>
+                <SelectionToolbar>
+                    <SelectionInfo>
+                        <FaCheckCircle color="var(--color-primary)" />
+                        <span>{selectedQuestionsCount} questões selecionadas</span>
+                        <Button
+                            $variant="text"
+                            $size="sm"
+                            onClick={clearSelection}
+                        >
+                            Limpar
+                        </Button>
+                    </SelectionInfo>
 
-                    <div className="action-buttons">
-                        <button onClick={() => editQuestions({ status: 'draft' })}>
-                            Publicar
-                        </button>
-
-                        <button onClick={deleteQuestions} className="danger">
-                            Excluir
-                        </button>
-
-                        <button onClick={exportQuestions}>
-                            Exportar
-                        </button>
-
-                        <button onClick={() => setModalStates(p => ({ ...p, combine: true }))}>
-                            Combinar
-                        </button>
-                    </div>
-                </div>
+                    <ActionButtonsContainer>
+                        <Button
+                            $variant="secondary"
+                            $size="sm"
+                            onClick={() => editQuestions({ status: 'active' })}
+                        >
+                            <FaUpload /> Publicar
+                        </Button>
+                        <Button
+                            $variant="danger"
+                            $size="sm"
+                            onClick={deleteQuestions}
+                        >
+                            <FaTrash /> Excluir
+                        </Button>
+                        <Button
+                            $variant="secondary"
+                            $size="sm"
+                            onClick={exportQuestions}
+                        >
+                            <FaFileExport /> Exportar
+                        </Button>
+                        <Button
+                            $variant="primary"
+                            $size="sm"
+                            onClick={() => setModalStates(p => ({ ...p, combine: true }))}
+                        >
+                            <FaObjectGroup /> Combinar
+                        </Button>
+                    </ActionButtonsContainer>
+                </SelectionToolbar>
             )}
 
             {error && (
-                <div className="error-message">
-                    {error}
-                    <button onClick={clearError}>Fechar</button>
-                </div>
+                <ErrorMessage>
+                    <div>
+                        <FaExclamationCircle /> {error}
+                    </div>
+                    <Button
+                        $variant="text"
+                        $size="sm"
+                        onClick={clearError}
+                    >
+                        <FaTimes />
+                    </Button>
+                </ErrorMessage>
             )}
-
-            {selectedDiscipline && (
-                <div>Disciplina selecionada: {selectedDiscipline}</div>
-            )}
-
+            
             <ViewControls
                 sortOptions={sortOptions}
                 sortValue={sortConfig.field}
@@ -311,18 +333,18 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
             {processedQuestions.length > itemsPerPage && (
                 <PaginationControls
-                    filteredQuestions={processedQuestions}
+                    totalItems={processedQuestions.length}
                     itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
-                    setCurrentPage={setCurrentPage}
-                    setItemsPerPage={setItemsPerPage}
+                    onPageChange={setCurrentPage}
+                    onItemsPerPageChange={setItemsPerPage}
                 />
             )}
 
             {selectedQuestion && (
                 <QuestionDetailModal
                     question={selectedQuestion}
-                    isOpen={!!selectedQuestion}
+                    isOpen={modalStates.detail}
                     onClose={() => setSelectedQuestion(null)}
                     onEdit={() => {
                         handleEditQuestion(selectedQuestion);
@@ -335,19 +357,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 />
             )}
 
-            {compositeQuestions.length > 0 && (
-                <div>
-                    <h3>Questões Compostas</h3>
-                    {compositeQuestions.map(q => (
-                        <QuestionCard
-                            key={q.id}
-                            question={q}
-                            onFindSimilar={findSimilar}
-                            showActionsOnClick />
-                    ))}
-                </div>
-            )}
-
             {modalStates.combine && isProcessing ? (
                 <LoadingSpinner message="Combinando questões..." />
             ) : (
@@ -357,7 +366,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     count={selectedQuestions.size}
                     isCombining={isProcessing}
                     onConfirm={confirmCombineQuestions}
-                    onCancel={() => setModalStates(prev => ({ ...prev, combine: false }))}
+                    onCancel={() => closeModal('combine')}
                 />
             )}
 
@@ -380,6 +389,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 />
             )}
 
+
             <BulkActionModals
                 showStatusModal={modalStates.status}
                 showMoveModal={modalStates.move}
@@ -390,20 +400,56 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 isCombining={isProcessing}
                 onStatusConfirm={() => {
                     handleBulkEdit({ status: newStatus });
-                    setModalStates(prev => ({ ...prev, status: false }))
+                    closeModal('status');
                 }}
-                onStatusCancel={() => setModalStates(prev => ({ ...prev, status: false }))}
+                onStatusCancel={() => closeModal('status')}
                 onMoveConfirm={(discipline) => {
                     handleBulkEdit({ discipline });
-                    setModalStates(prev => ({ ...prev, move: false }))
+                    closeModal('move');
                 }}
-                onMoveCancel={() => setModalStates(prev => ({ ...prev, move: false }))}
+                onMoveCancel={() => closeModal('move')}
                 onCombineConfirm={confirmCombineQuestions}
-                onCombineCancel={() => setModalStates(prev => ({ ...prev, combine: false }))}
-                setSelectedDiscipline={setSelectedDiscipline}
+                onCombineCancel={() => closeModal('combine')}
             />
         </>
     );
 };
 
 export default QuestionsView;
+
+
+const SelectionToolbar = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-primary-light);
+  border-radius: var(--border-radius-md);
+  margin: var(--space-md) 0;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-all);
+`;
+
+const SelectionInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-weight: var(--font-weight-medium);
+`;
+
+const ActionButtonsContainer = styled.div`
+  display: flex;
+  gap: var(--space-sm);
+`;
+
+const ErrorMessage = styled.div`
+  padding: var(--space-md);
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+  border-radius: var(--border-radius-md);
+  margin: var(--space-md) 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+`;

@@ -18,7 +18,7 @@ interface BulkActionModalsProps {
   onMoveCancel: () => void;
   onCombineConfirm: () => void;
   onCombineCancel: () => void;
-  setSelectedDiscipline: (value: string) => void;
+  setSelectedDiscipline?: (discipline: string) => void;
 }
 
 const BulkActionModals: React.FC<BulkActionModalsProps> = ({ ...props }) => (
