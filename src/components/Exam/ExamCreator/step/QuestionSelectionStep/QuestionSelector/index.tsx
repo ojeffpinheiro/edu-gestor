@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 
 import { useQuestionSelection } from '../../../../../../hooks/useQuestionSelection';
-import { useQuestionFilters } from '../../../../../../hooks/useQuestionFilters';
 
 import { Exam } from '../../../../../../utils/types/Exam';
 import { Question } from '../../../../../../utils/types/Question';
@@ -21,6 +20,7 @@ import {
   SelectionControls,
   ResponsiveWrapper,
 } from './styles';
+import { useQuestionFilters } from '../../../../../../hooks/Question/useQuestionFilters';
 
 interface QuestionSelectorProps {
   examData: Exam;
@@ -38,8 +38,7 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   const [showSelectedList, setShowSelectedList] = useState(false);
 
   const {
-    searchTerm,
-    setSearchTerm,
+    filters,
     setFilters,
     filteredQuestions,
   } = useQuestionFilters({
@@ -48,7 +47,6 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
       disciplines: examData.discipline ? [examData.discipline] : []
     }
   });
-
   const {
     toggleQuestionSelection,
     toggleSelectAll,
@@ -60,6 +58,7 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
     onQuestionsSelected
   });
 
+  const searchTerm = filters.searchTerm || '';
   const hasSelection = selectedQuestions.length > 0;
   const selectedCount = selectedQuestions.length;
 
@@ -70,10 +69,10 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
   };
 
   useEffect(() => {
-  setFilters({
-    disciplines: examData.discipline ? [examData.discipline] : []
-  });
-}, [examData.discipline, setFilters]);
+    setFilters({
+      disciplines: examData.discipline ? [examData.discipline] : []
+    });
+  }, [examData.discipline, setFilters]);
 
   return (
     <Container>
@@ -104,7 +103,12 @@ const QuestionSelector: React.FC<QuestionSelectorProps> = ({
       <ResponsiveWrapper>
         <SearchInput
           value={searchTerm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setFilters({
+              ...filters,
+              searchTerm: e.target.value
+            })
+          }
           placeholder="Buscar questões..."
           aria-label="Buscar questões"
         />

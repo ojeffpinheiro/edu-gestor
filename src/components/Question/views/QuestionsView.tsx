@@ -1,23 +1,11 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-
-import { useQuestionFilters } from '../../../hooks/useQuestionFilters';
-import { useSortPreferences } from '../../../hooks/useSortPreferences';
-import { useQuestionSort } from '../../../hooks/useQuestionSort';
-import { useBulkActions } from '../../../hooks/useBulkActions';
-import { useQuestionCombination } from '../../../hooks/useQuestionCombination';
-import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
-import { useQuestionSelectionManagement } from '../../../hooks/useQuestionSelectionManagement';
-import { useQuestionActions } from '../../../hooks/useQuestionActions';
-
 import { Question, QuestionStatus, QuestionType } from '../../../utils/types/Question';
+import { CategoryWithId } from '../QuestionForm/type';
 
 import LoadingSpinner from '../../shared/LoadingSpinner';
-
 import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
-
 import QuestionCard from '../QuestionCard';
 import CombineQuestionsModal from '../CombineQuestionsModal';
-import { CategoryWithId } from '../QuestionForm/type';
 import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
 import FilterBar from '../FilterBar';
 import ViewControls from '../ViewControls';
@@ -25,11 +13,13 @@ import LoadingModal from '../LoadingModal';
 import QuestionsRenderer from '../QuestionsRenderer';
 import BulkActionModals from '../BulkActionModals';
 import PaginationControls from '../PaginationControls';
+import { useQuestionManager } from '../../../hooks/Question/useQuestionManager';
+import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
 
 interface QuestionsViewProps {
     searchTerm: string;
     onSearchChange: (value: string) => void;
-    categories: CategoryWithId[]; // Usa a interface atualizada
+    categories: CategoryWithId[];
     selectedCategory: string;
     onCategoryChange: (value: string) => void;
     selectedDifficulty: string;
@@ -77,100 +67,64 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         detail: false
     });
 
+    // Hook principal de gerenciamento de questões
+    const {
+        questions: processedQuestions,
+        isProcessing,
+        error,
+
+        // Filtros
+        filters,
+        setFilters,
+
+        // Ordenação
+        sortConfig,
+        handleSortChange,
+
+        // Seleção
+        selectedQuestions,
+        selectedQuestionsCount,
+        isAllSelected,
+        clearSelection,
+        toggleSelectAll,
+        toggleSelection,
+
+        // Ações
+        createVariant,
+        editQuestion,
+        deleteQuestion,
+        deleteQuestions,
+        editQuestions,
+        exportQuestions,
+        combineQuestions,
+
+        // Utilitários
+        clearError,
+    } = useQuestionManager(questions, {
+        initialFilters: {
+            searchTerm,
+            categories: selectedCategory !== 'all' ? [selectedCategory] : [],
+            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : [],
+        },
+        initialSortField,
+        initialSortDirection,
+        sortOptions,
+        onUpdateQuestions: (updatedQuestions) => {
+            if (typeof onQuestionChange === 'function') {
+                onQuestionChange(updatedQuestions);
+            }
+        },
+        onCombineSuccess: (newQuestion) => {
+            setCompositeQuestions(prev => [...prev, newQuestion]);
+        }
+    });
+
     useEffect(() => {
         const timer = setTimeout(() => setIsLoading(false), 1000);
         return () => clearTimeout(timer);
     }, []);
-    const {
-        isCreatingVariant,
-        handleCreateVariant,
-        handleEditQuestion,
-        handleDeleteQuestion
-    } = useQuestionActions();
-    const {
-        selectedQuestions,
-        handleQuestionSelect,
-        clearSelection,
-        toggleSelectAll,
-        isAllSelected
-    } = useQuestionSelectionManagement(questions);
-    const {
-        similarQuestions,
-        currentQuestion: currentQuestionForSimilarity,
-        isModalOpen: showSimilarModal,
-        findSimilar,
-        closeModal: closeSimilarModal
-    } = useSimilarQuestions({ questions });
 
-    const {
-        combine,
-        isCombining,
-        error: combineError
-    } = useQuestionCombination({
-        questions,
-        onCombineSuccess: (newQuestion) => {
-            setCompositeQuestions(prev => [...prev, newQuestion]);
-        },
-        onClearSelection: clearSelection
-    });
-
-    const {
-        editQuestions,
-        isEditing: isBulkEditing
-    } = useBulkActions({
-        questions,
-        selectedQuestionIds: selectedQuestions,
-        onUpdateQuestions: onQuestionChange,
-        onClearSelection: clearSelection
-    });
-
-    const {
-        sortField,
-        sortDirection,
-        setSortField,
-        setSortDirection
-    } = useSortPreferences(
-        'questionSortPreferences',
-        initialSortField,
-        initialSortDirection
-    );
-
-    const {
-        activeFilters, setActiveFilters, filteredQuestions
-    } = useQuestionFilters({
-        questions,
-        initialFilters: {
-            searchTerm: searchTerm,
-            categories: selectedCategory !== 'all' ? [selectedCategory] : [],
-            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : [],
-        }
-    });
-
-    const handleSortChange = useCallback((field: string, direction: 'asc' | 'desc') => {
-        setSortField(field);
-        setSortDirection(direction);
-        onSortChange?.(field, direction);
-    }, [onSortChange, setSortField, setSortDirection]);
-
-    const {
-        sortField: currentSortField,
-        sortDirection: currentSortDirection,
-        sortQuestions
-    } = useQuestionSort({
-        initialField: sortField,
-        initialDirection: sortDirection,
-        sortOptions,
-        onSortChange: handleSortChange
-    });
-
-    useEffect(() => {
-        setActiveFilters(prev => ({
-            ...prev,
-            searchTerm: searchTerm,
-            categories: selectedCategory !== 'all' ? [selectedCategory] : [],
-            difficulties: selectedDifficulty !== 'all' ? [selectedDifficulty as 'easy' | 'medium' | 'hard'] : [],
-        }));
-    }, [searchTerm, selectedCategory, selectedDifficulty, setActiveFilters]);
+    const { similarQuestions, currentQuestion: currentQuestionForSimilarity, isModalOpen: showSimilarModal, findSimilar, closeModal: closeSimilarModal } = useSimilarQuestions({ questions });
 
     const difficultyOptions = [
         { value: 'easy', label: 'Fácil' },
@@ -183,38 +137,41 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
         label: category.name
     }));
 
+    const handleEditQuestion = useCallback((question: Question) => {
+        // Aqui você pode abrir um modal de edição ou fazer outra ação
+        console.log('Editar questão:', question);
+        // Exemplo: abrir modal de edição com os dados da questão
+        setSelectedQuestion(question);
+    }, []);
+
     const handleStatusChange = (status: QuestionStatus) => {
         setNewStatus(status);
         setModalStates(prev => ({ ...prev, status: true }));
     };
 
     const handleApplyAdvancedFilters = useCallback(() => {
-        // Atualiza a lista de questões filtradas
-        // O estado filteredQuestions já será atualizado automaticamente
         console.log(`QUESTIONVIEW: click filtros avançados`);
     }, []);
 
     const handleResetAdvancedFilters = useCallback(() => {
-        setActiveFilters(prev => ({
+        setFilters(prev => ({
             ...prev,
             tags: [],
             disciplines: [],
             ratingRange: [0, 5],
             createdAtRange: ['', ''],
         }));
-    }, [setActiveFilters]);
+    }, [setFilters]);
 
     const handleBulkEdit = useCallback((updates: Partial<Question>) => {
         editQuestions(updates);
     }, [editQuestions]);
 
-    // Processar questões após filtros e ordenação
-    const processedQuestions = useMemo(() => {
-        const sorted = sortQuestions(filteredQuestions);
-        // Adicione a lógica de paginação
+    // Paginação
+    const paginatedQuestions = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
-        return sorted.slice(startIndex, startIndex + itemsPerPage);
-    }, [filteredQuestions, sortQuestions, currentPage, itemsPerPage]);
+        return processedQuestions.slice(startIndex, startIndex + itemsPerPage);
+    }, [processedQuestions, currentPage, itemsPerPage]);
 
     const handleViewQuestion = (question: Question) => {
         setSelectedQuestion(question);
@@ -222,39 +179,33 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
     const handleRateQuestion = useCallback((id: string | number, rating: number) => {
         console.log(`Avaliando questão ${id} com ${rating} estrelas`);
-        // Lógica para atualizar a avaliação no backend/estado
     }, []);
 
     const handleToggleFavorite = useCallback((id: string | number) => {
         console.log(`Alternando favorito para questão ${id}`);
-        // Lógica para atualizar o favorito no backend/estado
     }, []);
 
     const handleQuestionTypeFilter = useCallback((type: QuestionType | 'all') => {
         setQuestionTypeFilter(type);
-        setActiveFilters(prev => ({
+        setFilters(prev => ({
             ...prev,
             types: type === 'all' ? [] : [type]
         }));
-    }, [setActiveFilters]);
+    }, [setFilters]);
 
     const confirmCombineQuestions = useCallback(async () => {
         if (selectedQuestions.size < 2) return;
 
         try {
-            await combine(Array.from(selectedQuestions));
-            setModalStates(prev => ({ ...prev, combine: false }))
+            await combineQuestions();
+            setModalStates(prev => ({ ...prev, combine: false }));
         } catch (error) {
             console.error(`QUESTIONVIEW: Erro ao combinar questões: ${error}`);
         }
-    }, [combine, selectedQuestions]);
+    }, [combineQuestions, selectedQuestions]);
 
     if (isLoading) {
-        return (
-            <LoadingSpinner
-                message="Carregando questões..."
-            />
-        );
+        return <LoadingSpinner message="Carregando questões..." />;
     }
 
     return (
@@ -271,11 +222,46 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 onQuestionTypeFilter={handleQuestionTypeFilter}
                 currentType={questionTypeFilter}
                 categories={categories}
-                filters={activeFilters}
-                onFiltersChange={(updates) => setActiveFilters(prev => ({ ...prev, ...updates }))}
+                filters={filters}
+                onFiltersChange={(updates) => setFilters(prev => ({ ...prev, ...updates }))}
                 onApplyAdvancedFilters={handleApplyAdvancedFilters}
                 onResetAdvancedFilters={handleResetAdvancedFilters}
             />
+
+            {selectedQuestionsCount > 0 && (
+                <div className="action-toolbar">
+                    <div className="selection-info">
+                        <span>{selectedQuestionsCount} selecionadas</span>
+                        <button onClick={clearSelection}>Limpar</button>
+                    </div>
+
+                    <div className="action-buttons">
+                        <button onClick={() => editQuestions({ status: 'draft' })}>
+                            Publicar
+                        </button>
+
+                        <button onClick={deleteQuestions} className="danger">
+                            Excluir
+                        </button>
+
+                        <button onClick={exportQuestions}>
+                            Exportar
+                        </button>
+
+                        <button onClick={() => setModalStates(p => ({ ...p, combine: true }))}>
+                            Combinar
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {error && (
+                <div className="error-message">
+                    {error}
+                    <button onClick={clearError}>Fechar</button>
+                </div>
+            )}
+
             {selectedDiscipline && (
                 <div>Disciplina selecionada: {selectedDiscipline}</div>
             )}
@@ -284,10 +270,11 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 <option value="draft">Rascunho</option>
                 <option value="published">Publicado</option>
             </select>
+
             <ViewControls
                 sortOptions={sortOptions}
-                sortValue={currentSortField}
-                sortDirection={currentSortDirection}
+                sortValue={sortConfig.field}
+                sortDirection={sortConfig.direction}
                 onSortChange={handleSortChange}
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
@@ -297,26 +284,26 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
             <QuestionsRenderer
                 viewMode={viewMode}
-                questions={processedQuestions}
+                questions={paginatedQuestions}
                 selectedQuestions={selectedQuestions}
                 onView={handleViewQuestion}
                 onEdit={handleEditQuestion}
-                onDelete={handleDeleteQuestion}
-                onSelect={handleQuestionSelect}
+                onDelete={(question) => deleteQuestion(question)}
+                onSelect={toggleSelection}
                 onSelectAll={toggleSelectAll}
                 isAllSelected={isAllSelected}
                 onRate={handleRateQuestion}
                 onToggleFavorite={handleToggleFavorite}
-                onFindSimilar={(question) => findSimilar(question)}
-                onCreateVariant={handleCreateVariant}
+                onFindSimilar={findSimilar}
+                onCreateVariant={createVariant}
                 cardProps={{
                     onTagClick: (tag: string) => console.log('Tag clicada:', tag)
                 }}
             />
 
-            {filteredQuestions.length > itemsPerPage && (
+            {processedQuestions.length > itemsPerPage && (
                 <PaginationControls
-                    filteredQuestions={filteredQuestions}
+                    filteredQuestions={processedQuestions}
                     itemsPerPage={itemsPerPage}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}
@@ -334,7 +321,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                         setSelectedQuestion(null);
                     }}
                     onDelete={() => {
-                        handleDeleteQuestion(selectedQuestion);
+                        deleteQuestion(selectedQuestion);
                         setSelectedQuestion(null);
                     }}
                 />
@@ -353,20 +340,20 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 </div>
             )}
 
-            {modalStates.combine && isCombining ? (
+            {modalStates.combine && isProcessing ? (
                 <LoadingSpinner message="Combinando questões..." />
             ) : (
                 modalStates.combine &&
                 <CombineQuestionsModal
                     isOpen={modalStates.combine}
                     count={selectedQuestions.size}
-                    isCombining={isCombining}
+                    isCombining={isProcessing}
                     onConfirm={confirmCombineQuestions}
                     onCancel={() => setModalStates(prev => ({ ...prev, combine: false }))}
                 />
             )}
 
-            {combineError && <div className="error-message">{combineError}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             {currentQuestionForSimilarity && (
                 <SimilarQuestionsModal
@@ -376,31 +363,14 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     onClose={closeSimilarModal}
                 />
             )}
-            {
-                [
-                    isBulkEditing
-                        ? {
-                            isOpen: isLoading,
-                            message: "Carregando questões...",
-                            variant: "spinner" as const,
-                            key: 'bulk-edit'
-                        }
-                        : null,
-                    isCreatingVariant
-                        ? {
-                            isOpen: isCreatingVariant,
-                            message: "Criando variação...",
-                            variant: "dots" as const,
-                            size: "medium" as const,
-                            key: 'create-variant'
-                        }
-                        : null
-                ]
-                    .filter((modal): modal is NonNullable<typeof modal> => modal !== null)
-                    .map((modalProps) => (
-                        <LoadingModal {...modalProps} />
-                    ))
-            }
+
+            {isProcessing && (
+                <LoadingModal
+                    isOpen={isProcessing}
+                    message="Processando..."
+                    variant="spinner"
+                />
+            )}
 
             <BulkActionModals
                 showStatusModal={modalStates.status}
@@ -409,7 +379,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 selectedQuestionsCount={selectedQuestions.size}
                 newStatus={newStatus}
                 categories={categories}
-                isCombining={isCombining}
+                isCombining={isProcessing}
                 onStatusConfirm={() => {
                     handleBulkEdit({ status: newStatus });
                     setModalStates(prev => ({ ...prev, status: false }))

@@ -1,8 +1,8 @@
 import { useCallback, useState } from "react";
-import { useQuestionSelection } from "./useQuestionSelection";
-import { Question } from "../utils/types/Question";
+import { useQuestionSelection } from "../useQuestionSelection";
+import { Question } from "../../utils/types/Question";
 
-export const useQuestionSelectionManagement = (questions: Question[]) => {
+export const useSelection = (questions: Question[]) => {
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());
   
   const { clearSelection, toggleSelectAll, isAllSelected } = useQuestionSelection({
@@ -15,7 +15,7 @@ export const useQuestionSelectionManagement = (questions: Question[]) => {
     }
   });
 
-  const handleQuestionSelect = useCallback((id: string | number) => {
+  const toggleSelection = useCallback((id: string | number) => {
     const idStr = id.toString();
     setSelectedQuestions(prev => {
       const newSet = new Set(prev);
@@ -26,11 +26,11 @@ export const useQuestionSelectionManagement = (questions: Question[]) => {
 
   return {
     selectedQuestions,
+    selectedQuestionsCount: selectedQuestions.size,
+    isAllSelected,
     setSelectedQuestions,
     clearSelection,
     toggleSelectAll,
-    isAllSelected,
-    handleQuestionSelect,
-    selectedQuestionsCount: selectedQuestions.size
+    toggleSelection,
   };
 };
