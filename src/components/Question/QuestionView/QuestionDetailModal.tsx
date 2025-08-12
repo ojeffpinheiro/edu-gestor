@@ -1,16 +1,14 @@
-import React from 'react'
-import { FaTag, FaChartLine, FaCalendarAlt, FaPencilAlt, FaTrash } from 'react-icons/fa';
-import {
-  ModalContentGrid,
-  QuestionDetailSection,
-  DetailLabel,
-  DetailValue
-} from './styles';
+import React from 'react';
+import { FaTag, FaChartLine, FaCalendarAlt } from 'react-icons/fa';
+import { ModalContentGrid } from './styles';
 import { QuestionDetailModalProps } from './types';
 import { Modal } from '../../Modal';
 import { AnswerRenderer } from '../AnswerRenderer';
-import { Button } from '../../shared/Button.styles';
 import { CardContainer } from '../../shared/Card.styles';
+import { TagList } from '../TagList';
+import { DetailSection } from '../DetailSection';
+import { ActionButtons } from '../ActionButtons';
+import { DateDisplay } from '../DateDisplay';
 
 const QuestionDetailModal = ({
   question,
@@ -29,40 +27,21 @@ const QuestionDetailModal = ({
       className={className}
       actions={
         <CardContainer $variant="default">
-          {onEdit && <Button $variant="primary" onClick={onEdit}><FaPencilAlt /></Button>}
-          {onDelete && <Button $variant="danger" onClick={onDelete}><FaTrash /></Button>}
+          <ActionButtons onEdit={onEdit} onDelete={onDelete} />
         </CardContainer>
       }
     >
       <ModalContentGrid>
         <div>
-          <QuestionDetailSection>
-            <DetailLabel>Enunciado</DetailLabel>
-            <DetailValue>{question.statement}</DetailValue>
-          </QuestionDetailSection>
+          <DetailSection label="Enunciado">
+            {question.statement}
+          </DetailSection>
 
-          <QuestionDetailSection>
-            <DetailLabel>
-              <FaTag /> Tags
-            </DetailLabel>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-              {question?.tags?.map((tag, index) => (
-                <span
-                  key={index}
-                  style={{
-                    padding: '0.25rem 0.5rem',
-                    backgroundColor: 'var(--color-background-tertiary)',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem'
-                  }}
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </QuestionDetailSection>
-          <QuestionDetailSection>
-            <DetailLabel>Respostas</DetailLabel>
+          <DetailSection label="Tags" icon={<FaTag />}>
+            <TagList tags={question.tags || []} />
+          </DetailSection>
+
+          <DetailSection label="Respostas">
             <div style={{ display: 'grid', gap: '0.5rem' }}>
               {question.answers?.map((answer, index) => (
                 <AnswerRenderer
@@ -72,46 +51,30 @@ const QuestionDetailModal = ({
                 />
               ))}
             </div>
-          </QuestionDetailSection>
+          </DetailSection>
         </div>
 
         <div>
-          <QuestionDetailSection>
-            <DetailLabel>
-              <FaChartLine /> Estatísticas
-            </DetailLabel>
+          <DetailSection label="Estatísticas" icon={<FaChartLine />}>
             <div style={{ display: 'grid', gap: '0.5rem' }}>
-              <DetailValue>
-                Dificuldade: {question.difficultyLevel}
-              </DetailValue>
+              <div>Dificuldade: {question.difficultyLevel}</div>
               {question.correctRate && (
-                <DetailValue>
-                  Taxa de acerto: {question.correctRate}%
-                </DetailValue>
+                <div>Taxa de acerto: {question.correctRate}%</div>
               )}
               {question.usageCount && (
-                <DetailValue>
-                  Número de usos: {question.usageCount}
-                </DetailValue>
+                <div>Número de usos: {question.usageCount}</div>
               )}
             </div>
-          </QuestionDetailSection>
+          </DetailSection>
 
-          <QuestionDetailSection>
-            <DetailLabel>
-              <FaCalendarAlt /> Datas
-            </DetailLabel>
+          <DetailSection label="Datas" icon={<FaCalendarAlt />}>
             <div style={{ display: 'grid', gap: '0.5rem' }}>
-              <DetailValue>
-                Criada em: {new Date(question.createdAt).toLocaleDateString()}
-              </DetailValue>
+              <DateDisplay date={question.createdAt} prefix="Criada em:" />
               {question.updatedAt && (
-                <DetailValue>
-                  Último uso: {new Date(question.updatedAt).toLocaleDateString()}
-                </DetailValue>
+                <DateDisplay date={question.updatedAt} prefix="Último uso:" />
               )}
             </div>
-          </QuestionDetailSection>
+          </DetailSection>
         </div>
       </ModalContentGrid>
     </Modal>

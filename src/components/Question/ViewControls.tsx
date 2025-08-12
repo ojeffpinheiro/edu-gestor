@@ -1,5 +1,4 @@
 import React from 'react';
-import { SortControls } from '../Sort/SortControls';
 import QuestionViewModeToggle from './QuestionView/QuestionViewModeToggle';
 
 interface ViewControlsProps {
@@ -45,14 +44,6 @@ const ViewControls: React.FC<ViewControlsProps> = ({
         marginBottom: '1rem',
       }}
     >
-      <SortControls
-        options={sortOptions}
-        value={sortValue}
-        direction={sortDirection}
-        onChange={onSortChange}
-        variant="dropdown"
-      />
-
       <QuestionViewModeToggle
         mode={viewMode}
         onChange={onViewModeChange}

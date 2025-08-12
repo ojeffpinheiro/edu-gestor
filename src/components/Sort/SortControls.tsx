@@ -4,8 +4,6 @@ import {
   SortContainer,
   SortLabel,
   SortSelect,
-  SortButtonGroup,
-  SortButton,
   DirectionButton
 } from './styles';
 import { SortControlsProps } from './types';
@@ -28,35 +26,6 @@ export const SortControls = ({
   };
 
   const selectedOption = options.find(opt => opt.value === value) || options[0];
-
-  if (variant === 'buttons') {
-    return (
-      <SortContainer className={className}>
-        <SortLabel>Ordenar por:</SortLabel>
-        <SortButtonGroup>
-          {options.map((option) => (
-            <SortButton
-              key={option.value}
-              $active={value === option.value}
-              onClick={() => handleSortChange(option.value)}
-            >
-              {option.label}
-            </SortButton>
-          ))}
-        </SortButtonGroup>
-
-        {selectedOption.direction !== undefined && (
-          <DirectionButton
-            $active={true}
-            onClick={handleDirectionToggle}
-            aria-label={`Orden ${direction === 'asc' ? 'ascendente' : 'descendente'}`}
-          >
-            {direction === 'asc' ? <FiArrowUp /> : <FiArrowDown />}
-          </DirectionButton>
-        )}
-      </SortContainer>
-    );
-  }
 
   return (
     <SortContainer className={className}>
