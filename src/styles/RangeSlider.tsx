@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
+import { constants } from '../utils/consts';
 
 interface RangeSliderProps {
   min: number;
@@ -40,9 +41,11 @@ const RangeSliderContainer = styled.div`SliderInput
 const SliderInput = styled.input.attrs({ type: 'range' })`
   width: 100%;
   
-  background: ${props => props.theme.colors.background};
+  /* Usando constantes do arquivo consts.ts */
+  background: ${constants.colors.background.main};
+  
   &::-webkit-slider-thumb {
-    background: ${props => props.theme.colors.primary};
+    background: ${constants.colors.primary};
   }
 `;
 

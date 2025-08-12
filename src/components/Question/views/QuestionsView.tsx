@@ -2,19 +2,22 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Question, QuestionStatus, QuestionType } from '../../../utils/types/Question';
 import { CategoryWithId } from '../QuestionForm/type';
 
-import LoadingSpinner from '../../shared/LoadingSpinner';
-import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
-import QuestionCard from '../QuestionCard';
-import CombineQuestionsModal from '../CombineQuestionsModal';
-import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
-import FilterBar from '../FilterBar';
-import ViewControls from '../ViewControls';
-import LoadingModal from '../LoadingModal';
-import QuestionsRenderer from '../QuestionsRenderer';
-import BulkActionModals from '../BulkActionModals';
-import PaginationControls from '../PaginationControls';
 import { useQuestionManager } from '../../../hooks/Question/useQuestionManager';
 import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
+
+import LoadingSpinner from '../../shared/LoadingSpinner';
+
+import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
+import CombineQuestionsModal from '../CombineQuestionsModal';
+import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
+import BulkActionModals from '../BulkActionModals';
+import LoadingModal from '../LoadingModal';
+
+import QuestionCard from '../QuestionCard';
+import FilterBar from '../FilterBar';
+import ViewControls from '../ViewControls';
+import QuestionsRenderer from '../QuestionsRenderer';
+import PaginationControls from '../PaginationControls';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -213,19 +216,29 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             <FilterBar
                 searchValue={searchTerm}
                 onSearchChange={onSearchChange}
+                onSearchSubmit={() => { }}
                 categoryOptions={categoryOptions}
                 difficultyOptions={difficultyOptions}
                 selectedCategory={selectedCategory}
                 selectedDifficulty={selectedDifficulty}
-                onCategoryChange={onCategoryChange}
-                onDifficultyChange={onDifficultyChange}
-                onQuestionTypeFilter={handleQuestionTypeFilter}
                 currentType={questionTypeFilter}
                 categories={categories}
                 filters={filters}
                 onFiltersChange={(updates) => setFilters(prev => ({ ...prev, ...updates }))}
-                onApplyAdvancedFilters={handleApplyAdvancedFilters}
-                onResetAdvancedFilters={handleResetAdvancedFilters}
+                onQuestionTypeFilter={handleQuestionTypeFilter}
+                onCategoryChange={onCategoryChange}
+                onDifficultyChange={onDifficultyChange}
+                onApplyFilters={() => { }}
+                onResetFilters={handleResetAdvancedFilters}
+                sortOptions={sortOptions}
+                sortField={sortConfig.field}
+                sortDirection={sortConfig.direction}
+                onSortChange={handleSortChange}
+                totalQuestions={processedQuestions.length}
+                itemsPerPage={itemsPerPage}
+                onItemsPerPageChange={setItemsPerPage}
+                questionStatus={newStatus}
+                onStatusChange={setNewStatus}
             />
 
             {selectedQuestionsCount > 0 && (
@@ -265,11 +278,6 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
             {selectedDiscipline && (
                 <div>Disciplina selecionada: {selectedDiscipline}</div>
             )}
-
-            <select onChange={(e) => handleStatusChange(e.target.value as QuestionStatus)}>
-                <option value="draft">Rascunho</option>
-                <option value="published">Publicado</option>
-            </select>
 
             <ViewControls
                 sortOptions={sortOptions}

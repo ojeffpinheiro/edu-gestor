@@ -2,8 +2,10 @@ import React from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+
 import { CategoryWithId } from './QuestionForm/type';
 import { FilterOptions } from '../../utils/types/Question';
+
 import RangeSlider from '../../styles/RangeSlider';
 import { MultiSelect } from '../shared/MultiSelect';
 import { Button } from '../shared/Button.styles';

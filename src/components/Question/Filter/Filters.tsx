@@ -1,5 +1,8 @@
 import React from 'react';
 import { FiFilter } from 'react-icons/fi';
+
+import { QuestionType } from '../../../utils/types/Question';
+
 import {
   FiltersContainer,
   FiltersHeader,
@@ -10,9 +13,9 @@ import {
   AdvancedFiltersButton
 } from './styles';
 import { FiltersProps } from './types';
+
 import { SearchBar } from '../../shared/SearchBar';
 import FilterGroup from './FilterGroup';
-import { QuestionType } from '../../../utils/types/Question';
 
 const Filters = ({
   searchValue,
