@@ -11,6 +11,12 @@ const QuestionsGrid = styled.div`
   margin-bottom: 2rem;
 `;
 
+const EmptyState = styled.div`
+  text-align: center;
+  padding: 2rem;
+  color: var(--color-text-secondary);
+`;
+
 interface QuestionsRendererProps {
   viewMode: 'cards' | 'table';
   questions: Question[];
@@ -64,12 +70,15 @@ const QuestionsRenderer: React.FC<QuestionsRendererProps> = ({
             onToggleFavorite={onToggleFavorite ? () => onToggleFavorite(question.id) : undefined}
             onFindSimilar={onFindSimilar ? () => onFindSimilar(question) : undefined}
             onCreateVariant={onCreateVariant ? () => onCreateVariant(question) : undefined}
-            showActionsOnClick={true}
             {...cardProps}
           />
         ))}
       </QuestionsGrid>
     );
+  }
+  
+  if (questions.length === 0) {
+    return <EmptyState>Nenhuma questão encontrada</EmptyState>;
   }
 
   return (

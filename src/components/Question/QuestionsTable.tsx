@@ -51,6 +51,16 @@ const ActionButton = styled.button`
   }
 `;
 
+const SortableHeader = styled(TableHeaderCell)<{ isActive?: boolean }>`
+  cursor: pointer;
+  &:hover {
+    background-color: var(--color-background-tertiary);
+  }
+  ${({ isActive }) => isActive && `
+    color: var(--color-primary);
+  `}
+`;
+
 interface QuestionsTableProps {
   questions: Question[];
   selectedQuestions: Set<string | number>;
@@ -76,18 +86,18 @@ const QuestionsTable: React.FC<QuestionsTableProps> = ({
     <Table>
       <TableHeader>
         <tr>
-          <TableHeaderCell>
+          <SortableHeader>
             <input
               type="checkbox"
               checked={isSelectAll}
               onChange={onSelectAll}
             />
-          </TableHeaderCell>
-          <TableHeaderCell>Título</TableHeaderCell>
-          <TableHeaderCell>Categoria</TableHeaderCell>
-          <TableHeaderCell>Dificuldade</TableHeaderCell>
-          <TableHeaderCell>Tipo</TableHeaderCell>
-          <TableHeaderCell>Ações</TableHeaderCell>
+          </SortableHeader>
+          <SortableHeader>Título</SortableHeader>
+          <SortableHeader>Categoria</SortableHeader>
+          <SortableHeader>Dificuldade</SortableHeader>
+          <SortableHeader>Tipo</SortableHeader>
+          <SortableHeader>Ações</SortableHeader>
         </tr>
       </TableHeader>
       <tbody>

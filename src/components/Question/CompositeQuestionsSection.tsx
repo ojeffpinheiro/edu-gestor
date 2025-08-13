@@ -5,6 +5,7 @@ import { Question } from '../../utils/types/Question';
 interface CompositeQuestionsProps {
   questions: Question[];
   onFindSimilar: (question: Question) => void;
+  showActionsOnClick?: boolean;
 }
 
 const CompositeQuestionsSection: React.FC<CompositeQuestionsProps> = ({ questions, onFindSimilar }) => (
@@ -14,8 +15,7 @@ const CompositeQuestionsSection: React.FC<CompositeQuestionsProps> = ({ question
       <QuestionCard
         key={q.id}
         question={q}
-        onFindSimilar={onFindSimilar}
-        showActionsOnClick />
+        onFindSimilar={onFindSimilar}  />
     ))}
   </div>
 );

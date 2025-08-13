@@ -1,13 +1,18 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import styled from 'styled-components';
+import { FaCheckCircle, FaExclamationCircle, FaFileExport, FaObjectGroup, FaTimes, FaTrash, FaUpload } from 'react-icons/fa';
+
 import { Question, QuestionStatus, QuestionType } from '../../../utils/types/Question';
 import { CategoryWithId } from '../QuestionForm/type';
 
 import { useQuestionManager } from '../../../hooks/Question/useQuestionManager';
 import { useSimilarQuestions } from '../../../hooks/useSimilarQuestions';
 
+import { Button } from '../../shared/Button.styles';
 import LoadingSpinner from '../../shared/LoadingSpinner';
 
 import QuestionDetailModal from '../QuestionView/QuestionDetailModal';
+
 import CombineQuestionsModal from '../CombineQuestionsModal';
 import { SimilarQuestionsModal } from '../SimilarQuestionsModal';
 import BulkActionModals from '../BulkActionModals';
@@ -17,9 +22,6 @@ import FilterBar from '../FilterBar';
 import ViewControls from '../ViewControls';
 import QuestionsRenderer from '../QuestionsRenderer';
 import PaginationControls from '../PaginationControls';
-import styled from 'styled-components';
-import { FaCheckCircle, FaExclamationCircle, FaFileExport, FaObjectGroup, FaTimes, FaTrash, FaUpload } from 'react-icons/fa';
-import { Button } from '../../shared/Button.styles';
 
 interface QuestionsViewProps {
     searchTerm: string;
@@ -300,7 +302,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                     </Button>
                 </ErrorMessage>
             )}
-            
+
             <ViewControls
                 sortOptions={sortOptions}
                 sortValue={sortConfig.field}

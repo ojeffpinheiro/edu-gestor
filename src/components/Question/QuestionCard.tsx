@@ -1,36 +1,130 @@
-import React, { memo, useState } from 'react';
-import { FaHeart, FaRegHeart, FaTag } from 'react-icons/fa';
-import QuestionActions, {
-  BadgeContainer,
-  QuestionBadge,
-  QuestionCardContainer,
-  QuestionHeader,
-  QuestionMeta,
-  QuestionTag,
-  QuestionTags,
-  QuestionTitle,
-  QuestionTitleWrapper,
-  SelectCheckbox
-} from './QuestionActions';
-import { QuestionContent } from './QuestionPreviewStyles';
-import { QUESTION_TYPE_LABELS, Question } from '../../utils/types/Question';
+import React, { memo, useState, useRef } from 'react';
+import {
+  FaHeart,
+  FaRegHeart,
+  FaEllipsisV,
+  FaEye,
+  FaEdit,
+  FaCopy,
+  FaSearch,
+  FaTrash
+} from 'react-icons/fa';
+import styled, { keyframes } from 'styled-components';
+
+import { Question } from '../../utils/types/Question';
+
+import { Button } from '../shared/Button.styles';
+
 import StarRating from './StarRating';
-import { QuestionTypeBadge } from '../shared/Badges';
+import { MenuDropdown } from './MenuDropdown';
+
+// Animação para feedback visual
+const pulse = keyframes`
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+`;
+
+const CardContainer = styled.div<{ selected?: boolean }>`
+  background: var(--color-card);
+  border-radius: var(--border-radius-md);
+  padding: var(--space-md);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-all);
+  position: relative;
+  border: 2px solid ${({ selected }) => selected ? 'var(--color-primary)' : 'transparent'};
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+`;
+
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  margin-bottom: var(--space-sm);
+  gap: var(--space-sm);
+`;
+
+const CardTitle = styled.h3`
+  margin: 0;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text);
+  flex: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 2.8em; // Garante espaço para 2 linhas
+`;
+
+const FavoriteButton = styled.button<{ isFavorite?: boolean }>`
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: ${({ isFavorite }) => isFavorite ? 'var(--color-error)' : 'var(--color-text-secondary)'};
+  padding: var(--space-xs);
+  font-size: 1.2rem;
+  transition: var(--transition-colors);
+  
+  &:hover {
+    color: var(--color-error);
+    animation: ${pulse} 0.5s ease;
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+`;
+
+const CardMeta = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+  align-items: center;
+`;
+
+const MetaBadge = styled.span<{ type: 'difficulty' | 'type', level?: string }>`
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  
+  ${({ type, level }) => type === 'difficulty' ? `
+    background: ${level === 'easy' ? 'var(--color-success-bg)' :
+      level === 'medium' ? 'var(--color-warning-bg)' : 'var(--color-error-bg)'};
+    color: ${level === 'easy' ? 'var(--color-success)' :
+      level === 'medium' ? 'var(--color-warning)' : 'var(--color-error)'};
+  ` : `
+    background: var(--color-info-bg);
+    color: var(--color-info);
+  `}
+`;
+
+const Checkbox = styled.input`
+  margin-right: var(--space-sm);
+  accent-color: var(--color-primary);
+`;
 
 interface QuestionCardProps {
-  question: Question | 'all'; // Permite o tipo 'all' para tratamento especial
-  onView?: () => void;
-  onEdit?: () => void;
-  onDelete?: () => void;
-  onTagClick?: (tag: string) => void;
-  className?: string;
+  question: Question;
+  onView?: (question: Question) => void;
+  onEdit?: (question: Question) => void;
+  onDelete?: (question: Question) => void;
   selected?: boolean;
   onSelect?: (id: string | number) => void;
   onRate?: (id: string | number, rating: number) => void;
   onToggleFavorite?: (id: string | number) => void;
   onFindSimilar?: (question: Question) => void;
   onCreateVariant?: (question: Question) => void;
-  showActionsOnClick: boolean;
 }
 
 const QuestionCard: React.FC<QuestionCardProps> = memo(({
@@ -38,167 +132,148 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
   onView,
   onEdit,
   onDelete,
-  onTagClick,
-  className,
   selected = false,
   onSelect,
   onRate,
   onToggleFavorite,
+  onFindSimilar,
   onCreateVariant,
-  showActionsOnClick = false,
 }) => {
-  const [showActions, setShowActions] = useState(false);
-
-  const handleTagClick = (tag: string) => {
-    onTagClick?.(tag);
-  };
-
-  if (question === 'all') {
-    return null; // ou tratamento especial para o caso 'all'
-  }
+  const [isFavorite, setIsFavorite] = useState(question.isFavorite || false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.stopPropagation();
+    setIsFavorite(!isFavorite);
+    setIsAnimating(true);
     onToggleFavorite?.(question.id);
+
+    // Reset animation after it completes
+    setTimeout(() => setIsAnimating(false), 500);
   };
 
-  const getUsageBadge = (usageCount?: number) => {
-    if (!usageCount || usageCount <= 0) return null;
-
-    let color = '#ccc';
-    if (usageCount > 50) color = '#FF5722';
-    else if (usageCount > 20) color = '#FF9800';
-    else if (usageCount > 5) color = '#FFC107';
-
-    return (
-      <span style={{
-        position: 'absolute',
-        top: '-8px',
-        right: '-8px',
-        backgroundColor: color,
-        color: 'white',
-        borderRadius: '50%',
-        width: '24px',
-        height: '24px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '0.75rem',
-        fontWeight: 'bold',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-      }}>
-        {usageCount > 99 ? '99+' : usageCount}
-      </span>
-    );
+  const handleSelect = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onSelect) {
+      onSelect(question.id);
+    }
   };
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Verifica se o clique veio do checkbox ou do botão do menu
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.closest('button')) {
+      return;
+    }
+    onView?.(question);
+  };
+
+
+  const handleMenuClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsMenuOpen(true);
+  };
+
+  // Limita o texto do statement para 100 caracteres
+  const truncatedStatement = question.statement.length > 100
+    ? `${question.statement.substring(0, 100)}...`
+    : question.statement;
 
   return (
-    <QuestionCardContainer
-      className={className}
+    <CardContainer
+      ref={cardRef}
       selected={selected}
-      $isFavorite={question.isFavorite}
-      $usageCount={question.usageCount}
-      onClick={() => showActionsOnClick && setShowActions(!showActions)}
+      onClick={handleCardClick}
     >
-      {getUsageBadge(question.usageCount)}
-      <QuestionHeader>
-        <QuestionTitleWrapper>
-          {onSelect && (
-            <SelectCheckbox
-              type="checkbox"
-              checked={selected}
-              onChange={() => onSelect(question.id)}
-              onClick={(e) => e.stopPropagation()}
-              aria-label={`Selecionar questão ${question.statement}`}
-            />
-          )}
-          <QuestionTitle title={question.statement}>
-            {question.statement}
-          </QuestionTitle>
-          <BadgeContainer>
-            <QuestionBadge $variant={`difficulty-${question.difficultyLevel}`}>
-              {question.difficultyLevel === 'easy' && 'Fácil'}
-              {question.difficultyLevel === 'medium' && 'Médio'}
-              {question.difficultyLevel === 'hard' && 'Difícil'}
-            </QuestionBadge>
-            <QuestionTypeBadge
-              type={question.questionType}
-              className={`type-${question.questionType}`}
-            >
-                {QUESTION_TYPE_LABELS[question.questionType]}
-            </QuestionTypeBadge>
-          </BadgeContainer>
-          <button
-            onClick={handleToggleFavorite}
-            style={{
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: question.isFavorite ? '#FF4081' : '#ccc',
-              marginLeft: 'auto'
-            }}
-          >
-            {question.isFavorite ? <FaHeart /> : <FaRegHeart />}
-          </button>
-        </QuestionTitleWrapper>
+      <CardHeader>
+        {onSelect && (
+          <Checkbox
+            type="checkbox"
+            checked={selected}
+            onChange={() => handleSelect}
+            onClick={e => e.stopPropagation()} 
+          />
+        )}
+        <CardTitle title={question.statement}>
+          {truncatedStatement}
+        </CardTitle>
 
-        <QuestionActions
-          onView={onView}
-          onEdit={onEdit}
-          onDelete={onDelete}
-          question={question}
-          onCreateVariant={onCreateVariant && (() => onCreateVariant(question))}
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onClick={handleToggleFavorite}
+          aria-label={isFavorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
+          className={isAnimating ? 'pulse' : ''}
+        >
+          {isFavorite ? <FaHeart /> : <FaRegHeart />}
+        </FavoriteButton>
+
+        <Button
+          $variant="text"
+          ref={menuTriggerRef}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(!isMenuOpen);
+          }}
+          aria-label="Ações"
+        >
+          <FaEllipsisV />
+        </Button>
+
+        <MenuDropdown
+          isOpen={isMenuOpen}
+          onClose={() => setIsMenuOpen(false)}
+          triggerRef={menuTriggerRef}
+          parentRef={cardRef}
+          items={[
+            {
+              icon: <FaEye />,
+              label: 'Visualizar',
+              onClick: () => onView?.(question),
+            },
+            {
+              icon: <FaEdit />,
+              label: 'Editar',
+              onClick: () => onEdit?.(question),
+            },
+            ...(onCreateVariant ? [{
+              icon: <FaCopy />,
+              label: 'Criar variação',
+              onClick: () => onCreateVariant?.(question),
+            }] : []),
+            ...(onFindSimilar ? [{
+              icon: <FaSearch />,
+              label: 'Encontrar similares',
+              onClick: () => onFindSimilar?.(question),
+            }] : []),
+            ...(onDelete ? [{
+              icon: <FaTrash />,
+              label: 'Excluir',
+              onClick: () => onDelete?.(question),
+              color: 'var(--color-error)',
+            }] : []),
+          ]}
         />
-      </QuestionHeader>
+      </CardHeader>
 
-      <QuestionContent title={question.explanation}>
-        {question.explanation}
-      </QuestionContent>
+      <CardMeta>
+        <MetaBadge type="difficulty" level={question.difficultyLevel}>
+          {question.difficultyLevel === 'easy' ? 'Fácil' :
+            question.difficultyLevel === 'medium' ? 'Médio' : 'Difícil'}
+        </MetaBadge>
 
-      <QuestionMeta>
-        <span>Categoria: {question.discipline}</span>
-        <span>Criada em: {new Date(question.createdAt).toLocaleDateString()}</span>
-        {question.updatedAt && (
-          <span>Último uso: {new Date(question.updatedAt).toLocaleDateString()}</span>
-        )}
-        {question.correctRate && (
-          <span>Acertos: {question.correctRate}%</span>
-        )}
+        <MetaBadge type="type">
+          {question.questionType}
+        </MetaBadge>
+
         <StarRating
           rating={question.rating || 0}
           onRate={(rating) => onRate?.(question.id, rating)}
+          interactive={!!onRate}
         />
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleFavorite?.(question.id);
-          }}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: question.isFavorite ? '#FF4081' : '#ccc',
-            marginLeft: 'auto'
-          }}
-        >
-          {question.isFavorite ? <FaHeart /> : <FaRegHeart />}
-        </button>
-      </QuestionMeta>
-
-      {question.tags && question.tags.length > 0 && (
-        <QuestionTags>
-          {question.tags.map((tag: string, index: number) => (
-            <QuestionTag
-              key={index}
-              onClick={() => handleTagClick(tag)}
-              title={`Filtrar por: ${tag}`}
-            >
-              <FaTag size={12} /> {tag}
-            </QuestionTag>
-          ))}
-        </QuestionTags>
-      )}
-    </QuestionCardContainer>
+      </CardMeta>
+    </CardContainer>
   );
 });
 
