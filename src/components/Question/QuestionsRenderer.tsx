@@ -52,7 +52,7 @@ const QuestionsRenderer: React.FC<QuestionsRendererProps> = ({
   cardProps = {},
   tableProps = {},
 }) => {
-  if (viewMode === 'cards') {
+ if (viewMode === 'cards') {
     return (
       <QuestionsGrid>
         {questions.map(question => (
@@ -63,7 +63,7 @@ const QuestionsRenderer: React.FC<QuestionsRendererProps> = ({
             onEdit={() => onEdit(question)}
             onDelete={() => onDelete(question)}
             selected={selectedQuestions.has(question.id)}
-            onSelect={() => onSelect(question.id)}
+            onSelect={(id) => { onSelect(id)}}
             onRate={onRate ? (id: string | number, rating: number) => {
               onRate(id, rating);
             } : undefined}

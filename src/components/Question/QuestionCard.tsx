@@ -155,21 +155,21 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
     setTimeout(() => setIsAnimating(false), 500);
   };
 
-  const handleSelect = (e: React.MouseEvent) => {
+  const handleSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
     if (onSelect) {
       onSelect(question.id);
     }
   };
+
   const handleCardClick = (e: React.MouseEvent) => {
-    // Verifica se o clique veio do checkbox ou do botão do menu
     const target = e.target as HTMLElement;
-    if (target.tagName === 'INPUT' || target.closest('button')) {
+    // Ignora cliques em elementos interativos
+    if (target.tagName === 'INPUT' || target.closest('button, a, [role="button"]')) {
       return;
     }
     onView?.(question);
   };
-
 
   const handleMenuClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -192,8 +192,8 @@ const QuestionCard: React.FC<QuestionCardProps> = memo(({
           <Checkbox
             type="checkbox"
             checked={selected}
-            onChange={() => handleSelect}
-            onClick={e => e.stopPropagation()} 
+            onChange={handleSelect} // Corrigido: usando a função diretamente
+            onClick={e => e.stopPropagation()}
           />
         )}
         <CardTitle title={question.statement}>

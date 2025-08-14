@@ -1,6 +1,6 @@
 import React, { ReactNode, useCallback, useEffect } from 'react';
 import { FiX } from 'react-icons/fi';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 export interface ModalProps {
   title: string;
@@ -11,8 +11,19 @@ export interface ModalProps {
   className?: string;
   closeOnOverlayClick?: boolean;
   showCloseButton?: boolean;
-  isOpen: boolean; 
+  isOpen: boolean;
 }
+
+const ModalAnimation = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -51,6 +62,7 @@ export const ModalContainer = styled.div<{ size: string }>`
   overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: slideIn 0.3s ease-out;
+  animation: ${ModalAnimation} 0.3s ease-out;
 
   @keyframes slideIn {
     from { transform: translateY(20px); opacity: 0; }
@@ -106,7 +118,7 @@ export const Modal = ({
   className,
   closeOnOverlayClick = true,
   showCloseButton = true,
-  isOpen 
+  isOpen
 }: ModalProps) => {
   // Fechar modal ao pressionar ESC
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
@@ -125,7 +137,7 @@ export const Modal = ({
       onClose();
     }
   };
-  
+
   if (!isOpen) return null;
 
   return (

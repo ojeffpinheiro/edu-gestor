@@ -81,6 +81,7 @@ export interface Question {
   componentQuestions?: string[];
   isVariant?: boolean;
   sourceQuestionId?: string;
+  lastUsed?: string;
 }
 
 // Interface para as props dos componentes de passo

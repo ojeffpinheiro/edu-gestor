@@ -58,11 +58,11 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
     onSortChange,
 }) => {
     const [newStatus, setNewStatus] = useState<QuestionStatus>('draft');
+    const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
     const [compositeQuestions, setCompositeQuestions] = useState<Question[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [questionTypeFilter, setQuestionTypeFilter] = useState<QuestionType | 'all'>('all');
     const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-    const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
     const [modalStates, setModalStates] = useState({
@@ -172,6 +172,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
 
     const handleViewQuestion = (question: Question) => {
         setSelectedQuestion(question);
+        setModalStates(prev => ({ ...prev, detail: true }));
     };
 
     const handleRateQuestion = useCallback((id: string | number, rating: number) => {
@@ -321,8 +322,7 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 onView={handleViewQuestion}
                 onEdit={handleEditQuestion}
                 onDelete={(question) => deleteQuestion(question)}
-                onSelect={toggleSelection}
-                onSelectAll={toggleSelectAll}
+                onSelect={(id) => toggleSelection(id)}
                 isAllSelected={isAllSelected}
                 onRate={handleRateQuestion}
                 onToggleFavorite={handleToggleFavorite}
@@ -347,14 +347,14 @@ const QuestionsView: React.FC<QuestionsViewProps> = ({
                 <QuestionDetailModal
                     question={selectedQuestion}
                     isOpen={modalStates.detail}
-                    onClose={() => setSelectedQuestion(null)}
+                    onClose={() => setModalStates(prev => ({ ...prev, detail: false }))}
                     onEdit={() => {
                         handleEditQuestion(selectedQuestion);
-                        setSelectedQuestion(null);
+                        setModalStates(prev => ({ ...prev, detail: false }));
                     }}
                     onDelete={() => {
                         deleteQuestion(selectedQuestion);
-                        setSelectedQuestion(null);
+                        setModalStates(prev => ({ ...prev, detail: false }));
                     }}
                 />
             )}

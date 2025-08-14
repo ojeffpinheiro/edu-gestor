@@ -1,6 +1,5 @@
 import React from 'react'
-import { Answer, AnswerType } from '../../utils/types/Question';
-import { QuestionType } from '../../utils/types/Question';
+import { Answer, AnswerType, QuestionType } from '../../utils/types/Question';
 
 // Mapeamento de QuestionType para AnswerType
 const getAnswerType = (questionType: QuestionType): AnswerType => {
