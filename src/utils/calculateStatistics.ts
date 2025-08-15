@@ -100,7 +100,6 @@ export const calculateStatistics = (results: ExamResult[], metric: string = 'sco
   
   // Quartis
   const q1Index = Math.floor(sortedValues.length / 4);
-  const q2Index = Math.floor(sortedValues.length / 2);
   const q3Index = Math.floor((3 * sortedValues.length) / 4);
   
   const quartiles = {

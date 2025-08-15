@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
-import { QuestionResource, ResourceType } from '../../../../utils/types/Question';
+import { QuestionFormData, QuestionResource, ResourceType } from '../../../../utils/types/Question';
 import {
   FormStepContainer,
   FormTitle,
@@ -15,11 +15,9 @@ import {
 } from '../../QuestionForm.styles';
 
 interface ResourcesStepProps {
-  data: {
-    resources: QuestionResource[];
-  };
+  data: Pick<QuestionFormData, 'resources'>;
+  updateData: (data: QuestionResource[]) => void;
   isSubmitting: boolean;
-  updateData: (data: Partial<any>) => void;
   onPrev: () => void;
   onSubmit?: () => void;
 }

@@ -46,7 +46,8 @@ export interface Alternative {
   id: string;
   text: string;
   isCorrect: boolean;
-}
+  feedback?: string;
+};
 
 export interface Question {
   id: string;
@@ -297,15 +298,6 @@ export interface RubricCriteria {
     points: number;
   }[];
 }
-
-// Alternativa para questões objetivas
-export interface Alternative {
-  id: string;
-  text: string;
-  isCorrect: boolean;
-  feedback?: string;
-}
-
 // Recurso adicional (imagem, link, etc)
 export type ResourceType = 'image' | 'video' | 'link' | 'audio';
 
@@ -330,4 +322,6 @@ export interface QuestionFormData {
   resources: QuestionResource[];
   optionsLayout: OptionsLayout;
   alternativesOrder: AlternativesOrder;
+  tags?: string[];
+  category?: string;
 }

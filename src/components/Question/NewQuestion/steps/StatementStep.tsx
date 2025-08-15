@@ -12,10 +12,7 @@ import { FormCard } from '../../../../styles/containers';
 import { QuestionFormData } from '../../../../utils/types/Question';
 
 interface StatementStepProps {
-  data: {
-    statement: string;
-    explanation: string;
-  };
+  data: QuestionFormData;
   updateData: (field: keyof QuestionFormData, value: any) => void;
   onNext?: () => void;
   onPrev?: () => void;

@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { FaHeading, FaTag, FaBook, FaQuestionCircle, FaChartBar } from 'react-icons/fa';
-import { DifficultyLevel, QuestionFormData, QuestionTypeConst, OptionsLayout } from '../../../../utils/types/Question';
+import { DifficultyLevel, QuestionFormData, QuestionTypeConst } from '../../../../utils/types/Question';
 import {
-  ConditionalField,
-  FormActions, FormButton, FormGroup,
+  FormActionsRight, FormGroup,
   FormInput, FormLabel,
-  FormStepContainer, FormTitle
+  FormSection,
+  FormSectionTitle,
+  TwoColumnGrid,
 } from '../../QuestionForm.styles';
 import { Select } from '../../../../styles/inputs';
 
@@ -13,127 +14,108 @@ import { Select } from '../../../../styles/inputs';
 interface BasicInfoStepProps {
   data: QuestionFormData;
   updateData: (field: keyof QuestionFormData, value: any) => void;
-  onNext: () => void;
+  onNext?: () => void;
+  onPrev?: () => void;
 }
 
-export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData, onNext }) => {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-
+export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     updateData(e.target.name as keyof QuestionFormData, e.target.value);
   };
 
   return (
-    <FormStepContainer>
-      <FormTitle>
-        <FaQuestionCircle style={{ marginRight: '8px' }} />
-        Informações Básicas
-      </FormTitle>
+    <div className="basic-info-grid">
+      <FormSection>
+        <FormSectionTitle>Informações Básicas</FormSectionTitle>
+        <TwoColumnGrid>
+          <FormGroup>
+            <FormLabel>
+              <FaHeading style={{ marginRight: '8px' }} />
+              Título da Questão*
+            </FormLabel>
+            <FormInput
+              type="text"
+              name="title"
+              value={data.title}
+              onChange={handleChange}
+              required
+              minLength={5}
+              placeholder="Digite o título da questão"
+            />
+          </FormGroup>
 
-      <FormGroup>
-        <FormLabel>
-          <FaHeading style={{ marginRight: '8px' }} />
-          Título
-        </FormLabel>
-        <FormInput
-          type="text"
-          name="title"
-          value={data.title}
-          onChange={handleChange}
-          required
-          minLength={5}
-          placeholder="Digite o título da questão"
-        />
-      </FormGroup>
+          <FormGroup>
+            <FormLabel>
+              <FaTag style={{ marginRight: '8px' }} />
+              Tags
+            </FormLabel>
+            <FormInput
+              type="text"
+              name="tags"
+              value={data.tags?.join(', ') || ''}
+              onChange={(e) => updateData('tags', e.target.value.split(',').map(tag => tag.trim()))}
+              placeholder="Algebra, equações, 9º ano"
+            />
+          </FormGroup>
+        </TwoColumnGrid>
+      </FormSection>
 
-      <FormGroup>
-        <FormLabel>
-          <FaTag style={{ marginRight: '8px' }} />
-          Tópico
-        </FormLabel>
-        <FormInput
-          type="text"
-          name="topic"
-          value={data.topic}
-          onChange={handleChange}
-          required
-          placeholder="Ex: Álgebra Linear"
-        />
-      </FormGroup>
+      {/* Seção de Classificação */}
+      <FormSection>
+        <FormSectionTitle>Classificação</FormSectionTitle>
+        <TwoColumnGrid>
+          <FormGroup>
+            <FormLabel>
+              <FaQuestionCircle style={{ marginRight: '8px' }} />
+              Tipo de Questão*
+            </FormLabel>
+            <Select name="type" value={data.type} onChange={handleChange}>
+              {Object.values(QuestionTypeConst).map(type => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </Select>
+          </FormGroup>
 
-      <FormGroup>
-        <FormLabel>
-          <FaBook style={{ marginRight: '8px' }} />
-          Conteúdo
-        </FormLabel>
-        <FormInput
-          type="text"
-          name="content"
-          value={data.content}
-          onChange={handleChange}
-          required
-          placeholder="Ex: Matrizes e Determinantes"
-        />
-      </FormGroup>
+          <FormGroup>
+            <FormLabel>
+              <FaChartBar style={{ marginRight: '8px' }} />
+              Dificuldade*
+            </FormLabel>
+            <Select name="difficulty" value={data.difficulty} onChange={handleChange}>
+              {Object.values(DifficultyLevel).map(level => (
+                <option key={level} value={level}>
+                  {level}
+                </option>
+              ))}
+            </Select>
+          </FormGroup>
 
-      <FormGroup>
-        <FormLabel>
-          <FaQuestionCircle style={{ marginRight: '8px' }} />
-          Tipo de Questão
-        </FormLabel>
-        <Select name="type" value={data.type} onChange={handleChange}>
-          {Object.values(QuestionTypeConst).map(type => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </Select>
-      </FormGroup>
+          <FormGroup>
+            <FormLabel>
+              <FaBook style={{ marginRight: '8px' }} />
+              Categoria*
+            </FormLabel>
+            <Select name="category" value={data.category} onChange={handleChange}>
+              <option value="">Selecione a categoria</option>
+              <option value="math">Matemática</option>
+              <option value="science">Ciências</option>
+              <option value="history">História</option>
+            </Select>
+          </FormGroup>
+        </TwoColumnGrid>
+      </FormSection>
 
-      <FormGroup>
-        <FormLabel>
-          <FaChartBar style={{ marginRight: '8px' }} />
-          Dificuldade
-        </FormLabel>
-        <Select name="difficulty" value={data.difficulty} onChange={handleChange}>
-          {Object.values(DifficultyLevel).map(level => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          ))}
-        </Select>
-      </FormGroup>
-
-      <FormButton
-        type="button"
-        $variant="outline"
-        onClick={() => setShowAdvanced(!showAdvanced)}
-      >
-        {showAdvanced ? 'Ocultar opções avançadas' : 'Mostrar opções avançadas'}
-      </FormButton>
-
-      <ConditionalField isVisible={showAdvanced}>
-        <FormGroup>
-          <FormLabel>Layout das Alternativas</FormLabel>
-          <Select
-            name="optionsLayout"
-            value={data.optionsLayout}
-            onChange={handleChange}
-          >
-            {Object.values(OptionsLayout).map(layout => (
-              <option key={layout} value={layout}>
-                {layout}
-              </option>
-            ))}
-          </Select>
-        </FormGroup>
-      </ConditionalField>
-
-      <FormActions>
-        <FormButton $variant="primary" onClick={onNext} $isLoading={false}>
-          Próximo
-        </FormButton>
-      </FormActions>
-    </FormStepContainer>
+      {/* Botões alinhados à direita */}
+      <FormActionsRight>
+        <button type="button" className="secondary">
+          Cancelar
+        </button>
+        <button type="submit" className="primary">
+          Salvar Questão
+        </button>
+      </FormActionsRight>
+    </div>
   );
 };

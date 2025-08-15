@@ -83,11 +83,42 @@ export const FormSelect = styled.select`
 
 export const FormActions = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: ${constants.spacing.lg};
+  justify-content: flex-end;
+  margin-top: ${constants.spacing.xl};
   gap: ${constants.spacing.md};
-`;
 
+  button {
+    padding: ${constants.spacing.sm} ${constants.spacing.lg};
+    border-radius: ${constants.borderRadius.md};
+    cursor: pointer;
+    transition: var(--transition-all);
+
+    &.primary {
+      background: var(--color-primary);
+      color: white;
+      border: 1px solid var(--color-primary);
+
+      &:hover {
+        background: var(--color-primary-dark);
+      }
+    }
+
+    &.secondary {
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+
+      &:hover {
+        background: var(--color-background-secondary);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  }
+`;
 
 interface FormButtonProps {
   $variant?: 'primary' | 'secondary' | 'outline' | 'danger';
@@ -155,10 +186,20 @@ export const FormErrorContainer = styled.div<{ error?: string | FieldError }>`
   }
 `;
 
-export const FormSection = styled.div`
-  margin-bottom: ${constants.spacing.xl};
-  padding-bottom: ${constants.spacing.md};
-  border-bottom: 1px solid var(--color-border-light);
+export const FormSection = styled.section`
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: ${constants.borderRadius.lg};
+  padding: ${constants.spacing.lg};
+
+  h3 {
+    font-size: ${constants.fontSize.lg};
+    margin-bottom: ${constants.spacing.lg};
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: ${constants.spacing.sm};
+  }
 `;
 
 export const FormSectionTitle = styled.h3`
@@ -178,7 +219,6 @@ export const ConditionalField = styled.div<{ isVisible: boolean }>`
   opacity: ${props => props.isVisible ? '1' : '0'};
 `;
 
-// Add input mask support
 export const MaskedInput = styled(Input)`
   &[data-mask]::placeholder {
     color: transparent;
@@ -187,4 +227,131 @@ export const MaskedInput = styled(Input)`
   &[data-mask]:focus::placeholder {
     color: var(--color-text-third);
   }
+`;
+
+export const ViewToggle = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: ${constants.spacing.xl};
+  gap: ${constants.spacing.md};
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: ${constants.spacing.xs};
+    padding: ${constants.spacing.sm} ${constants.spacing.md};
+    background: var(--color-background-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: ${constants.borderRadius.md};
+    cursor: pointer;
+    transition: var(--transition-all);
+
+    &.active {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    &:hover {
+      background: var(--color-primary-light);
+    }
+  }
+`;
+
+export const TwoColumnForm = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${constants.spacing.xl};
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  .form-column {
+    display: flex;
+    flex-direction: column;
+    gap: ${constants.spacing.xl};
+  }
+`;
+
+export const BasicInfoStep = styled.div`
+  .basic-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: ${constants.spacing.md};
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+    }
+
+    .title-group {
+      grid-column: span 2;
+    }
+
+    .content-group {
+      grid-column: span 2;
+    }
+  }
+`;
+
+export const TwoColumnGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${constants.spacing.lg};
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const FormActionsRight = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: ${constants.spacing.md};
+  margin-top: ${constants.spacing.xl};
+
+  button {
+    padding: ${constants.spacing.sm} ${constants.spacing.lg};
+    border-radius: ${constants.borderRadius.md};
+    cursor: pointer;
+    transition: var(--transition-all);
+
+    &.primary {
+      background: var(--color-primary);
+      color: white;
+      border: 1px solid var(--color-primary);
+
+      &:hover {
+        background: var(--color-primary-dark);
+      }
+    }
+
+    &.secondary {
+      background: transparent;
+      color: var(--color-text);
+      border: 1px solid var(--color-border);
+
+      &:hover {
+        background: var(--color-background-secondary);
+      }
+    }
+  }
+`;
+
+export const SingleViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${constants.spacing.xl};
+`;
+
+export const StepsViewContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${constants.spacing.xl};
+`;
+
+export const FormContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: ${constants.spacing.xl};
 `;

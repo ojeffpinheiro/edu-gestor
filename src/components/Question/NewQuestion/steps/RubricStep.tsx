@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaCheck, FaTimes, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { RubricCriteria } from '../../../../utils/types/Question';
+import { QuestionFormData, RubricCriteria } from '../../../../utils/types/Question';
 import { rubricCriteriaSchema } from '../../../../utils/validation/schemas';
 import {
   FormStepContainer, CriteriaItem,
@@ -14,11 +14,9 @@ import {
 
 
 interface RubricStepProps {
-  data: {
-    rubric: RubricCriteria[];
-  };
+  data: Pick<QuestionFormData, 'rubric'>;
+  updateData: (data: RubricCriteria[]) => void;
   isSubmitting: boolean;
-  updateData: (data: Partial<any>) => void;
   onNext: () => void;
   onPrev: () => void;
 }
@@ -42,28 +40,20 @@ export const RubricStep: React.FC<RubricStepProps> = ({
   ]);
 
   const addCriteria = (formData: any) => {
-    try {
-      const criteria: RubricCriteria = {
-        id: Date.now().toString(),
-        description: formData.description,
-        weight: Number(formData.weight),
-        levels: currentLevels
-      };
+    const criteria: RubricCriteria = {
+      id: Date.now().toString(),
+      description: formData.description,
+      weight: Number(formData.weight),
+      levels: currentLevels
+    };
 
-      updateData({
-        rubric: [...data.rubric, criteria]
-      });
-      reset();
-      setShowLevelsForm(false);
-    } catch (error) {
-      console.error('Erro ao adicionar critério:', error);
-    }
+    updateData([...(data.rubric || []), criteria]);
+    reset();
+    setShowLevelsForm(false);
   };
 
   const removeCriteria = (id: string) => {
-    updateData({
-      rubric: data.rubric.filter(c => c.id !== id)
-    });
+    updateData((data.rubric || []).filter(c => c.id !== id));
   };
 
   const addLevel = () => {
@@ -91,9 +81,9 @@ export const RubricStep: React.FC<RubricStepProps> = ({
               {...register('description')}
               placeholder="Ex: Clareza da argumentação"
             />
-            {errors.url && (
+            {errors.description && (
               <FormErrorContainer>
-                {typeof errors.url.message === 'string' ? errors.url.message : 'Erro inválido'}
+                {errors.description.message?.toString()}
               </FormErrorContainer>
             )}
           </FormGroup>

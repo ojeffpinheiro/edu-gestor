@@ -29,8 +29,7 @@ import {
   PreviewCard,
   PreviewCardContent,
   PreviewCardTitle,
-  StatusBadge,
-  CheckboxGroup
+  StatusBadge
 } from './styles';
 
 function FileGenerationSystem() {

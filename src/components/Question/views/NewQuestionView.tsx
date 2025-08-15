@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { FormProvider, SubmitHandler, useForm, UseFormSetValue } from 'react-hook-form';
+import { FaListOl, FaThLarge } from 'react-icons/fa';
 import {
+  Alternative,
   AlternativesOrder,
   DifficultyLevel, OptionsLayout,
   Question,
@@ -11,6 +13,7 @@ import { StatementStep } from '../NewQuestion/steps/StatementStep';
 import AlternativesStep from '../NewQuestion/steps/AlternativesStep';
 import { ResourcesStep } from '../NewQuestion/steps/ResourcesStep';
 import { RubricStep } from '../NewQuestion/steps/RubricStep';
+import { FormActions, FormContainer, StepsViewContainer, ViewToggle } from '../QuestionForm.styles';
 
 interface Props {
   questions: Question[];
@@ -59,21 +62,30 @@ const NewQuestionView: React.FC<Props> = ({ questions, onQuestionCreated }) => {
       alternativesOrder: AlternativesOrder.NONE
     }
   });
-
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
+  const [viewMode, setViewMode] = useState<'steps' | 'single'>('steps');
 
   const nextStep = () => setCurrentStep(prev => prev + 1);
   const prevStep = () => setCurrentStep(prev => prev - 1);
 
-  const updateFormData = (field: keyof QuestionFormData, value: any) => {
-    methods.setValue(field, value);
+  const updateFormData: UseFormSetValue<QuestionFormData> = (name, value) => {
+    methods.setValue(name, value);
   };
 
-  // Para atualizar objetos aninhados ou arrays:
-  const updateNestedData = (field: keyof QuestionFormData, newData: any) => {
-    methods.setValue(field, newData);
+  const updateNestedData = <K extends keyof QuestionFormData>(
+    field: K,
+    value: NonNullable<QuestionFormData[K]>
+  ) => {
+    methods.setValue(field, value as any); // Usamos 'as any' temporariamente
+  };
+
+  const updateAlternativesData = (data: Alternative[] | OptionsLayout) => {
+    if (Array.isArray(data)) {
+      methods.setValue('alternatives', data);
+    } else {
+      methods.setValue('optionsLayout', data);
+    }
   };
 
   const onSubmit: SubmitHandler<QuestionFormData> = (formData) => {
@@ -122,49 +134,142 @@ const NewQuestionView: React.FC<Props> = ({ questions, onQuestionCreated }) => {
 
     switch (currentStep) {
       case 0:
-        return (<BasicInfoStep data={formData} updateData={updateFormData} onNext={nextStep} />);
+        return <BasicInfoStep
+          data={formData}
+          updateData={(field, value) => updateFormData(field, value)}
+          onNext={nextStep}
+        />;
       case 1:
-        return (<StatementStep data={formData} updateData={updateFormData} onNext={nextStep} onPrev={prevStep} />);
+        return <StatementStep
+          data={formData}
+          updateData={(field, value) => updateFormData(field, value)}
+          onNext={nextStep}
+          onPrev={prevStep}
+        />;
       case 2:
         return formData.type === QuestionTypeConst.ESSAY ? (
           <RubricStep
             data={formData}
-            isSubmitting={isSubmitting}
             updateData={(data) => updateNestedData('rubric', data)}
+            isSubmitting={isSubmitting}
             onNext={nextStep}
             onPrev={prevStep}
           />
         ) : (
           <AlternativesStep
             data={formData}
-            updateData={(data) => updateNestedData('alternatives', data)}
+            updateData={updateAlternativesData}
             onNext={nextStep}
             onPrev={prevStep}
           />
         );
       case 3:
-        return (
-          <ResourcesStep
-            data={formData}
-            isSubmitting={isSubmitting}
-            updateData={(data) => updateNestedData('resources', data)}
-            onPrev={prevStep}
-            onSubmit={methods.handleSubmit(onSubmit)}
-          />
-        );
+        return <ResourcesStep
+          data={formData}
+          updateData={(data) => updateNestedData('resources', data)}
+          isSubmitting={isSubmitting}
+          onPrev={prevStep}
+          onSubmit={methods.handleSubmit(onSubmit)}
+        />;
       default:
         return null;
     }
   };
 
+  // Renderização da visualização única
+  const renderAllSteps = () => {
+    const formData = methods.watch();
+
+    return (
+      <div className="single-view-container">
+        <BasicInfoStep
+          data={formData}
+          updateData={(field, value) => updateFormData(field, value)}
+        />
+        <StatementStep
+          data={formData}
+          updateData={(field, value) => updateFormData(field, value)}
+        />
+
+        {formData.type === QuestionTypeConst.ESSAY ? (
+          <RubricStep
+            data={formData}
+            updateData={(data) => updateNestedData('rubric', data)}
+            isSubmitting={isSubmitting}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        ) : (
+          <AlternativesStep
+            data={formData}
+            updateData={updateAlternativesData}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        )}
+
+        <ResourcesStep
+          data={formData}
+          updateData={(data) => updateNestedData('resources', data)}
+          isSubmitting={isSubmitting}
+          onPrev={prevStep}
+          onSubmit={methods.handleSubmit(onSubmit)}
+        />
+      </div>
+    );
+  };
+
   return (
     <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <div className="question-form-wizard">
-          <div className="progress-indicator">Passo {currentStep + 1} de 4</div>
-          {renderStep()}
-        </div>
-      </form>
+      <FormContainer>
+        <ViewToggle>
+          <button
+            onClick={() => setViewMode('steps')}
+            className={viewMode === 'steps' ? 'active' : ''}
+          >
+            <FaListOl /> Visualização em Passos
+          </button>
+          <button
+            onClick={() => setViewMode('single')}
+            className={viewMode === 'single' ? 'active' : ''}
+          >
+            <FaThLarge /> Visualização Única
+          </button>
+        </ViewToggle>
+
+        <form onSubmit={methods.handleSubmit(onSubmit)}>
+          {viewMode === 'steps' ? (
+            <StepsViewContainer>
+              {renderStep()}
+              <FormActions>
+                {currentStep > 0 && (
+                  <button type="button" onClick={prevStep} className="secondary">
+                    Voltar
+                  </button>
+                )}
+                {currentStep < 3 ? (
+                  <button type="button" onClick={nextStep} className="primary">
+                    Próximo
+                  </button>
+                ) : (
+                  <button type="submit" className="primary" disabled={isSubmitting}>
+                    {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
+                  </button>
+                )}
+              </FormActions>
+            </StepsViewContainer>
+          ) : (
+            <>
+              {renderAllSteps()}
+              <FormActions>
+                <button type="submit" className="primary" disabled={isSubmitting}>
+                  {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
+                </button>
+              </FormActions>
+            </>
+          )}
+        </form>
+      </FormContainer>
     </FormProvider>
   );
 };

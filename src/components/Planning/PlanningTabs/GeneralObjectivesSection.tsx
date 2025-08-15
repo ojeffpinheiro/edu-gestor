@@ -25,7 +25,7 @@ const GeneralObjectivesSection: React.FC<GeneralObjectivesProps> = ({
   onEdit,
   onDelete
 }) => {
-  const { state, dispatch } = usePlanning();
+  const { dispatch } = usePlanning();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
 

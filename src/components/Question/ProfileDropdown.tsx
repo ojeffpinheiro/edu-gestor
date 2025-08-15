@@ -59,14 +59,14 @@ const DropdownItem = styled.a`
   }
 `;
 
-interface DropdownItem {
+interface DropdownItemType {
   icon: React.ReactNode;
   label: string;
   onClick?: () => void;
 }
 
 interface ProfileDropdownProps {
-  items?: DropdownItem[]; // Opcional para permitir valores padrão
+  items?: DropdownItemType[];
 }
 
 export const ProfileDropdown = ({ 

@@ -5,15 +5,11 @@ import {
   FormInput, FormSelect, FormActions, FormButton,
   AlternativeItem, FormSection
 } from '../../QuestionForm.styles';
-import { Alternative, AlternativesOrder, OptionsLayout } from '../../../../utils/types/Question';
+import { Alternative, OptionsLayout, QuestionFormData } from '../../../../utils/types/Question';
 
 interface AlternativesStepProps {
-  data: {
-    alternatives: Alternative[];
-    optionsLayout: OptionsLayout;
-    alternativesOrder: AlternativesOrder;
-  };
-  updateData: (data: Partial<any> | OptionsLayout | Alternative[]) => void;
+  data: Pick<QuestionFormData, 'alternatives' | 'optionsLayout' | 'alternativesOrder'>;
+  updateData: (data: Alternative[] | OptionsLayout) => void;
   onNext: () => void;
   onPrev: () => void;
 }
