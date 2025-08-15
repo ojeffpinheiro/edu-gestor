@@ -25,7 +25,7 @@ const eventSchema = z.object({
     'thematic_week', 'asynchronous_class', 'participatory_council', 'deadline',
     'saturday_class', 'personal', 'other'
   ]),
-  isAllDay: z.boolean().default(false),
+  isAllDay: z.boolean(),
   start: z.string().min(1, { message: 'Data de início é obrigatória' }),
   end: z.string().min(1, { message: 'Data de término é obrigatória' }),
 });

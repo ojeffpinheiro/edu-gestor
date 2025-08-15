@@ -182,10 +182,15 @@ export const FormRow = styled.div`
   gap: var(--space-md);
 `;
 
-export const FormError = styled.div`
+interface FormErrorProps {
+  error?: string;  // Adicione esta interface
+}
+
+export const FormError = styled.div<FormErrorProps>`
   color: var(--color-error);
-  font-size: var(--font-size-sm);
-  margin-top: var(--space-xs);
+  font-size: ${constants.fontSize.sm};
+  margin-top: ${constants.spacing.xs};
+  display: ${props => props.error ? 'block' : 'none'};
 `;
 
 export const FormSection = styled.div`

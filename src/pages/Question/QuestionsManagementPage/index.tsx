@@ -175,8 +175,6 @@ const QuestionBankPage = () => {
 
           <div id="new-question">
             <NewQuestionView
-              fields={fields}
-              onSubmit={handleSubmit}
             />
           </div>
 

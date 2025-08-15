@@ -53,7 +53,7 @@ import { useCalendar } from '../../contexts/CalendarContext';
 const holidaySchema = z.object({
   title: z.string().min(1, { message: 'Nome do feriado é obrigatório' }),
   date: z.string().min(1, { message: 'Data do feriado é obrigatória' }),
-  isRecurringYearly: z.boolean().default(false),
+  isRecurringYearly: z.boolean(),
   description: z.string().optional(),
 });
 

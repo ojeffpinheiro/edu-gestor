@@ -249,3 +249,82 @@ export interface QuestionSimilarity {
   similarityScore: number;
   matchedFields: string[];
 }
+
+// Tipos de questão
+export enum QuestionTypeConst {
+  MULTIPLE_CHOICE = 'multiple_choice',
+  TRUE_FALSE = 'true_false',
+  ESSAY = 'essay',
+  FILL_IN_THE_BLANK = 'fill_in_the_blank',
+  SHORT_ANSWER = 'short_answer',
+  MATCHING = 'matching',
+  ORDERING = 'ordering',
+  COMPOSITE = 'composite'
+}
+
+// Níveis de dificuldade
+export enum DifficultyLevel {
+  EASY = 'easy',
+  MEDIUM = 'medium',
+  HARD = 'hard'
+}
+
+// Layout de alternativas
+export enum OptionsLayout {
+  ONE_COLUMN = 'one-column',
+  TWO_COLUMNS = 'two-columns',
+  THREE_COLUMNS = 'three-columns'
+}
+
+// Ordenação de alternativas
+export enum AlternativesOrder {
+  NONE = 'none',
+  ASC = 'asc',
+  DESC = 'desc',
+  RANDOM = 'random'
+}
+
+// Critério de avaliação para questões dissertativas
+export interface RubricCriteria {
+  id: string;
+  description: string;
+  weight: number;
+  levels: {
+    description: string;
+    points: number;
+  }[];
+}
+
+// Alternativa para questões objetivas
+export interface Alternative {
+  id: string;
+  text: string;
+  isCorrect: boolean;
+  feedback?: string;
+}
+
+// Recurso adicional (imagem, link, etc)
+export type ResourceType = 'image' | 'video' | 'link' | 'audio';
+
+export interface QuestionResource {
+  id: string;
+  type: ResourceType;
+  url: string;
+  description?: string;
+}
+
+
+export interface QuestionFormData {
+  title: string;
+  topic: string;
+  content: string;
+  type: QuestionTypeConst;
+  difficulty: DifficultyLevel;
+  statement: string;
+  explanation: string;
+  alternatives: Alternative[];
+  rubric: RubricCriteria[];
+  resources: QuestionResource[];
+  optionsLayout: OptionsLayout;
+  alternativesOrder: AlternativesOrder;
+}
