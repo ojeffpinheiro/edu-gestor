@@ -2,6 +2,7 @@ import styled, { css } from 'styled-components';
 import { constants } from '../../utils/consts';
 import { CardContainer } from '../shared/Card.styles';
 import { Input } from '../../styles/inputs';
+import { FieldError } from 'react-hook-form';
 
 export const FormStepContainer = styled(CardContainer)`
   padding: ${constants.spacing.xl};
@@ -141,13 +142,17 @@ export const CriteriaItem = styled(AlternativeItem)`
   flex-direction: column;
 `;
 
-export const FormErrorContainer = styled.div`
+export const FormErrorContainer = styled.div<{ error?: string | FieldError }>`
   display: flex;
   align-items: center;
   gap: ${constants.spacing.xs};
   color: var(--color-error);
   font-size: ${constants.fontSize.sm};
   margin-top: ${constants.spacing.xs};
+
+  & > * {
+    display: inline;
+  }
 `;
 
 export const FormSection = styled.div`

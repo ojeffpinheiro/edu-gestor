@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { FaImage, FaVideo, FaLink, FaMusic, FaTrash, FaPlus } from 'react-icons/fa';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { QuestionResource } from '../../../../utils/types/Question';
-import { resourceSchema } from '../../../../utils/validation/schemas';
+import { FaTrash } from 'react-icons/fa';
+import { QuestionResource, ResourceType } from '../../../../utils/types/Question';
 import {
   FormStepContainer,
   FormTitle,
@@ -15,7 +12,6 @@ import {
   FormButton,
   ResourceItem,
   FormSection,
-  FormErrorContainer
 } from '../../QuestionForm.styles';
 
 interface ResourcesStepProps {
@@ -35,136 +31,105 @@ export const ResourcesStep: React.FC<ResourcesStepProps> = ({
   onPrev,
   onSubmit
 }) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    watch
-  } = useForm({
-    resolver: yupResolver(resourceSchema),
+  const resources = Array.isArray(data.resources) ? data.resources : [];
+  const [newResource, setNewResource] = useState<{
+    type: ResourceType;
+    url: string;
+    description: string;
+  }>({
+    type: 'image',
+    url: '',
+    description: ''
   });
-  const [isAdding, setIsAdding] = useState(false);
 
-  const resourceType = watch('type');
+  const addResource = () => {
+    if (!newResource.url.trim()) return;
 
-  const addResource = async (formData: Omit<QuestionResource, 'id'>) => {
-    setIsAdding(true);
-    try {
-      const resource: QuestionResource = {
-        id: Date.now().toString(),
-        ...formData
-      };
+    const resource: QuestionResource = {
+      id: `res-${Date.now()}`,
+      type: newResource.type,
+      url: newResource.url,
+      description: newResource.description
+    };
 
-      updateData({
-        resources: [...data.resources, resource]
-      });
-      reset();
-    } finally {
-      setIsAdding(false);
-    }
+    updateData([...resources, resource]);
+
+    setNewResource({
+      type: 'image',
+      url: '',
+      description: ''
+    });
   };
 
   const removeResource = (id: string) => {
-    updateData({
-      resources: data.resources.filter(r => r.id !== id)
-    });
+    if (window.confirm('Remover este recurso?')) {
+      updateData(resources.filter(r => r.id !== id));
+    }
   };
 
   return (
     <FormStepContainer>
-      <FormTitle>
-        <FaPlus style={{ marginRight: '8px' }} />
-        Recursos Adicionais
-      </FormTitle>
+      <FormTitle>Recursos Adicionais</FormTitle>
 
-      <form onSubmit={handleSubmit(addResource)}>
-        <FormSection>
-          <FormGroup>
-            <FormLabel>Tipo de Recurso*</FormLabel>
-            <FormSelect {...register('type')}>
-              <option value="image">
-                <FaImage style={{ marginRight: '8px' }} />Imagem
-              </option>
-              <option value="video">
-                <FaVideo style={{ marginRight: '8px' }} />
-                Vídeo
-              </option>
-              <option value="link">
-                <FaLink style={{ marginRight: '8px' }} />
-                Link
-              </option>
-              <option value="audio">
-                <FaMusic style={{ marginRight: '8px' }} />
-                Áudio
-              </option>
-            </FormSelect>
-            {errors.type && (
-              <FormErrorContainer>{errors.type.message}</FormErrorContainer>
-            )}
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>URL*</FormLabel>
-            <FormInput
-              {...register('url')}
-              placeholder={
-                resourceType === 'image' ? 'https://exemplo.com/imagem.jpg' :
-                  resourceType === 'video' ? 'https://youtube.com/watch?v=...' :
-                    'https://...'
-              }
-            />
-            {errors.url && (
-              <FormErrorContainer>{errors.url.message}</FormErrorContainer>
-            )}
-          </FormGroup>
-
-          {resourceType === 'image' && (
-            <FormGroup>
-              <FormLabel>Texto Alternativo (Acessibilidade)</FormLabel>
-              <FormInput
-                {...register('description')}
-                placeholder="Descreva a imagem para acessibilidade"
-              />
-            </FormGroup>
-          )}
-
-          <FormButton type="submit" $isLoading={isAdding}>
-            {isAdding ? 'Adicionando...' : 'Adicionar Recurso'}
-          </FormButton>
-        </FormSection>
-
-        <FormSection>
-          {data.resources.map(resource => (
-            <ResourceItem key={resource.id}>
-              <p><strong>{resource.type}:</strong> {resource.url}</p>
-              {resource.description && <p>{resource.description}</p>}
-              <FormButton
-                type="button"
-                $variant="danger"
-                $size="sm"
-                onClick={() => removeResource(resource.id)}
-              >
-                <FaTrash style={{ marginRight: '8px' }} />
-                Remover
-              </FormButton>
-            </ResourceItem>
-          ))}
-        </FormSection>
-
-        <FormActions>
-          <FormButton type="button" onClick={onPrev} $variant="outline">
-            Voltar
-          </FormButton>
-          <FormButton
-            type="button"
-            onClick={onSubmit}
-            $isLoading={isSubmitting}
+      <FormSection>
+        <FormGroup>
+          <FormLabel>Tipo de Recurso</FormLabel>
+          <FormSelect
+            value={newResource.type}
+            onChange={(e) => setNewResource({ ...newResource, type: e.target.value as ResourceType })}
           >
-            {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
-          </FormButton>
-        </FormActions>
-      </form>
+            <option value="image">Imagem</option>
+            <option value="video">Vídeo</option>
+            <option value="link">Link</option>
+            <option value="audio">Áudio</option>
+          </FormSelect>
+        </FormGroup>
+
+        <FormGroup>
+          <FormLabel>URL*</FormLabel>
+          <FormInput
+            value={newResource.url}
+            onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+            placeholder="https://exemplo.com/recurso.jpg"
+          />
+        </FormGroup>
+
+        <FormButton type="button" onClick={addResource}>
+          Adicionar Recurso
+        </FormButton>
+      </FormSection>
+
+      <FormSection>
+        {resources.map(resource => (
+          <ResourceItem key={resource.id}>
+            <div>
+              <strong>{resource.type}:</strong> {resource.url}
+              {resource.description && <p>{resource.description}</p>}
+            </div>
+            <FormButton
+              type="button"
+              $variant="danger"
+              $size="sm"
+              onClick={() => removeResource(resource.id)}
+            >
+              <FaTrash /> Remover
+            </FormButton>
+          </ResourceItem>
+        ))}
+      </FormSection>
+
+      <FormActions>
+        <FormButton type="button" onClick={onPrev} $variant="outline">
+          Voltar
+        </FormButton>
+        <FormButton
+          type="button"
+          onClick={onSubmit}
+          $isLoading={isSubmitting}
+        >
+          {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
+        </FormButton>
+      </FormActions>
     </FormStepContainer>
   );
 };

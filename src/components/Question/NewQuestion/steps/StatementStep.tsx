@@ -34,7 +34,7 @@ export const StatementStep: React.FC<StatementStepProps> = ({ data, updateData, 
         </h2>
 
         <FormGroup>
-          <Label htmlFor="statement">Enunciado</Label>
+          <Label htmlFor="statement">Enunciado*</Label>
           <TextArea
             id="statement"
             {...register('statement', {
@@ -47,7 +47,9 @@ export const StatementStep: React.FC<StatementStepProps> = ({ data, updateData, 
             rows={7}
             placeholder="Digite o enunciado da questão aqui..."
           />
-          <FormError error={errors.statement?.message?.toString()} />
+          {errors.statement && (
+            <FormError error={errors.statement?.message?.toString()} />
+          )}
         </FormGroup>
 
         <FormGroup>

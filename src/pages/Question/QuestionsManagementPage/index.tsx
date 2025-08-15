@@ -175,7 +175,10 @@ const QuestionBankPage = () => {
 
           <div id="new-question">
             <NewQuestionView
-            />
+              questions={questions}
+              onQuestionCreated={(newQuestion) =>
+                setQuestions([...questions, newQuestion])
+              } />
           </div>
 
           <div id="folders">

@@ -42,17 +42,22 @@ export const RubricStep: React.FC<RubricStepProps> = ({
   ]);
 
   const addCriteria = (formData: any) => {
-    const criteria: RubricCriteria = {
-      id: Date.now().toString(),
-      ...formData,
-      levels: currentLevels
-    };
+    try {
+      const criteria: RubricCriteria = {
+        id: Date.now().toString(),
+        description: formData.description,
+        weight: Number(formData.weight),
+        levels: currentLevels
+      };
 
-    updateData({
-      rubric: [...data.rubric, criteria]
-    });
-    reset();
-    setShowLevelsForm(false);
+      updateData({
+        rubric: [...data.rubric, criteria]
+      });
+      reset();
+      setShowLevelsForm(false);
+    } catch (error) {
+      console.error('Erro ao adicionar critério:', error);
+    }
   };
 
   const removeCriteria = (id: string) => {
@@ -86,8 +91,10 @@ export const RubricStep: React.FC<RubricStepProps> = ({
               {...register('description')}
               placeholder="Ex: Clareza da argumentação"
             />
-            {errors.description && (
-              <FormErrorContainer>{errors.description.message}</FormErrorContainer>
+            {errors.url && (
+              <FormErrorContainer>
+                {typeof errors.url.message === 'string' ? errors.url.message : 'Erro inválido'}
+              </FormErrorContainer>
             )}
           </FormGroup>
 
@@ -100,7 +107,11 @@ export const RubricStep: React.FC<RubricStepProps> = ({
               max="10"
             />
             {errors.weight && (
-              <FormErrorContainer>{errors.weight.message}</FormErrorContainer>
+              <FormErrorContainer>
+                {errors.weight.message && typeof errors.weight.message === 'string'
+                  ? errors.weight.message
+                  : 'Peso inválido'}
+              </FormErrorContainer>
             )}
           </FormGroup>
 
@@ -131,6 +142,7 @@ export const RubricStep: React.FC<RubricStepProps> = ({
                   </FormGroup>
                 </div>
               ))}
+
               <FormButton
                 type="button"
                 onClick={addLevel}
@@ -160,13 +172,19 @@ export const RubricStep: React.FC<RubricStepProps> = ({
                 $size="sm"
                 onClick={() => removeCriteria(criteria.id)}
               >
+                <FaTrash style={{ marginRight: '8px' }} />
                 Remover
               </FormButton>
             </CriteriaItem>
           ))}
+          {errors.description && (
+            <FormErrorContainer>
+              {errors.description.message && typeof errors.description.message === 'string'
+                ? errors.description.message
+                : 'Descrição inválida'}
+            </FormErrorContainer>
+          )}
         </FormSection>
-
-
 
         <FormActions>
           <FormButton type="button" onClick={onPrev} $variant="outline">

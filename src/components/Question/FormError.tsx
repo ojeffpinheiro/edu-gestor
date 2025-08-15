@@ -1,28 +1,23 @@
 import React from 'react'
-import styled from 'styled-components';
 import { FaExclamationCircle } from 'react-icons/fa';
-import { constants } from '../../utils/consts';
+import { FieldError } from 'react-hook-form';
+import { FormErrorContainer } from './QuestionForm.styles';
 
 interface FormErrorProps {
-  error?: string;
+  error?: string | FieldError;
 }
 
-const ErrorContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${constants.spacing.xs};
-  color: var(--color-error);
-  font-size: ${constants.fontSize.sm};
-  margin-top: ${constants.spacing.xs};
-`;
-
-export const FormError = ({ error }: FormErrorProps) => {
+export const FormError: React.FC<FormErrorProps> = ({ error }) => {
   if (!error) return null;
 
+  const message = typeof error === 'string'
+    ? error
+    : error.message || 'Erro inválido';
+
   return (
-    <ErrorContainer>
+    <FormErrorContainer>
       <FaExclamationCircle size={14} />
-      <span>{error}</span>
-    </ErrorContainer>
-  );
+      {message}
+    </FormErrorContainer>
+  )
 };

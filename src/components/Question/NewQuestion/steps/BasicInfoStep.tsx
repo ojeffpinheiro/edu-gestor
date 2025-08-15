@@ -41,6 +41,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData, 
           value={data.title}
           onChange={handleChange}
           required
+          minLength={5}
           placeholder="Digite o título da questão"
         />
       </FormGroup>
@@ -103,9 +104,9 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData, 
         </Select>
       </FormGroup>
 
-      <FormButton 
-        type="button" 
-        $variant="outline" 
+      <FormButton
+        type="button"
+        $variant="outline"
         onClick={() => setShowAdvanced(!showAdvanced)}
       >
         {showAdvanced ? 'Ocultar opções avançadas' : 'Mostrar opções avançadas'}
@@ -114,9 +115,9 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData, 
       <ConditionalField isVisible={showAdvanced}>
         <FormGroup>
           <FormLabel>Layout das Alternativas</FormLabel>
-          <Select 
-            name="optionsLayout" 
-            value={data.optionsLayout} 
+          <Select
+            name="optionsLayout"
+            value={data.optionsLayout}
             onChange={handleChange}
           >
             {Object.values(OptionsLayout).map(layout => (

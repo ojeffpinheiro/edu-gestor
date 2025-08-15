@@ -82,6 +82,9 @@ export interface Question {
   isVariant?: boolean;
   sourceQuestionId?: string;
   lastUsed?: string;
+  rubric?: RubricCriteria[];
+  resources?: QuestionResource[];
+  alternativesOrder: AlternativesOrder;
 }
 
 // Interface para as props dos componentes de passo

@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { Alternative, AlternativesOrder, OptionsLayout } from '../../../../utils/types/Question';
-import { alternativeSchema } from '../../../../utils/validation/schemas';
+import { FaTrash } from 'react-icons/fa';
 import {
-  FormStepContainer,
-  FormTitle,
-  FormGroup,
-  FormLabel,
-  FormInput,
-  FormSelect,
-  FormActions,
-  FormButton,
-  AlternativeItem,
-  FormSection,
-  FormErrorContainer
+  FormStepContainer, FormTitle, FormGroup, FormLabel,
+  FormInput, FormSelect, FormActions, FormButton,
+  AlternativeItem, FormSection
 } from '../../QuestionForm.styles';
+import { Alternative, AlternativesOrder, OptionsLayout } from '../../../../utils/types/Question';
 
 interface AlternativesStepProps {
   data: {
@@ -23,151 +13,127 @@ interface AlternativesStepProps {
     optionsLayout: OptionsLayout;
     alternativesOrder: AlternativesOrder;
   };
-  updateData: (data: Partial<any>) => void;
+  updateData: (data: Partial<any> | OptionsLayout | Alternative[]) => void;
   onNext: () => void;
   onPrev: () => void;
 }
 
-export const AlternativesStep: React.FC<AlternativesStepProps> = ({
+const AlternativesStep: React.FC<AlternativesStepProps> = ({
   data,
   updateData,
   onNext,
   onPrev
 }) => {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
-    resolver: yupResolver(alternativeSchema),
+  const [newAlternative, setNewAlternative] = useState({
+    text: '',
+    isCorrect: false,
+    feedback: ''
   });
 
-  const [showCorrectAnswer, setShowCorrectAnswer] = useState(false);
+  const addAlternative = () => {
+    if (!newAlternative.text.trim()) return;
 
-  const toggleCorrect = (id: string) => {
-    updateData({
-      alternatives: data.alternatives.map(alt =>
-        alt.id === id ? { ...alt, isCorrect: !alt.isCorrect } : alt
-      )
+    const alternative: Alternative = {
+      id: Date.now().toString(),
+      ...newAlternative
+    };
+    updateData([...data.alternatives, alternative]);
+    setNewAlternative({
+      text: '',
+      isCorrect: false,
+      feedback: ''
     });
-  };
-
-  const addAlternative = (formData: any) => {
-    try {
-      const alternative: Alternative = {
-        id: Date.now().toString(),
-        text: formData.text,
-        isCorrect: showCorrectAnswer,
-        feedback: formData.feedback || ''
-      };
-
-      // Limita o número máximo de alternativas
-      if (data.alternatives.length >= 10) {
-        alert('Máximo de 10 alternativas permitidas');
-        return;
-      }
-
-      updateData({
-        alternatives: [...data.alternatives, alternative]
-      });
-      reset();
-      setShowCorrectAnswer(false);
-    } catch (error) {
-      console.error('Error adding alternative:', error);
-    }
   };
 
   const removeAlternative = (id: string) => {
-    updateData({
-      alternatives: data.alternatives.filter(alt => alt.id !== id)
-    });
+    updateData(data.alternatives.filter(alt => alt.id !== id));
   };
 
-  const handleOrderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateData({
-      alternativesOrder: e.target.value as AlternativesOrder
-    });
-  };
-
-  const handleLayoutChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    updateData({
-      optionsLayout: e.target.value as OptionsLayout
-    });
+  const toggleCorrect = (id: string) => {
+    updateData(
+      data.alternatives.map(alt =>
+        alt.id === id ? { ...alt, isCorrect: !alt.isCorrect } : alt
+      ));
   };
 
   return (
     <FormStepContainer>
       <FormTitle>Alternativas</FormTitle>
 
-      <form onSubmit={handleSubmit(addAlternative)}>
-        <FormSection>
-          <FormGroup>
-            <FormLabel>Texto da Alternativa*</FormLabel>
-            <FormInput
-              {...register('text')}
-              placeholder="Digite a alternativa"
+      <FormSection>
+        <FormGroup>
+          <FormLabel>Texto da Alternativa*</FormLabel>
+          <FormInput
+            value={newAlternative.text}
+            onChange={(e) => setNewAlternative({ ...newAlternative, text: e.target.value })}
+            placeholder="Digite a alternativa"
+          />
+        </FormGroup>
+
+        <FormGroup>
+          <label>
+            <input
+              type="checkbox"
+              checked={newAlternative.isCorrect}
+              onChange={(e) => setNewAlternative({ ...newAlternative, isCorrect: e.target.checked })}
             />
-            {errors.text?.message && (
-              <FormErrorContainer>{errors.text.message.toString()}</FormErrorContainer>
-            )}
-          </FormGroup>
+            Resposta Correta
+          </label>
+        </FormGroup>
 
-          <FormGroup>
-            <label>
-              <input
-                type="checkbox"
-                checked={showCorrectAnswer}
-                onChange={() => setShowCorrectAnswer(!showCorrectAnswer)}
-              />
-              Esta é a resposta correta?
-            </label>
-          </FormGroup>
+        <FormButton type="button" onClick={addAlternative}>
+          Adicionar Alternativa
+        </FormButton>
+      </FormSection>
 
-          <FormButton type="submit">Adicionar Alternativa</FormButton>
-        </FormSection>
+      <FormSection>
+        {data.alternatives.map(alt => (
+          <AlternativeItem key={alt.id}>
+            <input
+              type="checkbox"
+              checked={alt.isCorrect}
+              onChange={() => toggleCorrect(alt.id)}
+            />
+            <span>{alt.text}</span>
+            <FormButton
+              type="button"
+              $variant="danger"
+              $size="sm"
+              onClick={() => removeAlternative(alt.id)}
+            >
+              <FaTrash /> Remover
+            </FormButton>
+          </AlternativeItem>
+        ))}
+      </FormSection>
 
-        <FormSection>
-          {data.alternatives.map(alt => (
-            <AlternativeItem key={alt.id}>
-              <input
-                type="checkbox"
-                checked={alt.isCorrect}
-                onChange={() => toggleCorrect(alt.id)}
-              />
-              <span>{alt.text}</span>
-              <FormButton
-                type="button"
-                $variant="danger"
-                $size="sm"
-                onClick={() => removeAlternative(alt.id)}
-              >
-                Remover
-              </FormButton>
-            </AlternativeItem>
-          ))}
-        </FormSection>
+      <FormSection>
+        <FormGroup>
+          <FormLabel>Layout das Alternativas</FormLabel>
+          <FormSelect
+            value={data.optionsLayout}
+            onChange={(e) => {
+              updateData(e.target.value as OptionsLayout);
+              console.log('Layout alterado para:', e.target.value);
+            }}
+          >
+            <option value="one-column">Uma coluna</option>
+            <option value="two-columns">Duas colunas</option>
+            <option value="three-columns">Três colunas</option>
+          </FormSelect>
+        </FormGroup>
+      </FormSection>
 
-        <FormSection>
-          <FormGroup>
-            <FormLabel>Layout das Alternativas</FormLabel>
-            <FormSelect value={data.optionsLayout} onChange={handleLayoutChange}>
-              {Object.values(OptionsLayout).map(layout => (
-                <option key={layout} value={layout}>{layout}</option>
-              ))}
-            </FormSelect>
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>Ordenação das Alternativas</FormLabel>
-            <FormSelect value={data.alternativesOrder} onChange={handleOrderChange}>
-              {Object.values(AlternativesOrder).map(order => (
-                <option key={order} value={order}>{order}</option>
-              ))}
-            </FormSelect>
-          </FormGroup>
-        </FormSection>
-
-        <FormActions>
-          <FormButton type="button" onClick={onPrev} $variant="outline">Voltar</FormButton>
-          <FormButton type="button" onClick={onNext}>Próximo</FormButton>
-        </FormActions>
-      </form>
+      <FormActions>
+        <FormButton type="button" onClick={onPrev} $variant="outline">
+          Voltar
+        </FormButton>
+        <FormButton type="button" onClick={onNext}>
+          Próximo
+        </FormButton>
+      </FormActions>
     </FormStepContainer>
   );
 };
+
+export default AlternativesStep;
