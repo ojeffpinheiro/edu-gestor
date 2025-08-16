@@ -3,13 +3,10 @@ import { useFormContext } from 'react-hook-form';
 import { FaEdit, FaPlus } from "react-icons/fa";
 
 import {
-  FormGroup,
-  Label,
-  TextArea,
-  FormError
+  FormGroup
 } from '../../../../styles/formControls';
-import { FormCard } from '../../../../styles/containers';
 import { QuestionFormData } from '../../../../utils/types/Question';
+import { FormErrorContainer, FormLabel, FormSection, FormSectionTitle, FormTextArea } from '../../QuestionForm.styles';
 
 interface StatementStepProps {
   data: QuestionFormData;
@@ -21,50 +18,59 @@ interface StatementStepProps {
 export const StatementStep: React.FC<StatementStepProps> = ({ data, updateData, onNext, onPrev }) => {
   const { register, formState: { errors } } = useFormContext();
   const MAX_STATEMENT_LENGTH = 1000;
+  const MAX_EXPLANATION_LENGTH = 500;
 
   return (
-    <div className="step-content">
-      <FormCard>
-        <h2 className="section-title">
-          <FaEdit style={{ marginRight: '8px' }} />
-          Enunciado da Questão
-        </h2>
+    <FormSection>
+      <FormSectionTitle>
+        <FaEdit style={{ marginRight: '8px' }} />
+        Enunciado da Questão
+      </FormSectionTitle>
 
-        <FormGroup>
-          <Label htmlFor="statement">Enunciado*</Label>
-          <TextArea
-            id="statement"
-            {...register('statement', {
-              required: 'O enunciado é obrigatório',
-              maxLength: {
-                value: MAX_STATEMENT_LENGTH,
-                message: `Máximo de ${MAX_STATEMENT_LENGTH} caracteres`
-              }
-            })}
-            rows={7}
-            placeholder="Digite o enunciado da questão aqui..."
-          />
-          {errors.statement && (
-            <FormError error={errors.statement?.message?.toString()} />
-          )}
-        </FormGroup>
+      <FormGroup>
+        <FormLabel htmlFor="statement">Enunciado*</FormLabel>
+        <FormTextArea
+          id="statement"
+          {...register('statement', {
+            required: 'O enunciado é obrigatório',
+            maxLength: {
+              value: MAX_STATEMENT_LENGTH,
+              message: `Máximo de ${MAX_STATEMENT_LENGTH} caracteres`
+            }
+          })}
+          rows={7}
+          placeholder="Digite o enunciado da questão aqui..."
+          aria-invalid={errors.statement ? "true" : "false"}
+        />
+        {errors.statement && (
+          <FormErrorContainer>
+            {errors.statement.message?.toString()}
+          </FormErrorContainer>
+        )}
+      </FormGroup>
 
-        <FormGroup>
-          <FaPlus />
-          <Label htmlFor="explanation">Feedback / Explicação</Label>
-          <TextArea
-            id="explanation"
-            {...register('explanation')}
-            rows={4}
-            placeholder="Explicação que será mostrada após o aluno responder a questão"
-          />
-        </FormGroup>
-
-        <div className="form-actions">
-          <button type="button" onClick={onPrev}>Voltar</button>
-          <button type="button" onClick={onNext}>Próximo</button>
-        </div>
-      </FormCard>
-    </div>
+      <FormGroup>
+        <FormLabel htmlFor="explanation">
+          <FaPlus style={{ marginRight: '8px' }} />
+          Feedback / Explicação
+        </FormLabel>
+        <FormTextArea
+          id="explanation"
+          {...register('explanation', {
+            maxLength: {
+              value: MAX_EXPLANATION_LENGTH,
+              message: `Máximo de ${MAX_EXPLANATION_LENGTH} caracteres`
+            }
+          })}
+          rows={4}
+          placeholder="Explicação que será mostrada após o aluno responder a questão"
+        />
+        {errors.explanation && (
+          <FormErrorContainer>
+            {errors.explanation.message?.toString()}
+          </FormErrorContainer>
+        )}
+      </FormGroup>
+    </FormSection>
   );
 };

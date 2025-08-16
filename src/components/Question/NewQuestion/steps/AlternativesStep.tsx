@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { FaTrash } from 'react-icons/fa';
+import { FaListUl, FaPlus, FaTrash } from 'react-icons/fa';
 import {
   FormStepContainer, FormTitle, FormGroup, FormLabel,
-  FormInput, FormSelect, FormActions, FormButton,
-  AlternativeItem, FormSection
+  FormInput, FormSelect, FormButton,
+  AlternativeItem, FormSection,
+  TwoColumnGrid,
+  CorrectAnswerIndicator,
+  AlternativeText,
+  AlternativeActions
 } from '../../QuestionForm.styles';
 import { Alternative, OptionsLayout, QuestionFormData } from '../../../../utils/types/Question';
+import { constants } from '../../../../utils/consts';
 
 interface AlternativesStepProps {
   data: Pick<QuestionFormData, 'alternatives' | 'optionsLayout' | 'alternativesOrder'>;
@@ -54,80 +59,110 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
 
   return (
     <FormStepContainer>
-      <FormTitle>Alternativas</FormTitle>
+      <FormTitle>
+        <FaListUl style={{ marginRight: '8px' }} />
+        Alternativas
+      </FormTitle>
 
-      <FormSection>
-        <FormGroup>
-          <FormLabel>Texto da Alternativa*</FormLabel>
-          <FormInput
-            value={newAlternative.text}
-            onChange={(e) => setNewAlternative({ ...newAlternative, text: e.target.value })}
-            placeholder="Digite a alternativa"
-          />
-        </FormGroup>
-
-        <FormGroup>
-          <label>
-            <input
-              type="checkbox"
-              checked={newAlternative.isCorrect}
-              onChange={(e) => setNewAlternative({ ...newAlternative, isCorrect: e.target.checked })}
+      <TwoColumnGrid>
+        <FormSection>
+          <h3 style={{ marginBottom: constants.spacing.lg }}>
+            Adicionar Nova Alternativa
+          </h3>
+          
+          <FormGroup>
+            <FormLabel>Texto da Alternativa*</FormLabel>
+            <FormInput
+              value={newAlternative.text}
+              onChange={(e) => setNewAlternative({ ...newAlternative, text: e.target.value })}
+              placeholder="Digite o texto da alternativa"
             />
-            Resposta Correta
-          </label>
-        </FormGroup>
+          </FormGroup>
 
-        <FormButton type="button" onClick={addAlternative}>
-          Adicionar Alternativa
-        </FormButton>
-      </FormSection>
+          <FormGroup>
+            <label style={{ display: 'flex', alignItems: 'center', gap: constants.spacing.sm }}>
+              <input
+                type="checkbox"
+                checked={newAlternative.isCorrect}
+                onChange={(e) => setNewAlternative({ ...newAlternative, isCorrect: e.target.checked })}
+              />
+              <span>Marcar como resposta correta</span>
+            </label>
+          </FormGroup>
 
-      <FormSection>
-        {data.alternatives.map(alt => (
-          <AlternativeItem key={alt.id}>
-            <input
-              type="checkbox"
-              checked={alt.isCorrect}
-              onChange={() => toggleCorrect(alt.id)}
-            />
-            <span>{alt.text}</span>
-            <FormButton
-              type="button"
-              $variant="danger"
-              $size="sm"
-              onClick={() => removeAlternative(alt.id)}
-            >
-              <FaTrash /> Remover
-            </FormButton>
-          </AlternativeItem>
-        ))}
-      </FormSection>
-
-      <FormSection>
-        <FormGroup>
-          <FormLabel>Layout das Alternativas</FormLabel>
-          <FormSelect
-            value={data.optionsLayout}
-            onChange={(e) => {
-              updateData(e.target.value as OptionsLayout);
-              console.log('Layout alterado para:', e.target.value);
-            }}
+          <FormButton 
+            type="button" 
+            onClick={addAlternative}
+            disabled={!newAlternative.text.trim()}
           >
-            <option value="one-column">Uma coluna</option>
-            <option value="two-columns">Duas colunas</option>
-            <option value="three-columns">Três colunas</option>
-          </FormSelect>
-        </FormGroup>
-      </FormSection>
+            <FaPlus style={{ marginRight: '8px' }} />
+            Adicionar Alternativa
+          </FormButton>
+        </FormSection>
 
-      <FormActions>
-        <FormButton type="button" onClick={onPrev} $variant="outline">
-          Voltar
-        </FormButton>
-        <FormButton type="button" onClick={onNext}>
-          Próximo
-        </FormButton>
-      </FormActions>
+        <FormSection>
+          <h3 style={{ marginBottom: constants.spacing.lg }}>
+            Configurações de Exibição
+          </h3>
+          
+          <FormGroup>
+            <FormLabel>Layout das Alternativas</FormLabel>
+            <FormSelect
+              value={data.optionsLayout}
+              onChange={(e) => updateData(e.target.value as OptionsLayout)}
+            >
+              <option value="one-column">Uma coluna</option>
+              <option value="two-columns">Duas colunas</option>
+              <option value="three-columns">Três colunas</option>
+            </FormSelect>
+          </FormGroup>
+        </FormSection>
+      </TwoColumnGrid>
+
+      <FormSection>
+        <h3 style={{ marginBottom: constants.spacing.lg }}>
+          Alternativas Adicionadas ({data.alternatives.length})
+        </h3>
+        
+        {data.alternatives.length === 0 ? (
+          <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center' }}>
+            Nenhuma alternativa adicionada ainda.
+          </p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: constants.spacing.sm }}>
+            {data.alternatives.map(alt => (
+              <AlternativeItem key={alt.id}>
+                <CorrectAnswerIndicator 
+                  isCorrect={alt.isCorrect} 
+                  onClick={() => toggleCorrect(alt.id)}
+                  title={alt.isCorrect ? "Resposta correta - Clique para alterar" : "Resposta incorreta - Clique para alterar"}
+                />
+                
+                <AlternativeText>
+                  {alt.text}
+                  {alt.feedback && (
+                    <div style={{ fontSize: constants.fontSize.sm, color: 'var(--color-text-secondary)', marginTop: constants.spacing.xs }}>
+                      <strong>Feedback:</strong> {alt.feedback}
+                    </div>
+                  )}
+                </AlternativeText>
+                
+                <AlternativeActions>
+                  <FormButton
+                    type="button"
+                    $variant="danger"
+                    $size="sm"
+                    onClick={() => removeAlternative(alt.id)}
+                    title="Remover alternativa"
+                  >
+                    <FaTrash />
+                  </FormButton>
+                </AlternativeActions>
+              </AlternativeItem>
+            ))}
+          </div>
+        )}
+      </FormSection>
     </FormStepContainer>
   );
 };

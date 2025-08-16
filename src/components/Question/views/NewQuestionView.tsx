@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormProvider, SubmitHandler, useForm, UseFormSetValue } from 'react-hook-form';
-import { FaListOl, FaThLarge } from 'react-icons/fa';
+import { FaArrowLeft, FaArrowRight, FaListOl, FaSave, FaSpinner, FaThLarge } from 'react-icons/fa';
 import {
   Alternative,
   AlternativesOrder,
@@ -9,18 +9,18 @@ import {
   QuestionFormData, QuestionTypeConst,
 } from '../../../utils/types/Question';
 import { BasicInfoStep } from '../NewQuestion/steps/BasicInfoStep';
-import { StatementStep } from '../NewQuestion/steps/StatementStep';
-import AlternativesStep from '../NewQuestion/steps/AlternativesStep';
-import { ResourcesStep } from '../NewQuestion/steps/ResourcesStep';
-import { RubricStep } from '../NewQuestion/steps/RubricStep';
-import { FormActions, FormContainer, StepsViewContainer, ViewToggle } from '../QuestionForm.styles';
+import { StatementStep } from '../NewQuestion/steps/StatementStep'; // OK
+import AlternativesStep from '../NewQuestion/steps/AlternativesStep'; // OK
+import { ResourcesStep } from '../NewQuestion/steps/ResourcesStep'; // OK
+import { RubricStep } from '../NewQuestion/steps/RubricStep'; // OK
+import { FormActions, FormButton, FormContainer, StepsViewContainer, ViewToggle } from '../QuestionForm.styles';
 
 interface Props {
   questions: Question[];
   onQuestionCreated: (question: Question) => void;
 }
 
-const NewQuestionView: React.FC<Props> = ({ questions, onQuestionCreated }) => {
+const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
   const methods = useForm<QuestionFormData>({
     defaultValues: {
       title: 'Exemplo de questão mockada',
@@ -243,17 +243,38 @@ const NewQuestionView: React.FC<Props> = ({ questions, onQuestionCreated }) => {
               {renderStep()}
               <FormActions>
                 {currentStep > 0 && (
-                  <button type="button" onClick={prevStep} className="secondary">
+                  <FormButton
+                    $variant="outline"
+                    type="button"
+                    onClick={prevStep}
+                    className="secondary"
+                  >
+                    <FaArrowLeft style={{ marginRight: '8px' }} />
                     Voltar
-                  </button>
+                  </FormButton>
                 )}
                 {currentStep < 3 ? (
-                  <button type="button" onClick={nextStep} className="primary">
+                  <FormButton
+                    type="button"
+                    onClick={nextStep}
+                    className="primary"
+                  >
                     Próximo
-                  </button>
+                    <FaArrowRight style={{ marginLeft: '8px' }} />
+                  </FormButton>
                 ) : (
                   <button type="submit" className="primary" disabled={isSubmitting}>
-                    {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
+                    {isSubmitting ? (
+                      <>
+                        <FaSpinner className="fa-spin" style={{ marginRight: '8px' }} />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <FaSave style={{ marginRight: '8px' }} />
+                        Salvar Questão
+                      </>
+                    )}
                   </button>
                 )}
               </FormActions>
@@ -263,7 +284,17 @@ const NewQuestionView: React.FC<Props> = ({ questions, onQuestionCreated }) => {
               {renderAllSteps()}
               <FormActions>
                 <button type="submit" className="primary" disabled={isSubmitting}>
-                  {isSubmitting ? 'Salvando...' : 'Salvar Questão'}
+                  {isSubmitting ? (
+                    <>
+                      <FaSpinner className="fa-spin" style={{ marginRight: '8px' }} />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <FaSave style={{ marginRight: '8px' }} />
+                      Salvar Questão
+                    </>
+                  )}
                 </button>
               </FormActions>
             </>

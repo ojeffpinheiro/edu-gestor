@@ -3,6 +3,7 @@ import { constants } from '../../utils/consts';
 import { CardContainer } from '../shared/Card.styles';
 import { Input } from '../../styles/inputs';
 import { FieldError } from 'react-hook-form';
+import { ResourceType } from '../../utils/types/Question';
 
 export const FormStepContainer = styled(CardContainer)`
   padding: ${constants.spacing.xl};
@@ -186,6 +187,12 @@ export const FormErrorContainer = styled.div<{ error?: string | FieldError }>`
   }
 `;
 
+export const Content = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: ${constants.spacing.md};
+`;
+
 export const FormSection = styled.section`
   background: var(--color-background-secondary);
   border: 1px solid var(--color-border);
@@ -354,4 +361,79 @@ export const FormContainer = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   padding: ${constants.spacing.xl};
+`;
+
+export const LevelsContainer = styled.div`
+  margin-top: ${constants.spacing.md};
+  padding: ${constants.spacing.md};
+  background: var(--color-background-third);
+  border-radius: ${constants.borderRadius.md};
+`;
+
+export const LevelItem = styled.div`
+  margin-bottom: ${constants.spacing.md};
+  padding-bottom: ${constants.spacing.md};
+  border-bottom: 1px dashed var(--color-border);
+  
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+`;
+
+export const CorrectAnswerIndicator = styled.span<{ isCorrect: boolean }>`
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: ${props => props.isCorrect ? 'var(--color-success)' : 'var(--color-error)'};
+  margin-right: ${constants.spacing.sm};
+  cursor: pointer;
+`;
+
+export const AlternativeText = styled.div`
+  flex: 1;
+  padding: ${constants.spacing.sm};
+  background: var(--color-background-third);
+  border-radius: ${constants.borderRadius.md};
+`;
+
+export const AlternativeActions = styled.div`
+  display: flex;
+  gap: ${constants.spacing.sm};
+`;
+
+export const ResourceTypeBadge = styled.span<{ type: ResourceType }>`
+  display: inline-block;
+  padding: ${constants.spacing.xs} ${constants.spacing.sm};
+  border-radius: ${constants.borderRadius.sm};
+  font-size: ${constants.fontSize.sm};
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  color: white;
+  max-height: 2rem;
+  background-color: ${props => {
+    switch(props.type) {
+      case 'image': return 'var(--color-primary)';
+      case 'video': return 'var(--color-danger)';
+      case 'audio': return 'var(--color-warning)';
+      case 'link': return 'var(--color-success)';
+      default: return 'var(--color-text-secondary)';
+    }
+  }};
+`;
+
+export const ResourcePreview = styled.div`
+  margin-top: ${constants.spacing.sm};
+  padding: ${constants.spacing.sm};
+  background: var(--color-background-third);
+  border-radius: ${constants.borderRadius.md};
+  border: 1px solid var(--color-border);
+`;
+
+export const ResourceActions = styled.div`
+  display: flex;
+  gap: ${constants.spacing.sm};
+  margin-top: ${constants.spacing.md};
 `;

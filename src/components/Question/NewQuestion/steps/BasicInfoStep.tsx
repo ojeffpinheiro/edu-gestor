@@ -2,7 +2,8 @@ import React from 'react';
 import { FaHeading, FaTag, FaBook, FaQuestionCircle, FaChartBar } from 'react-icons/fa';
 import { DifficultyLevel, QuestionFormData, QuestionTypeConst } from '../../../../utils/types/Question';
 import {
-  FormActionsRight, FormGroup,
+  Content,
+  FormGroup,
   FormInput, FormLabel,
   FormSection,
   FormSectionTitle,
@@ -24,7 +25,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData }
   };
 
   return (
-    <div className="basic-info-grid">
+    <Content>
       <FormSection>
         <FormSectionTitle>Informações Básicas</FormSectionTitle>
         <TwoColumnGrid>
@@ -106,16 +107,6 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData }
           </FormGroup>
         </TwoColumnGrid>
       </FormSection>
-
-      {/* Botões alinhados à direita */}
-      <FormActionsRight>
-        <button type="button" className="secondary">
-          Cancelar
-        </button>
-        <button type="submit" className="primary">
-          Salvar Questão
-        </button>
-      </FormActionsRight>
-    </div>
+    </Content>
   );
 };
