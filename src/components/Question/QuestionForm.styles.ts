@@ -173,9 +173,14 @@ export const AlternativeItem = styled.div<{ isCorrect?: boolean }>`
   }
 `;
 
-export const ResourceItem = styled(AlternativeItem)`
+export const ResourceItem = styled.div`
+  display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  gap: ${constants.spacing.sm};
+  padding: ${constants.spacing.md};
+  background: var(--color-background-third);
+  border-radius: ${constants.borderRadius.md};
+  margin-bottom: ${constants.spacing.md};
 `;
 
 export const CriteriaItem = styled(AlternativeItem)`
@@ -433,7 +438,9 @@ export const AlternativeActions = styled.div`
 `;
 
 export const ResourceTypeBadge = styled.span<{ type: ResourceType }>`
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: ${constants.spacing.xs};
   padding: ${constants.spacing.xs} ${constants.spacing.sm};
   border-radius: ${constants.borderRadius.sm};
   font-size: ${constants.fontSize.sm};
@@ -442,22 +449,21 @@ export const ResourceTypeBadge = styled.span<{ type: ResourceType }>`
   color: white;
   max-height: 2rem;
   background-color: ${props => {
-    switch(props.type) {
+    switch (props.type) {
       case 'image': return 'var(--color-primary)';
       case 'video': return 'var(--color-danger)';
-      case 'audio': return 'var(--color-warning)';
       case 'link': return 'var(--color-success)';
+      case 'audio': return 'var(--color-warning)';
       default: return 'var(--color-text-secondary)';
     }
   }};
 `;
 
 export const ResourcePreview = styled.div`
-  margin-top: ${constants.spacing.sm};
+  flex: 1;
   padding: ${constants.spacing.sm};
-  background: var(--color-background-third);
+  background: var(--color-background-secondary);
   border-radius: ${constants.borderRadius.md};
-  border: 1px solid var(--color-border);
 `;
 
 export const ResourceActions = styled.div`
@@ -483,5 +489,61 @@ export const StyledRemoveButton = styled.button`
   
   &:hover {
     background: var(--color-error-light);
+  }
+`;
+
+export const ResourceCard = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: ${constants.spacing.sm};
+  padding: ${constants.spacing.md};
+  background: var(--color-background-third);
+  border-radius: ${constants.borderRadius.md};
+  border-left: 4px solid var(--color-primary);
+  transition: all 0.2s ease;
+  margin-bottom: ${constants.spacing.md};
+  box-shadow: ${constants.shadows.sm};
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: ${constants.shadows.md};
+  }
+`;
+
+export const ResourceHeader = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${constants.spacing.sm};
+`;
+
+export const ResourceContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${constants.spacing.xs};
+`;
+
+export const RemoveButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-error);
+  cursor: pointer;
+  padding: ${constants.spacing.xs};
+  border-radius: ${constants.borderRadius.sm};
+  transition: all 0.2s ease;
+  align-self: flex-end;
+  
+  &:hover {
+    background: var(--color-error-light);
+  }
+`;
+export const ResourceLink = styled.a`
+  word-break: break-all;
+  color: ${constants.colors.text.main};
+  text-decoration: none;
+  
+  &:hover {
+    color: ${constants.colors.text.secondary};
   }
 `;

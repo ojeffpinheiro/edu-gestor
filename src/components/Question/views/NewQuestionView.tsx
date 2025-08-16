@@ -55,8 +55,8 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
         }
       ],
       resources: [
-        { type: 'image', url: 'https://via.placeholder.com/150' },
-        { type: 'link', url: 'https://pt.wikipedia.org/wiki/Velocidade' }
+        { id: '1', type: 'image', url: 'https://via.placeholder.com/150' },
+        { id: '2', type: 'link', url: 'https://pt.wikipedia.org/wiki/Velocidade' }
       ],
       optionsLayout: OptionsLayout.ONE_COLUMN,
       alternativesOrder: AlternativesOrder.NONE

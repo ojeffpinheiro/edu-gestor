@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaListUl, FaPaperclip, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaImage, FaLink, FaListUl, FaMusic, FaPaperclip, FaPlus, FaTrash, FaVideo } from 'react-icons/fa';
 import { QuestionFormData, QuestionResource, ResourceType } from '../../../../utils/types/Question';
 import {
   FormStepContainer,
@@ -9,13 +9,23 @@ import {
   FormInput,
   FormSelect,
   FormButton,
-  ResourceItem,
   FormSection,
-  ResourcePreview,
   ResourceTypeBadge,
-  TwoColumnGrid,
+  ResourceCard,
+  RemoveButton,
+  ResourceLink,
 } from '../../QuestionForm.styles';
 import { constants } from '../../../../utils/consts';
+
+const getResourceIcon = (type: ResourceType) => {
+  switch (type) {
+    case 'image': return <FaImage />;
+    case 'video': return <FaVideo />;
+    case 'link': return <FaLink />;
+    case 'audio': return <FaMusic />;
+    default: return <FaPaperclip />;
+  }
+};
 
 interface ResourcesStepProps {
   data: Pick<QuestionFormData, 'resources'>;
@@ -54,7 +64,6 @@ export const ResourcesStep: React.FC<ResourcesStepProps> = ({
     };
 
     updateData([...resources, resource]);
-
     setNewResource({
       type: 'image',
       url: '',
@@ -63,7 +72,7 @@ export const ResourcesStep: React.FC<ResourcesStepProps> = ({
   };
 
   const removeResource = (id: string) => {
-    if (window.confirm('Remover este recurso?')) {
+    if (window.confirm('Tem certeza que deseja remover este recurso?')) {
       updateData(resources.filter(r => r.id !== id));
     }
   };
@@ -75,52 +84,54 @@ export const ResourcesStep: React.FC<ResourcesStepProps> = ({
         Recursos Adicionais
       </FormTitle>
 
-      <TwoColumnGrid>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: constants.spacing.xl }}>
         <FormSection>
           <h3 style={{ marginBottom: constants.spacing.lg }}>
             <FaPlus style={{ marginRight: '8px' }} />
             Adicionar Novo Recurso
           </h3>
 
-          <FormGroup>
-            <FormLabel>Tipo de Recurso</FormLabel>
-            <FormSelect
-              value={newResource.type}
-              onChange={(e) => setNewResource({ ...newResource, type: e.target.value as ResourceType })}
+          <div style={{ display: 'grid', gap: constants.spacing.md }}>
+            <FormGroup>
+              <FormLabel>Tipo de Recurso</FormLabel>
+              <FormSelect
+                value={newResource.type}
+                onChange={(e) => setNewResource({ ...newResource, type: e.target.value as ResourceType })}
+              >
+                <option value="image">Imagem</option>
+                <option value="video">Vídeo</option>
+                <option value="link">Link</option>
+                <option value="audio">Áudio</option>
+              </FormSelect>
+            </FormGroup>
+
+            <FormGroup>
+              <FormLabel>URL*</FormLabel>
+              <FormInput
+                value={newResource.url}
+                onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
+                placeholder="https://exemplo.com/recurso.jpg"
+              />
+            </FormGroup>
+
+            <FormGroup>
+              <FormLabel>Descrição (Opcional)</FormLabel>
+              <FormInput
+                value={newResource.description}
+                onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
+                placeholder="Descrição do recurso"
+              />
+            </FormGroup>
+
+            <FormButton
+              type="button"
+              onClick={addResource}
+              disabled={!newResource.url.trim()}
             >
-              <option value="image">Imagem</option>
-              <option value="video">Vídeo</option>
-              <option value="link">Link</option>
-              <option value="audio">Áudio</option>
-            </FormSelect>
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>URL*</FormLabel>
-            <FormInput
-              value={newResource.url}
-              onChange={(e) => setNewResource({ ...newResource, url: e.target.value })}
-              placeholder="https://exemplo.com/recurso.jpg"
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <FormLabel>Descrição (Opcional)</FormLabel>
-            <FormInput
-              value={newResource.description}
-              onChange={(e) => setNewResource({ ...newResource, description: e.target.value })}
-              placeholder="Descrição do recurso"
-            />
-          </FormGroup>
-
-          <FormButton
-            type="button"
-            onClick={addResource}
-            disabled={!newResource.url.trim()}
-          >
-            <FaPlus style={{ marginRight: '8px' }} />
-            Adicionar Recurso
-          </FormButton>
+              <FaPlus style={{ marginRight: '8px' }} />
+              Adicionar Recurso
+            </FormButton>
+          </div>
         </FormSection>
 
         <FormSection>
@@ -133,54 +144,53 @@ export const ResourcesStep: React.FC<ResourcesStepProps> = ({
             <p style={{
               color: 'var(--color-text-secondary)',
               textAlign: 'center',
-              padding: constants.spacing.lg
+              padding: constants.spacing.lg,
+              background: 'var(--color-background-third)',
+              borderRadius: constants.borderRadius.md
             }}>
               Nenhum recurso adicionado ainda.
             </p>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: constants.spacing.md }}>
               {resources.map(resource => (
-                <ResourceItem key={resource.id}>
-                  <div style={{ display: 'flex' }} >
-                    <ResourceTypeBadge type={resource.type}>
-                      {resource.type}
-                    </ResourceTypeBadge>
+                <ResourceCard key={resource.id}>
+                  {getResourceIcon(resource.type)}
+                  <ResourceTypeBadge type={resource.type}>
+                    {resource.type === 'image' && 'Imagem'}
+                    {resource.type === 'video' && 'Vídeo'}
+                    {resource.type === 'link' && 'Link'}
+                    {resource.type === 'audio' && 'Áudio'}
+                  </ResourceTypeBadge>
+                  <ResourceLink
+                    href={resource.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {resource.url}
+                  </ResourceLink>
 
-                    <ResourcePreview>
-                      <a
-                        href={resource.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ wordBreak: 'break-all' }}
-                      >
-                        {resource.url}
-                      </a>
-
-                      {resource.description && (
-                        <p style={{
-                          marginTop: constants.spacing.sm,
-                          color: 'var(--color-text)'
-                        }}>
-                          {resource.description}
-                        </p>
-                      )}
-                      <FormButton
-                        type="button"
-                        $variant="danger"
-                        $size="sm"
-                        onClick={() => removeResource(resource.id)}
-                        title="Remover recurso"
-                      >
-                        <FaTrash />
-                      </FormButton>
-                    </ResourcePreview>
-                  </div>
-                </ResourceItem>
+                  {resource.description && (
+                    <p style={{
+                      marginTop: constants.spacing.sm,
+                      color: 'var(--color-text)',
+                      fontSize: constants.fontSize.sm
+                    }}>
+                      {resource.description}
+                    </p>
+                  )}
+                  <RemoveButton
+                    type="button"
+                    onClick={() => removeResource(resource.id)}
+                    title="Remover recurso"
+                  >
+                    <FaTrash />
+                  </RemoveButton>
+                </ResourceCard>
               ))}
             </div>
           )}
         </FormSection>
-      </TwoColumnGrid>
+      </div>
     </FormStepContainer>
   );
 };
