@@ -131,7 +131,6 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
 
   const renderStep = () => {
     const formData = methods.watch();
-
     switch (currentStep) {
       case 0:
         return <BasicInfoStep

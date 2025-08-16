@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaHeading, FaTag, FaBook, FaQuestionCircle, FaChartBar } from 'react-icons/fa';
-import { DifficultyLevel, QuestionFormData, QuestionTypeConst } from '../../../../utils/types/Question';
+import { QuestionFormData } from '../../../../utils/types/Question';
 import {
   Content,
   FormGroup,
@@ -10,7 +10,7 @@ import {
   TwoColumnGrid,
 } from '../../QuestionForm.styles';
 import { Select } from '../../../../styles/inputs';
-
+import { FORM_CONFIG, QUESTION_TYPE_CONFIG } from '../../../../utils/questionsTypesRender';
 
 interface BasicInfoStepProps {
   data: QuestionFormData;
@@ -70,10 +70,11 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData }
               <FaQuestionCircle style={{ marginRight: '8px' }} />
               Tipo de Questão*
             </FormLabel>
-            <Select name="type" value={data.type} onChange={handleChange}>
-              {Object.values(QuestionTypeConst).map(type => (
-                <option key={type} value={type}>
-                  {type}
+            <Select
+              name="type" value={data.type} onChange={handleChange}>
+              {Object.entries(QUESTION_TYPE_CONFIG).map(([key, config]) => (
+                <option key={key} value={key}>
+                  {config.label}
                 </option>
               ))}
             </Select>
@@ -84,10 +85,14 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({ data, updateData }
               <FaChartBar style={{ marginRight: '8px' }} />
               Dificuldade*
             </FormLabel>
-            <Select name="difficulty" value={data.difficulty} onChange={handleChange}>
-              {Object.values(DifficultyLevel).map(level => (
-                <option key={level} value={level}>
-                  {level}
+            <Select
+              name="difficultyLevel"
+              value={data.difficulty}
+              onChange={handleChange}
+            >
+              {Object.values(FORM_CONFIG.difficulty).map(({ value, label }) => (
+                <option key={value} value={value}>
+                  {label}
                 </option>
               ))}
             </Select>
