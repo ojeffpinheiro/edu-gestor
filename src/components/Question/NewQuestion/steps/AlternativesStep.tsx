@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { FaListUl, FaPlus, FaTrash } from 'react-icons/fa';
+import { FaListUl, FaPlus, FaTrash, FaChevronUp, FaChevronDown } from 'react-icons/fa';
 import {
   FormStepContainer, FormTitle, FormGroup, FormLabel,
   FormInput, FormSelect, FormButton,
   AlternativeItem, FormSection,
-  TwoColumnGrid,
-  CorrectAnswerIndicator,
   AlternativeText,
-  AlternativeActions
+  AlternativeActions,
+  StyledCorrectAnswerIndicator,
+  StyledRemoveButton
 } from '../../QuestionForm.styles';
 import { Alternative, OptionsLayout, QuestionFormData } from '../../../../utils/types/Question';
 import { constants } from '../../../../utils/consts';
@@ -30,15 +30,24 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
     isCorrect: false,
     feedback: ''
   });
+  const [isAlternativesCollapsed, setIsAlternativesCollapsed] = useState(false);
 
   const addAlternative = () => {
     if (!newAlternative.text.trim()) return;
 
+    const updatedAlternatives = [...data.alternatives];
     const alternative: Alternative = {
       id: Date.now().toString(),
       ...newAlternative
     };
-    updateData([...data.alternatives, alternative]);
+
+    if (newAlternative.isCorrect) {
+      updatedAlternatives.forEach(alt => {
+        alt.isCorrect = false;
+      });
+    }
+
+    updateData([...updatedAlternatives, alternative]);
     setNewAlternative({
       text: '',
       isCorrect: false,
@@ -52,9 +61,16 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
 
   const toggleCorrect = (id: string) => {
     updateData(
-      data.alternatives.map(alt =>
-        alt.id === id ? { ...alt, isCorrect: !alt.isCorrect } : alt
-      ));
+      data.alternatives.map(alt => {
+        if (alt.id === id && !alt.isCorrect) {
+          return { ...alt, isCorrect: true };
+        }
+        return {
+          ...alt,
+          isCorrect: alt.id === id ? !alt.isCorrect : false
+        };
+      })
+    );
   };
 
   return (
@@ -64,7 +80,7 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
         Alternativas
       </FormTitle>
 
-      <TwoColumnGrid>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: constants.spacing.xl }}>
         <FormSection>
           <h3 style={{ marginBottom: constants.spacing.lg }}>
             Adicionar Nova Alternativa
@@ -80,24 +96,115 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
           </FormGroup>
 
           <FormGroup>
-            <label style={{ display: 'flex', alignItems: 'center', gap: constants.spacing.sm }}>
+            <label style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: constants.spacing.sm,
+              cursor: 'pointer',
+              padding: constants.spacing.sm,
+              borderRadius: constants.borderRadius.md,
+              background: newAlternative.isCorrect ? 'var(--color-success-light)' : 'transparent',
+              transition: 'background 0.2s ease'
+            }}>
               <input
                 type="checkbox"
                 checked={newAlternative.isCorrect}
                 onChange={(e) => setNewAlternative({ ...newAlternative, isCorrect: e.target.checked })}
+                style={{ cursor: 'pointer' }}
               />
               <span>Marcar como resposta correta</span>
             </label>
           </FormGroup>
 
-          <FormButton 
-            type="button" 
-            onClick={addAlternative}
-            disabled={!newAlternative.text.trim()}
-          >
-            <FaPlus style={{ marginRight: '8px' }} />
-            Adicionar Alternativa
-          </FormButton>
+          <div style={{ display: 'flex', gap: constants.spacing.md }}>
+            <FormButton 
+              type="button" 
+              onClick={addAlternative}
+              disabled={!newAlternative.text.trim()}
+              style={{ flex: 1 }}
+            >
+              <FaPlus style={{ marginRight: '8px' }} />
+              Adicionar Alternativa
+            </FormButton>
+          </div>
+        </FormSection>
+
+        <FormSection>
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: constants.spacing.lg,
+            cursor: 'pointer'
+          }} onClick={() => setIsAlternativesCollapsed(!isAlternativesCollapsed)}>
+            <h3>
+              Alternativas Adicionadas ({data.alternatives.length})
+            </h3>
+            {isAlternativesCollapsed ? <FaChevronDown /> : <FaChevronUp />}
+          </div>
+          
+          {!isAlternativesCollapsed && (
+            <>
+              {data.alternatives.length === 0 ? (
+                <p style={{ 
+                  color: 'var(--color-text-secondary)', 
+                  textAlign: 'center',
+                  padding: constants.spacing.md,
+                  background: 'var(--color-background-third)',
+                  borderRadius: constants.borderRadius.md
+                }}>
+                  Nenhuma alternativa adicionada ainda.
+                </p>
+              ) : (
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: constants.spacing.sm 
+                }}>
+                  {data.alternatives.map(alt => (
+                    <AlternativeItem 
+                      key={alt.id}
+                      style={{
+                        borderLeft: alt.isCorrect 
+                          ? `4px solid var(--color-success)`
+                          : '4px solid transparent',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <StyledCorrectAnswerIndicator
+                        isCorrect={alt.isCorrect} 
+                        onClick={() => toggleCorrect(alt.id)}
+                        title={alt.isCorrect ? "Resposta correta - Clique para alterar" : "Clique para marcar como correta"}
+                      />
+                      
+                      <AlternativeText>
+                        {alt.text}
+                        {alt.feedback && (
+                          <div style={{ 
+                            fontSize: constants.fontSize.sm, 
+                            color: 'var(--color-text-secondary)', 
+                            marginTop: constants.spacing.xs 
+                          }}>
+                            <strong>Feedback:</strong> {alt.feedback}
+                          </div>
+                        )}
+                      </AlternativeText>
+                      
+                      <AlternativeActions>
+                        <StyledRemoveButton
+                          type="button"
+                          onClick={() => removeAlternative(alt.id)}
+                          title="Remover alternativa"
+                        >
+                          <FaTrash />
+                        </StyledRemoveButton>
+                      </AlternativeActions>
+                    </AlternativeItem>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
         </FormSection>
 
         <FormSection>
@@ -117,52 +224,7 @@ const AlternativesStep: React.FC<AlternativesStepProps> = ({
             </FormSelect>
           </FormGroup>
         </FormSection>
-      </TwoColumnGrid>
-
-      <FormSection>
-        <h3 style={{ marginBottom: constants.spacing.lg }}>
-          Alternativas Adicionadas ({data.alternatives.length})
-        </h3>
-        
-        {data.alternatives.length === 0 ? (
-          <p style={{ color: 'var(--color-text-secondary)', textAlign: 'center' }}>
-            Nenhuma alternativa adicionada ainda.
-          </p>
-        ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: constants.spacing.sm }}>
-            {data.alternatives.map(alt => (
-              <AlternativeItem key={alt.id}>
-                <CorrectAnswerIndicator 
-                  isCorrect={alt.isCorrect} 
-                  onClick={() => toggleCorrect(alt.id)}
-                  title={alt.isCorrect ? "Resposta correta - Clique para alterar" : "Resposta incorreta - Clique para alterar"}
-                />
-                
-                <AlternativeText>
-                  {alt.text}
-                  {alt.feedback && (
-                    <div style={{ fontSize: constants.fontSize.sm, color: 'var(--color-text-secondary)', marginTop: constants.spacing.xs }}>
-                      <strong>Feedback:</strong> {alt.feedback}
-                    </div>
-                  )}
-                </AlternativeText>
-                
-                <AlternativeActions>
-                  <FormButton
-                    type="button"
-                    $variant="danger"
-                    $size="sm"
-                    onClick={() => removeAlternative(alt.id)}
-                    title="Remover alternativa"
-                  >
-                    <FaTrash />
-                  </FormButton>
-                </AlternativeActions>
-              </AlternativeItem>
-            ))}
-          </div>
-        )}
-      </FormSection>
+      </div>
     </FormStepContainer>
   );
 };

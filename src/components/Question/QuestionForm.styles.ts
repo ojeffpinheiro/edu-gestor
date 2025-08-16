@@ -155,7 +155,7 @@ export const FormButton = styled.button<FormButtonProps>`
   `}
 `;
 
-export const AlternativeItem = styled.div`
+export const AlternativeItem = styled.div<{ isCorrect?: boolean }>`
   display: flex;
   align-items: center;
   gap: ${constants.spacing.sm};
@@ -163,6 +163,14 @@ export const AlternativeItem = styled.div`
   background: var(--color-background-third);
   border-radius: ${constants.borderRadius.md};
   margin-bottom: ${constants.spacing.sm};
+  border-left: 4px solid ${props => props.isCorrect ? 'var(--color-success)' : 'transparent'};
+  transition: all 0.2s ease;
+  box-shadow: ${constants.shadows.sm};
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: ${constants.shadows.md};
+  }
 `;
 
 export const ResourceItem = styled(AlternativeItem)`
@@ -390,6 +398,11 @@ export const CorrectAnswerIndicator = styled.span<{ isCorrect: boolean }>`
   background: ${props => props.isCorrect ? 'var(--color-success)' : 'var(--color-error)'};
   margin-right: ${constants.spacing.sm};
   cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.1);
+  }
 `;
 
 export const AlternativeText = styled.div`
@@ -397,11 +410,26 @@ export const AlternativeText = styled.div`
   padding: ${constants.spacing.sm};
   background: var(--color-background-third);
   border-radius: ${constants.borderRadius.md};
+  font-size: ${constants.fontSize.md};
 `;
 
 export const AlternativeActions = styled.div`
   display: flex;
   gap: ${constants.spacing.sm};
+  
+  button {
+    background: transparent;
+    border: none;
+    color: var(--color-error);
+    cursor: pointer;
+    padding: ${constants.spacing.xs};
+    border-radius: ${constants.borderRadius.sm};
+    transition: all 0.2s ease;
+    
+    &:hover {
+      background: var(--color-error-light);
+    }
+  }
 `;
 
 export const ResourceTypeBadge = styled.span<{ type: ResourceType }>`
@@ -436,4 +464,24 @@ export const ResourceActions = styled.div`
   display: flex;
   gap: ${constants.spacing.sm};
   margin-top: ${constants.spacing.md};
+`;
+
+export const StyledCorrectAnswerIndicator = styled(CorrectAnswerIndicator)`
+  &:hover {
+    transform: scale(1.1);
+  }
+`;
+
+export const StyledRemoveButton = styled.button`
+  background: transparent;
+  border: none;
+  color: var(--color-error);
+  cursor: pointer;
+  padding: ${constants.spacing.xs};
+  border-radius: ${constants.borderRadius.sm};
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background: var(--color-error-light);
+  }
 `;
