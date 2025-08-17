@@ -3,7 +3,7 @@ import { constants } from '../../utils/consts';
 import { CardContainer } from '../shared/Card.styles';
 import { Input } from '../../styles/inputs';
 import { FieldError } from 'react-hook-form';
-import { ResourceType } from '../../utils/types/Question';
+import { ImageWrapType, ResourceType } from '../../utils/types/Question';
 
 export const FormStepContainer = styled(CardContainer)`
   padding: ${constants.spacing.xl};
@@ -371,7 +371,7 @@ export const StepsViewContainer = styled.div`
 `;
 
 export const FormContainer = styled.div`
-  max-width: 1200px;
+  max-width: 90%;
   margin: 0 auto;
   padding: ${constants.spacing.xl};
 `;
@@ -538,6 +538,7 @@ export const RemoveButton = styled.button`
     background: var(--color-error-light);
   }
 `;
+
 export const ResourceLink = styled.a`
   word-break: break-all;
   color: ${constants.colors.text.main};
@@ -547,3 +548,407 @@ export const ResourceLink = styled.a`
     color: ${constants.colors.text.secondary};
   }
 `;
+
+export const PreviewContainer = styled.div`
+  flex: 1;
+  padding: ${constants.spacing.lg};
+  background: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: ${constants.borderRadius.lg};
+`;
+
+export const PreviewContent = styled.div`
+  padding: ${constants.spacing.xl};
+  background: white;
+  border-radius: 4px;
+  min-height: 400px;
+  position: relative;
+  font-family: 'Times New Roman', serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #333;
+
+  &.enem-style {
+    p {
+      margin-bottom: 16px;
+      text-align: justify;
+    }
+  }
+`;
+
+export const PreviewToggleButton = styled.button`
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  padding: ${constants.spacing.sm} ${constants.spacing.md};
+  border-radius: ${constants.borderRadius.md};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: ${constants.spacing.sm};
+  margin-bottom: ${constants.spacing.md};
+  transition: all 0.2s ease;
+  max-height: 3rem;
+
+  &:hover {
+    background: var(--color-primary-dark);
+  }
+`;
+
+export const QuestionTextWrapper = styled.div`
+  position: relative;
+  margin-bottom: 24px;
+  
+  shape-outside: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  padding-bottom: 20px;
+`;
+
+
+export const QuestionText = styled.div<{ $hasImages?: boolean }>`
+  p {
+    text-align: justify;
+    shape-outside: ${({ $hasImages }) => $hasImages ? 'content-box' : 'none'};
+    transition: all 0.3s ease;
+  }
+
+  // Estilo específico para quando há imagens com wrap
+  ${({ $hasImages }) => $hasImages && css`
+    p {
+      hyphens: auto;
+      overflow-wrap: break-word;
+    }
+  `}
+`;
+
+export const getWrapStyle = (wrapType: ImageWrapType = 'square') => {
+  switch (wrapType) {
+    case 'square':
+      return { shapeMargin: '8px', float: 'left' };
+    case 'tight':
+      return { shapeMargin: '4px', float: 'left' };
+    case 'through':
+      return { shapeMargin: '0', float: 'left' };
+    case 'top-bottom':
+      return { clear: 'both', display: 'block' };
+    case 'behind-text':
+      return { position: 'absolute', zIndex: 1 };
+    case 'in-front-of-text':
+      return { position: 'absolute', zIndex: 3 };
+    default:
+      return {};
+  }
+};
+
+interface PreviewImageWrapperProps {
+  $isDragging: boolean;
+  $positionX: number;
+  $positionY: number;
+  $wrapType?: ImageWrapType;
+}
+
+export const PreviewImageWrapper = styled.div.attrs<PreviewImageWrapperProps>(
+  ({ $wrapType }) => ({
+    style: {
+      // Aplica estilos específicos baseados no wrapType
+      ...getWrapBehaviorStyles($wrapType)
+    }
+  })
+)<PreviewImageWrapperProps>`
+  position: relative;
+  transition: all 0.3s ease;
+  z-index: ${({ $isDragging }) => $isDragging ? 10 : 2};
+  cursor: move;
+  left: ${({ $positionX }) => `${$positionX}px`};
+  top: ${({ $positionY }) => `${$positionY}px`};
+  border: 2px solid ${({ $isDragging }) => $isDragging ? 'var(--color-primary)' : 'transparent'};
+  border-radius: ${({ $wrapType }) => $wrapType === 'square' ? '0' : '4px'};
+  background: ${({ $isDragging }) => $isDragging ? 'rgba(0, 119, 204, 0.1)' : 'transparent'};
+  transform: ${({ $isDragging }) => $isDragging ? 'scale(1.02)' : 'scale(1)'};
+  
+  &:hover {
+    z-index: 3;
+    box-shadow: 0 0 0 2px var(--color-primary-light);
+  }
+
+  // Efeito de sombra para indicar profundidade quando atrás/na frente do texto
+  ${({ $wrapType }) => $wrapType === 'behind-text' && css`
+    opacity: 0.7;
+    filter: brightness(1.1);
+  `}
+
+  ${({ $wrapType }) => $wrapType === 'in-front-of-text' && css`
+    box-shadow: 0 0 8px rgba(0,0,0,0.2);
+  `}
+`;
+
+// Função auxiliar para os comportamentos específicos
+const getWrapBehaviorStyles = (wrapType?: ImageWrapType): React.CSSProperties => {
+  switch(wrapType) {
+    case 'square':
+      return {
+        float: 'left',
+        shapeMargin: '8px',
+        margin: '0 16px 16px 0'
+      };
+    case 'tight':
+      return {
+        float: 'left',
+        shapeMargin: '4px',
+        margin: '0 16px 16px 0'
+      };
+    case 'through':
+      return {
+        float: 'left',
+        shapeMargin: '0',
+        margin: '0 16px 16px 0'
+      };
+    case 'top-bottom':
+      return {
+        clear: 'both',
+        display: 'block',
+        margin: '16px 0'
+      };
+    case 'behind-text':
+      return {
+        position: 'absolute',
+        zIndex: 1
+      };
+    case 'in-front-of-text':
+      return {
+        position: 'absolute',
+        zIndex: 3
+      };
+    default:
+      return {};
+  }
+};
+
+export const AlternativeList = styled.div`
+  margin-top: ${constants.spacing.lg};
+  display: flex;
+  flex-direction: column;
+  gap: ${constants.spacing.sm};
+
+  &.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: ${constants.spacing.md};
+  }
+
+  &.three-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: ${constants.spacing.md};
+  }
+`;
+
+export const CorrectIndicatorPreview = styled.span<{ isCorrect: boolean }>`
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: ${props => props.isCorrect
+    ? 'var(--color-success)'
+    : 'var(--color-error)'};
+`;
+
+export const AlternativesGrid = styled.div`
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  clear: both;
+
+  &.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  &.three-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+`;
+
+export const CorrectIndicator = styled.span`
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #009688;
+  margin-left: 8px;
+`;
+
+interface PreviewImageProps {
+  src: string;
+  $wrapType?: ImageWrapType;
+  $isDragging: boolean;
+}
+
+export const PreviewImage = styled.div<PreviewImageProps>`
+  width: 200px;
+  height: 150px;
+  background-image: url(${props => props.src});
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border: 1px solid #ddd;
+  position: relative;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+  /* Indicador visual do tipo de wrap */
+  &::after {
+    content: ${props => props.$wrapType ? `"${props.$wrapType.replace(/-/g, ' ')}"` : '""'};
+    position: absolute;
+    bottom: -25px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--color-text-secondary);
+    background: var(--color-background-secondary);
+    padding: 2px 5px;
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &:hover::after {
+    opacity: 1;
+  }
+`;
+
+interface PreviewAlternativeProps {
+  $isCorrect?: boolean;
+}
+
+export const PreviewAlternative = styled.div<PreviewAlternativeProps>`
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 4px;
+  background: ${({ $isCorrect }) => $isCorrect ? 'rgba(0, 200, 83, 0.1)' : 'transparent'};
+  border-left: 3px solid ${({ $isCorrect }) => $isCorrect ? 'var(--color-success)' : 'transparent'};
+  transition: all 0.2s ease;
+
+  .alternative-letter {
+    font-weight: bold;
+    color: var(--color-text);
+  }
+
+  .alternative-text {
+    flex: 1;
+  }
+
+  &:hover {
+    background: var(--color-background-secondary);
+  }
+`;
+
+export const ImageWrapControlsContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin: 16px 0;
+  padding: 8px;
+  background: var(--color-background-secondary);
+  border-radius: 8px;
+  gap: 8px;
+`;
+
+export const WrapControlButton = styled.button<{ $active: boolean }>`
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: ${({ $active }) => $active ? 'var(--color-primary)' : 'transparent'};
+  color: ${({ $active }) => $active ? 'white' : 'var(--color-text)'};
+  border: 1px solid ${({ $active }) => $active ? 'var(--color-primary)' : 'var(--color-border)'};
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ $active }) => $active ? 'var(--color-primary-dark)' : 'var(--color-background-secondary)'};
+  }
+`;
+
+export const DragHandle = styled.div`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: var(--color-primary);
+  color: white;
+  padding: ${constants.spacing.xs};
+  border-radius: ${constants.borderRadius.sm} 0 0 0;
+  cursor: move;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  ${PreviewImageWrapper}:hover & {
+    opacity: 1;
+  }
+`;
+
+export const ContentForm = styled.div`
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: ${constants.spacing.xl};
+`;
+
+// Badge para mostrar o tipo atual
+export const WrapTypeBadge = styled.div<{ $wrapType?: ImageWrapType }>`
+  position: absolute;
+  bottom: -24px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  border-radius: 3px;
+  background: ${({ $wrapType }) => {
+    switch($wrapType) {
+      case 'square': return 'var(--color-blue-100)';
+      case 'tight': return 'var(--color-green-100)';
+      case 'through': return 'var(--color-orange-100)';
+      case 'top-bottom': return 'var(--color-purple-100)';
+      case 'behind-text': return 'var(--color-gray-100)';
+      case 'in-front-of-text': return 'var(--color-red-100)';
+      default: return 'var(--color-background-secondary)';
+    }
+  }};
+  color: ${({ $wrapType }) => {
+    switch($wrapType) {
+      case 'behind-text': return 'var(--color-text)';
+      default: return 'white';
+    }
+  }};
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  
+  ${PreviewImageWrapper}:hover & {
+    opacity: 1;
+  }
+`;
+
+// Função auxiliar para rótulos
+export const getWrapTypeLabel = (wrapType?: ImageWrapType): string => {
+  switch(wrapType) {
+    case 'square': return 'Quadrado';
+    case 'tight': return 'Justa';
+    case 'through': return 'Através';
+    case 'top-bottom': return 'Sup/Inf';
+    case 'behind-text': return 'Atrás';
+    case 'in-front-of-text': return 'Frente';
+    default: return 'Padrão';
+  }
+};

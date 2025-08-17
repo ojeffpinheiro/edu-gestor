@@ -4,16 +4,17 @@ import { FaArrowLeft, FaArrowRight, FaListOl, FaSave, FaSpinner, FaThLarge } fro
 import {
   Alternative,
   AlternativesOrder,
-  DifficultyLevel, OptionsLayout,
+  DifficultyLevel, ImageWrapType, OptionsLayout,
   Question,
-  QuestionFormData, QuestionTypeConst,
+  QuestionFormData, QuestionResource, QuestionTypeConst,
 } from '../../../utils/types/Question';
 import { BasicInfoStep } from '../NewQuestion/steps/BasicInfoStep';
 import { StatementStep } from '../NewQuestion/steps/StatementStep'; // OK
 import AlternativesStep from '../NewQuestion/steps/AlternativesStep'; // OK
 import { ResourcesStep } from '../NewQuestion/steps/ResourcesStep'; // OK
 import { RubricStep } from '../NewQuestion/steps/RubricStep'; // OK
-import { FormActions, FormButton, FormContainer, StepsViewContainer, ViewToggle } from '../QuestionForm.styles';
+import { ContentForm, FormActions, FormButton, FormContainer, StepsViewContainer, ViewToggle } from '../QuestionForm.styles';
+import { QuestionPreview } from '../NewQuestion/QuestionPreview';
 
 interface Props {
   questions: Question[];
@@ -62,6 +63,7 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
       alternativesOrder: AlternativesOrder.NONE
     }
   });
+  const [resourcePositions, setResourcePositions] = useState<Record<string, { x: number; y: number }>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [viewMode, setViewMode] = useState<'steps' | 'single'>('steps');
@@ -72,6 +74,30 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
   const updateFormData: UseFormSetValue<QuestionFormData> = (name, value) => {
     methods.setValue(name, value);
   };
+
+  const handlePositionChange = (id: string, position: { x: number; y: number }) => {
+    setResourcePositions(prev => ({
+      ...prev,
+      [id]: position
+    }));
+
+    // Atualize os recursos com as novas posições
+    const updatedResources = methods.getValues('resources')?.map(res =>
+      res.id === id ? { ...res, position } : res
+    );
+    methods.setValue('resources', updatedResources || []);
+  };
+
+  const updateResourceWrapType = (id: string, wrapType: ImageWrapType) => {
+  const updatedResources = methods.getValues('resources')?.map(res => 
+    res.id === id ? { 
+      ...res, 
+      wrapType: wrapType as ImageWrapType // Garante o tipo correto
+    } : res
+  ) as QuestionResource[];
+  
+  methods.setValue('resources', updatedResources || []);
+};
 
   const updateNestedData = <K extends keyof QuestionFormData>(
     field: K,
@@ -87,6 +113,7 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
       methods.setValue('optionsLayout', data);
     }
   };
+
 
   const onSubmit: SubmitHandler<QuestionFormData> = (formData) => {
     setIsSubmitting(true);
@@ -131,6 +158,7 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
 
   const renderStep = () => {
     const formData = methods.watch();
+
     switch (currentStep) {
       case 0:
         return <BasicInfoStep
@@ -236,32 +264,53 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
           </button>
         </ViewToggle>
 
-        <form onSubmit={methods.handleSubmit(onSubmit)}>
-          {viewMode === 'steps' ? (
-            <StepsViewContainer>
-              {renderStep()}
-              <FormActions>
-                {currentStep > 0 && (
-                  <FormButton
-                    $variant="outline"
-                    type="button"
-                    onClick={prevStep}
-                    className="secondary"
-                  >
-                    <FaArrowLeft style={{ marginRight: '8px' }} />
-                    Voltar
-                  </FormButton>
-                )}
-                {currentStep < 3 ? (
-                  <FormButton
-                    type="button"
-                    onClick={nextStep}
-                    className="primary"
-                  >
-                    Próximo
-                    <FaArrowRight style={{ marginLeft: '8px' }} />
-                  </FormButton>
-                ) : (
+        <ContentForm>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            {viewMode === 'steps' ? (
+              <StepsViewContainer>
+                {renderStep()}
+                <FormActions>
+                  {currentStep > 0 && (
+                    <FormButton
+                      $variant="outline"
+                      type="button"
+                      onClick={prevStep}
+                      className="secondary"
+                    >
+                      <FaArrowLeft style={{ marginRight: '8px' }} />
+                      Voltar
+                    </FormButton>
+                  )}
+                  {currentStep < 3 ? (
+                    <FormButton
+                      type="button"
+                      onClick={nextStep}
+                      className="primary"
+                    >
+                      Próximo
+                      <FaArrowRight style={{ marginLeft: '8px' }} />
+                    </FormButton>
+                  ) : (
+                    <button type="submit" className="primary" disabled={isSubmitting}>
+                      {isSubmitting ? (
+                        <>
+                          <FaSpinner className="fa-spin" style={{ marginRight: '8px' }} />
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <FaSave style={{ marginRight: '8px' }} />
+                          Salvar Questão
+                        </>
+                      )}
+                    </button>
+                  )}
+                </FormActions>
+              </StepsViewContainer>
+            ) : (
+              <>
+                {renderAllSteps()}
+                <FormActions>
                   <button type="submit" className="primary" disabled={isSubmitting}>
                     {isSubmitting ? (
                       <>
@@ -275,30 +324,17 @@ const NewQuestionView: React.FC<Props> = ({ onQuestionCreated }) => {
                       </>
                     )}
                   </button>
-                )}
-              </FormActions>
-            </StepsViewContainer>
-          ) : (
-            <>
-              {renderAllSteps()}
-              <FormActions>
-                <button type="submit" className="primary" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <FaSpinner className="fa-spin" style={{ marginRight: '8px' }} />
-                      Salvando...
-                    </>
-                  ) : (
-                    <>
-                      <FaSave style={{ marginRight: '8px' }} />
-                      Salvar Questão
-                    </>
-                  )}
-                </button>
-              </FormActions>
-            </>
-          )}
-        </form>
+                </FormActions>
+              </>
+            )}
+          </form>
+          
+          <QuestionPreview
+            data={methods.watch()}
+            onPositionChange={handlePositionChange}
+            onWrapTypeChange={updateResourceWrapType}
+          />
+        </ContentForm>
       </FormContainer>
     </FormProvider>
   );

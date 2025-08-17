@@ -306,8 +306,12 @@ export interface QuestionResource {
   type: ResourceType;
   url: string;
   description?: string;
+  wrapType?: ImageWrapType;
+  position?: {
+    x: number;
+    y: number;
+  };
 }
-
 
 export interface QuestionFormData {
   title: string;
@@ -325,3 +329,5 @@ export interface QuestionFormData {
   tags?: string[];
   category?: string;
 }
+
+export type ImageWrapType = 'square' | 'tight' | 'through' | 'top-bottom' | 'behind-text' | 'in-front-of-text';
