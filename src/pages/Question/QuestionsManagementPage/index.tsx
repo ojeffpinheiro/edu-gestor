@@ -1,18 +1,21 @@
 import React, { useCallback, useState } from 'react';
 
-import { Category, CategoryWithId, FormField } from '../../../components/Question/QuestionForm/type';
+import { Category, CategoryWithId } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
 
-import Navbar from '../../../../src/components/shared/Navbar'
-import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
+import { Question } from '../../../utils/types/Question';
 
+import { mockQuestions } from '../../../mocks/question';
+
+import Navbar from '../../../../src/components/shared/Navbar'
+
+import { SettingsModal } from '../../../components/Question/SettingsSection/SettingsModal';
 import NewQuestionView from '../../../components/Question/views/NewQuestionView';
 import QuestionsView from '../../../components/Question/views/QuestionsView';
 import FoldersView from '../../../components/Question/views/FoldersView';
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
-import { Question } from '../../../utils/types/Question';
-import { mockQuestions } from '../../../mocks/question';
+import { FaSave } from 'react-icons/fa';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -26,6 +29,29 @@ const QuestionBankPage = () => {
   const [sortField, setSortField] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [questions, setQuestions] = useState<Question[]>(mockQuestions);
+  const [categories, setCategories] = useState<Category[]>([
+    {
+      id: '1',
+      name: 'Matemática',
+      count: 342,
+      color: 'blue',
+      subTopics: [
+        { id: '1-1', name: 'Álgebra' },
+        { id: '1-2', name: 'Geometria' }
+      ]
+    },
+    {
+      id: '2',
+      name: 'Português',
+      count: 256,
+      color: 'green',
+      subTopics: [
+        { id: '2-1', name: 'Gramática' },
+        { id: '2-2', name: 'Literatura' }
+      ]
+    },
+    // Outras categorias...
+  ]);
 
   const sortOptions: SortOption[] = [
     { value: 'title', label: 'Título', direction: 'asc', },
@@ -42,47 +68,12 @@ const QuestionBankPage = () => {
     // como atualizar uma API, analytics, etc.
   }, []);
 
-  // Dados de exemplo
-  const categories: Category[] = [
-    { i: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
-    { i: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
-    { i: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
-    { i: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
-    { i: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
-  ];
-
   const categoriesWithID: CategoryWithId[] = [
-    { i: '', id: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
-    { i: '', id: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
-    { i: '', id: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
-    { i: '', id: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
-    { i: '', id: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
-  ];
-
-  const fields: FormField[] = [
-    {
-      name: 'title',
-      label: 'Título da Questão',
-      type: 'text' as const,
-      required: true,
-      placeholder: 'Digite o título'
-    },
-    {
-      name: 'category',
-      label: 'Categoria',
-      type: 'select' as const,
-      required: true,
-      options: [
-        { value: 'math', label: 'Matemática' },
-        { value: 'science', label: 'Ciências' }
-      ]
-    },
-    {
-      name: 'content',
-      label: 'Enunciado',
-      type: 'textarea' as const,
-      required: true
-    }
+    { id: 'math', name: 'Matemática', count: 342, color: 'bg-blue-100 text-blue-800' },
+    { id: 'portuguese', name: 'Português', count: 256, color: 'bg-green-100 text-green-800' },
+    { id: 'science', name: 'Ciências', count: 189, color: 'bg-purple-100 text-purple-800' },
+    { id: 'history', name: 'História', count: 167, color: 'bg-orange-100 text-orange-800' },
+    { id: 'geography', name: 'Geografia', count: 134, color: 'bg-red-100 text-red-800' }
   ];
 
   const sections = [
@@ -122,13 +113,79 @@ const QuestionBankPage = () => {
     }
   ];
 
-  const handleSubmit = (values: Record<string, unknown>) => {
+  /**
+   * const handleSubmit = (values: Record<string, unknown>) => {
     console.log('Dados do formulário:', values);
   };
+   */
 
   const saveSettings = () => {
     // Lógica para salvar configurações
     console.log('Configurações salvas');
+  };
+  // Funções para manipulação de pastas
+  const handleAddFolder = async (folderName: string) => {
+    const newFolder: Category = {
+      id: Date.now().toString(),
+      name: folderName,
+      count: 0,
+      color: 'gray',
+      subTopics: []
+    };
+    setCategories([...categories, newFolder]);
+  };
+
+  const handleEditFolder = async (folderId: string, newName: string) => {
+    setCategories(categories.map(cat =>
+      cat.id === folderId ? { ...cat, name: newName } : cat
+    ));
+  };
+
+  const handleDeleteFolder = async (folderId: string) => {
+    setCategories(categories.filter(cat => cat.id !== folderId));
+  };
+
+  // Funções para manipulação de subtópicos
+  const handleAddSubTopic = async (folderId: string, subTopicName: string) => {
+    setCategories(categories.map(cat => {
+      if (cat.id === folderId) {
+        const newSubTopic = {
+          id: `${folderId}-${Date.now()}`,
+          name: subTopicName
+        };
+        return {
+          ...cat,
+          subTopics: [...(cat.subTopics || []), newSubTopic]
+        };
+      }
+      return cat;
+    }));
+  };
+
+  const handleEditSubTopic = async (folderId: string, subTopicId: string, newName: string) => {
+    setCategories(categories.map(cat => {
+      if (cat.id === folderId) {
+        return {
+          ...cat,
+          subTopics: cat.subTopics?.map(st =>
+            st.id === subTopicId ? { ...st, name: newName } : st
+          )
+        };
+      }
+      return cat;
+    }));
+  };
+
+  const handleDeleteSubTopic = async (folderId: string, subTopicId: string) => {
+    setCategories(categories.map(cat => {
+      if (cat.id === folderId) {
+        return {
+          ...cat,
+          subTopics: cat.subTopics?.filter(st => st.id !== subTopicId)
+        };
+      }
+      return cat;
+    }));
   };
 
   return (
@@ -181,10 +238,16 @@ const QuestionBankPage = () => {
               } />
           </div>
 
+
           <div id="folders">
             <FoldersView
               categories={categories}
-              onAddFolder={() => console.log('Adicionar pasta')}
+              onAddFolder={handleAddFolder}
+              onEditFolder={handleEditFolder}
+              onDeleteFolder={handleDeleteFolder}
+              onAddSubTopic={handleAddSubTopic}
+              onEditSubTopic={handleEditSubTopic}
+              onDeleteSubTopic={handleDeleteSubTopic}
             />
           </div>
         </Tabs>
@@ -203,7 +266,10 @@ const QuestionBankPage = () => {
               <button onClick={() => {
                 saveSettings();
                 setIsOpen(false);
-              }}>Salvar</button>
+              }}>
+                <FaSave />
+                Salvar
+              </button>
             </>
           }
         />

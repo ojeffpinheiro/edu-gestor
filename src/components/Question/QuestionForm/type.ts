@@ -19,13 +19,19 @@ export interface QuestionFormProps {
   className?: string;
 }
 
-export interface Category {
-  i: string;
-  name: string;
-  count: number;
-  color: string;
-}
-
 export interface CategoryWithId extends Category {
     id: string;
+}
+
+export interface SubTopic {
+    id: string;
+    name: string;
+}
+
+export interface Category {
+    id: string;
+    name: string;
+    color: string;
+    count: number;
+    subTopics?: SubTopic[];
 }
