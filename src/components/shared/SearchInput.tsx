@@ -1,173 +1,55 @@
-import React, { useState, useEffect, useRef } from 'react';
-import styled from 'styled-components';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Input } from '../../styles/inputs';
+import { 
+  SearchWrapper, Button, SearchIcon,
+  ButtonGroup, Dropdown, DropdownButton,
+  DropdownContent, DropdownHeader, FilterGroup,
+  FilterLabel, Select
+} from './SearchInputStyles';
 
-const SearchWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`;
-
-const SearchIcon = styled.div`
-  position: absolute;
-  left: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #7f8c8d;
-  
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-`;
-
-const DropdownButton = styled.button`
-  position: absolute;
-  right: 0.5rem;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #7f8c8d;
-  padding: 0.25rem;
-  display: flex;
-  align-items: center;
-  
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-`;
-
-const Dropdown = styled.div<{ isOpen: boolean }>`
-  position: absolute;
-  top: calc(100% + 0.5rem);
-  right: 0;
-  background-color: var(--color-background-secondary);
-  border-radius: 4px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  width: 250px;
-  z-index: 10;
-  display: ${props => props.isOpen ? 'block' : 'none'};
-`;
-
-const DropdownHeader = styled.div`
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #e1e4e8;
-  font-weight: 500;
-  font-size: 0.875rem;
-`;
-
-const DropdownContent = styled.div`
-  padding: 1rem;
-`;
-
-const FilterGroup = styled.div`
-  margin-bottom: 1rem;
-  
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const FilterLabel = styled.label`
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: var(--color-text);
-`;
-
-const Select = styled.select`
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #e1e4e8;
-  border-radius: 4px;
-  font-size: 0.875rem;
-  background-color: var(--color-background-secondary);
-`;
-
-const ButtonGroup = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  margin-top: 1rem;
-`;
-
-const Button = styled.button`
-  padding: 0.5rem 1rem;
-  font-size: 0.75rem;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.2s;
-  
-  &.primary {
-    background-color: #3498db;
-    color: white;
-    border: none;
-    
-    &:hover {
-      background-color: #2980b9;
-    }
-  }
-  
-  &.secondary {
-    background-color: var(--color-background-secondary);
-    color: var(--color-text);
-    border: 1px solid #e1e4e8;
-    
-    &:hover {
-      background-color: var(--color-secondary-hover);
-      }
-    }
-  }
-`;
+interface SearchFilter {
+  disciplina: string;
+  dificuldade: string;
+  tipo: string;
+}
 
 interface SearchInputProps {
   placeholder?: string;
   value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onSearch?: (searchTerm: string,
-    filters: { disciplina: string; dificuldade: string; tipo: string; }) => void;
+  onChange: (value: string) => void;
+  onSearch?: (searchTerm: string, filters: SearchFilter) => void;
+  debounceDelay?: number;
 }
-
-const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) => {
-  const [searchTerm, setSearchTerm] = useState('');
+const SearchInput: React.FC<SearchInputProps> = ({ 
+  placeholder = 'Buscar...', 
+  value,
+  onChange,
+  onSearch,
+  debounceDelay = 300
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<SearchFilter>({
     disciplina: '',
     dificuldade: '',
     tipo: ''
   });
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Implement debounce
+  
+  // Debounce melhorado
   useEffect(() => {
+    if (!onSearch) return;
+    
     const handler = setTimeout(() => {
-      if (onSearch && searchTerm) {
-        onSearch(searchTerm, filters);
-      }
-    }, 300);
+      onSearch(value, filters);
+    }, debounceDelay);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm, filters, onSearch]);
+    return () => clearTimeout(handler);
+  }, [value, filters, debounceDelay, onSearch]);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.value);
+  }, [onChange]);
 
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -187,8 +69,8 @@ const SearchInput = ({ placeholder = 'Buscar...', onSearch }: SearchInputProps) 
       <Input
         type="text"
         placeholder={placeholder}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        value={value}
+        onChange={handleInputChange}
       />
       <SearchIcon>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

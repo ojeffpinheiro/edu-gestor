@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components';
 import { FiChevronDown } from 'react-icons/fi';
+import { Link } from 'react-router-dom';
 
 const DropdownContainer = styled.div`
   position: relative;
@@ -20,7 +21,7 @@ const DropdownButton = styled.button`
   font-weight: 500;
 `;
 
-const DropdownContent = styled.div`
+const DropdownContent = styled.div<{ isOpen: boolean }>`
   position: absolute;
   background-color: var(--color-background-secondary);
   min-width: 200px;
@@ -50,26 +51,46 @@ const DropdownItem = styled.a`
   }
 `;
 
-interface DropdownItem {
+interface DropdownItemType {
   icon: React.ReactNode;
   label: string;
+  path: string;
 }
 
 interface NavigationDropdownProps {
-  items: DropdownItem[];
+  items: DropdownItemType[];
 }
 
-export const NavigationDropdown = ({ items }: NavigationDropdownProps) => (
-  <DropdownContainer>
-    <DropdownButton>
-      Navegação <FiChevronDown />
-    </DropdownButton>
-    <DropdownContent>
-      {items.map((item, index) => (
-        <DropdownItem key={index}>
-          {item.icon} {item.label}
-        </DropdownItem>
-      ))}
-    </DropdownContent>
-  </DropdownContainer>
-);
+export const NavigationDropdown = ({ items }: NavigationDropdownProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => setIsOpen(!isOpen);
+  const closeDropdown = () => setIsOpen(false);
+
+  return (
+    <DropdownContainer 
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
+      <DropdownButton 
+        onClick={toggleDropdown}
+        aria-haspopup="true"
+        aria-expanded={isOpen}
+      >
+        Navegação <FiChevronDown />
+      </DropdownButton>
+      <DropdownContent isOpen={isOpen}>
+        {items.map((item, index) => (
+          <DropdownItem 
+            key={index} 
+            as={Link} 
+            to={item.path}
+            onClick={closeDropdown}
+          >
+            {item.icon} {item.label}
+          </DropdownItem>
+        ))}
+      </DropdownContent>
+    </DropdownContainer>
+  );
+};

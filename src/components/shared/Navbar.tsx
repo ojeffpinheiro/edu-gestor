@@ -9,45 +9,51 @@ import {
     MenuButton, NavbarContainer, NavLeft, NavRight, NotificationBadge, NotificationButton 
 } from '../../styles/navbar';
 
-
 interface NavbarProps {
-    searchValue: string;
-    onSearchChange: (value: string) => void;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  onMenuClick?: () => void;
+  notificationCount?: number;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
-    searchValue = '',
-    onSearchChange
+  searchValue = '',
+  onSearchChange = () => {},
+  onMenuClick = () => {},
+  notificationCount = 0
 }) => {
+  const navItems = [
+    { icon: <MdDashboard />, label: 'Dashboard', path: '/' },
+    { icon: <MdQuestionAnswer />, label: 'Banco de Questões', path: '/questions' },
+    { icon: <MdAssignment />, label: 'Geração de Prova', path: '/exams' },
+    { icon: <MdAssessment />, label: 'Avaliação', path: '/evaluations' },
+    { icon: <MdBarChart />, label: 'Estatísticas', path: '/stats' }
+  ];
+
     return (
-        <NavbarContainer>
-            <NavLeft>
-                <MenuButton>
-                    <FiMenu />
-                </MenuButton>
+    <NavbarContainer>
+      <NavLeft>
+        <MenuButton onClick={onMenuClick}>
+          <FiMenu />
+        </MenuButton>
 
-                <NavigationDropdown
-                    items={[
-                        { icon: <MdDashboard />, label: 'Dashboard' },
-                        { icon: <MdQuestionAnswer />, label: 'Banco de Questões' },
-                        { icon: <MdAssignment />, label: 'Geração de Prova' },
-                        { icon: <MdAssessment />, label: 'Avaliação' },
-                        { icon: <MdBarChart />, label: 'Estatísticas' }
-                    ]}
-                />
-            </NavLeft>
+        <NavigationDropdown items={navItems} />
+      </NavLeft>
 
-            <SearchBar value={searchValue} onChange={onSearchChange} />
-            <NavRight>
-                <NotificationButton>
-                    <FiBell />
-                    <NotificationBadge>3</NotificationBadge>
-                </NotificationButton>
+      <SearchBar value={searchValue} onChange={onSearchChange} />
+      
+      <NavRight>
+        <NotificationButton>
+          <FiBell />
+          {notificationCount > 0 && (
+            <NotificationBadge>{Math.min(notificationCount, 9)}</NotificationBadge>
+          )}
+        </NotificationButton>
 
-                <ProfileDropdown />
-            </NavRight>
-        </NavbarContainer>
-    )
+        <ProfileDropdown />
+      </NavRight>
+    </NavbarContainer>
+  );
 };
 
 export default Navbar;

@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { FaSave } from 'react-icons/fa';
 
 import { Category, CategoryWithId } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
@@ -15,7 +16,6 @@ import QuestionsView from '../../../components/Question/views/QuestionsView';
 import FoldersView from '../../../components/Question/views/FoldersView';
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
-import { FaSave } from 'react-icons/fa';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
