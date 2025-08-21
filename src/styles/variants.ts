@@ -45,7 +45,8 @@ export const buttonVariants = {
     &:hover {
       background-color: var(--color-primary-light);
     }
-  `
+  `,
+  ghost: css``
 };
 
 export const badgeVariants = {

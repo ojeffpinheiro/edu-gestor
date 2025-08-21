@@ -331,3 +331,21 @@ export interface QuestionFormData {
 }
 
 export type ImageWrapType = 'square' | 'tight' | 'through' | 'top-bottom' | 'behind-text' | 'in-front-of-text';
+
+export interface QuestionBankState {
+  activeTab: 'questions' | 'new-question' | 'folders';
+  searchTerm: string;
+  selectedCategory: string;
+  selectedDifficulty: string;
+  sortField: string;
+  sortDirection: 'asc' | 'desc';
+}
+
+export interface CategoryActions {
+  onAddFolder: (name: string) => void;
+  onEditFolder: (id: string, newName: string) => void;
+  onDeleteFolder: (id: string) => void;
+  onAddSubTopic: (folderId: string, name: string) => void;
+  onEditSubTopic: (folderId: string, subTopicId: string, newName: string) => void;
+  onDeleteSubTopic: (folderId: string, subTopicId: string) => void;
+}

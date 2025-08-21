@@ -16,6 +16,7 @@ import QuestionsView from '../../../components/Question/views/QuestionsView';
 import FoldersView from '../../../components/Question/views/FoldersView';
 import PageHeader from '../../../components/Question/PageHeader';
 import Tabs from '../../../components/Question/Tabs';
+import { SidebarProvider } from '../../../components/ui/AppLayout/sidebar/sidebar-context';
 
 const QuestionBankPage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
@@ -189,7 +190,7 @@ const QuestionBankPage = () => {
   };
 
   return (
-    <div>
+    <SidebarProvider>
       {/* Navbar Superior */}
       <Navbar searchValue={searchTerm} onSearchChange={setSearchTerm} />
 
@@ -274,7 +275,7 @@ const QuestionBankPage = () => {
           }
         />
       )}
-    </div>
+    </SidebarProvider>
   );
 };
 
