@@ -7,9 +7,12 @@ export const TabsContainer = styled.div`
 `;
 
 export const TabsList = styled.div`
-  display: flex;
-  gap: var(--space-sm);
-  padding: var(--space-sm);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+  color: var(--color-muted-foreground);
   background: var(--color-background-secondary);
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--color-border-light);
@@ -30,6 +33,7 @@ export const TabTrigger = styled.button<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  justify-content: center;
   
   &:hover {
     background: ${({ $active }) => 

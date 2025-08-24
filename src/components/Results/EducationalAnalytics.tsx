@@ -1,70 +1,37 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
-import { FaAward, FaCheckCircle, FaDownload, FaFilter, FaGraduationCap, FaUser, FaUsers } from 'react-icons/fa';
+import { FaAward, FaBookOpen, FaCheckCircle, FaDownload, FaEye, FaFilter, FaGraduationCap, FaSearch, FaUser, FaUsers } from 'react-icons/fa';
 import { FiAlertTriangle, FiFileText } from 'react-icons/fi';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/Card';
-import { Button } from '../ui/Button';
-import { Tabs } from '../ui/Tabs';
-import { MetricCard } from './Features/MetricCard';
+import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
+
 import { ClassPerformance, ClassPerformanceWithSubjects, StudentResult } from '../../utils/types/Assessment';
 
-const AnalyticsContainer = styled.div`
-  min-height: 100vh;
-  background: var(--color-background);
-`;
+import { 
+  Grid, AnalyticsContainer, Flex,
+   Header, HeaderContent, HeaderSubtitle,
+   HeaderTitle, MainContent,
+   SectionHeader,
+   SectionTitle,
+   SectionDescription,
+   SectionActions,
+   ClassGrid,
+   StudentGrid,
+   StudentItem,
+   StudentRank,
+   StudentInfo,
+   CheckboxGrid,
+   CheckboxLabel,
+   QuestionGrid,
+   TabsContent
+  } from './styles/Analytics';
 
-const Header = styled.header`
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-card);
-  box-shadow: var(--shadow-card);
-  padding: 1.5rem 0;
-`;
+import { Card, CardContent, CardDescription, CardTitle } from '../ui/Card';
+import { Button } from '../ui/Button';
+import { Tabs } from '../ui/Tabs';
 
-const HeaderContent = styled.div`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-  display: flex;
-  justify-content: between;
-  align-items: center;
-`;
-
-const HeaderTitle = styled.h1`
-  font-size: 2.25rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin: 0;
-`;
-
-const HeaderSubtitle = styled.p`
-  color: var(--color-muted-foreground);
-  margin: 0.25rem 0 0 0;
-`;
-
-const MainContent = styled.main`
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-`;
-
-const Grid = styled.div<{ $columns?: number }>`
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(${({ $columns = 1 }) => $columns}, 1fr);
-  
-  @media (max-width: 768px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-const Flex = styled.div<{ $justify?: string; $align?: string; $gap?: string }>`
-  display: flex;
-  justify-content: ${({ $justify = 'flex-start' }) => $justify};
-  align-items: ${({ $align = 'center' }) => $align};
-  gap: ${({ $gap = '0.5rem' }) => $gap};
-`;
+import { MetricCard } from './Features/MetricCard';
+import { distributionData, overviewData, progressData } from '../../mocks/results';
+import { CardHeader } from '../shared/Card.styles';
+import { Badge } from '../shared/Badge.v2.styles';
 
 interface Props {
     classPerformances: ClassPerformance[];
@@ -114,8 +81,17 @@ export const EducationalAnalytics: React.FC<Props> = () => {
             <CardTitle>Comparação com Padrões Nacionais</CardTitle>
             <CardDescription>Média por disciplina vs. nacional</CardDescription>
           </CardHeader>
+
           <CardContent>
-            {/* Gráfico seria implementado aqui */}
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={overviewData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="subject" />
+                <YAxis />
+                <Bar dataKey="average" fill="var(--color-primary)" name="Escola" />
+                <Bar dataKey="national" fill="var(--color-accent)" name="Nacional" />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
         
@@ -125,7 +101,20 @@ export const EducationalAnalytics: React.FC<Props> = () => {
             <CardDescription>Número de alunos por faixa de nota</CardDescription>
           </CardHeader>
           <CardContent>
-            {/* Gráfico seria implementado aqui */}
+            <ResponsiveContainer width="100%" height={300}>
+              <AreaChart data={distributionData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="range" />
+                <YAxis />
+                <Area
+                  type="monotone" 
+                  dataKey="students" 
+                  stroke="var(--color-primary)" 
+                  fill="var(--color-primary)" 
+                  fillOpacity={0.3}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </Grid>
@@ -155,7 +144,249 @@ export const EducationalAnalytics: React.FC<Props> = () => {
     </div>
   );
 
-  // Implementar outras tabs seguindo o mesmo padrão...
+  
+  const ClassTab = () => (
+    <div>
+      <SectionHeader>
+        <div>
+          <SectionTitle>Análise por Turma</SectionTitle>
+          <SectionDescription>Desempenho detalhado das turmas</SectionDescription>
+        </div>
+        <SectionActions>
+          <Button $variant="outline" $size="sm">
+            <FaFilter size={16} />
+            Filtros
+          </Button>
+          <Button $variant="default" $size="sm">
+            <FaSearch size={16} />
+            Buscar Turma
+          </Button>
+        </SectionActions>
+      </SectionHeader>
+
+      <ClassGrid>
+        {["8º A", "8º B", "8º C"].map((turma, index) => (
+          <Card key={turma}>
+            <CardHeader $flex $alignCenter $justifyBetween>
+              <div>
+                <CardTitle>{turma}</CardTitle>
+                <CardDescription>32 alunos • Matemática</CardDescription>
+              </div>
+              <Badge $variant={index === 0 ? "default" : index === 1 ? "secondary" : "outline"}>
+                {index === 0 ? "Destaque" : index === 1 ? "Médio" : "Atenção"}
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span>Média:</span>
+                  <span style={{ fontWeight: '600' }}>{[8.2, 7.1, 6.4][index]}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span>Taxa de Aprovação:</span>
+                  <span style={{ fontWeight: '600' }}>{[94, 87, 78][index]}%</span>
+                </div>
+                <div style={{ paddingTop: '0.75rem' }}>
+                  <Button $variant="outline" $size="sm" style={{ width: '100%' }}>
+                    <FaEye size={16} />
+                    Ver Detalhes
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </ClassGrid>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Evolução das Turmas</CardTitle>
+          <CardDescription>Progresso ao longo do semestre</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={progressData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Line type="monotone" dataKey="score" stroke="var(--color-primary)" strokeWidth={3} />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const StudentTab = () => (
+    <div>
+      <SectionHeader>
+        <div>
+          <SectionTitle>Relatórios Individuais</SectionTitle>
+          <SectionDescription>Análise personalizada por aluno</SectionDescription>
+        </div>
+      </SectionHeader>
+
+      <StudentGrid>
+        <Card>
+          <CardHeader>
+            <CardTitle>Alunos em Destaque</CardTitle>
+            <CardDescription>Top 5 melhores desempenhos</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {["Ana Silva", "João Santos", "Maria Oliveira", "Pedro Costa", "Luiza Ferreira"].map((name, index) => (
+                <StudentItem key={name}>
+                  <StudentInfo>
+                    <StudentRank $rank={index + 1}>
+                      {index + 1}
+                    </StudentRank>
+                    <span style={{ fontWeight: '500' }}>{name}</span>
+                  </StudentInfo>
+                  <Badge $variant="default">{[9.2, 8.9, 8.7, 8.5, 8.3][index]}</Badge>
+                </StudentItem>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Alunos em Risco</CardTitle>
+            <CardDescription>Necessitam atenção especial</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {["Carlos Lima", "Beatriz Rocha", "Rafael Mendes"].map((name, index) => (
+                <StudentItem key={name} $isRisk={true}>
+                  <StudentInfo>
+                    <FiAlertTriangle size={20} color="var(--color-destructive)" />
+                    <span style={{ fontWeight: '500' }}>{name}</span>
+                  </StudentInfo>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <Badge $variant="destructive">{[4.2, 4.8, 5.1][index]}</Badge>
+                    <Button $variant="outline" $size="sm">
+                      Ação
+                    </Button>
+                  </div>
+                </StudentItem>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </StudentGrid>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Configurar Relatório Individual</CardTitle>
+          <CardDescription>Personalize os dados que deseja incluir</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CheckboxGrid>
+            <CheckboxLabel>
+              <input type="checkbox" id="notas" defaultChecked />
+              Notas e Percentis
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="evolucao" defaultChecked />
+              Evolução Temporal
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="recomendacoes" defaultChecked />
+              Recomendações
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="comparacao" />
+              Comparação Turma
+            </CheckboxLabel>
+          </CheckboxGrid>
+          <Button $variant="hero">
+            <FaDownload size={16} />
+            Gerar Relatório Individual
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  const QuestionTab = () => (
+    <div>
+      <SectionHeader>
+        <div>
+          <SectionTitle>Análise Psicométrica</SectionTitle>
+          <SectionDescription>Análise técnica por questão</SectionDescription>
+        </div>
+      </SectionHeader>
+
+      <QuestionGrid>
+        {[1, 2, 3, 4, 5, 6].map((questionNum) => (
+          <Card key={questionNum}>
+            <CardHeader $flex $alignCenter $justifyBetween>
+              <div>
+                <CardTitle>Questão {questionNum}</CardTitle>
+                <CardDescription>Matemática • Álgebra</CardDescription>
+              </div>
+              <Badge $variant={questionNum <= 2 ? "destructive" : questionNum <= 4 ? "secondary" : "default"}>
+                {questionNum <= 2 ? "Difícil" : questionNum <= 4 ? "Médio" : "Fácil"}
+              </Badge>
+            </CardHeader>
+            <CardContent>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span>Acertos:</span>
+                  <span style={{ fontWeight: '600' }}>{[32, 45, 67, 78, 89, 92][questionNum - 1]}%</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span>Discriminação:</span>
+                  <span style={{ fontWeight: '600' }}>{[0.2, 0.35, 0.52, 0.61, 0.73, 0.81][questionNum - 1]}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem' }}>
+                  <span>Distrator Mais Escolhido:</span>
+                  <span style={{ fontWeight: '600' }}>Opção {["C", "B", "A", "D", "C", "B"][questionNum - 1]}</span>
+                </div>
+                <div style={{ paddingTop: '0.75rem' }}>
+                  <Button $variant="outline" $size="sm" style={{ width: '100%' }}>
+                    <FaBookOpen size={16} />
+                    Análise Completa
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </QuestionGrid>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Relatório Psicométrico Completo</CardTitle>
+          <CardDescription>Gere análise técnica detalhada das questões</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <CheckboxGrid>
+            <CheckboxLabel>
+              <input type="checkbox" id="dificuldade" defaultChecked />
+              Índice de Dificuldade
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="discriminacao" defaultChecked />
+              Discriminação
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="distratores" defaultChecked />
+              Análise de Distratores
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" id="confiabilidade" />
+              Alpha de Cronbach
+            </CheckboxLabel>
+          </CheckboxGrid>
+          <Button $variant="gradient">
+            <FiFileText size={16} />
+            Gerar Relatório Psicométrico
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
   return (
     <AnalyticsContainer>
@@ -199,7 +430,22 @@ export const EducationalAnalytics: React.FC<Props> = () => {
             <OverviewTab />
           </Tabs.Content>
 
-          {/* Adicionar outras tabs aqui */}
+          
+          <TabsContent value="overview">
+            <OverviewTab />
+          </TabsContent>
+
+          <TabsContent value="class">
+            <ClassTab />
+          </TabsContent>
+
+          <TabsContent value="student">
+            <StudentTab />
+          </TabsContent>
+
+          <TabsContent value="question">
+            <QuestionTab />
+          </TabsContent>
         </Tabs>
       </MainContent>
     </AnalyticsContainer>

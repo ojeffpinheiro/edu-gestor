@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { EnhancedExamResult, StudentResult } from '../../../utils/types/Assessment';
 import { Question } from '../../../utils/types/Question';
 
@@ -45,9 +45,10 @@ const StudentView: React.FC<StudentViewProps> = ({
   questions,
   isLoading
 }) => {
-  const currentStudent = selectedStudent 
-    ? studentResults.find(s => s.studentId === selectedStudent)
-    : null;
+  const currentStudent = useMemo(() => 
+    selectedStudent ? studentResults.find(s => s.studentId === selectedStudent) : null,
+    [selectedStudent, studentResults]
+  );
 
   if (isLoading) return <EmptyState message="Carregando dados do aluno..." />;
 

@@ -33,9 +33,11 @@ export const Badge = styled.span<{ $variant?: keyof typeof badgeVariants }>`
   align-items: center;
   padding: var(--space-xs) var(--space-sm);
   border-radius: var(--border-radius-full);
+  border: 1px solid var(--color-border);
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   line-height: 1;
+  transition: all 0.2s;
   
   ${({ $variant = 'default' }) => badgeVariants[$variant]}
 `;

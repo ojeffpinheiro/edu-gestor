@@ -66,3 +66,28 @@ export const mockStudents = {
     'student2': { id: 'student2', name: 'Maria Oliveira', email: 'maria@example.com', classId: 'class1' },
     'student3': { id: 'student3', name: 'Pedro Santos', email: 'pedro@example.com', classId: 'class2' },
 };
+
+
+export const overviewData = [
+  { subject: "Matemática", average: 7.2, national: 6.8 },
+  { subject: "Português", average: 8.1, national: 7.5 },
+  { subject: "Ciências", average: 6.9, national: 7.0 },
+  { subject: "História", average: 7.8, national: 7.2 },
+];
+
+export const progressData = [
+  { month: "Jan", score: 6.5 },
+  { month: "Fev", score: 6.8 },
+  { month: "Mar", score: 7.2 },
+  { month: "Abr", score: 7.0 },
+  { month: "Mai", score: 7.5 },
+  { month: "Jun", score: 7.8 },
+];
+
+export const distributionData = [
+  { range: "0-3", students: 5 },
+  { range: "3-5", students: 12 },
+  { range: "5-7", students: 28 },
+  { range: "7-8", students: 35 },
+  { range: "8-10", students: 20 },
+];

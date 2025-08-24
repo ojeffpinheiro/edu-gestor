@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { StudentResult } from '../../../utils/types/Assessment';
 import { Question } from '../../../utils/types/Question';
@@ -66,6 +66,7 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
   };
 
   const categoryData = calculateCategoryScores();
+
   const labels = categoryData.length > 0
     ? categoryData.map(item => item.category)
     : ['Matemática', 'Português', 'Ciências', 'História'];
@@ -86,12 +87,19 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
     }]
   };
 
-  const options = {
+  const options = useMemo(() => ({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
         position: 'right' as const,
+        labels: {
+          boxWidth: 12,
+          padding: 15
+        }
+      },
+      colors: {
+        forceOverride: true
       },
       tooltip: {
         callbacks: {
@@ -99,22 +107,21 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
             return `${context.label}: ${context.raw.toFixed(1)}%`;
           }
         }
-      },
-      colors: {
-        forceOverride: true
       }
     }
-  };
+  }), []);
 
-  if (!data) {
+  if (categoryData.length === 0) {
     return (
-      <EmptyState
-        message="Dados insuficientes para análise"
-        type="search"
-      />
+      <ChartContainer>
+        <EmptyState
+          message="Dados insuficientes para análise por categoria"
+          type="search"
+        />
+      </ChartContainer>
     );
   }
-  
+
   return (
     <ChartContainer>
       <Doughnut data={data} options={options} />
@@ -122,4 +129,4 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
   );
 };
 
-export default ScoreBreakdownChart;
+export default memo(ScoreBreakdownChart);

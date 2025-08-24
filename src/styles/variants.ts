@@ -5,7 +5,7 @@ export const buttonVariants = {
     background-color: var(--color-primary);
     color: var(--color-text-on-primary);
     &:hover {
-      background-color: var(--color-primary-hover);
+      background-color: var(--color-primary)/0.9;
     }
     &:active {
       background-color: var(--color-primary-active);
@@ -46,7 +46,49 @@ export const buttonVariants = {
       background-color: var(--color-primary-light);
     }
   `,
-  ghost: css``
+  ghost: css`
+    &:hover {
+      background-color: var(--color-accent);
+      color: var(--color-accent-foreground);
+    }
+  `,
+  link: `
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    
+    &:hover {
+      text-decoration: none;
+    }
+  `,
+  success: `
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+    box-shadow: var(--shadow-success);
+    
+    &:hover {
+      background-color: var(--color-accent)/0.9;
+    }
+  `,
+  hero: `
+    background: var(--gradient-hero);
+    color: white;
+    transition: all 0.3s;
+    
+    &:hover {
+      box-shadow: var(--shadow-elegant);
+      transform: scale(1.05);
+    }
+  `,
+  gradient: `
+    background: var(--gradient-primary);
+    color: white;
+    transition: all 0.3s;
+    
+    &:hover {
+      box-shadow: var(--shadow-elegant);
+    }
+  `
 };
 
 export const badgeVariants = {
@@ -103,6 +145,7 @@ export const cardVariants = {
 
 export const sizeVariants = {
   sm: css`
+    height: 2.25rem;
     padding: var(--space-xs) var(--space-sm);
     font-size: var(--font-size-sm);
   `,
@@ -111,8 +154,13 @@ export const sizeVariants = {
     font-size: var(--font-size-md);
   `,
   lg: css`
+    height: 2.75rem;
     padding: var(--space-md) var(--space-lg);
     font-size: var(--font-size-lg);
+  `,
+  icon: css`
+    height: 2.5rem;
+    width: 2.5rem;
   `
 };
 

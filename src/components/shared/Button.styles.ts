@@ -16,17 +16,28 @@ export const Button = styled.button<ButtonProps>`
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
+  white-space: nowrap;
   cursor: pointer;
   border: none;
   line-height: 1.5;
+  outline: none;
 
   ${({ $variant = 'primary' }) => buttonVariants[$variant]}
   ${({ $size = 'md' }) => sizeVariants[$size]}
   ${({ $fullWidth }) => $fullWidth && css`width: 100%;`}
 
+  &:focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+  }
+  svg {
+    width: 1rem;
+    height: 1rem;
   }
 `;
 

@@ -53,6 +53,8 @@ export const Card = styled.div<{ $clickable?: boolean }>`
   border: 1px solid var(--color-border-light);
   overflow: hidden;
   transition: all var(--transition-normal);
+  color: var(--color-card-foreground);
+  box-shadow: var(--shadow-sm);
   
   ${({ $clickable }) => $clickable && css`
     cursor: pointer;
@@ -65,24 +67,31 @@ export const Card = styled.div<{ $clickable?: boolean }>`
   `}
 `;
 
-export const CardHeader = styled.div`
+export const CardHeader = styled.div<{ $flex?: boolean; $alignCenter?: boolean; $justifyBetween?: boolean }>`
   padding: var(--space-lg);
   border-bottom: 1px solid var(--color-border-light);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: ${({ $flex }) => $flex ? 'flex' : 'block'};
+  align-items: ${({ $alignCenter }) => $alignCenter ? 'center' : 'flex-start'};
+  justify-content: ${({ $justifyBetween }) => $justifyBetween ? 'space-between' : 'flex-start'};
   background: var(--color-background-secondary);
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
 `;
 
-export const CardTitle = styled.h3`
-  font-size: var(--font-size-lg);
+export const CardTitle = styled.h3<{ $small?: boolean }>`
+  font-size: ${({ $small }) => $small ? '0.875rem' : '1.5rem'};
   font-weight: var(--font-weight-semibold);
   color: var(--color-title-card);
   margin: 0;
+  line-height: 1;
 `;
 
 export const CardContent = styled.div`
-  padding: var(--space-lg);
+  padding: 0 1.5rem 1.5rem;
 `;
 
 export const CardDescription = styled.p`

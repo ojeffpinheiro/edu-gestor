@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { StudentResult } from '../../utils/types/Assessment';
 import styled from 'styled-components';
 
@@ -78,4 +78,4 @@ const StudentSelector: React.FC<StudentSelectorProps> = ({
   );
 };
 
-export default StudentSelector;
+export default memo(StudentSelector);
