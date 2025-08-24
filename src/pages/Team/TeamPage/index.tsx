@@ -11,7 +11,7 @@ import { CalendarEvent } from '../../../utils/types/CalendarEvent';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 
 import { generateMockEvents } from '../../../hooks/calendar/useCalendar';
-import { useStudents } from '../../../hooks/useStudent';
+import { useStudents } from '../../../hooks/student/useStudent';
 
 import Notification from '../../../components/shared/Notification';
 import EventCreation from '../../../components/Events/EventCreation';

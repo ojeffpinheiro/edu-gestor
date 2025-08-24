@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useStudents } from '../../../hooks/useStudent';
+import { useStudents } from '../../../hooks/student/useStudent';
 
 import ActionsContainer from '../../../components/Team/ActionsContainer';
 import StudentTable from '../../../components/StudentTable';

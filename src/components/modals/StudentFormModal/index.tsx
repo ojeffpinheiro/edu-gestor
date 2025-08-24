@@ -3,7 +3,7 @@ import { FaCheck, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
 
 import { Input, Label } from "../../../styles/formControls";
 import { InputGroup, StyledInputGroup } from "../../../styles/inputs";
-import { useStudents } from "../../../hooks/useStudent";
+import { useStudents } from "../../../hooks/student/useStudent";
 import { Grid, InfoBox } from "../../../styles/layoutUtils";
 import { FormCard } from "../../../styles/containers";
 import { Select, InlineErrorMessage } from "./styles";
