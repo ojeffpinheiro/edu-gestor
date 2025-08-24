@@ -1,8 +1,8 @@
 // src/hooks/useDidacticSequences.ts
 
 import { useState, useEffect, useCallback } from 'react';
-import { DidacticSequence, DisciplineType } from '../utils/types/DidacticSequence';
-import { didacticSequencesService } from '../services/didacticSequencesService';
+import { DidacticSequence, DisciplineType } from '../../utils/types/DidacticSequence';
+import { didacticSequencesService } from '../../services/didacticSequencesService';
 
 export const useDidacticSequences = () => {
   const [sequences, setSequences] = useState<DidacticSequence[]>([]);

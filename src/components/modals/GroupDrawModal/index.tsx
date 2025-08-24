@@ -3,7 +3,7 @@ import { FaRandom } from "react-icons/fa";
 
 import { validateFormationParams } from '../../../utils/groupFormationValidators'
 import { createStudentGroups } from '../../../services/groupFormationService'
-import { useFormationState } from '../../../hooks/useFormationState'
+import { useFormationState } from '../../../hooks/student/useFormationState'
 
 import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
 

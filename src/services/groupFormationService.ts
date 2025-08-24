@@ -1,4 +1,4 @@
-import { distributeStudentsIntoGroups } from '../hooks/useRandomSelection';
+import { distributeStudentsIntoGroups } from '../hooks/student/useRandomSelection';
 import { StudentFormData } from '../utils/types/BasicUser';
 import { GroupFormationState, GroupFormationType } from '../utils/types/GroupFormation';
 

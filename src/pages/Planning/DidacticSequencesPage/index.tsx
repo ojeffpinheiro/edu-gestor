@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { FaPlus, FaEdit, FaTrash, FaEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-import { useDidacticSequences } from '../../../hooks/useDidacticSequences';
+import { useDidacticSequences } from '../../../hooks/didactic-sequence/useDidacticSequences';
 
 import { DidacticSequence, DisciplineType } from '../../../utils/types/DidacticSequence';
 
