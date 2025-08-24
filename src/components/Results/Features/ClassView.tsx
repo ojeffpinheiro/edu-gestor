@@ -10,8 +10,8 @@ import {
 } from '../../../utils/types/Assessment';
 
 import { useFilters } from '../../../hooks/userResultsFilters';
-import { useStudentResults } from '../../../hooks/useStudentResults';
-import { useClassMetrics } from '../../../hooks/useClassMetrics';
+import { useStudentResults } from '../../../hooks/assessment/useStudentResults';
+import { useClassMetrics } from '../../../hooks/assessment/useClassMetrics';
 
 import { prepareComparisonData } from '../../../utils/chartDataHelpers';
 

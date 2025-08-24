@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
-import useEvaluationForm from '../../../hooks/useEvaluationForm';
+import useEvaluationForm from '../../../hooks/assessment/useEvaluationForm';
 
 import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
 import { FormSectionOptions } from "../../../utils/types/FormSection";

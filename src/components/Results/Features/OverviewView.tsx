@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { FiBarChart2, FiChevronLeft, FiChevronRight, FiDownload, FiFileText, FiFilter, FiTrendingUp } from 'react-icons/fi';
 import { ClassPerformance, ExamSummary, FilterState, StudentResult } from '../../../utils/types/Assessment';
-import { useStrategicData } from '../../../hooks/useStrategicData';
+import { useStrategicData } from '../../../hooks/assessment/useStrategicData';
 
 import TemporalProgressChart from '../Charts/TemporalProgressChart';
 import ClassPerformanceChart from '../ClassPerformanceChart';

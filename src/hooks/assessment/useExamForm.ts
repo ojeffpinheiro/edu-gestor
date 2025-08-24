@@ -1,6 +1,6 @@
 // hooks/useExamForm.ts
 import { useState, useEffect } from 'react';
-import { ExamGenerationParams, Question } from '../services/examsService';
+import { ExamGenerationParams, Question } from '../../services/examsService';
 
 interface UseExamFormProps {
   initialParams: ExamGenerationParams;

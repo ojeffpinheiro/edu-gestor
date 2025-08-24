@@ -13,7 +13,7 @@ import QuestionSelectionStep from './step/QuestionSelectionStep';
 import ReviewStep from './step/ReviewStep';
 
 import { ErrorMessage } from '../../styles/feedback';
-import { useExamForm } from '../../hooks/useExamForm';
+import { useExamForm } from '../../hooks/assessment/useExamForm';
 import { ErrorBoundary } from '../shared/ErrorBoundary';
 import Notification from '../shared/Notification';
 

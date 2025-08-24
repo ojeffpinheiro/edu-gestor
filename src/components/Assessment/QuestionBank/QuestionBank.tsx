@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuestionBank } from '../../../hooks/useQuestionBank';
+import { useQuestionBank } from '../../../hooks/assessment/useQuestionBank';
 import { Question } from '../../../utils/types/Assessment';
 
 interface QuestionFiltersProps {

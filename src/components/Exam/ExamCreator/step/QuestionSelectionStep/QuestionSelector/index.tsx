@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp, FaTimes } from 'react-icons/fa';
 
-import { useQuestionSelection } from '../../../../../../hooks/useQuestionSelection';
+import { useQuestionSelection } from '../../../../../../hooks/assessment/useQuestionSelection';
 
 import { Exam } from '../../../../../../utils/types/Exam';
 import { Question } from '../../../../../../utils/types/Question';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaFileExport, FaChartBar, FaUserGraduate, FaFilter } from "react-icons/fa";
 
-import { useExamResults } from "../../../hooks/useExamResults";
+import { useExamResults } from "../../../hooks/assessment/useExamResults";
 import { Exam, ExamResult } from "../../../utils/types/Assessment";
 
 import examService from "../../../services/examService";

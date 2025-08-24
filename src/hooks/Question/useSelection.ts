@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { useQuestionSelection } from "../useQuestionSelection";
+import { useQuestionSelection } from "../assessment/useQuestionSelection";
 import { Question } from "../../utils/types/Question";
 
 export const useSelection = (questions: Question[]) => {

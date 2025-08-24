@@ -1,5 +1,5 @@
 import React from 'react';
-import { useExamCreator } from '../../../../hooks/useExamCreator';
+import { useExamCreator } from '../../../../hooks/assessment/useExamCreator';
 import { mockQuestions } from '../../../../mocks/question';
 
 import ProgressIndicator from '../../../../components/Exam/ExamCreator/ProgressIndicator';

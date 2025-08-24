@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiTrendingUp, FiTrendingDown } from 'react-icons/fi';
-import { PerformancePrediction } from '../../hooks/useStrategicData';
+import { PerformancePrediction } from '../../hooks/assessment/useStrategicData';
 
 const PredictionCard = styled.div<{ riskLevel: string }>`
   padding: var(--space-md);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Exam } from "../utils/types/Assessment";
+import { Exam } from "../../utils/types/Assessment";
 
 interface UseExamSecurityProps {
   examConfig: any;

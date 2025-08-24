@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { Question } from '../utils/types/Question';
+import { Question } from '../../utils/types/Question';
 
 interface UseQuestionSelectionProps {
   availableQuestions: Question[];

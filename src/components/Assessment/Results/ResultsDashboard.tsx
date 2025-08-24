@@ -3,7 +3,7 @@ import { FaChartLine, FaUsers, FaClipboardCheck, FaChartBar, FaCaretUp, FaCaretD
 
 import { EnhancedExamResult, Exam, ExamResult } from '../../../utils/types/Assessment';
 
-import { useExams } from '../../../hooks/useExams';
+import { useExams } from '../../../hooks/assessment/useExams';
 import { mockExams } from '../../../mocks/assessmentData';
 
 import { Table, TableHeader, TableRow, TableCell, EmptyStateMessage } from '../../../styles/table';

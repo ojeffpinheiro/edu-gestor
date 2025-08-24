@@ -1,6 +1,5 @@
-// src/hooks/useQuestionBank.ts
 import { useState, useCallback, useMemo } from 'react';
-import { useAssessment } from '../contexts/AssessmentContext';
+import { useAssessment } from '../../contexts/AssessmentContext';
 
 export interface QuestionFilters {
   category?: string;

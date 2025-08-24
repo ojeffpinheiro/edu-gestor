@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ClassPerformance, ExamSummary, StudentResult } from '../utils/types/Assessment';
+import { ClassPerformance, ExamSummary, StudentResult } from '../../utils/types/Assessment';
 
 interface InstitutionalMetrics {
   totalStudents: number;

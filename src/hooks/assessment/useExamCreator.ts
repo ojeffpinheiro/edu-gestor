@@ -1,8 +1,7 @@
-// hooks/useExamCreator.ts - Versão melhorada com geração automática inteligente
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Exam, ExamTypes, ExamVariant } from '../utils/types/Exam';
-import { Question, DifficultyLevelType } from '../utils/types/Question';
-import { generateAccessCode } from '../utils/examHelpers';
+import { Exam, ExamTypes, ExamVariant } from '../../utils/types/Exam';
+import { Question, DifficultyLevelType } from '../../utils/types/Question';
+import { generateAccessCode } from '../../utils/examHelpers';
 
 interface QuestionDistributionAnalysis {
   difficulty: DifficultyLevelType;

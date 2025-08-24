@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { FiAlertTriangle, FiAlertCircle, FiInfo } from 'react-icons/fi';
-import { LearningGap } from '../../hooks/useStrategicData';
+import { LearningGap } from '../../hooks/assessment/useStrategicData';
 
 const GapCard = styled.div<{ severity: 'critical' | 'high' | 'medium' | 'low' }>`
   padding: var(--space-md);

@@ -6,8 +6,8 @@ import ExamSecurityManager from './ExamSecurityManager';
 import ExamConfig from './ExamConfig';
 import QuestionSelector from './QuestionSelector';
 
-import useExamSecurity from '../../../hooks/useExamSecurity';
-import useExamGenerator from '../../../hooks/useExamGenerator';
+import useExamSecurity from '../../../hooks/assessment/useExamSecurity';
+import useExamGenerator from '../../../hooks/assessment/useExamGenerator';
 
 import { StepIndicator } from '../../../styles/indicators';
 import { 

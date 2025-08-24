@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { Question } from '../utils/types/Question';
-import { combineQuestions } from '../utils/questionUtils';
+import { Question } from '../../utils/types/Question';
+import { combineQuestions } from '../../utils/questionUtils';
 
 interface UseQuestionCombinationProps {
   questions: Question[];

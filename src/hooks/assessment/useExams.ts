@@ -1,8 +1,6 @@
-// src/hooks/useExams.ts
-
 import { useState, useCallback } from 'react';
-import { Exam, ExamResult, TimeframeFilter } from '../utils/types/Assessment';
-import examService from '../services/examService';
+import { Exam, ExamResult, TimeframeFilter } from '../../utils/types/Assessment';
+import examService from '../../services/examService';
 
 export const useExams = () => {
   const [exams, setExams] = useState<Exam[]>([]);

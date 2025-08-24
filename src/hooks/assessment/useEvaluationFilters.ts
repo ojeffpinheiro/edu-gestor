@@ -1,4 +1,3 @@
-// Crie um novo arquivo hooks/useEvaluationFilters.ts
 import { useState } from 'react';
 
 export const useEvaluationFilters = () => {

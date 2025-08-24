@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ClassPerformance, ExamResult, ExamSummary, StudentResult } from '../utils/types/Assessment';
+import { ClassPerformance, ExamResult, ExamSummary, StudentResult } from '../../utils/types/Assessment';
 
 /**
  * Transforma dados brutos de alunos em formato para exibição

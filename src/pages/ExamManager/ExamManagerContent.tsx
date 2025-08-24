@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 
-import useExamManager from '../../hooks/useExamManager';
+import useExamManager from '../../hooks/assessment/useExamManager';
 import ExamCardComponent from '../../components/Exam/ExamCard';
 import ExamEmptyState from '../../components/Exam/ExamEmptyState';
 import ExamModals from '../../components/modals/ExamModals';

@@ -4,7 +4,7 @@ import { Evaluation, StudentScore } from "../../../utils/types/AssessmentEvaluat
 import { mockStudents } from "../../../mocks/student";
 import { mockEvaluations } from "../../../mocks/evaluation";
 
-import { useEvaluationFilters } from "../../../hooks/useEvaluationFilters";
+import { useEvaluationFilters } from "../../../hooks/assessment/useEvaluationFilters";
 
 import EvaluationForm from "../../../components/modals/EvaluationForm";
 import RegisterScoresModal from "../../../components/modals/RegisterScoresModal";

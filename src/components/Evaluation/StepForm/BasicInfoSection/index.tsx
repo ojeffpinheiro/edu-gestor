@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FiInfo, FiCalendar, FiBook, FiClipboard } from "react-icons/fi";
 
-import { initializeEmptyEvaluation } from "../../../../hooks/useEvaluationForm";
+import { initializeEmptyEvaluation } from "../../../../hooks/assessment/useEvaluationForm";
 
 import { Label, StyledInputGroup } from "../../../../styles/inputs";
 import { 

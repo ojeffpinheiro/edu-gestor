@@ -1,7 +1,7 @@
 import React from 'react';
 import styled, { css } from 'styled-components';
 import { FiAlertTriangle, FiAlertCircle, FiInfo } from 'react-icons/fi';
-import { ClassAlert } from '../../hooks/useStrategicData';
+import { ClassAlert } from '../../hooks/assessment/useStrategicData';
 
 const AlertCard = styled.div<{ severity: 'critical' | 'high' | 'medium' | 'low' }>`
   padding: var(--space-md);

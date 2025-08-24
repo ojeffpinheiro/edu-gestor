@@ -1,6 +1,6 @@
 // hooks/useSavedFilters.ts
 import { useState, useEffect } from 'react';
-import { SavedFilter } from '../utils/types/Question';
+import { SavedFilter } from '../../utils/types/Question';
 
 export const useSavedFilters = () => {
   const [savedFilters, setSavedFilters] = useState<SavedFilter[]>([]);

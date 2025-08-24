@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import * as rubricService from '../services/rubricService';
+import * as rubricService from '../../services/rubricService';
 
 // Utilizando a interface EvaluationRubric já definida no documento
 interface EvaluationRubric {

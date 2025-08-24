@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
-import { ExamResult } from '../utils/types/Assessment';
+import { ExamResult } from '../../utils/types/Assessment';
 
 interface UseExamResultsProps {
   examId?: string;
