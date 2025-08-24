@@ -281,3 +281,8 @@ export interface FilterState {
   selectedSubjects: string[];
   selectedTimeRange: 'all' | 'week' | 'month' | 'quarter';
 }
+
+
+export interface ClassPerformanceWithSubjects extends ClassPerformance {
+  subjects: { name: string; averageScore: number; schoolAverage: number }[];
+}

@@ -1,4 +1,3 @@
-// Button.styles.ts
 import styled, { css } from 'styled-components';
 import { buttonVariants, sizeVariants } from '../../styles/variants';
 

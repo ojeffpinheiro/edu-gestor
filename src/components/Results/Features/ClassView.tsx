@@ -5,7 +5,8 @@ import {
   EvaluationRubric,
   StudentResult,
   ChartTab,
-  ExamSummary
+  ExamSummary,
+  ClassPerformanceWithSubjects
 } from '../../../utils/types/Assessment';
 
 import { useFilters } from '../../../hooks/userResultsFilters';
@@ -29,6 +30,7 @@ import ClassViewToolbar from '../ClassViewToolbar';
 import ClassSelectorChart from '../Charts/ClassSelectorChart';
 
 import { ClassViewContainer } from './styles/ClassViewStyles';
+import { EducationalAnalytics } from '../EducationalAnalytics';
 
 interface ClassViewProps {
   classPerformances: ClassPerformance[];
@@ -37,10 +39,6 @@ interface ClassViewProps {
   onStudentSelect: (studentId: string | null) => void;
   rubrics?: EvaluationRubric[];
   isLoading?: boolean;
-}
-
-interface ClassPerformanceWithSubjects extends ClassPerformance {
-  subjects: { name: string; averageScore: number; schoolAverage: number }[];
 }
 
 /**
@@ -90,7 +88,7 @@ const ClassView: React.FC<ClassViewProps> = ({
     const periods = new Set(classPerformances
       .map((c: ClassPerformance) => c.academicPeriod)
       .filter((p): p is string => !!p));
-      return Array.from(periods);
+    return Array.from(periods);
   }, [classPerformances]);
 
   const filteredClassData = useMemo(() => {
@@ -161,51 +159,64 @@ const ClassView: React.FC<ClassViewProps> = ({
         setSelectedSubject={setSelectedSubject}
         subjects={currentClass?.subjects || []} />
 
-      {currentClass ? (
+      {activeView === 'class' ? (
+        // Seu ClassView atual aqui
         <>
-          <ClassMetricsSection metrics={classMetrics} />
+          {currentClass
+            ? (
+              <>
+                <ClassMetricsSection metrics={classMetrics} />
 
-          {filteredClassData && (
-            <ClassChartTabs
-              activeTab={activeChartTab}
-              classPerformance={filteredClassData}
-              onTabChange={setActiveChartTab}
-              rubrics={rubrics}
-            />
-          )}
+                {filteredClassData && (
+                  <ClassChartTabs
+                    activeTab={activeChartTab}
+                    classPerformance={filteredClassData}
+                    onTabChange={setActiveChartTab}
+                    rubrics={rubrics}
+                  />
+                )}
 
-          <ClassSelectorChart
-            classes={filteredByPeriod}
-            initialSelection={selectedClasses}
-            onSelectionChange={(selected) => setSelectedClasses(selected.map(c => c.classId))}
-          >
-            {(selectedClasses) => (
-              <InteractiveChart
-                data={prepareComparisonData(selectedClasses, selectedSubject)}
-                onElementClick={handleBarClick}
+                <ClassSelectorChart
+                  classes={filteredByPeriod}
+                  initialSelection={selectedClasses}
+                  onSelectionChange={(selected) => setSelectedClasses(selected.map(c => c.classId))}
+                >
+                  {(selectedClasses) => (
+                    <InteractiveChart
+                      data={prepareComparisonData(selectedClasses, selectedSubject)}
+                      onElementClick={handleBarClick}
+                    />
+                  )}
+                </ClassSelectorChart>
+
+                {currentClass.subjects?.length > 0 && (
+                  <SubjectSelector
+                    subjects={currentClass.subjects}
+                    selectedSubject={selectedSubject}
+                    onSelect={setSelectedSubject}
+                  />
+                )}
+
+                <ClassResultsTable
+                  students={studentsAsResults}
+                  examResults={allExamResults}
+                  timeRange={timeRange}
+                  onStudentSelect={handleStudentSelect}
+                />
+
+                <BenchmarkSection classes={classPerformances} metrics={classMetrics} />
+              </>)
+            : (
+              <EmptyState
+                message="Selecione uma turma para visualizar os dados"
               />
             )}
-          </ClassSelectorChart>
-
-          {currentClass.subjects?.length > 0 && (
-            <SubjectSelector
-              subjects={currentClass.subjects}
-              selectedSubject={selectedSubject}
-              onSelect={setSelectedSubject}
-            />
-          )}
-
-          <ClassResultsTable
-            students={studentsAsResults}
-            examResults={allExamResults}
-            timeRange={timeRange}
-            onStudentSelect={handleStudentSelect}
-          />
-
-          <BenchmarkSection classes={classPerformances} metrics={classMetrics} />
-        </>) : (
-        <EmptyState
-          message="Selecione uma turma para visualizar os dados"
+        </>
+      ) : (
+        <EducationalAnalytics
+          classPerformances={classPerformances}
+          currentClass={currentClass}
+          students={studentsAsResults}
         />
       )}
 
@@ -225,7 +236,7 @@ const ClassView: React.FC<ClassViewProps> = ({
           onStudentSelect(null);
         }}
       />
-      
+
       {selectedStudent && (
         <EnhancedStudentDetailModal
           student={selectedStudent}
