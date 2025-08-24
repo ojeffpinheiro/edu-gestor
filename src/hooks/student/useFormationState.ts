@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../utils/types/GroupFormation';
-import { FeedbackState } from '../utils/types/FeedbackState';
-import { StudentFormData } from '../utils/types/BasicUser';
+import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../../utils/types/GroupFormation';
+import { FeedbackState } from '../../utils/types/FeedbackState';
+import { StudentFormData } from '../../utils/types/BasicUser';
 
 /**
  * Hook personalizado para gerenciar o estado de formação de grupos
