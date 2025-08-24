@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
-import { DailyVerification } from '../utils/types/Team';
-import { useClassroom } from '../contexts/ClassroomContext';
+import { DailyVerification } from '../../utils/types/Team';
+import { useClassroom } from '../../contexts/ClassroomContext';
 
 export const useConferenceMode = () => {
   const { state, dispatch } = useClassroom();

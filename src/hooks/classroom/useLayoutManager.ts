@@ -1,8 +1,8 @@
 // useLayoutManager.ts
 import { useCallback } from 'react';
-import { useClassroom } from '../contexts/ClassroomContext';
-import { generateLayout, Template, validateLayout } from '../utils/classroomUtils';
-import { LayoutConfig } from '../utils/types/Team';
+import { useClassroom } from '../../contexts/ClassroomContext';
+import { generateLayout, Template, validateLayout } from '../../utils/classroomUtils';
+import { LayoutConfig } from '../../utils/types/Team';
 
 export const useLayoutManager = () => {
   const { state, dispatch } = useClassroom();

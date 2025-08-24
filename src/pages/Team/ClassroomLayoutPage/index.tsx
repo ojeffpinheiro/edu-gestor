@@ -5,9 +5,9 @@ import { DailyVerification, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo, Prio
 
 import { useClassroom } from '../../../contexts/ClassroomContext';
 
-import { useConferenceMode } from '../../../hooks/useConferenceMode';
-import { useLayoutManager } from '../../../hooks/useLayoutManager';
-import { useSeatOperations } from '../../../hooks/useSeatingOperations';
+import { useConferenceMode } from '../../../hooks/classroom/useConferenceMode';
+import { useLayoutManager } from '../../../hooks/classroom/useLayoutManager';
+import { useSeatOperations } from '../../../hooks/classroom/useSeatingOperations';
 
 import { initializeLayout } from '../../../utils/classroomUtils';
 import { getAttendanceColor } from '../../../utils/attendanceUtils';

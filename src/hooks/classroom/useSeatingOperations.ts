@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
-import { useClassroom } from '../contexts/ClassroomContext';
-import { SeatType } from '../utils/types/Team';
-import { StudentFormData } from '../utils/types/BasicUser';
+import { useClassroom } from '../../contexts/ClassroomContext';
+import { SeatType } from '../../utils/types/Team';
+import { StudentFormData } from '../../utils/types/BasicUser';
 
 export const useSeatOperations = () => {
   const { state, dispatch } = useClassroom();
