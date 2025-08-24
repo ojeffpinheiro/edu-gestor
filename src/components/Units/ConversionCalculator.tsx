@@ -1,7 +1,7 @@
 // src/components/Units/ConversionCalculator.tsx
 import React, { useState } from 'react';
 import { FaExchangeAlt } from 'react-icons/fa';
-import { UnitType, ConversionRelation } from '../../utils/types/Question';
+import { UnitType, ConversionRelation } from '../../types/evaluation/Question';
 import { Grid, Flex } from '../../styles/layoutUtils';
 import { Input, Label, InputGroup, Select } from '../../styles/inputs';
 import { Button } from '../../styles/buttons';

@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { ClassPerformance, Subject } from '../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../types/academic/Assessment';
 
 interface FilterState {
   period: 'all' | string;

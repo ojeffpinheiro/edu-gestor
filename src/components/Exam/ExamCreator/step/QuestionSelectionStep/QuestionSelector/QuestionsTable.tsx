@@ -2,7 +2,7 @@ import React from 'react'
 import { FiTrash2 } from 'react-icons/fi';
 import { DIFFICULTY_LABELS } from './types';
 import { FaEdit, FaEye } from 'react-icons/fa';
-import { Question } from '../../../../../../utils/types/Question';
+import { Question } from '../../../../../../types/evaluation/Question';
 
 import {
     ActionButton,

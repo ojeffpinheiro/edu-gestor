@@ -1,6 +1,6 @@
 // src/mocks/classesData.ts
 
-import { ClassData } from "../utils/types/Class";
+import { ClassData } from "../types/classroom/Class";
 
 
 export const classes: ClassData[] = [

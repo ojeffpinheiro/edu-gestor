@@ -10,7 +10,7 @@ import { Container } from '../../../styles/layoutUtils';
 import { Title } from '../../../styles/typography';
 import { SearchInput } from '../../../styles/formControls';
 import { PaginationContainer, PaginationControls, PaginationInfo } from '../../../styles/pagination';
-import { StatusType } from '../../../utils/types/UIComponent';
+import { StatusType } from '../../../types/ui/UIComponent';
 
 // Define the types for the results data
 interface ResultItem {

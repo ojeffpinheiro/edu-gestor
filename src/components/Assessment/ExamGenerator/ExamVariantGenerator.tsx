@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaCopy, FaRandom, FaFileExport, FaCheck } from 'react-icons/fa';
 
-import { Exam, Question } from '../../../utils/types/Assessment';
+import { Exam, Question } from '../../../types/academic/Assessment';
 import QRCodeService from '../../../utils/qrCodeGenerator';
 import ExamPdfGenerator from '../../../utils/examPdfGenerator';
 

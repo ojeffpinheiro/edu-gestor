@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SchoolInfo } from '../../../utils/types/Planning';
+import { SchoolInfo } from '../../../types/academic/Planning';
 import { FormGroup } from '../../../styles/formControls';
 import { ErrorMessage } from '../../../styles/feedback';
 import { usePlanning } from '../../../contexts/PlannerContext';

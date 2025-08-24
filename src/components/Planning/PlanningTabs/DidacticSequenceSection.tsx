@@ -1,5 +1,5 @@
 import React from 'react';
-import { DidacticSequence } from '../../../utils/types/Planning';
+import { DidacticSequence } from '../../../types/academic/Planning';
 
 import { SectionTitle } from '../../../styles/baseComponents';
 import { FormGroup } from '../../../styles/formControls';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaFilter, FaStar, FaSave } from 'react-icons/fa';
-import { FilterOptions, SavedFilter } from '../../../utils/types/Question';
+import { FilterOptions, SavedFilter } from '../../../types/evaluation/Question';
 import { Card } from '../../../styles/card';
 import { Divider, Flex, Grid } from '../../../styles/layoutUtils';
 import { Input, Label, Select } from '../../../styles/inputs';

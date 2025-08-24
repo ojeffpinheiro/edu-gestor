@@ -4,7 +4,7 @@ import { FaSave } from 'react-icons/fa';
 import { Category, CategoryWithId } from '../../../components/Question/QuestionForm/type';
 import { SortOption } from '../../../components/Sort/types';
 
-import { Question } from '../../../utils/types/Question';
+import { Question } from '../../../types/evaluation/Question';
 
 import { mockQuestions } from '../../../mocks/question';
 

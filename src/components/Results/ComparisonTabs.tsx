@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ComparisonTab } from '../../utils/types/Assessment';
+import { ComparisonTab } from '../../types/academic/Assessment';
 
 const TabsContainer = styled.div`
   display: flex;

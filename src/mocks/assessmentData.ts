@@ -1,6 +1,6 @@
 // src/mocks/assessmentData.ts
 
-import { Question, Exam, EvaluationRubric, ExamResult, ReportTemplate } from '../utils/types/Assessment';
+import { Question, Exam, EvaluationRubric, ExamResult, ReportTemplate } from '../types/academic/Assessment';
 
 export const mockQuestions: Question[] = [
   {

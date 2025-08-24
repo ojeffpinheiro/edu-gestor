@@ -1,5 +1,5 @@
 // services/reportService.ts
-import { DailyVerification, SeatType } from '../utils/types/Team';
+import { DailyVerification, SeatType } from '../types/classroom/Team';
 import { StudentFormData } from '../utils/types/BasicUser';
 
 export const generateAttendanceReport = (

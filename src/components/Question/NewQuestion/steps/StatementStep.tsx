@@ -5,7 +5,7 @@ import { FaEdit, FaPlus } from "react-icons/fa";
 import {
   FormGroup
 } from '../../../../styles/formControls';
-import { QuestionFormData } from '../../../../utils/types/Question';
+import { QuestionFormData } from '../../../../types/evaluation/Question';
 import { FormErrorContainer, FormLabel, FormSection, FormSectionTitle, FormTextArea } from '../../QuestionForm.styles';
 
 interface StatementStepProps {

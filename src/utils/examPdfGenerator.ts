@@ -1,5 +1,5 @@
 import jsPDF from 'jspdf';
-import { Exam, Question } from './types/Assessment'
+import { Exam, Question } from '../types/academic/Assessment'
 import QRCode from 'qrcode';
 import JsBarcode from 'jsbarcode';
 

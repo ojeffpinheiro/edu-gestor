@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { FaUsers, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 
-import { ClassData, ClassFilters } from "../../../utils/types/Class";
+import { ClassData, ClassFilters } from "../../../types/classroom/Class";
 
 // Importação dos dados de classes (mockados)
 import { classes } from "../../../mocks/classesData";

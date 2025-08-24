@@ -1,6 +1,6 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 
 interface ValueAddedChartProps {
   classes: ClassPerformance[];

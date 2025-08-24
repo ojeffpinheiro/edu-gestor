@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ClassPerformance, ClassMetricsType } from '../../utils/types/Assessment';
+import { ClassPerformance, ClassMetricsType } from '../../types/academic/Assessment';
 
 /**
  * Calcula métricas agregadas para uma turma

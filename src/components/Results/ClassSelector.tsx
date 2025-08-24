@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 
 interface ClassSelectorProps {
   classes: ClassPerformance[];

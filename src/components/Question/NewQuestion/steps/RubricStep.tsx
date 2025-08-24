@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaCheck, FaTimes, FaPlus, FaTrash, FaEdit } from 'react-icons/fa';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { QuestionFormData, RubricCriteria } from '../../../../utils/types/Question';
+import { QuestionFormData, RubricCriteria } from '../../../../types/evaluation/Question';
 import { rubricCriteriaSchema } from '../../../../utils/validation/schemas';
 import {
   FormStepContainer, CriteriaItem,

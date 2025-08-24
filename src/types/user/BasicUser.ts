@@ -1,6 +1,6 @@
-import { Assessment } from "./AssessmentEvaluation";
-import { AttendanceRecord } from "./Attendance";
-import { PriorityType } from "./Team";
+import { Assessment } from "../../types/evaluation/AssessmentEvaluation";
+import { AttendanceRecord } from "../../types/academic/Attendance";
+import { PriorityType } from "../../types/classroom/Team";
 
 // Student Interface
 export interface Student {

@@ -1,6 +1,6 @@
 // components/AdvancedFilters.tsx
 import React, { useMemo, useState } from 'react';
-import { ClassPerformance, Subject } from '../../../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../../../types/academic/Assessment';
 import { FilterGroup, FilterLabel, FiltersContainer, FiltersHeader } from './styles';
 import { FiFilter, FiX } from 'react-icons/fi';
 

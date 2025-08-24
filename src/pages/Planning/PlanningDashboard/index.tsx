@@ -36,7 +36,7 @@ import {
   TabButton,
   TabButtons
 } from './styles';
-import {  AccessCard, ActivityType, ClassSummaryType, NotificationType, PlanningItemType, SubjectSummaryType } from '../../../utils/types/planningDashboard';
+import {  AccessCard, ActivityType, ClassSummaryType, NotificationType, PlanningItemType, SubjectSummaryType } from '../../../types/ui/planningDashboard';
 import LoadingSpinner from '../../../components/shared/LoadingSpinner';
 import { ErrorAlert } from '../../../components/shared/ErrorAlert';
 import { ErrorBoundary } from '../../../components/shared/ErrorBoundary';

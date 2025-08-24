@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimeframeFilter, ViewMode } from '../../../utils/types/Assessment';
+import { TimeframeFilter, ViewMode } from '../../../types/academic/Assessment';
 import { FilterGroup, FiltersContainer } from './styles';
 
 interface DashboardFiltersProps {

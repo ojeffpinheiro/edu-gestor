@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Content, Question, Topic } from "../../../utils/types/Question";
+import { Content, Question, Topic } from "../../../types/evaluation/Question";
 
 import BasicDefinitionsStep from "../../Question/steps/BasicInfo";
 import StatementStep from "../../Question/steps/StatementStep";

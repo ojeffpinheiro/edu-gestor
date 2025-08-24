@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Question } from '../../../utils/types/Question';
-import { EnhancedExamResult } from '../../../utils/types/Assessment';
+import { Question } from '../../../types/evaluation/Question';
+import { EnhancedExamResult } from '../../../types/academic/Assessment';
 
 interface DifficultyAnalysisProps {
   questions: Question[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { LoadingSpinnerProps } from '../../utils/types/planningDashboard';
+import { LoadingSpinnerProps } from '../../types/ui/planningDashboard';
 import { spin } from '../../styles/animations';
 
 /**

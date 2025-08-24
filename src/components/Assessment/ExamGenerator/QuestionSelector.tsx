@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
-import { Question } from '../../../utils/types/Assessment';
+import { Question } from '../../../types/academic/Assessment';
 import { 
   AddQuestionButton, 
   QuestionItem, 

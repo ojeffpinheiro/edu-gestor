@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Evaluation } from '../../../utils/types/AssessmentEvaluation';
+import { Evaluation } from '../../../types/evaluation/AssessmentEvaluation';
 import { Card, CardBody, CardHeader } from '../../../styles/card';
 import ClassGradesView from '../ClassGradesView';
 

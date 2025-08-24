@@ -1,6 +1,6 @@
 import React from 'react'
 import { ActionButton, QuestionTableContent, TableHeader, TableRow } from './styles';
-import { Question } from '../../../../utils/types/Question';
+import { Question } from '../../../../types/evaluation/Question';
 import { FiBookmark, FiCopy, FiEdit2, FiZoomIn } from 'react-icons/fi';
 import QuestionStats from '../QuestionStats';
 

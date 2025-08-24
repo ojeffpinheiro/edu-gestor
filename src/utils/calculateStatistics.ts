@@ -1,4 +1,4 @@
-import { ExamResult } from '../utils/types/Assessment';
+import { ExamResult } from '../types/academic/Assessment';
 
 interface StatisticsData {
   mean: number;

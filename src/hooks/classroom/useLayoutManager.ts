@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { useClassroom } from '../../contexts/ClassroomContext';
 import { generateLayout, Template, validateLayout } from '../../utils/classroomUtils';
-import { LayoutConfig } from '../../utils/types/Team';
+import { LayoutConfig } from '../../types/classroom/Team';
 
 export const useLayoutManager = () => {
   const { state, dispatch } = useClassroom();

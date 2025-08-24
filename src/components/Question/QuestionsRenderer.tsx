@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Question } from '../../utils/types/Question';
+import { Question } from '../../types/evaluation/Question';
 import QuestionCard from './QuestionCard';
 import QuestionsTable from './QuestionsTable';
 

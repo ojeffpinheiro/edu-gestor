@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { DifficultyLevelType, QuestionStatus } from '../../utils/types/Question';
+import { DifficultyLevelType, QuestionStatus } from '../../types/evaluation/Question';
 
 // Interface para os filtros - deve ser idêntica à usada no QuestionSelector
 export interface FilterValues {

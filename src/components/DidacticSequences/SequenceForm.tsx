@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FaTimes, FaCheck, FaExclamationTriangle, FaArrowLeft, FaArrowRight, FaSave } from "react-icons/fa";
 import type { Resolver } from 'react-hook-form';
 
-import { SequenceFormData, SequenceStatus } from '../../utils/types/DidacticSequence';
+import { SequenceFormData, SequenceStatus } from '../../types/academic/DidacticSequence';
 
 // Import separate section components
 import BasicInfoSection from './BasicInfoSection';

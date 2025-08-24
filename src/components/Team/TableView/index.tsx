@@ -7,7 +7,7 @@ import {
   PriorityTag
 } from './styles';
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { PRIORITY_CONFIGS, PriorityType } from '../../../utils/types/Team';
+import { PRIORITY_CONFIGS, PriorityType } from '../../../types/classroom/Team';
 import { useClassroom } from '../../../contexts/ClassroomContext';
 
 interface TableViewProps {

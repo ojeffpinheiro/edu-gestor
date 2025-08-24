@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiChevronDown, FiSearch, FiX } from 'react-icons/fi';
 import styled, { css } from 'styled-components';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 
 const ClassViewContainer = styled.div`
   display: flex;

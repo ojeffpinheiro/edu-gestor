@@ -1,5 +1,5 @@
 import React from 'react'
-import { ClassPerformance, Subject } from '../../utils/types/Assessment';
+import { ClassPerformance, Subject } from '../../types/academic/Assessment';
 import ClassSelector from './ClassSelector';
 import AdvancedFilters, { FilterState } from './AdvancedFilters';
 

@@ -5,7 +5,7 @@ import {
   FiSearch, FiTarget, FiUsers, FiX
 } from 'react-icons/fi';
 
-import { PlanningData } from '../../../utils/types/Planning';
+import { PlanningData } from '../../../types/academic/Planning';
 import { mockPlanningData } from '../../../mocks/planning';
 import SchoolInfoSection from '../PlanningTabs/SchoolInfoSection';
 import GeneralObjectivesSection from '../PlanningTabs/GeneralObjectivesSection';

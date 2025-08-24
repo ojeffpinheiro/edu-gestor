@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { format } from 'date-fns';
 
-import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
+import { CalendarEvent, EventType } from '../../types/academic/CalendarEvent';
 
 import Modal from '../modals/Modal';
 

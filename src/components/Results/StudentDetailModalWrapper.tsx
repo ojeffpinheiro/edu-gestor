@@ -1,5 +1,5 @@
 import React from 'react'
-import { StudentResult } from "../../utils/types/Assessment";
+import { StudentResult } from "../../types/academic/Assessment";
 import EnhancedStudentDetailModal from "./EnhancedStudentDetailModal";
 /**
  * Wrapper para o modal de detalhes do aluno que gerencia a renderização condicional.

@@ -1,6 +1,6 @@
 // ProgressView.tsx
 import React from 'react';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { ClassPerformance } from '../../../types/academic/Assessment';
 import ProgressChart from '../Charts/ProgressChart';
 
 interface ProgressViewProps {

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { SeatType, PriorityType, PRIORITY_CONFIGS } from '../../utils/types/Team';
+import { SeatType, PriorityType, PRIORITY_CONFIGS } from '../../types/classroom/Team';
 import { StudentFormData } from '../../utils/types/BasicUser';
 
 interface UseSeatManagementProps {

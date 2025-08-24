@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { mockQuestions } from "../../mocks/question";
-import { Question } from "../../utils/types/Question";
+import { Question } from "../../types/evaluation/Question";
 
 // hook customizado para gerenciar o estado das questões
 const useQuestions = () => {

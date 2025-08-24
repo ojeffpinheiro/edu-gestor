@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaCheckSquare, FaSquare } from "react-icons/fa";
 import styled from 'styled-components';
-import { Report } from '../../utils/types/UIComponent';
+import { Report } from '../../types/ui/UIComponent';
 
 const ReportCheckbox: React.FC<Report> = ({ checked, onChange, label, disabled = false }) => {
     return (

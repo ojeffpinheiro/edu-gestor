@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAssessment } from '../../contexts/AssessmentContext';
-import { Exam, ExamModalType } from '../../utils/types/Assessment';
+import { Exam, ExamModalType } from '../../types/academic/Assessment';
 
 /**
  * Custom hook para gerenciar o estado e a lógica do gerenciador de exames

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiFilter } from 'react-icons/fi';
 
-import { QuestionType } from '../../../utils/types/Question';
+import { QuestionType } from '../../../types/evaluation/Question';
 
 import {
   FiltersContainer,

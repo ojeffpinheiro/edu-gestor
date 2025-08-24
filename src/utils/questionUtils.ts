@@ -1,4 +1,4 @@
-import { Alternative, DifficultyLevelType, Question } from "./types/Question";
+import { Alternative, DifficultyLevelType, Question } from "../types/evaluation/Question";
 
 export const calculateAverageDifficulty = (questions: Question[]): DifficultyLevelType => {
   if (!questions.length) return 'easy'; // fallback para lista vazia

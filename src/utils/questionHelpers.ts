@@ -2,7 +2,7 @@
  * Utility functions for handling questions, variables, and equations
  */
 
-import { Variable } from "./types/Question";
+import { Variable } from "../types/evaluation/Question";
 
 /**
  * Generates a random value within a specified range

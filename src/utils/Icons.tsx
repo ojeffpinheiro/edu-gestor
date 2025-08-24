@@ -1,6 +1,6 @@
 import React from 'react'
 import { FaLayerGroup, FaBook, FaCubes, FaBookOpen, FaAlignLeft } from 'react-icons/fa';
-import { HierarchyLevel } from './types/Topic';
+import { HierarchyLevel } from '../types/academic/Topic';
 
 export const getItemIcon = (type: HierarchyLevel, size = 16) => {
   const iconProps = { size };

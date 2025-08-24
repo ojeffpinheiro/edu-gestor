@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { StudentResult } from '../../utils/types/Assessment';
+import { StudentResult } from '../../types/academic/Assessment';
 import styled from 'styled-components';
 
 interface StudentSelectorProps {

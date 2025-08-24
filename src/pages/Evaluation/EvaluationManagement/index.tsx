@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 
-import { Evaluation, StudentScore } from "../../../utils/types/AssessmentEvaluation";
+import { Evaluation, StudentScore } from "../../../types/evaluation/AssessmentEvaluation";
 import { mockStudents } from "../../../mocks/student";
 import { mockEvaluations } from "../../../mocks/evaluation";
 

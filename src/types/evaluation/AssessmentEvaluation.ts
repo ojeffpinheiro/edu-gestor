@@ -1,5 +1,5 @@
 import { Question } from "./Question";
-import { Resource } from "./Resource";
+import { Resource } from "../shared/Resource";
 
 // Assessment Interface
 export interface Assessment {

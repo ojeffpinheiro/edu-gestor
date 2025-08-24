@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useFormContext, useFieldArray } from 'react-hook-form';
 import { FaTimes, FaPlus, FaExclamationTriangle } from "react-icons/fa";
 
-import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { SequenceFormData } from '../../types/academic/DidacticSequence';
 
 import { Label } from '../../styles/inputs';
 

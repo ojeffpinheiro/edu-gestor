@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { ExamResult, StudentResult } from '../../utils/types/Assessment';
+import { ExamResult, StudentResult } from '../../types/academic/Assessment';
 import { calculatePerformanceTrend } from '../../utils/dataProcessing';
 
 interface ClassResultsTableProps {

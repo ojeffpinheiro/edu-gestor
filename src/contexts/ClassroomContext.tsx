@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useReducer } from 'react';
-import { LayoutConfig, SeatType } from '../utils/types/Team';
+import { LayoutConfig, SeatType } from '../types/classroom/Team';
 import { StudentFormData } from '../utils/types/BasicUser';
 import { findBestSeatForStudent, initializeLayout, Template } from '../utils/classroomUtils';
 import { mockStudentsTeam } from '../mocks/student';

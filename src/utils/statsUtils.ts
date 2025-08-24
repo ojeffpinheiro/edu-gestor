@@ -1,4 +1,4 @@
-import { ClassPerformance, EnhancedExamResult } from "./types/Assessment";
+import { ClassPerformance, EnhancedExamResult } from "../types/academic/Assessment";
 
 // Calcula distribuição de notas para histograma
 export const calculateDistribution = (examResults: EnhancedExamResult[]) => {

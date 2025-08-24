@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 
 import { Table, TableCell, TableHeader, TableRow } from '../../../styles/table'
-import { EvaluationPart, StudentScore } from "../../../utils/types/AssessmentEvaluation";
+import { EvaluationPart, StudentScore } from "../../../types/evaluation/AssessmentEvaluation";
 import Modal from "../Modal";
 
 interface RegisterScoresModalProps {

@@ -1,5 +1,5 @@
 import { StudentFormData } from "./types/BasicUser";
-import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from "./types/GroupFormation";
+import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from "../types/classroom/GroupFormation";
 
 /**
  * Valida os parâmetros antes da formação dos grupos

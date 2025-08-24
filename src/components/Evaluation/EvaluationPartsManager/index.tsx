@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaPlus } from "react-icons/fa";
 
-import { EvaluationPart } from "../../../utils/types/AssessmentEvaluation";
+import { EvaluationPart } from "../../../types/evaluation/AssessmentEvaluation";
 
 import { WeightSummary } from "./WeightSummary";
 import { EditableRow } from "./EditableRow";

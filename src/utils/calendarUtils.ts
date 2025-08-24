@@ -7,7 +7,7 @@ import {
     endOfWeek,
     isSameDay
   } from 'date-fns';
-import { CalendarEvent } from './types/CalendarEvent';
+import { CalendarEvent } from '../types/academic/CalendarEvent';
   
   export const getDaysInMonthGrid = (date: Date) => {
     const monthStart = startOfMonth(date);

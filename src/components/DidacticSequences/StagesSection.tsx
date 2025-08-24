@@ -3,7 +3,7 @@ import { useFormContext, useFieldArray } from 'react-hook-form';
 import { FaPlus, FaExclamationTriangle } from "react-icons/fa";
 import { v4 as uuidv4 } from 'uuid';
 
-import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { SequenceFormData } from '../../types/academic/DidacticSequence';
 
 import StageForm from './StageForm';
 import { SequenceFormStyle } from './style';

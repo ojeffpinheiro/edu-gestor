@@ -1,4 +1,4 @@
-import { Activity, DetailedPlanning, DiagnosticEvaluation, DidacticSequence, DigitalTechnologies, Evaluation, GeneralObjective, InclusionAndAccessibility, PlanningData, RegistrationAndFeedback, SchoolInfo, SupportMaterial, Topic } from "../utils/types/Planning";
+import { Activity, DetailedPlanning, DiagnosticEvaluation, DidacticSequence, DigitalTechnologies, Evaluation, GeneralObjective, InclusionAndAccessibility, PlanningData, RegistrationAndFeedback, SchoolInfo, SupportMaterial, Topic } from "../types/academic/Planning";
 
 const mockSchoolInfo: SchoolInfo[] = [
   {

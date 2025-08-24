@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { FaPlus, FaExchangeAlt } from 'react-icons/fa';
 
-import { ConversionRelation, UnitType } from '../../utils/types/Question';
+import { ConversionRelation, UnitType } from '../../types/evaluation/Question';
 import { sampleConversions, sampleUnits } from '../../mocks/conversionRelation';
 import ConversionRelationModal from '../../components/modals/Unit/ConversionRelationModal';
 

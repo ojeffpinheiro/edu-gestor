@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { useDidacticSequences } from '../../../hooks/didactic-sequence/useDidacticSequences';
 
-import { DidacticSequence, DisciplineType } from '../../../utils/types/DidacticSequence';
+import { DidacticSequence, DisciplineType } from '../../../types/academic/DidacticSequence';
 
 import SequenceForm from '../../../components/DidacticSequences/SequenceForm';
 

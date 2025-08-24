@@ -1,5 +1,5 @@
 import React from 'react';
-import { Evaluation } from '../../utils/types/AssessmentEvaluation';
+import { Evaluation } from '../../types/evaluation/AssessmentEvaluation';
 import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../styles/modals';
 import { Button } from '../../styles/buttons';
 

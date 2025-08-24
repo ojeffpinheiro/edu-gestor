@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { EvaluationPart } from "../../../utils/types/AssessmentEvaluation";
+import { EvaluationPart } from "../../../types/evaluation/AssessmentEvaluation";
 import DraggablePart from '../DraggablePart';
 
 const FormulaBuilder: React.FC<{

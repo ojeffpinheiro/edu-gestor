@@ -1,4 +1,4 @@
-import { Content, Question, Topic } from "../utils/types/Question";
+import { Content, Question, Topic } from "../types/evaluation/Question";
 
 export const mockTopics: Topic[] = [
     { id: '1', name: 'Matemática' },

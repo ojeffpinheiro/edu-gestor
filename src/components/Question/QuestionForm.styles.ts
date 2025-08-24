@@ -3,7 +3,7 @@ import { constants } from '../../utils/consts';
 import { CardContainer } from '../shared/Card.styles';
 import { Input } from '../../styles/inputs';
 import { FieldError } from 'react-hook-form';
-import { ImageWrapType, ResourceType } from '../../utils/types/Question';
+import { ImageWrapType, ResourceType } from '../../types/evaluation/Question';
 
 export const FormStepContainer = styled(CardContainer)`
   padding: ${constants.spacing.xl};

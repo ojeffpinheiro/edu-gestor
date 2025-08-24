@@ -1,7 +1,7 @@
 import React from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import JsBarcode from 'jsbarcode';
-import { Exam } from '../../../utils/types/Exam';
+import { Exam } from '../../../types/evaluation/Exam';
 
 interface ExamWithIdentification extends Omit<Exam, 'password'> {
   qrCode?: string;

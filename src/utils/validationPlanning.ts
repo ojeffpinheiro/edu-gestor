@@ -1,5 +1,5 @@
 import { hasScheduleConflict } from "./scheduleUtils";
-import { DayOfWeek, Holiday, Lesson, Period, Shift, ShiftSettings } from "./types/Planning";
+import { DayOfWeek, Holiday, Lesson, Period, Shift, ShiftSettings } from "../types/academic/Planning";
 
 interface ValidationRules {
   required?: boolean;

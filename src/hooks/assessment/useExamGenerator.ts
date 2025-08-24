@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Question } from '../../utils/types/Assessment';
+import { Question } from '../../types/academic/Assessment';
 
 const useExamGenerator = (
     questions: Question[],

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaSquare, FaObjectGroup, FaAlignCenter, FaTextHeight, FaEyeSlash, FaEye } from 'react-icons/fa';
-import { ImageWrapType } from '../../../utils/types/Question';
+import { ImageWrapType } from '../../../types/evaluation/Question';
 
 interface ImageWrapControlsProps {
   wrapType: ImageWrapType;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { constants, EventTypeConfig } from "../../../../utils/consts";
-import { CalendarEvent } from "../../../../utils/types/CalendarEvent";
+import { CalendarEvent } from "../../../../types/academic/CalendarEvent";
 import { CloseButton, PopupContainer, PopupHeader, PopupTitle } from '../../Views/AnnualView/styles';
 import { format } from 'date-fns';
 import { FaTimes } from 'react-icons/fa';

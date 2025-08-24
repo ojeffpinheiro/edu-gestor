@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ClassPerformance, TimeframeFilter, ViewMode } from '../../utils/types/Assessment';
+import { ClassPerformance, TimeframeFilter, ViewMode } from '../../types/academic/Assessment';
 
 // Componentes de visualização
 import OverviewView from '../../components/Results/Features/OverviewView';

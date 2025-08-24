@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarEvent } from '../utils/types/CalendarEvent';
+import { CalendarEvent } from '../types/academic/CalendarEvent';
 
 export const useNotification = () => {
   const [notification, setNotification] = useState({ show: false, message: '', type: '' });

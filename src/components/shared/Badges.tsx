@@ -1,4 +1,4 @@
-import { DifficultyLevelType, QuestionStatus, QuestionType } from "../../utils/types/Question";
+import { DifficultyLevelType, QuestionStatus, QuestionType } from "../../types/evaluation/Question";
 import styled from 'styled-components';
 import { badgeVariants, sizeVariants } from '../../styles/variants';
 

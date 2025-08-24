@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaRandom, FaDownload } from 'react-icons/fa';
 
-import { Variable } from '../../utils/types/Question';
+import { Variable } from '../../types/evaluation/Question';
 import { PreviewActions, PreviewContainer, PreviewHeader, PreviewTitle, QuestionContent, RenderedEquation, VariablesTable } from './QuestionPreviewStyles';
 import { Button } from '../../styles/buttons';
 import { formatUnits, parseQuestion, substituteVariables } from '../../utils/questionHelpers';

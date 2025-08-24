@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaTimes } from 'react-icons/fa';
 
-import { Question } from "../../../../../../utils/types/Question";
+import { Question } from "../../../../../../types/evaluation/Question";
 import { ActionButton, ItemContent, ItemMeta, ItemTitle, SelectedContainer, SelectedGrid, SelectedHeader, SelectedItem, SelectedTitle } from './styles';
 import { DIFFICULTY_LABELS } from './types';
 

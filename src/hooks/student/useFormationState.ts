@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../../utils/types/GroupFormation';
-import { FeedbackState } from '../../utils/types/FeedbackState';
+import { FORMATION_CONFIG, GroupFormationState, GroupFormationType } from '../../types/classroom/GroupFormation';
+import { FeedbackState } from '../../types/ui/FeedbackState';
 import { StudentFormData } from '../../utils/types/BasicUser';
 
 /**

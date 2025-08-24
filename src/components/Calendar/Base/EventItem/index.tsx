@@ -1,5 +1,5 @@
 import React from 'react';
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 import { EventContainer, EventTitle, TimeLabel } from './styles';
 import { format } from 'date-fns';
 

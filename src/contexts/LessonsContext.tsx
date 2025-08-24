@@ -1,6 +1,6 @@
 // src/contexts/planning/LessonsContext.tsx
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import { DayOfWeek, Lesson, Shift } from '../utils/types/Planning';
+import { DayOfWeek, Lesson, Shift } from '../types/academic/Planning';
 import { ScheduleProvider } from './ScheduleContext';
 
 interface LessonsState {

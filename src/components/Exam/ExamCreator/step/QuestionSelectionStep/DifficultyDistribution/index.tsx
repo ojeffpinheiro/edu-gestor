@@ -1,6 +1,6 @@
 import React from 'react';
-import { Exam } from '../../../../../../utils/types/Exam';
-import { DifficultyLevelType, Question } from '../../../../../../utils/types/Question';
+import { Exam } from '../../../../../../types/evaluation/Exam';
+import { DifficultyLevelType, Question } from '../../../../../../types/evaluation/Question';
 
 import {
   DifficultyDistributionContainer,

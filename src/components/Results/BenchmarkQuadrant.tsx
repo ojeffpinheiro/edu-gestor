@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { ClassPerformance } from "../../utils/types/Assessment";
+import { ClassPerformance } from "../../types/academic/Assessment";
 
 const AVAILABLE_METRICS = [
   'averageScore',

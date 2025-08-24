@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiArrowLeft, FiArrowRight, FiDownload, FiPrinter } from 'react-icons/fi';
 
-import { Exam } from '../../../../utils/types/Exam';
+import { Exam } from '../../../../types/evaluation/Exam';
 import { Container } from '../../../../styles/layoutUtils';
 import { ButtonGroup } from '../step/CorrectionForm/styles';
 

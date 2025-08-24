@@ -3,7 +3,7 @@ import { useQuestionFilters } from './useQuestionFilters';
 import { useQuestionSort } from './useQuestionSort';
 import { useSelection } from './useSelection';
 import { useQuestionActions } from './useQuestionActions';
-import { Question, QuestionStatus, QuestionType } from '../../utils/types/Question';
+import { Question, QuestionStatus, QuestionType } from '../../types/evaluation/Question';
 
 export interface QuestionManagerOptions {
   // Filtros

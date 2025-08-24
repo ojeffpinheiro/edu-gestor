@@ -1,6 +1,6 @@
 import React from 'react';
 import { Chart } from 'react-chartjs-2';
-import { EnhancedExamResult } from '../../../utils/types/Assessment';
+import { EnhancedExamResult } from '../../../types/academic/Assessment';
 import { calculateDistribution } from '../../../utils/statsUtils';
 
 interface DistributionChartProps {

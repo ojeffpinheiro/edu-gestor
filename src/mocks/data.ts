@@ -1,5 +1,5 @@
-import { ClassPerformance, EnhancedExamResult, EvaluationRubric, ExamSummary, StudentResult } from "../utils/types/Assessment";
-import { Question } from "../utils/types/Question";
+import { ClassPerformance, EnhancedExamResult, EvaluationRubric, ExamSummary, StudentResult } from "../types/academic/Assessment";
+import { Question } from "../types/evaluation/Question";
 
 export const mockEvaluationRubrics: EvaluationRubric[] = [
   {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AdvancedFilters } from './AdvancedFilters';
 import { CategoryWithId } from './QuestionForm/type';
-import { SavedFilter, FilterOptions } from '../../utils/types/Question';
+import { SavedFilter, FilterOptions } from '../../types/evaluation/Question';
 
 // Definindo valores padrão para FilterOptions
 const defaultFilters: FilterOptions = {

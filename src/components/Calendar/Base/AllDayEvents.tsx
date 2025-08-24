@@ -1,7 +1,7 @@
 // components/Calendar/MonthlyView/AllDayEvents.tsx
 import React from 'react';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../types/academic/CalendarEvent';
 import { AllDayEventItem, AllDayEventsContainer } from '../Views/WeeklyView/styles';
 import { AllDayExpandButton } from '../Views/MonthlyView/styles';
 

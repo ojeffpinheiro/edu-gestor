@@ -4,7 +4,7 @@ import { FaTimes, FaPlus } from "react-icons/fa";
 
 import { SequenceFormStyle } from './style';
 import { Label } from '../../styles/inputs';
-import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { SequenceFormData } from '../../types/academic/DidacticSequence';
 import { FormGroup } from '../../styles/formControls';
 import { SectionTitle } from '../../styles/baseComponents';
 import { ErrorMessage } from '../../styles/feedback';

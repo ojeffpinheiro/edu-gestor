@@ -18,7 +18,7 @@ import {
 import { FaChartBar, FaChartPie, FaChartLine, FaQuestion, FaSyncAlt } from 'react-icons/fa';
 
 import { useExamResults } from '../../../hooks/assessment/useExamResults';
-import { ExamResult } from '../../../utils/types/Assessment';
+import { ExamResult } from '../../../types/academic/Assessment';
 
 import { calculateStatistics } from '../../../utils/calculateStatistics';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../styles/card';

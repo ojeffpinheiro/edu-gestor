@@ -1,6 +1,6 @@
 // pages/Team/ClassroomLayoutPage/styles.ts
 import styled, { css, keyframes } from 'styled-components';
-import { PriorityType, SeatStatus } from '../../../utils/types/Team';
+import { PriorityType, SeatStatus } from '../../../types/classroom/Team';
 
 const fadeIn = keyframes`
   from { opacity: 0; transform: translateY(-10px); }

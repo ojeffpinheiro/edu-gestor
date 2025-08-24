@@ -1,4 +1,4 @@
-import { QuestionType } from "../../../utils/types/Question";
+import { QuestionType } from "../../../types/evaluation/Question";
 
 export interface FilterOption {
   value: string;

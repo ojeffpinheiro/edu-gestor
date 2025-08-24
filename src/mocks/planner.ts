@@ -1,5 +1,5 @@
-import { Event } from "../utils/types/Event";
-import { ClassSummaryType, SubjectSummaryType } from "../utils/types/planningDashboard";
+import { Event } from "../types/shared/Event";
+import { ClassSummaryType, SubjectSummaryType } from "../types/ui/planningDashboard";
 
 const planejamentoPorSerie = [
     { serie: '6º ano', completo: 85, parcial: 10, pendente: 5 },

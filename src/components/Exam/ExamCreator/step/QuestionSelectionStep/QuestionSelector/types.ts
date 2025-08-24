@@ -1,5 +1,5 @@
-import { Exam } from '../../../../../../utils/types/Exam';
-import { Question, DifficultyLevelType, QuestionStatus } from '../../../../../../utils/types/Question';
+import { Exam } from '../../../../../../types/evaluation/Exam';
+import { Question, DifficultyLevelType, QuestionStatus } from '../../../../../../types/evaluation/Question';
 
 export interface QuestionSelectorProps {
   examData: Exam;

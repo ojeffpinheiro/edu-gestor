@@ -15,10 +15,10 @@ import { DEFAULT_STUDENT_DATA, SECTION_CONFIG } from '../../../utils/setting'
 
 import AttendanceTable from '../../ui/AttendanceTable';
 import { ErrorBoundary } from '../../shared/ErrorBoundary';
-import { Assessment } from '../../../utils/types/AssessmentEvaluation';
-import { StudentModalProps } from '../../../utils/types/UIComponent';
+import { Assessment } from '../../../types/evaluation/AssessmentEvaluation';
+import { StudentModalProps } from '../../../types/ui/UIComponent';
 import { StudentData } from '../../../utils/types/BasicUser';
-import { ExportOptions } from '../../../utils/types/ExportReport';
+import { ExportOptions } from '../../../types/shared/ExportReport';
 import { ModalBody, ModalContainer, ModalContent } from '../../../styles/modals';
 import Modal from '../Modal';
 

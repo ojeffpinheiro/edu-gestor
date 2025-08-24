@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
 
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic.js';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic.js';
 
 import TopicTreeNode from './TopicTreeNode';
 

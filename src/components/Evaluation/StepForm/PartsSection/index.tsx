@@ -7,7 +7,7 @@ import { CollapsibleContent, CollapsibleHeader } from "../../../ui/CollapsibleCo
 
 import CollapsibleSection from "../../CollapsibleSection";
 import { EmptyMessage, IconButton, InputContainer, PartControls, PartHeader, PartItem, PartName, PartsList, SectionTitle, WeightBadge } from "./styles";
-import { Evaluation, EvaluationPart } from "../../../../utils/types/AssessmentEvaluation";
+import { Evaluation, EvaluationPart } from "../../../../types/evaluation/AssessmentEvaluation";
 
 interface PartsSectionProps {
     parts: EvaluationPart[];

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 
-import { QUESTION_TYPE_LABELS, QuestionType } from '../../utils/types/Question'
+import { QUESTION_TYPE_LABELS, QuestionType } from '../../types/evaluation/Question'
 
 interface QuestionTypeIndicatorProps {
     type: QuestionType | 'all';

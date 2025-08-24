@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { FaExclamationTriangle, FaGripLines, FaPlus, FaPuzzlePiece, FaSortDown, FaSortUp, FaTrashAlt } from "react-icons/fa";
-import { StepProps } from "../../../utils/types/Question";
+import { StepProps } from "../../../types/evaluation/Question";
 import { AlternativeActions, AlternativeContent, AlternativeItem, AlternativesContainer, CorrectBadge, DragHandle, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
 import { Input } from '../../../styles/inputs';
 import { Button } from '../../../styles/buttons';

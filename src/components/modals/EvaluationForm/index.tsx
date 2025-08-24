@@ -3,8 +3,8 @@ import { FaCheck, FaExclamationTriangle } from "react-icons/fa";
 
 import useEvaluationForm from '../../../hooks/assessment/useEvaluationForm';
 
-import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
-import { FormSectionOptions } from "../../../utils/types/FormSection";
+import { Evaluation } from "../../../types/evaluation/AssessmentEvaluation";
+import { FormSectionOptions } from "../../../types/ui/FormSection";
 
 import { Button } from '../../../styles/buttons';
 import { ModalBody, ModalFooter } from "../../../styles/modals";

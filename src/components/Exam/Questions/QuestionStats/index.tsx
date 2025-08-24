@@ -1,5 +1,5 @@
 import React from 'react'
-import { Question } from '../../../../utils/types/Question';
+import { Question } from '../../../../types/evaluation/Question';
 
 const QuestionStats = ({ question }: { question: Question }) => {
   if (!question.answerStats) return null;

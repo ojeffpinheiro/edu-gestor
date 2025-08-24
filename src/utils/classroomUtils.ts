@@ -1,5 +1,5 @@
 import { StudentFormData } from "./types/BasicUser";
-import { LayoutConfig, SeatType } from "./types/Team";
+import { LayoutConfig, SeatType } from "../types/classroom/Team";
 
 export type Template = 'U' | 'circle' | 'groups' | 'rows';
 

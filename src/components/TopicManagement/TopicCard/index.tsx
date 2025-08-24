@@ -1,5 +1,5 @@
 import React from 'react';
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic';
 import { CardContent, CardIcon, CardTitle, CardType, ContentCard } from './styles';
 import { getItemIcon } from '../../../utils/Icons';
 

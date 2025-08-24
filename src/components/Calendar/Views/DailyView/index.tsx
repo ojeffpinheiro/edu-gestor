@@ -20,7 +20,7 @@ import {
   AllDayEventsRow,
   AllDayEventsCounter
 } from './styles';
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
 
 const DailyView: React.FC = () => {

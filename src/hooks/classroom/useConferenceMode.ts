@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { DailyVerification } from '../../utils/types/Team';
+import { DailyVerification } from '../../types/classroom/Team';
 import { useClassroom } from '../../contexts/ClassroomContext';
 
 export const useConferenceMode = () => {

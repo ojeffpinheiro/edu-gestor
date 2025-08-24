@@ -2,7 +2,7 @@ import React from "react";
 
 import { colorPalette } from "../../styles/colors";
 import styled from "styled-components";
-import { AttendanceStatus } from "../../utils/types/Attendance";
+import { AttendanceStatus } from "../../types/academic/Attendance";
 
 const AttendanceStatusBadge: React.FC<{ status: AttendanceStatus }> = ({ status }) => {
     const getStatusColor = () => {

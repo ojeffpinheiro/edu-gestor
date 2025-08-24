@@ -1,7 +1,7 @@
 // components/Calendar/MonthlyView/DayCell.tsx
 import React, { useRef, useState } from 'react';
 import { isSameMonth, isSameDay, format } from 'date-fns';
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 import EventPopup from '../../Base/EventPopup';
 import { groupEventsByType } from '../../../../utils/calendarUtils';
 import { DayCellContainer } from '../../Views/MonthlyView/styles';

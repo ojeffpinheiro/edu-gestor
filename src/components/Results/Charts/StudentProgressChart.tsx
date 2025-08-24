@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Line } from 'react-chartjs-2';
-import { StudentResult, EnhancedExamResult } from '../../../utils/types/Assessment';
+import { StudentResult, EnhancedExamResult } from '../../../types/academic/Assessment';
 import {
   Chart as ChartJS,
   CategoryScale,

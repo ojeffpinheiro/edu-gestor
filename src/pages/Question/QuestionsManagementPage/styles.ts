@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { Container, Flex } from "../../../styles/layoutUtils";
-import { QuestionType } from "../../../utils/types/Question";
+import { QuestionType } from "../../../types/evaluation/Question";
 
 export const QuestionsManagementContainer = styled(Container)`
   max-width: 95vw;

@@ -9,7 +9,7 @@ import {
   StyledCorrectAnswerIndicator,
   StyledRemoveButton
 } from '../../QuestionForm.styles';
-import { Alternative, OptionsLayout, QuestionFormData } from '../../../../utils/types/Question';
+import { Alternative, OptionsLayout, QuestionFormData } from '../../../../types/evaluation/Question';
 import { constants } from '../../../../utils/consts';
 
 interface AlternativesStepProps {

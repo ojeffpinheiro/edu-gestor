@@ -11,7 +11,7 @@ import {
   FaClock
 } from 'react-icons/fa';
 
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { constants, eventTypeColors } from '../../../../utils/consts';

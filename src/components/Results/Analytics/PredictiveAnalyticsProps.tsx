@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PerformancePrediction, StudentResult, StudentRiskAssessment, StudyRecommendation, TeacherAlert } from '../../../utils/types/Assessment';
+import { PerformancePrediction, StudentResult, StudentRiskAssessment, StudyRecommendation, TeacherAlert } from '../../../types/academic/Assessment';
 import RiskAnalysisChart from '../../../components/Results/Charts/RiskAnalysisChart';
 import PredictionAccuracyChart from '../../../components/Results/Charts/PredictionAccuracyChart';
 

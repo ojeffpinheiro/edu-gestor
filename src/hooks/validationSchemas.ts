@@ -1,6 +1,6 @@
 // utils/validationSchemas.ts
 import * as yup from 'yup';
-import { Exam } from '../utils/types/Exam';
+import { Exam } from '../types/evaluation/Exam';
 
 export const examSchema = yup.object().shape({
   title: yup.string()

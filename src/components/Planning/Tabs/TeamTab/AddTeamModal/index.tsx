@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaGraduationCap, FaClock, FaUpload } from 'react-icons/fa';
 
-import { Session, Team } from '../../../../../utils/types/Planning';
+import { Session, Team } from '../../../../../types/academic/Planning';
 import Modal from '../../../../modals/Modal';
 import { ModalBody } from '../../../../../styles/modals';
 import { FormGroup } from '../../../../../styles/formControls';

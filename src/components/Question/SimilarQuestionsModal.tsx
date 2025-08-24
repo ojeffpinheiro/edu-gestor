@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal } from '../Modal';
-import { Question } from '../../utils/types/Question';
+import { Question } from '../../types/evaluation/Question';
 import { QuestionCard } from '../shared/QuestionCard';
 
 interface SimilarQuestionsModalProps {

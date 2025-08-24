@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaTimes } from 'react-icons/fa';
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic';
 import Modal from '../../modals/Modal';
 import { ModalBody, ModalContent, ModalFooter, ModalHeader } from '../../../styles/modals';
 import { CancelButton, CloseButton } from '../../../styles/buttons';

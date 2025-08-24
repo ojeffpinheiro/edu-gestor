@@ -11,7 +11,7 @@ import {
 import ConferencePanel from './ConferencePanel';
 import { ActionButton } from '../../styles/buttons';
 import VerificationHistory from './VerificationHistory';
-import { DailyVerification } from '../../utils/types/Team';
+import { DailyVerification } from '../../types/classroom/Team';
 
 interface Props {
     conferenceMode: boolean;

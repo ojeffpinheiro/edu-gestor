@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { PriorityConfig, PriorityInfo, PriorityType, SeatType } from '../../../utils/types/Team';
+import { PriorityConfig, PriorityInfo, PriorityType, SeatType } from '../../../types/classroom/Team';
 import { useClassroom } from '../../../contexts/ClassroomContext';
 import { getAttendanceColor } from '../../../utils/attendanceUtils';
 

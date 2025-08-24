@@ -12,7 +12,7 @@ import {
 } from 'chart.js';
 
 import { Bar } from 'react-chartjs-2';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { ClassPerformance } from '../../../types/academic/Assessment';
 
 // Tipo seguro para as métricas disponíveis
 type SafeMetricKey = 'averageScore' | 'passingRate';

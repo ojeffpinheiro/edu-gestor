@@ -1,6 +1,6 @@
 // src/contexts/AssessmentContext.tsx
 import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
-import { Question, Exam, EvaluationRubric, ExamResult } from '../utils/types/Assessment';
+import { Question, Exam, EvaluationRubric, ExamResult } from '../types/academic/Assessment';
 import { mockQuestions, mockExams, mockRubrics, mockResults } from '../mocks/assessmentData';
 import { validateExam } from '../utils/examValidationUtils';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Scatter } from 'react-chartjs-2';
-import { StudentResult, StudentRiskAssessment } from '../../../utils/types/Assessment';
+import { StudentResult, StudentRiskAssessment } from '../../../types/academic/Assessment';
 
 interface RiskAnalysisChartProps {
   riskAssessments: StudentRiskAssessment[];

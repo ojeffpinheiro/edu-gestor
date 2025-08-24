@@ -2,7 +2,7 @@ import React from 'react'
 
 import { FaClipboardList, FaExclamationTriangle } from "react-icons/fa";
 
-import { Alternative, StepProps } from "../../../utils/types/Question";
+import { Alternative, StepProps } from "../../../types/evaluation/Question";
 import {
     RadioWrapper, 
     SectionTitle, 

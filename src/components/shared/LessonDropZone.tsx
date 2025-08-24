@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrop } from 'react-dnd';
 import { DropZone } from '../../styles/schedule';
-import { DayOfWeek } from '../../utils/types/Planning';
+import { DayOfWeek } from '../../types/academic/Planning';
 
 interface LessonDropZoneProps {
   day: DayOfWeek;

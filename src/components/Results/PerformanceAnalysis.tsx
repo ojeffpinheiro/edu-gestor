@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 import TimeRangeSelector from './TimeRangeSelector';
 import PerformanceRadar from './PerformanceRadar';
 import ComparativeBarChart from './ComparativeBarChart';

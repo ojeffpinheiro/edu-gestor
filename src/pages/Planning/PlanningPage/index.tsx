@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FiEdit2, FiPlus, FiTrash2 } from 'react-icons/fi';
 
 import { PlanningProvider } from '../../../contexts/PlannerContext';
-import { PlanningData, Session, ShiftSettings, Team } from '../../../utils/types/Planning';
+import { PlanningData, Session, ShiftSettings, Team } from '../../../types/academic/Planning';
 
 import { mockPlanningData } from '../../../mocks/planning';
 

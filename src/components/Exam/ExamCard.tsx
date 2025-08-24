@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Exam } from '../../utils/types/Assessment';
+import { Exam } from '../../types/academic/Assessment';
 import { Button } from '../../styles/buttons';
 
 import {

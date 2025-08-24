@@ -16,7 +16,7 @@ import {
   FaUser,
   FaAlignLeft
 } from 'react-icons/fa';
-import { CalendarEvent, EventType } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent, EventType } from '../../../../types/academic/CalendarEvent';
 import { format, isSameDay, isSameMonth } from 'date-fns';
 import {
   EventPopupContainer,

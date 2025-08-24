@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { EnhancedExamResult, StudentResult } from '../../../utils/types/Assessment';
-import { Question } from '../../../utils/types/Question';
+import { EnhancedExamResult, StudentResult } from '../../../types/academic/Assessment';
+import { Question } from '../../../types/evaluation/Question';
 
 import DashboardCard from '../DashboardCard';
 import EmptyState from '../EmptyState';

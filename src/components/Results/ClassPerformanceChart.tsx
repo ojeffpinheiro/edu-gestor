@@ -5,7 +5,7 @@ import {
   ActiveElement,
   TooltipItem
 } from 'chart.js';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 
 interface ClassPerformanceChartProps {
   classPerformances: ClassPerformance[];

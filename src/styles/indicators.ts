@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { constants } from "../utils/consts";
-import { StatusType } from "../utils/types/UIComponent";
+import { StatusType } from "../types/ui/UIComponent";
 
 type DifficultyLevel = "easy" | "medium" | "hard";
 type ContentType = "multiple_choice" | "true_false" | "essay" | "code" | "default";

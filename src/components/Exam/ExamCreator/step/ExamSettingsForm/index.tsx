@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiArrowRight, FiGrid, FiList, FiMinimize2, FiSettings, FiType } from 'react-icons/fi';
-import { Exam } from '../../../../../utils/types/Exam';
+import { Exam } from '../../../../../types/evaluation/Exam';
 
 import {
   ActionButtons,

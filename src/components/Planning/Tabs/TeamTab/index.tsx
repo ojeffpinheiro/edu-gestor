@@ -13,7 +13,7 @@ import {
 import { useTeams } from '../../../../contexts/TeamsContext';
 import { useModal } from '../../../../contexts/ModalContext';
 
-import { LearningObjective, Session, Team } from '../../../../utils/types/Planning';
+import { LearningObjective, Session, Team } from '../../../../types/academic/Planning';
 
 import PlanningPreview from '../../PlanningPreview';
 import { Button } from '../../../../styles/buttons';

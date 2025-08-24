@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClassPerformance, StudentResult } from '../../../utils/types/Assessment'
+import { ClassPerformance, StudentResult } from '../../../types/academic/Assessment'
 import ClassResultsTable from '../ClassResultsTable'
 
 import EnhancedStudentDetailModal from '../EnhancedStudentDetailModal'

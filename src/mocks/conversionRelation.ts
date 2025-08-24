@@ -1,4 +1,4 @@
-import { ConversionRelation, UnitType } from "../utils/types/Question";
+import { ConversionRelation, UnitType } from "../types/evaluation/Question";
 
 export const sampleConversions: ConversionRelation[] = [
     { fromUnit: '1', toUnit: '2', factor: 100, formula: 'value * 100' },

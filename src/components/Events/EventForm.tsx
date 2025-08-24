@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { format, parseISO } from 'date-fns';
-import { CalendarEvent, EventType } from '../../utils/types/CalendarEvent';
+import { CalendarEvent, EventType } from '../../types/academic/CalendarEvent';
 
 const FormContainer = styled.div`
   display: flex;

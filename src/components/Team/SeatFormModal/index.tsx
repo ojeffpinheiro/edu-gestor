@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
-import { SeatType, PriorityType, PRIORITY_CONFIGS } from '../../../utils/types/Team';
+import { SeatType, PriorityType, PRIORITY_CONFIGS } from '../../../types/classroom/Team';
 import {
   ModalBody,
   ModalContent,

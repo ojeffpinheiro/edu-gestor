@@ -1,4 +1,4 @@
-import { Lesson } from "../../../../utils/types/Planning";
+import { Lesson } from "../../../../types/academic/Planning";
 
 export const validateLesson = (lesson: Lesson): Record<string, string> => {
     const errors: Record<string, string> = {};

@@ -7,7 +7,7 @@ import BarCodeGenerator from '../utils/barCodeGenerator';
 import ExamPdfGenerator from '../utils/examPdfGenerator';
 import QRCodeService from '../utils/qrCodeGenerator';
 
-import { ClassPerformance, Exam, ExamResult, ExamSummary, StudentResult, TimeframeFilter } from '../utils/types/Assessment';
+import { ClassPerformance, Exam, ExamResult, ExamSummary, StudentResult, TimeframeFilter } from '../types/academic/Assessment';
 
 // Interface for exam creation
 interface CreateExamData {

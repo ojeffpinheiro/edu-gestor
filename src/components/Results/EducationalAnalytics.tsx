@@ -3,7 +3,7 @@ import { FaAward, FaBookOpen, FaCheckCircle, FaDownload, FaEye, FaFilter, FaGrad
 import { FiAlertTriangle, FiFileText } from 'react-icons/fi';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, XAxis, YAxis } from 'recharts';
 
-import { ClassPerformance, ClassPerformanceWithSubjects, StudentResult } from '../../utils/types/Assessment';
+import { ClassPerformance, ClassPerformanceWithSubjects, StudentResult } from '../../types/academic/Assessment';
 
 import { 
   Grid, AnalyticsContainer, Flex,

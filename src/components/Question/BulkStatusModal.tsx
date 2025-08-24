@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { QuestionStatus } from '../../utils/types/Question';
+import { QuestionStatus } from '../../types/evaluation/Question';
 import { Modal } from '../Modal';
 
 interface BulkStatusModalProps {

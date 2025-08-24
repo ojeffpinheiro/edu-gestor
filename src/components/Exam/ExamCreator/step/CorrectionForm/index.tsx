@@ -1,6 +1,6 @@
 import React from 'react';
 import { FiArrowLeft, FiArrowRight, FiEye, FiEyeOff } from 'react-icons/fi';
-import { Exam } from '../../../../../utils/types/Exam';
+import { Exam } from '../../../../../types/evaluation/Exam';
 import { ButtonGroup } from '../../../../../pages/Exam/Subpages/ExamGenerator/styles';
 import AccessCodeGenerator from '../../AccessCodeGenerator';
 

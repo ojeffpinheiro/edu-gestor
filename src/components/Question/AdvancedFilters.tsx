@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { CategoryWithId } from './QuestionForm/type';
-import { FilterOptions } from '../../utils/types/Question';
+import { FilterOptions } from '../../types/evaluation/Question';
 
 import RangeSlider from '../../styles/RangeSlider';
 import { MultiSelect } from '../shared/MultiSelect';

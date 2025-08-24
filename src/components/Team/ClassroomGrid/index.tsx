@@ -1,6 +1,6 @@
 import React from 'react'
 import { ClassroomLayout, GridContainer, TeacherDesk } from "./style";
-import { PriorityConfig, PriorityInfo, PriorityType, SeatType } from '../../../utils/types/Team';
+import { PriorityConfig, PriorityInfo, PriorityType, SeatType } from '../../../types/classroom/Team';
 import DroppableSeat from '../DroppableSeat';
 import { getAttendanceColor } from '../../../utils/attendanceUtils';
 

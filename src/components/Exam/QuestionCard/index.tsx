@@ -1,6 +1,6 @@
 import React from 'react'
 import { FiEye, FiEdit2, FiTrash2, FiCheck, FiX } from 'react-icons/fi';
-import { Question } from '../../../utils/types/Question';
+import { Question } from '../../../types/evaluation/Question';
 import { DifficultyBadge, QuestionTypeBadge, StatusBadge } from '../../shared/Badges';
 
 import {

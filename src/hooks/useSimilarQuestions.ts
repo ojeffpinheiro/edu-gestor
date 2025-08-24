@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Question } from '../utils/types/Question';
+import { Question } from '../types/evaluation/Question';
 
 interface UseSimilarQuestionsProps {
   questions: Question[];

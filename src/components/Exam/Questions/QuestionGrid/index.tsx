@@ -1,6 +1,6 @@
 import React from 'react'
 import { ActionButton, QuestionCard, QuestionGridContent } from './styles'
-import { Question } from '../../../../utils/types/Question'
+import { Question } from '../../../../types/evaluation/Question'
 import { FiEdit2, FiTrash2 } from 'react-icons/fi';
 import QuestionStats from '../QuestionStats';
 

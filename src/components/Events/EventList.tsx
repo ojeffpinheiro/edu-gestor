@@ -3,7 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { format, isPast, isToday, isFuture } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { FaCalendarAlt, FaClock, FaMapMarkerAlt, FaFilter, FaSearch, FaEdit, FaEye } from 'react-icons/fa';
-import { CalendarEvent } from '../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../types/academic/CalendarEvent';
 
 import {
   ActionButton,

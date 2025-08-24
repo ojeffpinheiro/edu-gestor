@@ -4,7 +4,7 @@
  */
 import React, { memo } from 'react';
 import { GridSection, QuickAccessCard, QuickHeader, SectionHeader } from './styles';
-import { AccessCard } from '../../utils/types/planningDashboard';
+import { AccessCard } from '../../types/ui/planningDashboard';
 
 interface QuickAccessSectionProps {
   accessCards: AccessCard[];

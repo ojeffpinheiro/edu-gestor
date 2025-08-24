@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { useCalendar } from '../../contexts/CalendarContext';
 
-import { AcademicPeriod, CalendarEvent } from '../../utils/types/CalendarEvent';
+import { AcademicPeriod, CalendarEvent } from '../../types/academic/CalendarEvent';
 
 import { MOCK_EVENTS } from '../../mocks/events';
 

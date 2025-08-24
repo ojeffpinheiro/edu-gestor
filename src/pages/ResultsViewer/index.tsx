@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-import { Exam, ExamResult } from '../../utils/types/Assessment';
+import { Exam, ExamResult } from '../../types/academic/Assessment';
 
 import { LoadingStates } from '../../components/shared/LoadingStates';
 import ExportButton from '../../components/shared/ExportButton';

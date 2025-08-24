@@ -1,6 +1,6 @@
 // DistributionView.tsx
 import React from 'react';
-import { ClassPerformance, ExamSummary } from '../../../utils/types/Assessment';
+import { ClassPerformance, ExamSummary } from '../../../types/academic/Assessment';
 import ScoreDistributionChart from '../Charts/ScoreDistributionChart';
 
 interface DistributionViewProps {

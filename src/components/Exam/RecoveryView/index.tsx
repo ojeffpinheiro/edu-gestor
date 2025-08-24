@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClassData } from '../../../utils/types/ExamAssesments';
+import { ClassData } from '../../../types/academic/ExamAssesments';
 import { 
   RecoveryContainer,
   RecoveryHeader,

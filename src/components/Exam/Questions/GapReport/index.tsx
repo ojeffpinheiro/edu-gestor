@@ -1,5 +1,5 @@
 import React from 'react'
-import { Question } from '../../../../utils/types/Question';
+import { Question } from '../../../../types/evaluation/Question';
 
 const generateGapReport = (questions: Question[]) => {
   const topicStats = questions.reduce((acc, q) => {

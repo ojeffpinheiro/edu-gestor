@@ -1,6 +1,6 @@
 // components/Equation/EnhancedEquationEditor.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Variable } from '../../utils/types/Topic';
+import { Variable } from '../../types/academic/Topic';
 
 import { symbolCategories } from '../../mocks/equation';
 

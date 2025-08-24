@@ -1,4 +1,4 @@
-import { ClassPerformance, ExamSummary, StudentResult } from './types/Assessment';
+import { ClassPerformance, ExamSummary, StudentResult } from '../types/academic/Assessment';
 
 interface ProcessedProgressData {
   labels: string[];

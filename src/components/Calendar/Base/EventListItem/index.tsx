@@ -4,7 +4,7 @@ import { FaCopy, FaEdit, FaTrash } from "react-icons/fa";
 
 import { constants } from '../../../../utils/consts';
 
-import { CalendarEvent } from "../../../../utils/types/CalendarEvent";
+import { CalendarEvent } from "../../../../types/academic/CalendarEvent";
 import { EventItem, ActionButton, EventActions } from './styles';
 
 // components/EventListItem.tsx

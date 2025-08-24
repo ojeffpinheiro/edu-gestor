@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { EnhancedExamResult } from '../../../utils/types/Assessment';
+import { EnhancedExamResult } from '../../../types/academic/Assessment';
 import { groupByTimePeriod } from '../../../utils/statsUtils';
 
 interface TemporalProgressProps {

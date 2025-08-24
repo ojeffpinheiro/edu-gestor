@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useQuestionSelection } from "../assessment/useQuestionSelection";
-import { Question } from "../../utils/types/Question";
+import { Question } from "../../types/evaluation/Question";
 
 export const useSelection = (questions: Question[]) => {
   const [selectedQuestions, setSelectedQuestions] = useState<Set<string>>(new Set());

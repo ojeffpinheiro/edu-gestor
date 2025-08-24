@@ -1,6 +1,6 @@
 import React from 'react';
 import { ToggleButton, ToggleContainer } from './styles';
-import { CalendarViewType } from '../../../../utils/types/CalendarEvent';
+import { CalendarViewType } from '../../../../types/academic/CalendarEvent';
 
 interface ViewToggleProps {
   views: Array<{ key: CalendarViewType; label: string }>

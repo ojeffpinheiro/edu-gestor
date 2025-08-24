@@ -17,7 +17,7 @@ import { ErrorBoundary } from '../../../shared/ErrorBoundary';
 import CalendarBase from '../../Base/CalendarBase';
 import { FaTimes, FaFilter, FaEdit, FaTrash, FaCopy, FaCheck, FaAngleDown, FaAngleUp } from 'react-icons/fa';
 import { constants, EventTypeConfig } from '../../../../utils/consts';
-import { CalendarEvent, EventType } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent, EventType } from '../../../../types/academic/CalendarEvent';
 
 import {
   DayCell,

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import EventForm from './EventForm';
-import { CalendarEvent } from '../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../types/academic/CalendarEvent';
 
 const ModalOverlay = styled.div`
   position: fixed;

@@ -1,6 +1,6 @@
 // src/contexts/planning/ScheduleContext.tsx
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import { Shift, ShiftSettings, Period } from '../utils/types/Planning';
+import { Shift, ShiftSettings, Period } from '../types/academic/Planning';
 import { ModalProvider } from './ModalContext';
 
 interface ScheduleState {

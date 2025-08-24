@@ -5,7 +5,7 @@
 import React, { memo } from 'react';
 import { NotificationItem, NotificationList, SectionCard, SectionHeader, EmptyStateMessage } from './styles';
 import { FaBell } from 'react-icons/fa';
-import { Notification } from '../../utils/types/planningDashboard';
+import { Notification } from '../../types/ui/planningDashboard';
 import { formatDate } from '../../utils/dateFormatter';
 
 interface NotificationSectionProps {

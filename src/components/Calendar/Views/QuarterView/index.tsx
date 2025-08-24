@@ -10,7 +10,7 @@ import {
 import { useCalendar } from '../../../../contexts/CalendarContext';
 import { ErrorBoundary } from '../../../shared/ErrorBoundary';
 import CalendarBase from '../../Base/CalendarBase';
-import { EventType } from '../../../../utils/types/CalendarEvent';
+import { EventType } from '../../../../types/academic/CalendarEvent';
 
 import { 
   ActiveFiltersBadge, DayCell, DaysGrid, EventItem, 

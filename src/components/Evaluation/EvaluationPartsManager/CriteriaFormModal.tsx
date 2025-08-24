@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { EvaluationPart } from "../../../utils/types/AssessmentEvaluation";
+import { EvaluationPart } from "../../../types/evaluation/AssessmentEvaluation";
 import { ModalOverlay } from "../../../styles/baseComponents";
 import { ModalContent, ModalHeader } from "../../../styles/modals";
 import { ActionButton, CancelButton, CloseButton } from "../../../styles/buttons";

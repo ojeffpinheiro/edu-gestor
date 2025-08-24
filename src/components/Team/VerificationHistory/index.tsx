@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { FiEye, FiCalendar } from "react-icons/fi";
-import { DailyVerification, SeatType } from '../../../utils/types/Team';
+import { DailyVerification, SeatType } from '../../../types/classroom/Team';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 import {
     DetailButton,

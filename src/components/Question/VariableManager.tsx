@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { FaPlus, FaTrash, FaEdit, FaSave, FaTimes } from 'react-icons/fa';
 
-import { Variable } from '../../utils/types/Question';
+import { Variable } from '../../types/evaluation/Question';
 
 import { EmptyStateMessage, TableCell, TableHeader, TableRow } from '../../styles/table';
 import { Flex } from '../../styles/layoutUtils';

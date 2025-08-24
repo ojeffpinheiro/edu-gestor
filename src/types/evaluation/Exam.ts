@@ -1,4 +1,4 @@
-import { Question } from "./Question";
+import { Question } from "../../utils/types/Question";
 
 /**
  * Enum para os possíveis tipos de documento

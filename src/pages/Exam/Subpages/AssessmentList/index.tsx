@@ -1,7 +1,7 @@
 import React from "react";
 import { FaEdit, FaCopy, FaClipboardList, FaTrash, FaEye } from "react-icons/fa";
 
-import { Assessment } from "../../../../utils/types/AssessmentEvaluation";
+import { Assessment } from "../../../../types/evaluation/AssessmentEvaluation";
 
 import { Card, CardHeader, CardBody, ActionButton } from "./styles";
 

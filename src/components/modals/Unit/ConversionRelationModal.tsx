@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { FaInfoCircle, FaExclamationTriangle } from 'react-icons/fa';
 import styled from 'styled-components';
 
-import { ConversionRelation, UnitType } from '../../../utils/types/Question';
+import { ConversionRelation, UnitType } from '../../../types/evaluation/Question';
 
 import { Input, Label, InputGroup, TextArea, Select } from '../../../styles/inputs';
 import { Grid, InfoBox } from '../../../styles/layoutUtils';

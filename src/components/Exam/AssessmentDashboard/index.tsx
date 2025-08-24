@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FiGrid, FiPlusCircle, FiBarChart2 } from 'react-icons/fi';
 
-import { ClassData } from '../../../utils/types/ExamAssesments';
+import { ClassData } from '../../../types/academic/ExamAssesments';
 
 import PeriodSelector from '../PeriodSelector';
 import ClassCards from '../ClassCards';

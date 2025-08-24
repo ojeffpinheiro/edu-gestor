@@ -4,7 +4,7 @@ import { format, formatDate } from 'date-fns';
 
 import { useCalendar } from '../../../../contexts/CalendarContext';
 
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 
 import CalendarBase from '../../Base/CalendarBase';
 import { WeekdayHeader } from './WeekdayHeader';

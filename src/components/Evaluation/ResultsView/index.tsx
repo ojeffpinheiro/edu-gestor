@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Evaluation } from '../../../utils/types/AssessmentEvaluation';
+import { Evaluation } from '../../../types/evaluation/AssessmentEvaluation';
 import { Section, SectionHeader } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/baseComponents';
 import { FilterContainer } from '../../../pages/Planning/DidacticSequencesPage/styled';

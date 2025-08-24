@@ -9,7 +9,7 @@ import {
 } from 'react-icons/fa';
 
 import { EmptyStateMessage } from '../../styles/table';
-import { Topic } from '../../utils/types/Topic';
+import { Topic } from '../../types/academic/Topic';
 import { TopicTreeStyles } from './styles'
 import { IconButton } from '../../styles/buttons';
 

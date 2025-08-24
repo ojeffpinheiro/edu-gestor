@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from 'react';
 import { Doughnut } from 'react-chartjs-2';
-import { StudentResult } from '../../../utils/types/Assessment';
-import { Question } from '../../../utils/types/Question';
+import { StudentResult } from '../../../types/academic/Assessment';
+import { Question } from '../../../types/evaluation/Question';
 import {
   Chart as ChartJS,
   ArcElement,

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RecoveryActivity } from '../../utils/types/AssessmentEvaluation';
+import { RecoveryActivity } from '../../types/evaluation/AssessmentEvaluation';
 import { ModalBody, ModalContainer, ModalFooter, ModalHeader } from '../../styles/modals';
 import { ModalContent } from '../../styles/baseComponents';
 import { Button } from '../../styles/buttons';

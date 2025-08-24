@@ -3,7 +3,7 @@
  * @module scheduleUtils
  */
 
-import { Lesson } from "./types/Planning";
+import { Lesson } from "../types/academic/Planning";
 
 /**
  * Verifica conflitos de horário

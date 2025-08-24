@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { FaFileExport, FaChartBar, FaUserGraduate, FaFilter } from "react-icons/fa";
 
 import { useExamResults } from "../../../hooks/assessment/useExamResults";
-import { Exam, ExamResult } from "../../../utils/types/Assessment";
+import { Exam, ExamResult } from "../../../types/academic/Assessment";
 
 import examService from "../../../services/examService";
 import { Select } from "../../../styles/inputs";

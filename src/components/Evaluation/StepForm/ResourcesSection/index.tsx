@@ -5,7 +5,7 @@ import CollapsibleSection from "../../CollapsibleSection";
 
 import { CollapsibleHeader } from "../../../ui/CollapsibleComponents";
 import { AddButton, DeleteButton, EmptyMessage, FeedbackMessage, HelpText, InputContainer, ResourceItem, ResourceName, ResourcesContainer, ResourcesContent, ResourcesList, StyledInput } from "./styles";
-import { Resource } from "../../../../utils/types/Resource";
+import { Resource } from "../../../../types/shared/Resource";
 
 
 interface ResourcesSectionProps {

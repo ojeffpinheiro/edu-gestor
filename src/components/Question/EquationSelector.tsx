@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaSearch, FaPlus, FaTimes } from 'react-icons/fa';
 
-import { Equation } from '../../utils/types/Topic';
+import { Equation } from '../../types/academic/Topic';
 
 import { EmptyState, EquationCard, EquationList, EquationSelectorContainer, EquationTag, SearchContainer, SearchInput, SelectedEquation, SelectedEquationsContainer } from './EquationSelectorStyles';
 

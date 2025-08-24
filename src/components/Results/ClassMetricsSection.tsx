@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 import { FiUsers, FiTrendingUp, FiAward } from 'react-icons/fi';
-import { ClassMetricsType } from "../../utils/types/Assessment";
+import { ClassMetricsType } from "../../types/academic/Assessment";
 
 import MetricCard from './MetricCard';
 

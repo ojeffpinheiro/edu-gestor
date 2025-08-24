@@ -1,5 +1,5 @@
 import React from 'react';
-import { ExamSummary } from '../../../utils/types/Assessment';
+import { ExamSummary } from '../../../types/academic/Assessment';
 import { Line } from 'react-chartjs-2';
 
 interface TemporalProgressChartProps {

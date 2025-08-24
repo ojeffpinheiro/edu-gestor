@@ -5,7 +5,7 @@ import { validateFormationParams } from '../../../utils/groupFormationValidators
 import { createStudentGroups } from '../../../services/groupFormationService'
 import { useFormationState } from '../../../hooks/student/useFormationState'
 
-import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../utils/types/GroupFormation";
+import { FORMATION_CONFIG, GroupFormationModalProps, GroupFormationType } from "../../../types/classroom/GroupFormation";
 
 import FormationControls from "../../ui/FormationControls";
 import GroupsResultList from "../../ui/GroupsResultList";

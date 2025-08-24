@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useClassroom } from '../../contexts/ClassroomContext';
-import { SeatType } from '../../utils/types/Team';
+import { SeatType } from '../../types/classroom/Team';
 import { StudentFormData } from '../../utils/types/BasicUser';
 
 export const useSeatOperations = () => {

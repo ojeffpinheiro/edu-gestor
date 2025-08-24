@@ -1,7 +1,7 @@
 import React from 'react'
 import { addDays, format, getDaysInMonth, isSameDay, startOfMonth } from "date-fns";
 import { EventTypeConfig } from "../../../../utils/consts";
-import { CalendarEvent } from "../../../../utils/types/CalendarEvent";
+import { CalendarEvent } from "../../../../types/academic/CalendarEvent";
 
 import { DayCell, DaysGrid, MonthContainer, MonthHeader, WeekdayCell, WeekdayHeader } from '../../Views/AnnualView/styles';
 import { ptBR } from 'date-fns/locale';

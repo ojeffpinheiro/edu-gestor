@@ -3,7 +3,7 @@ import { Section, SectionHeader } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/baseComponents';
 import { ActionButton } from '../../../styles/buttons';
 import { Table, TableCell, TableHeader, TableRow } from '../../../styles/table';
-import { RecoveryActivity } from '../../../utils/types/AssessmentEvaluation';
+import { RecoveryActivity } from '../../../types/evaluation/AssessmentEvaluation';
 import RecoveryActivityModal from '../RecoveryActivityModal';
 
 const RecoveryView: React.FC = () => {

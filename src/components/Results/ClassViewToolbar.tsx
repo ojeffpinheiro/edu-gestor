@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 import ClassSelector from './ClassSelectorView';
 import PeriodSelector from './PeriodSelector';
 import ViewToggle from './ViewToggle';

@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { FaQuestionCircle, FaUserGraduate, FaChartLine, FaChartPie } from 'react-icons/fa';
 
-import { EnhancedExamResult, EvaluationRubric, StudentResult } from '../../../utils/types/Assessment';
-import { Question } from '../../../utils/types/Question';
+import { EnhancedExamResult, EvaluationRubric, StudentResult } from '../../../types/academic/Assessment';
+import { Question } from '../../../types/evaluation/Question';
 
 import StudentProgressChart from '../Charts/StudentProgressChart';
 import ScoreBreakdownChart from '../Charts/ScoreBreakdownChart';

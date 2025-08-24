@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import { DidacticSequence } from '../../utils/types/DidacticSequence';
+import { DidacticSequence } from '../../types/academic/DidacticSequence';
 import { Card, CardHeader } from '../../styles/card';
 import { Title } from '../../styles/typography';
 import { CardActions, DeleteButton, Discipline, EditButton, EducationLevel, InfoItem, InfoLabel, Overview, Tag, TagsContainer } from './SequenceCardStyle';

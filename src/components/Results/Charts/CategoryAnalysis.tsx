@@ -1,7 +1,7 @@
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
-import { Question } from '../../../utils/types/Question';
-import { EnhancedExamResult, EvaluationRubric } from '../../../utils/types/Assessment';
+import { Question } from '../../../types/evaluation/Question';
+import { EnhancedExamResult, EvaluationRubric } from '../../../types/academic/Assessment';
 
 interface CategoryAnalysisProps {
   questions: Question[];

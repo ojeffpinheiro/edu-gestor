@@ -1,7 +1,7 @@
 // components/Charts/PercentileScatterPlot.tsx
 import React from 'react';
 import { Scatter } from 'react-chartjs-2';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { ClassPerformance } from '../../../types/academic/Assessment';
 
 const PercentileScatterPlot: React.FC<{ classes: ClassPerformance[] }> = ({ classes }) => {
   const data = {

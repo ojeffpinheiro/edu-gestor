@@ -6,7 +6,7 @@ import AttendanceStatusBadge from './AttendanceStatusBadge';
 
 import { formatDate } from '../../utils/dateFormatter';
 import styled from 'styled-components';
-import { AttendanceRecord } from '../../utils/types/Attendance';
+import { AttendanceRecord } from '../../types/academic/Attendance';
 
 /**
  * Calculates attendance statistics for visual feedback

@@ -1,4 +1,4 @@
-import { Exam } from '../utils/types/Assessment';
+import { Exam } from '../types/academic/Assessment';
 
 /**
  * Interface para erros de validação de exames

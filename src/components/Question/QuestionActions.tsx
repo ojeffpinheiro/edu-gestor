@@ -2,7 +2,7 @@ import React from 'react'
 import { FiTrash2, FiMoreHorizontal } from 'react-icons/fi';
 import styled from 'styled-components';
 import Dropdown from './Dropdown/Dropdown';
-import { Question } from '../../utils/types/Question';
+import { Question } from '../../types/evaluation/Question';
 import { FaCopy, FaPencilAlt, FaRegEye, FaSearch } from 'react-icons/fa';
 
 interface QuestionActionsProps {

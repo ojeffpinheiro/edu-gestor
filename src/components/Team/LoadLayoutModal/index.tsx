@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useClassroom } from '../../../contexts/ClassroomContext';
-import { LayoutConfig } from '../../../utils/types/Team';
+import { LayoutConfig } from '../../../types/classroom/Team';
 
 import Modal from '../../modals/Modal';
 

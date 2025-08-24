@@ -1,4 +1,4 @@
-import { ExamResult } from "../utils/types/Assessment";
+import { ExamResult } from "../types/academic/Assessment";
 
 // Mock results for testing
 export const mockResults: ExamResult[] = [

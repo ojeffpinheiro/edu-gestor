@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaFileAlt, FaChartBar, FaListAlt, FaUserGraduate, FaInfoCircle } from 'react-icons/fa';
 
-import { Exam, ExamResult, Question, ReportSection, ReportTemplate } from '../../../utils/types/Assessment';
+import { Exam, ExamResult, Question, ReportSection, ReportTemplate } from '../../../types/academic/Assessment';
 
 import { predefinedTemplates } from '../../../mocks/assessmentData';
 

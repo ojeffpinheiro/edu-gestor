@@ -15,7 +15,7 @@ import {
   FaTrash
  } from 'react-icons/fa';
 
-import { CalendarEvent } from '../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../types/academic/CalendarEvent';
 
 import { CancelButton, IconButton } from '../../styles/buttons';
 import { FormGroup } from '../../styles/formControls';

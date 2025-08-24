@@ -1,5 +1,5 @@
 // mocks/equation.ts
-import { Equation, SymbolCategory } from '../utils/types/Topic';
+import { Equation, SymbolCategory } from '../types/academic/Topic';
 
 /**
  * Dados iniciais para o sistema de equações

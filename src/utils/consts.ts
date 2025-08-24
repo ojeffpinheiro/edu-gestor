@@ -1,4 +1,4 @@
-import { EventType } from "./types/CalendarEvent";
+import { EventType } from "../types/academic/CalendarEvent";
 
 export const constants = {
   colors: {

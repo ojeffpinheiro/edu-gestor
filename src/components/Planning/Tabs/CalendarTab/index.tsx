@@ -1,7 +1,7 @@
 // src/components/Planning/Tabs/CalendarTab/index.tsx
 import React, { useState } from 'react';
 import { FaPlus, FaBell, FaCalendarAlt, FaTimes } from 'react-icons/fa';
-import { CalendarEvent, EventType } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent, EventType } from '../../../../types/academic/CalendarEvent';
 import { 
   Container, 
   CalendarHeader, 

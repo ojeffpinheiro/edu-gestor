@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import { LearningObjective, Team } from '../utils/types/Planning';
+import { LearningObjective, Team } from '../types/academic/Planning';
 import { mockTeams } from '../mocks/plannigData';
 import { LessonsProvider } from './LessonsContext';
 

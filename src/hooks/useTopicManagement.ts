@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { CurriculumItem, HierarchyLevel } from '../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../types/academic/Topic';
 
 export const useTopicManagement = (initialData: CurriculumItem[]) => {
   const [data, setData] = useState<CurriculumItem[]>(initialData);

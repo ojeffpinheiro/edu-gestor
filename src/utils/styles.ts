@@ -1,4 +1,4 @@
-import { ButtonVariant } from "./types/UIComponent";
+import { ButtonVariant } from "../types/ui/UIComponent";
 
 export const getButtonColor = (variant: ButtonVariant) => {
     switch (variant) {

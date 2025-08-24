@@ -1,5 +1,5 @@
 import React from 'react';
-import { DiagnosticEvaluation } from '../../../utils/types/Planning';
+import { DiagnosticEvaluation } from '../../../types/academic/Planning';
 import { Section } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/baseComponents';
 import { FormGroup } from '../../../styles/formControls';

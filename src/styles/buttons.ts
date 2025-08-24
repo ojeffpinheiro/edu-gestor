@@ -3,7 +3,7 @@ import { flexRow } from "./layoutUtils";
 import { BaseButton, buttonBaseCss } from "./baseComponents";
 import { getButtonColor } from "../utils/styles";
 import { constants } from "../utils/consts";
-import { ButtonVariant } from "../utils/types/UIComponent";
+import { ButtonVariant } from "../types/ui/UIComponent";
 
 type ButtonSize = 'xs' | "sm" | "md" | "lg";
 

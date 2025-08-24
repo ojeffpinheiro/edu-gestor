@@ -1,7 +1,7 @@
 import React from 'react';
 import DashboardCard from './DashboardCard';
 import { ProgressTrendChart } from './Charts/ProgressTrendChart';
-import { ExamSummary } from '../../utils/types/Assessment';
+import { ExamSummary } from '../../types/academic/Assessment';
 
 interface PerformanceTrendSectionProps {
   examSummaries: ExamSummary[];

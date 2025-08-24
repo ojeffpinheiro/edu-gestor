@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { FaEye, FaEyeSlash, FaGripLines } from 'react-icons/fa';
-import { ImageWrapType, QuestionFormData } from '../../../utils/types/Question';
+import { ImageWrapType, QuestionFormData } from '../../../types/evaluation/Question';
 import {
   PreviewContainer,
   PreviewContent,

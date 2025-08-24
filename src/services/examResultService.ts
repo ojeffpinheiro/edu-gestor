@@ -1,5 +1,5 @@
 import { mockResults } from "../mocks/assessmentData";
-import { ExamResult } from "../utils/types/Assessment";
+import { ExamResult } from "../types/academic/Assessment";
 
 /**
  * Serviço para gerenciamento de resultados de exames

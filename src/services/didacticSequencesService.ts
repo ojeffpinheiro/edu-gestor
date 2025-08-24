@@ -1,6 +1,6 @@
 // src/services/didacticSequencesService.ts
 
-import { DidacticSequence, DisciplineType } from '../utils/types/DidacticSequence';
+import { DidacticSequence, DisciplineType } from '../types/academic/DidacticSequence';
 import { v4 as uuidv4 } from 'uuid';
 
 // Dados mocados

@@ -13,7 +13,7 @@ import {
   Legend,
   Colors
 } from 'chart.js';
-import { ExamSummary } from '../../../utils/types/Assessment';
+import { ExamSummary } from '../../../types/academic/Assessment';
 import { calculateTrendLine } from '../../../utils/attendanceUtils';
 
 ChartJS.register(

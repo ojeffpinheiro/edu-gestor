@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
-import { CalendarEvent } from '../utils/types/CalendarEvent';
-import { Holiday, NonSchoolDay, Task } from '../utils/types/Planning';
-import { LessonPlan } from '../utils/types/DidacticSequence';
+import { CalendarEvent } from '../types/academic/CalendarEvent';
+import { Holiday, NonSchoolDay, Task } from '../types/academic/Planning';
+import { LessonPlan } from '../types/academic/DidacticSequence';
 
 interface Team {
   id: number;

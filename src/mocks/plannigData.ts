@@ -1,6 +1,6 @@
-import { CalendarEvent } from "../utils/types/CalendarEvent";
-import { LessonPlan } from "../utils/types/DidacticSequence";
-import { GradeSettings, Holiday, LearningObjective, Lesson, LessonPlanTemplate, NonSchoolDay, Session, Task, Team } from "../utils/types/Planning";
+import { CalendarEvent } from "../types/academic/CalendarEvent";
+import { LessonPlan } from "../types/academic/DidacticSequence";
+import { GradeSettings, Holiday, LearningObjective, Lesson, LessonPlanTemplate, NonSchoolDay, Session, Task, Team } from "../types/academic/Planning";
 
 const mockTasks: Task[] = [
   { id: 1, text: "Preparar material didático", completed: false },

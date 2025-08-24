@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Content, DifficultyLevelType, Filter, QuestionStatus, QuestionType } from '../../../../utils/types/Question';
+import { Content, DifficultyLevelType, Filter, QuestionStatus, QuestionType } from '../../../../types/evaluation/Question';
 import { Select } from '../../../../styles/inputs';
 import { Button } from '../../../../styles/buttons';
 interface FiltersPanelProps {

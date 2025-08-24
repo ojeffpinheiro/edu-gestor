@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { FaSave, FaTimes } from 'react-icons/fa';
 
-import { Topic } from '../../utils/types/Topic';
+import { Topic } from '../../types/academic/Topic';
 import { Input, InputGroup, Label, Select } from '../../styles/inputs';
 import { CancelButton, IconButton, PrimaryActionButton } from '../../styles/buttons';
 import { ModalBody, ModalContainer, ModalContent, ModalFooter, ModalHeader } from '../../styles/modals';

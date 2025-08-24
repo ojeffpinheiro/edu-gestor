@@ -14,7 +14,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 
 import { generatePassword } from '../../../utils/passwordGenerator';
-import { Exam } from '../../../utils/types/Assessment';
+import { Exam } from '../../../types/academic/Assessment';
 import { CardHeader } from '../../../styles/card';
 import { Divider, Section } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/baseComponents';

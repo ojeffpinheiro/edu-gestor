@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
 
-import { Evaluation } from '../../../utils/types/AssessmentEvaluation';
+import { Evaluation } from '../../../types/evaluation/AssessmentEvaluation';
 
 import EvaluationsList from '../EvaluationsList';
 

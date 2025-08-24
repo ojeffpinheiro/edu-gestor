@@ -1,5 +1,5 @@
 import { StudentData } from "./BasicUser";
-import { ExportOptions } from "./ExportReport";
+import { ExportOptions } from "../shared/ExportReport";
 
 // Button Variants
 export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'error' | 'warning' | 'info' | 'link';

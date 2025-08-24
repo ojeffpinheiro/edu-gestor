@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { BenchmarkQuadrant } from './BenchmarkQuadrant';
-import { ClassPerformance } from '../../utils/types/Assessment';
+import { ClassPerformance } from '../../types/academic/Assessment';
 import ClassPerformanceChart from './ClassPerformanceChart';
 
 const ComparisonContainer = styled.div`

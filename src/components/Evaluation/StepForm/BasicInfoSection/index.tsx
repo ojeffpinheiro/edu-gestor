@@ -16,7 +16,7 @@ import {
     StyledSelect, 
     StyledTextArea
  } from './styles'
-import { Evaluation, EvaluationType } from "../../../../utils/types/AssessmentEvaluation";
+import { Evaluation, EvaluationType } from "../../../../types/evaluation/AssessmentEvaluation";
 import { FormGrid, Grid2Columns, SectionHeader } from "../../../../styles/layoutUtils";
 
 interface BasicInfoSectionProps {

@@ -1,4 +1,4 @@
-import { DifficultyLevelType, QuestionType } from "./types/Question";
+import { DifficultyLevelType, QuestionType } from "../types/evaluation/Question";
 
 // Tabela de mapeamento tipo de questão para configurações de exibição
 export const QUESTION_TYPE_CONFIG: Record<QuestionType, {

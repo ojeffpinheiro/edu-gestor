@@ -2,7 +2,7 @@ import React from "react";
 import { FaEdit, FaCopy, FaClipboardList, FaTrash } from "react-icons/fa";
 
 import { Card, CardHeader, CardBody, ActionButton } from "./styles";
-import { Evaluation } from "../../../utils/types/AssessmentEvaluation";
+import { Evaluation } from "../../../types/evaluation/AssessmentEvaluation";
 
 interface EvaluationsListProps {
     evaluations: Evaluation[];

@@ -11,7 +11,7 @@ import {
   ChartOptions,
   ChartData
 } from 'chart.js';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { ClassPerformance } from '../../../types/academic/Assessment';
 
 // Registra os componentes necessários do Chart.js
 ChartJS.register(

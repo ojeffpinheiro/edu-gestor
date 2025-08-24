@@ -1,5 +1,5 @@
 import React from 'react'
-import { QuestionStatus } from "../../utils/types/Question";
+import { QuestionStatus } from "../../types/evaluation/Question";
 import { CategoryWithId } from "./QuestionForm/type";
 import ConfirmationModal from './ConfirmationModal';
 import { BulkMoveModal } from './BulkMoveModal';

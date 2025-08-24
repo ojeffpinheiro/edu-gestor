@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import { PerformancePrediction, StudentResult } from '../../../utils/types/Assessment';
+import { PerformancePrediction, StudentResult } from '../../../types/academic/Assessment';
 
 interface PredictionAccuracyChartProps {
   predictions: PerformancePrediction[];

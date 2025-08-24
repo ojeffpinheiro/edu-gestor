@@ -3,7 +3,7 @@ import { useDrop } from 'react-dnd';
 import { FiAlertCircle } from 'react-icons/fi';
 import { FaCheck, FaTimes } from 'react-icons/fa';
 
-import { SeatType, PriorityType, PriorityInfo, PriorityConfig } from '../../../utils/types/Team';
+import { SeatType, PriorityType, PriorityInfo, PriorityConfig } from '../../../types/classroom/Team';
 import Seat from '../Seat';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 import { useClassroom } from '../../../contexts/ClassroomContext';

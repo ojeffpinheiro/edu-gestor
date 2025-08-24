@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaPlus } from 'react-icons/fa';
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic';
 import { EmptyContentMessage } from '../../../pages/TopicContentManagement/styles';
 import { AddButton } from '../communStyles';
 

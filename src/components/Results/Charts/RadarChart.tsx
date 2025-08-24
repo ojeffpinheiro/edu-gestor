@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClassPerformance, EvaluationRubric } from '../../../utils/types/Assessment';
+import { ClassPerformance, EvaluationRubric } from '../../../types/academic/Assessment';
 import { Radar } from 'react-chartjs-2';
 
 interface RadarChartProps {

@@ -1,7 +1,7 @@
 // components/Calendar/MonthlyView/TimedEvents.tsx
 import React from 'react';
 import { FaAngleDown, FaAngleUp } from 'react-icons/fa';
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../types/academic/CalendarEvent';
 import { EventsContainer } from '../ScheduleView/styles';
 import EventItem from './EventItem';
 import { ExpandButton } from '../Views/WeeklyView/styles';

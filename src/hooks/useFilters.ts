@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { EventTypeConfig } from "../utils/consts";
-import { EventType } from "../utils/types/CalendarEvent";
-import { ClassPerformance, FilterState } from "../utils/types/Assessment";
+import { EventType } from "../types/academic/CalendarEvent";
+import { ClassPerformance, FilterState } from "../types/academic/Assessment";
 
 interface FilterOptions {
     types: Record<EventType, boolean>;

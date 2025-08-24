@@ -1,4 +1,4 @@
-import { CurriculumItem, Topic } from "../utils/types/Topic";
+import { CurriculumItem, Topic } from "../types/academic/Topic";
 
 // Mock de dados iniciais
 const initialTopics: Topic[] = [

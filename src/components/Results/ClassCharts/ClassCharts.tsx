@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClassPerformance, EvaluationRubric } from '../../../utils/types/Assessment';
+import { ClassPerformance, EvaluationRubric } from '../../../types/academic/Assessment';
 import DashboardCard from '../DashboardCard';
 import { ChartTabs, TabButton } from '../Features/styles/ClassViewStyles';
 

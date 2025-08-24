@@ -1,5 +1,5 @@
 import React from 'react';
-import { Assessment, ClassData, Student } from '../../../utils/types/ExamAssesments';
+import { Assessment, ClassData, Student } from '../../../types/academic/ExamAssesments';
 import { ResultsTable, StatusBadge, ResultsHeader } from './styles';
 
 interface FinalResultsProps {

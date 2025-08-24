@@ -6,7 +6,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 
 import RangeSlider from '../../styles/RangeSlider';
 import { MultiSelect } from '../shared/MultiSelect';
-import { QuestionStatus, QuestionType } from '../../utils/types/Question';
+import { QuestionStatus, QuestionType } from '../../types/evaluation/Question';
 import { CategoryWithId } from './QuestionForm/type';
 import { constants } from '../../utils/consts';
 

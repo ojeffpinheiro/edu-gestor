@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Exam, ExamResult, TimeframeFilter } from '../../utils/types/Assessment';
+import { Exam, ExamResult, TimeframeFilter } from '../../types/academic/Assessment';
 import examService from '../../services/examService';
 
 export const useExams = () => {

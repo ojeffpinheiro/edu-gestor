@@ -7,7 +7,7 @@ import {
   DifficultyLevel, ImageWrapType, OptionsLayout,
   Question,
   QuestionFormData, QuestionResource, QuestionTypeConst,
-} from '../../../utils/types/Question';
+} from '../../../types/evaluation/Question';
 import { BasicInfoStep } from '../NewQuestion/steps/BasicInfoStep';
 import { StatementStep } from '../NewQuestion/steps/StatementStep'; // OK
 import AlternativesStep from '../NewQuestion/steps/AlternativesStep'; // OK

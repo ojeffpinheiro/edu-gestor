@@ -5,7 +5,7 @@ import {
 } from 'react-icons/fi';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Content, DifficultyLevelType, Filter, Question, QuestionStatus, QuestionType } from '../../../../utils/types/Question';
+import { Content, DifficultyLevelType, Filter, Question, QuestionStatus, QuestionType } from '../../../../types/evaluation/Question';
 
 import QuestionTable from '../../../../components/Exam/Questions/QuestionTable';
 import QuestionGrid from '../../../../components/Exam/Questions/QuestionGrid';

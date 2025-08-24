@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity } from '../../../utils/types/Planning';
+import { Activity } from '../../../types/academic/Planning';
 import { Section } from '../../../styles/layoutUtils';
 import { SectionTitle } from '../../../styles/baseComponents';
 import { Card, CardBody, CardHeader } from '../../../styles/card';

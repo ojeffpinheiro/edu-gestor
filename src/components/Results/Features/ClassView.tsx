@@ -7,7 +7,7 @@ import {
   ChartTab,
   ExamSummary,
   ClassPerformanceWithSubjects
-} from '../../../utils/types/Assessment';
+} from '../../../types/academic/Assessment';
 
 import { useFilters } from '../../../hooks/userResultsFilters';
 import { useStudentResults } from '../../../hooks/assessment/useStudentResults';

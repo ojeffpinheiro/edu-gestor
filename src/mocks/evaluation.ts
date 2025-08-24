@@ -1,5 +1,5 @@
-import { Evaluation } from "../utils/types/AssessmentEvaluation";
-import { EvaluationCriteria, EvaluationCriterion } from "../utils/types/RubricCriteria";
+import { Evaluation } from "../types/evaluation/AssessmentEvaluation";
+import { EvaluationCriteria, EvaluationCriterion } from "../types/evaluation/RubricCriteria";
 
 export const evaluationCriteria: EvaluationCriteria[] = [
     { id: "1", name: "Participação", description: "Envolvimento ativo nas atividades", weight: 30 },

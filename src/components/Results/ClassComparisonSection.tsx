@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChartData, ClassPerformance } from '../../utils/types/Assessment';
+import { ChartData, ClassPerformance } from '../../types/academic/Assessment';
 import ClassSelectorChart from './Charts/ClassSelectorChart';
 import InteractiveChart from './InteractiveChart';
 import ComparisonTabs from './ComparisonTabs';

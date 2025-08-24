@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClassPerformance, ClassMetricsType } from '../../../utils/types/Assessment'
+import { ClassPerformance, ClassMetricsType } from '../../../types/academic/Assessment'
 import MetricCard from './MetricCard';
 
 const calculateClassMetrics = (currentClass: ClassPerformance): ClassMetricsType => {

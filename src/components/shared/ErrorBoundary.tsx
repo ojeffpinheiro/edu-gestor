@@ -1,7 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import styled from 'styled-components';
 import { fadeIn } from '../../styles/animations';
-import { ErrorBoundaryProps, ErrorBoundaryState } from '../../utils/types/planningDashboard';
+import { ErrorBoundaryProps, ErrorBoundaryState } from '../../types/ui/planningDashboard';
 
 // Styled components for error display
 const ErrorContainer = styled.div`

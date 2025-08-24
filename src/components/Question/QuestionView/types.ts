@@ -1,4 +1,4 @@
-import { Question } from "../../../utils/types/Question";
+import { Question } from "../../../types/evaluation/Question";
 
 export type ViewMode = 'cards' | 'table';
 

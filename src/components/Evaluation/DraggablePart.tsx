@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { EvaluationPart } from '../../utils/types/AssessmentEvaluation';
+import { EvaluationPart } from '../../types/evaluation/AssessmentEvaluation';
 
 const PartContainer = styled.div`
     padding: 8px 12px;

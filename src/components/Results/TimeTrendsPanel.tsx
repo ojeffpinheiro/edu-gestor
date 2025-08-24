@@ -1,7 +1,7 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import styled from 'styled-components';
-import { ExamSummary } from '../../utils/types/Assessment';
+import { ExamSummary } from '../../types/academic/Assessment';
 
 const TimeTrendsContainer = styled.div`
   background: var(--color-card);

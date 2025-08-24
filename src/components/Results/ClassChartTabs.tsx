@@ -1,5 +1,5 @@
 import React from 'react'
-import { ChartTab, ClassPerformance, EvaluationRubric } from "../../utils/types/Assessment";
+import { ChartTab, ClassPerformance, EvaluationRubric } from "../../types/academic/Assessment";
 import DashboardCard from "./DashboardCard";
 import { ChartTabs, TabButton } from './Features/styles/ClassViewStyles';
 import DistributionView from './ClassCharts/DistributionView';

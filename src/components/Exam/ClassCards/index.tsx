@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Assessment, ClassData, Student } from '../../../utils/types/ExamAssesments';
+import { Assessment, ClassData, Student } from '../../../types/academic/ExamAssesments';
 import {
   ClassGrid,
   ClassCard,

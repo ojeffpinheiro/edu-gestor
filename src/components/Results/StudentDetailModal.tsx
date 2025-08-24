@@ -1,6 +1,6 @@
 // components/StudentDetailModal.tsx
 import React, { useState } from 'react';
-import { StudentResult, ExamResult } from '../../utils/types/Assessment'
+import { StudentResult, ExamResult } from '../../types/academic/Assessment'
 import { FiEye, FiTarget, FiTrendingUp, FiUser, FiX } from 'react-icons/fi'
 import { FaChartBar, FaGraduationCap } from 'react-icons/fa';
 

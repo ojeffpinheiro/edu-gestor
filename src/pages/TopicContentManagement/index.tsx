@@ -50,7 +50,7 @@ import {
   LoadingSpinner,
   ErrorText
 } from './styles';
-import { CurriculumItem, HierarchyLevel } from '../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../types/academic/Topic';
 import { initialCurriculumItem } from '../../mocks/topic';
 
 // Componente principal

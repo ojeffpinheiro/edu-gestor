@@ -5,8 +5,8 @@ import { Input, InputRow, Label, TextArea, InputGroup } from "../../../../styles
 import { Button, ActionButton } from "../../../../styles/buttons";
 import CollapsibleSection from "../../CollapsibleSection";
 import { AddCriterionContainer, Badge, CriteriaBody, CriteriaCard, CriteriaHeader, CriteriaOptionItem, CriteriaOptions, DragHandle, EmptyCriteriaState, ErrorMessage, FormActions, StatusBanner, Tooltip, WeightInput } from "./styles";
-import { EvaluationCriterion } from "../../../../utils/types/RubricCriteria";
-import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
+import { EvaluationCriterion } from "../../../../types/evaluation/RubricCriteria";
+import { Evaluation } from "../../../../types/evaluation/AssessmentEvaluation";
 import { initialEvaluationCriteria } from "../../../../mocks/evaluation";
 
 interface EvaluationCriteriaSectionProps {

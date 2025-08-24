@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { FaFilter } from 'react-icons/fa';
 import { useCalendar } from '../../../contexts/CalendarContext';
-import { CalendarEvent, CalendarViewType, EventType } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent, CalendarViewType, EventType } from '../../../types/academic/CalendarEvent';
 import { ErrorBoundary } from '../../shared/ErrorBoundary';
 import { constants, eventTypeColors } from '../../../utils/consts';
 import {

@@ -1,5 +1,5 @@
 import { LessonPlan } from "./DidacticSequence";
-import { Event } from "./Event";
+import { Event } from "../shared/Event";
 
 export enum Session {
   MORNING = 'Manhã',

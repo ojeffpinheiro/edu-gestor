@@ -1,6 +1,6 @@
 // ErrorAlert.tsx - Componente para exibição de erros
 import React from 'react';
-import { ErrorAlertProps } from '../../utils/types/planningDashboard';
+import { ErrorAlertProps } from '../../types/ui/planningDashboard';
 import { Container } from '../../styles/layoutUtils';
 
 /**

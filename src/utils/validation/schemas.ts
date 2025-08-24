@@ -1,5 +1,5 @@
 import * as yup from 'yup';
-import { DifficultyLevelType, QuestionType } from '../types/Question';
+import { DifficultyLevelType, QuestionType } from '../../types/evaluation/Question';
 
 export const questionBaseSchema = yup.object().shape({
   title: yup.string()

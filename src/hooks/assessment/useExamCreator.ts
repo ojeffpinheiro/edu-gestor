@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo, useEffect } from 'react';
-import { Exam, ExamTypes, ExamVariant } from '../../utils/types/Exam';
-import { Question, DifficultyLevelType } from '../../utils/types/Question';
+import { Exam, ExamTypes, ExamVariant } from '../../types/evaluation/Exam';
+import { Question, DifficultyLevelType } from '../../types/evaluation/Question';
 import { generateAccessCode } from '../../utils/examHelpers';
 
 interface QuestionDistributionAnalysis {

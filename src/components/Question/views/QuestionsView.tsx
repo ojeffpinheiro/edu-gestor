@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import { FaCheckCircle, FaExclamationCircle, FaFileExport, FaObjectGroup, FaTimes, FaTrash, FaUpload } from 'react-icons/fa';
 
-import { Question, QuestionStatus, QuestionType } from '../../../utils/types/Question';
+import { Question, QuestionStatus, QuestionType } from '../../../types/evaluation/Question';
 import { CategoryWithId } from '../QuestionForm/type';
 
 import { useQuestionManager } from '../../../hooks/Question/useQuestionManager';

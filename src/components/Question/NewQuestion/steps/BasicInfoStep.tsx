@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaHeading, FaTag, FaBook, FaQuestionCircle, FaChartBar } from 'react-icons/fa';
-import { QuestionFormData } from '../../../../utils/types/Question';
+import { QuestionFormData } from '../../../../types/evaluation/Question';
 import {
   Content,
   FormGroup,

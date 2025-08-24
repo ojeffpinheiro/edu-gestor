@@ -1,7 +1,7 @@
 import React from 'react';
 import { FiTrendingDown, FiTrendingUp } from 'react-icons/fi';
 
-import { ClassMetricsType, ClassPerformance } from '../../../utils/types/Assessment'
+import { ClassMetricsType, ClassPerformance } from '../../../types/academic/Assessment'
 
 import ComparisonBarChart from '../Charts/ComparisonBarChart'
 import BenchmarkCard from '../BenchmarkCard';

@@ -1,6 +1,6 @@
 import React from 'react'
 import QuestionCard from "./QuestionCard";
-import { Question } from '../../utils/types/Question';
+import { Question } from '../../types/evaluation/Question';
 
 interface CompositeQuestionsProps {
   questions: Question[];

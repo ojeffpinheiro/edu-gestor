@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Question, QuestionStatus, QuestionType } from '../../utils/types/Question';
+import { Question, QuestionStatus, QuestionType } from '../../types/evaluation/Question';
 
 export interface FilterOptions {
   searchTerm?: string;

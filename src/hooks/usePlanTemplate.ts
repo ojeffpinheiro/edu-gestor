@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { LessonPlan } from "../utils/types/DidacticSequence";
+import { LessonPlan } from "../types/academic/DidacticSequence";
 import { usePlanningContext } from "../contexts/PlanningContext";
 
 interface UsePlanTemplateReturn {

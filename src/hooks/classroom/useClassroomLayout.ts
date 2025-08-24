@@ -1,6 +1,6 @@
 // hooks/useClassroomLayout.ts
 import { useCallback, useState } from 'react';
-import { LayoutConfig } from '../../utils/types/Team';
+import { LayoutConfig } from '../../types/classroom/Team';
 import { generateLayout, initializeLayout, Template, validateLayout } from '../../utils/classroomUtils';
 
 

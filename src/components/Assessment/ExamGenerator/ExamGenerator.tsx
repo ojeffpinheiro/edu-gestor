@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaCheck, FaArrowRight, FaLock, FaQrcode, FaBarcode } from 'react-icons/fa';
-import { Exam, Question } from '../../../utils/types/Assessment'
+import { Exam, Question } from '../../../types/academic/Assessment'
 
 import ExamSecurityManager from './ExamSecurityManager';
 import ExamConfig from './ExamConfig';

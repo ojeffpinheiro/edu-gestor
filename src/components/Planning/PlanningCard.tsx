@@ -4,7 +4,7 @@
  */
 import React, { memo } from 'react';
 import { PlanningCardWrapper, ProgressBar } from "./styles";
-import { PlanningData } from '../../utils/types/planningDashboard';
+import { PlanningData } from '../../types/ui/planningDashboard';
 import { usePlanning } from '../../utils/usePlanning';
 
 /**

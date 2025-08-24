@@ -5,7 +5,7 @@
 import React, { memo } from 'react';
 import { FaCalendarAlt } from "react-icons/fa";
 import { NotificationItem, NotificationList, SectionCard, SectionHeader, EmptyStateMessage } from "./styles";
-import { Activity } from '../../utils/types/planningDashboard';
+import { Activity } from '../../types/ui/planningDashboard';
 import { formatDate } from '../../utils/dateFormatter';
 
 interface UpcomingActivitiesSectionProps {

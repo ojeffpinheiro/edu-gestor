@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { Evaluation, EvaluationPart, EvaluationStatus, EvaluationType, FormFeedback } from "../../utils/types/AssessmentEvaluation";
-import { FormSectionOptions } from "../../utils/types/FormSection";
-import { Resource } from "../../utils/types/Resource";
-import { EvaluationCriterion, RubricOrConcept } from "../../utils/types/RubricCriteria";
+import { Evaluation, EvaluationPart, EvaluationStatus, EvaluationType, FormFeedback } from "../../types/evaluation/AssessmentEvaluation";
+import { FormSectionOptions } from "../../types/ui/FormSection";
+import { Resource } from "../../types/shared/Resource";
+import { EvaluationCriterion, RubricOrConcept } from "../../types/evaluation/RubricCriteria";
 
 // Inicializa uma avaliação vazia com valores padrão
 export function initializeEmptyEvaluation(): Evaluation {

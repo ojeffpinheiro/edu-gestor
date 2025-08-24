@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaChartLine, FaUsers, FaClipboardCheck, FaChartBar, FaCaretUp, FaCaretDown } from 'react-icons/fa';
 
-import { EnhancedExamResult, Exam, ExamResult } from '../../../utils/types/Assessment';
+import { EnhancedExamResult, Exam, ExamResult } from '../../../types/academic/Assessment';
 
 import { useExams } from '../../../hooks/assessment/useExams';
 import { mockExams } from '../../../mocks/assessmentData';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bar, Line, Radar } from 'react-chartjs-2';
-import { ExamResult, StudentResult } from '../../utils/types/Assessment';
+import { ExamResult, StudentResult } from '../../types/academic/Assessment';
 
 interface EnhancedStudentDetailModalProps {
   student: StudentResult;

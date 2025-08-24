@@ -1,4 +1,4 @@
-import { Lesson } from "../utils/types/Planning";
+import { Lesson } from "../types/academic/Planning";
 
 
 class ScheduleManager {

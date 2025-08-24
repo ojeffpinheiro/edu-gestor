@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic';
 import { ExpandButton, ItemIcon, ItemLabel, NavItem } from './TopicTreeNodeStyles';
 import { ItemType } from '../communStyles';
 import { getItemIcon } from '../../../utils/Icons';

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useAssessment } from '../../../contexts/AssessmentContext';
-import { Exam, ExamModalType } from '../../../utils/types/Assessment';
+import { Exam, ExamModalType } from '../../../types/academic/Assessment';
 
 import ExamGenerator from '../../../components/Assessment/ExamGenerator/ExamGenerator';
 import ExamSecurityManager from '../../../components/Assessment/ExamGenerator/ExamSecurityManager';

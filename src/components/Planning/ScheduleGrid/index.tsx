@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLessons } from '../../../contexts/LessonsContext';
 import { useSchedule } from '../../../contexts/ScheduleContext';
-import { DayOfWeek, Shift } from '../../../utils/types/Planning';
+import { DayOfWeek, Shift } from '../../../types/academic/Planning';
 import { Grid, Cell, HeaderCell, TimeCell } from './styles';
 
 interface ScheduleGridProps {

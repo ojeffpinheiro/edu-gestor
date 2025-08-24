@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ClassPerformance } from '../../../utils/types/Assessment';
+import { ClassPerformance } from '../../../types/academic/Assessment';
 import ClassSelector from '../ClassSelector';
 import SubjectSelector from '../SubjectSelector';
 import { useFilters } from '../../../hooks/userResultsFilters';

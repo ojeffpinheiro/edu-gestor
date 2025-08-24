@@ -1,5 +1,5 @@
 import React, { Children, isValidElement } from 'react';
-import { TabsProps } from '../../utils/types/Question';
+import { TabsProps } from '../../types/evaluation/Question';
 import { TabContent, TabsContainer, TabsList, TabTrigger } from '../../styles/tab';
 
 interface TabChildProps {

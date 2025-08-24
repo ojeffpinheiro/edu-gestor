@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lesson, DayOfWeek } from '../../utils/types/Planning';
+import { Lesson, DayOfWeek } from '../../types/academic/Planning';
 import { useModal } from '../../contexts/ModalContext';
 import { useLessons } from '../../contexts/LessonsContext';
 import { useTeams } from '../../contexts/TeamsContext';

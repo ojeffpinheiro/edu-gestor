@@ -1,4 +1,4 @@
-import { SeatType } from "./types/Team";
+import { SeatType } from "../types/classroom/Team";
 
 export const getSeatPosition = (seatId: string, seats: SeatType[]) => {
   const seat = seats.find(s => s.id === seatId);

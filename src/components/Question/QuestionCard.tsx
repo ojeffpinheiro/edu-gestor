@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import styled, { keyframes } from 'styled-components';
 
-import { Question } from '../../utils/types/Question';
+import { Question } from '../../types/evaluation/Question';
 
 import { Button } from '../shared/Button.styles';
 

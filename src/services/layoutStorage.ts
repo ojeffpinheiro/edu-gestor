@@ -1,4 +1,4 @@
-import { LayoutConfig } from "../utils/types/Team";
+import { LayoutConfig } from "../types/classroom/Team";
 
 const LAYOUT_KEY = 'savedLayouts';
 

@@ -17,7 +17,7 @@ import {
   CalendarEvent,
   EventType,
   CalendarViewType,
-} from '../utils/types/CalendarEvent';
+} from '../types/academic/CalendarEvent';
 import { TeamsProvider } from './TeamsContext';
 import { schoolCalendar } from '../mocks/events';
 

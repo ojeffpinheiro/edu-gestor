@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShiftSettings, Period } from '../../../utils/types/Planning';
+import { ShiftSettings, Period } from '../../../types/academic/Planning';
 import { FormGroup, Label } from '../../../styles/formControls';
 import { Input } from '../../../styles/inputs';
 import { Button } from '../../../styles/buttons';

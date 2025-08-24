@@ -7,7 +7,7 @@ import 'moment/locale/pt-br';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { momentLocalizer, Views } from 'react-big-calendar';
 
-import { CalendarEvent } from '../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../types/academic/CalendarEvent';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 
 import { generateMockEvents } from '../../../hooks/calendar/useCalendar';

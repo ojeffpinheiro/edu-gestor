@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { mockPlanningData } from '../../../../mocks/planning';
 
-import { GeneralObjective, PlanningData, SchoolInfo } from '../../../../utils/types/Planning';
+import { GeneralObjective, PlanningData, SchoolInfo } from '../../../../types/academic/Planning';
 import SchoolInfoSection from '../../PlanningTabs/SchoolInfoSection';
 import GeneralObjectivesSection from '../../PlanningTabs/GeneralObjectivesSection';
 import TrimesterTopicsSection from '../../PlanningTabs/TrimesterTopicsSection';

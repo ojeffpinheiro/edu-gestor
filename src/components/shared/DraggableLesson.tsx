@@ -1,6 +1,6 @@
 import React, { forwardRef } from 'react';
 import { useDrag } from 'react-dnd';
-import { Lesson } from '../../utils/types/Planning';
+import { Lesson } from '../../types/academic/Planning';
 import { LessonCard } from '../../styles/schedule';
 
 interface DraggableLessonProps {

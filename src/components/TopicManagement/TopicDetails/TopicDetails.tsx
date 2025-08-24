@@ -13,7 +13,7 @@ import {
   SectionTitle, 
   ContentGrid 
 } from './styles';
-import { CurriculumItem, HierarchyLevel } from '../../../utils/types/Topic';
+import { CurriculumItem, HierarchyLevel } from '../../../types/academic/Topic';
 import EmptyTopicState from '../EmptyTopicState';
 import TopicCard from '../TopicCard';
 import AddCard from '../AddCard';

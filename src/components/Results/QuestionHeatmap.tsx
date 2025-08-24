@@ -1,8 +1,8 @@
 import React from 'react';
 import { Chart } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
-import { EnhancedExamResult } from '../../utils/types/Assessment';
-import { Question } from '../../utils/types/Question';
+import { EnhancedExamResult } from '../../types/academic/Assessment';
+import { Question } from '../../types/evaluation/Question';
 
 ChartJS.register(...registerables);
 

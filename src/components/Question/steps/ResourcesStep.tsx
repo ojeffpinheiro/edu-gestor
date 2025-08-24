@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { StepProps } from "../../../utils/types/Question";
+import { StepProps } from "../../../types/evaluation/Question";
 import { ImagePreview, ImagePreviewContainer, ImageUploadContainer, RemoveImageButton, SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
 import { FaExclamationTriangle, FaImage, FaLink, FaTrashAlt, FaUpload } from "react-icons/fa";
 import { FormCard } from "../../../styles/containers";

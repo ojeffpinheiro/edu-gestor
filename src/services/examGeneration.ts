@@ -1,5 +1,5 @@
-import { Exam } from "../utils/types/Exam";
-import { Question, QuestionFilters } from "../utils/types/Question";
+import { Exam } from "../types/evaluation/Exam";
+import { Question, QuestionFilters } from "../types/evaluation/Question";
 
 const questionBank: Question[] = []; // Inicialize com suas questões
 

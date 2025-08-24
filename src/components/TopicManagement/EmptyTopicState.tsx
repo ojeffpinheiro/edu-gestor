@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaLayerGroup, FaPlus } from 'react-icons/fa';
-import { HierarchyLevel } from '../../utils/types/Topic';
+import { HierarchyLevel } from '../../types/academic/Topic';
 import { AddButton, EmptyState } from './communStyles';
 
 interface EmptyTopicStateProps {

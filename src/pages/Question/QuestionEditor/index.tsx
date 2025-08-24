@@ -4,7 +4,7 @@ import { Editor, EditorState, RichUtils, ContentState, convertFromHTML } from 'd
 
 import 'draft-js/dist/Draft.css';
 
-import { Equation } from '../../../utils/types/Topic';
+import { Equation } from '../../../types/academic/Topic';
 
 import { FormContainer } from '../../../styles/containers';
 import { FormGroup } from '../../../styles/formControls';
@@ -12,7 +12,7 @@ import { Label } from '../../../styles/inputs';
 import { EditorContainer, EditorTab, EditorTabs, Toolbar, ToolbarButton } from './styles';
 import { Flex } from '../../../styles/layoutUtils';
 import { ActionButton, Button, CancelButton } from '../../../styles/buttons';
-import { Variable } from '../../../utils/types/Question';
+import { Variable } from '../../../types/evaluation/Question';
 import VariableManager from '../../../components/Question/VariableManager';
 import QuestionPreview from '../../../components/Question/QuestionPreview';
 import EquationSelector from '../../../components/Question/EquationSelector';

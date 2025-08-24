@@ -5,7 +5,7 @@ import { useModal } from '../../../../contexts/ModalContext';
 import { useSchedule } from '../../../../contexts/ScheduleContext';
 import { useLessons } from '../../../../contexts/LessonsContext';
 
-import { DayOfWeek, Shift } from '../../../../utils/types/Planning';
+import { DayOfWeek, Shift } from '../../../../types/academic/Planning';
 
 import ScheduleGrid from '../../ScheduleGrid';
 

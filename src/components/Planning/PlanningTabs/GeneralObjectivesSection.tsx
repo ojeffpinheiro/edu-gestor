@@ -3,7 +3,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import { usePlanning } from '../../../contexts/PlannerContext';
 
-import { GeneralObjective } from '../../../utils/types/Planning';
+import { GeneralObjective } from '../../../types/academic/Planning';
 
 import { Card, CardContent } from '../../../styles/card';
 import { FormGroup } from '../../../styles/formControls';

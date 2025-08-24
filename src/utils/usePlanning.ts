@@ -1,7 +1,7 @@
 /* Hook personalizado para cálculos de planejamento
  */
 import { useMemo } from 'react';
-import { PlanningData } from './types/planningDashboard'
+import { PlanningData } from '../types/ui/planningDashboard'
 
 /**
  * Calcula percentuais de conclusão para um planejamento

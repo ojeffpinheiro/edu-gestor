@@ -1,5 +1,5 @@
 import React from 'react';
-import { QuestionType } from '../../utils/types/Question';
+import { QuestionType } from '../../types/evaluation/Question';
 import styled from 'styled-components';
 
 interface QuestionTypeFilterProps {

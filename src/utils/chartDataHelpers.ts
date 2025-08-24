@@ -1,4 +1,4 @@
-import { ClassPerformance, ExamSummary } from '../utils/types/Assessment';
+import { ClassPerformance, ExamSummary } from '../types/academic/Assessment';
 
 /**
  * Prepara dados para gráficos de comparação entre turmas

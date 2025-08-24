@@ -3,7 +3,7 @@ import { FaCheck } from 'react-icons/fa';
 import { FiCheck } from 'react-icons/fi';
 
 import { StudentFormData } from '../../../utils/types/BasicUser';
-import { SeatType, PriorityType, SeatStatus, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo } from "../../../utils/types/Team";
+import { SeatType, PriorityType, SeatStatus, PRIORITY_CONFIGS, PriorityConfig, PriorityInfo } from "../../../types/classroom/Team";
 import { AttendanceIndicator, EmptySeatLabel, InteractionOverlay, SeatContainer, SeatTooltip, StudentName, } from './styles';
 
 interface SeatProps {

@@ -4,7 +4,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 
 import { Input, Label, Select, TextArea } from '../../styles/inputs';
 import { SequenceFormStyle} from './style';
-import { SequenceFormData } from '../../utils/types/DidacticSequence';
+import { SequenceFormData } from '../../types/academic/DidacticSequence';
 import { FormGroup, FormRow, FormSection } from '../../styles/formControls';
 import { SectionTitle } from '../../styles/baseComponents';
 import { ErrorMessage } from '../../styles/feedback';

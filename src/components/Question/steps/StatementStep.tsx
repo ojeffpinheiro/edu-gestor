@@ -1,7 +1,7 @@
 import React from 'react'
 import { FaEdit, FaExclamationTriangle } from "react-icons/fa";
 
-import { StepProps } from "../../../utils/types/Question";
+import { StepProps } from "../../../types/evaluation/Question";
 import { SectionTitle, StepContent, ValidationError } from "../../modals/QuestionModal/styles";
 import { FormGroup } from "../../../styles/formControls";
 import { Label, TextArea } from "../../../styles/inputs";

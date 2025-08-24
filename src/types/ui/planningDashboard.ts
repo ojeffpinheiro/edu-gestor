@@ -1,4 +1,3 @@
-// types.ts - Definições de tipos para o dashboard
 import { ReactNode } from 'react';
 
 /**

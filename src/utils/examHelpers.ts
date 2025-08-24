@@ -1,4 +1,4 @@
-import { Exam, ExamTypes } from './types/Exam';
+import { Exam, ExamTypes } from '../types/evaluation/Exam';
 
 /**
  * Inicializa os dados do exame com valores padrão

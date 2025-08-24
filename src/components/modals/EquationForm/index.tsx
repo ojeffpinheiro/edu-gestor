@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { FaTimes, FaPlus } from 'react-icons/fa';
 
-import { Equation, Variable } from '../../../utils/types/Topic';
+import { Equation, Variable } from '../../../types/academic/Topic';
 
 import EnhancedEquationEditor from '../../Equation/EnhancedEquationEditor';
 import EquationViewer from '../../Equation/EquationView';

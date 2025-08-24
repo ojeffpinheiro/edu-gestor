@@ -1,6 +1,6 @@
 // components/Calendar/MonthlyView/MonthGrid.tsx
 import React, { useMemo } from 'react';
-import { CalendarEvent } from '../../../../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../../../types/academic/CalendarEvent';
 import { getDayEvents, getDaysInMonthGrid } from '../../../../utils/calendarUtils';
 import { DayCell } from '../../Base/DayCell';
 import { MonthGridContainer } from './styles';

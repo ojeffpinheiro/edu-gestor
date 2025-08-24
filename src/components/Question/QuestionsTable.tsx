@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Question, QUESTION_TYPE_LABELS } from '../../utils/types/Question';
+import { Question, QUESTION_TYPE_LABELS } from '../../types/evaluation/Question';
 import { FaPencilAlt, FaRegEye } from 'react-icons/fa';
 import { FiTrash2 } from 'react-icons/fi';
 

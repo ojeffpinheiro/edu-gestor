@@ -1,5 +1,5 @@
 import React from 'react';
-import { StudentResult } from '../../utils/types/Assessment';
+import { StudentResult } from '../../types/academic/Assessment';
 
 interface StudentDetailsProps {
   student: StudentResult;

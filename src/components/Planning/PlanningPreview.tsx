@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardBody } from '../../styles/card';
 import { Button } from '../../styles/buttons';
-import { Lesson, LessonPlanTemplate, Team } from '../../utils/types/Planning';
+import { Lesson, LessonPlanTemplate, Team } from '../../types/academic/Planning';
 
 interface PlanningPreviewProps {
   team: Team;

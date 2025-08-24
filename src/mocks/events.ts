@@ -1,4 +1,4 @@
-import { CalendarEvent, SchoolCalendar } from "../utils/types/CalendarEvent";
+import { CalendarEvent, SchoolCalendar } from "../types/academic/CalendarEvent";
 
 // In a real application, this would come from an API
 export const MOCK_EVENTS: CalendarEvent[] = [

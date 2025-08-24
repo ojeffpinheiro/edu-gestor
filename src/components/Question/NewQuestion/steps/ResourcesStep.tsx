@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaImage, FaLink, FaListUl, FaMusic, FaPaperclip, FaPlus, FaTrash, FaVideo } from 'react-icons/fa';
-import { QuestionFormData, QuestionResource, ResourceType } from '../../../../utils/types/Question';
+import { QuestionFormData, QuestionResource, ResourceType } from '../../../../types/evaluation/Question';
 import {
   FormStepContainer,
   FormTitle,

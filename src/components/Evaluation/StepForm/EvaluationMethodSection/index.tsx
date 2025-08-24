@@ -9,8 +9,8 @@ import { Input, InputRow, Label, TextArea } from "../../../../styles/inputs";
 import { CollapsibleContent, CollapsibleHeader } from "../../../ui/CollapsibleComponents";
 import { EmptyStateMessage } from "../../../../styles/table";
 import { CriteriaActions, CriteriaCard, CriteriaHeader, CriteriaTitle, DeleteButton, FormFeedback, TotalWeightDisplay, WeightBadge } from "./styles";
-import { Evaluation } from "../../../../utils/types/AssessmentEvaluation";
-import { EvaluationCriteria } from "../../../../utils/types/RubricCriteria";
+import { Evaluation } from "../../../../types/evaluation/AssessmentEvaluation";
+import { EvaluationCriteria } from "../../../../types/evaluation/RubricCriteria";
 import { evaluationCriteria } from "../../../../mocks/evaluation";
 
 interface EvaluationCriteriaSectionProps {

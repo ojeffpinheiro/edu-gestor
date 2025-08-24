@@ -8,7 +8,7 @@ import {
   ResponsiveWrapper,
   SchoolInfoItem
 } from '../ExamSettingsForm/styles';
-import { Exam } from '../../../../../utils/types/Exam';
+import { Exam } from '../../../../../types/evaluation/Exam';
 import { Label, Switch, SwitchRow } from '../../../../../styles/inputs';
 import HeaderPreview from './HeaderPreview';
 

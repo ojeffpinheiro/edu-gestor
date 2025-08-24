@@ -5,7 +5,7 @@ import {
   FaExclamationTriangle
 } from 'react-icons/fa';
 
-import { Equation } from '../../utils/types/Topic';
+import { Equation } from '../../types/academic/Topic';
 import { initialEquations } from '../../mocks/equation';
 
 // Componentes
