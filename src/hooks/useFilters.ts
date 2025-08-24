@@ -3,7 +3,6 @@ import { EventTypeConfig } from "../utils/consts";
 import { EventType } from "../utils/types/CalendarEvent";
 import { ClassPerformance, FilterState } from "../utils/types/Assessment";
 
-// hooks/useFilters.ts
 interface FilterOptions {
     types: Record<EventType, boolean>;
     schools: Record<string, boolean>;
@@ -68,7 +67,7 @@ export const useFilters = (eventTypes: EventTypeConfig[]) => {
         handleDateChange,
         toggleAllTypeFilters
     };
-};// Novo hook useFilters.ts
+};
 
 export const useAssessmentFilters = (classPerformances: ClassPerformance[]) => {
   const [filters, setFilters] = useState<FilterState>({

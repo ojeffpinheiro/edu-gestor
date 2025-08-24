@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// hooks/useCollapsibleSections.ts
 export const useCollapsibleSections = () => {
     const [collapsedSections, setCollapsedSections] = useState({
       types: false,
