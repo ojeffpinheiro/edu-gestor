@@ -10,6 +10,7 @@ import {
   Colors
 } from 'chart.js';
 import styled from 'styled-components';
+import EmptyState from '../EmptyState';
 
 // Registrando os componentes necessários
 ChartJS.register(
@@ -30,26 +31,26 @@ const ChartContainer = styled.div`
   min-height: 300px;
 `;
 
-const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({ 
+const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
   studentResult,
-  questions 
+  questions
 }) => {
   // Implementação real da análise por categoria/tag
   const calculateCategoryScores = () => {
     if (!questions || !studentResult) return [];
-    
-    const categoryMap: Record<string, {correct: number, total: number}> = {};
-    
+
+    const categoryMap: Record<string, { correct: number, total: number }> = {};
+
     studentResult.examResults.forEach(exam => {
       exam.answers.forEach(answer => {
         const question = questions.find(q => q.id === answer.questionId);
         if (question) {
           // Usando tags como categorias (fallback para disciplina se não houver tags)
           const categories = question.tags?.length ? question.tags : [question.discipline];
-          
+
           categories.forEach(category => {
             if (!categoryMap[category]) {
-              categoryMap[category] = {correct: 0, total: 0};
+              categoryMap[category] = { correct: 0, total: 0 };
             }
             categoryMap[category].total += 1;
             categoryMap[category].correct += answer.score;
@@ -57,15 +58,15 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
         }
       });
     });
-    
-    return Object.entries(categoryMap).map(([category, {correct, total}]) => ({
+
+    return Object.entries(categoryMap).map(([category, { correct, total }]) => ({
       category,
       percentage: total > 0 ? (correct / total) * 100 : 0
     }));
   };
 
   const categoryData = calculateCategoryScores();
-  const labels = categoryData.length > 0 
+  const labels = categoryData.length > 0
     ? categoryData.map(item => item.category)
     : ['Matemática', 'Português', 'Ciências', 'História'];
 
@@ -105,6 +106,15 @@ const ScoreBreakdownChart: React.FC<ScoreBreakdownChartProps> = ({
     }
   };
 
+  if (!data) {
+    return (
+      <EmptyState
+        message="Dados insuficientes para análise"
+        type="search"
+      />
+    );
+  }
+  
   return (
     <ChartContainer>
       <Doughnut data={data} options={options} />
