@@ -1,4 +1,3 @@
-// src/utils/types/CalendarEvent.ts
 export type EventType = 
   | 'class' 
   | 'assessment' 

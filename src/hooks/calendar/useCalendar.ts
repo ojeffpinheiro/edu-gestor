@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { addDays, isSameDay, isWithinInterval } from 'date-fns';
 import { v4 as uuidv4 } from 'uuid';
 
-import { useCalendar } from '../contexts/CalendarContext';
+import { useCalendar } from '../../contexts/CalendarContext';
 
-import { AcademicPeriod, CalendarEvent } from '../utils/types/CalendarEvent';
+import { AcademicPeriod, CalendarEvent } from '../../utils/types/CalendarEvent';
 
-import { MOCK_EVENTS } from '../mocks/events';
+import { MOCK_EVENTS } from '../../mocks/events';
 
 interface UpdateEventParams {
   id: string;

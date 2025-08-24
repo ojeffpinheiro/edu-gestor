@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { CalendarEvent } from '../utils/types/CalendarEvent';
+import { CalendarEvent } from '../../utils/types/CalendarEvent';
 
 interface DragDropHandlers {
     onDragStart: (event: CalendarEvent, e: React.DragEvent) => void;

@@ -10,7 +10,7 @@ import { momentLocalizer, Views } from 'react-big-calendar';
 import { CalendarEvent } from '../../../utils/types/CalendarEvent';
 import { StudentFormData } from '../../../utils/types/BasicUser';
 
-import { generateMockEvents } from '../../../hooks/useCalendar';
+import { generateMockEvents } from '../../../hooks/calendar/useCalendar';
 import { useStudents } from '../../../hooks/useStudent';
 
 import Notification from '../../../components/shared/Notification';
