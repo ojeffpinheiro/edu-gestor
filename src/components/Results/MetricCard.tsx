@@ -74,13 +74,14 @@ const MetricTrend = styled.div`
 `;
 
 interface MetricCardProps {
-    title: string;
-    value: string | number;
-    unit?: string;
-    icon: React.ReactNode;
-    color: string;
-    bgColor: string;
-    trend?: string;
+  title: string;
+  value: string | number;
+  unit?: string;
+  icon: React.ReactNode;
+  color: string;
+  bgColor: string;
+  trend?: string;
+  change?: string;
 }
 
 /**
@@ -108,27 +109,33 @@ interface MetricCardProps {
  * />
  */
 const MetricCard: React.FC<MetricCardProps> = ({
-    title,
-    value,
-    unit,
-    icon,
-    color,
-    bgColor,
-    trend
+  title,
+  value,
+  unit,
+  icon,
+  color,
+  bgColor,
+  trend,
+  change
 }) => (
-    <MetricCardContent color={color}>
-        <MetricHeader>
-            <MetricTitle>{title}</MetricTitle>
-            <IconContainer bgColor={bgColor}>
-                {icon}
-            </IconContainer>
-        </MetricHeader>
-        <MetricValue>
-            {value}
-            {unit && <MetricUnit>{unit}</MetricUnit>}
-        </MetricValue>
-        {trend && <MetricTrend>{trend}</MetricTrend>}
-    </MetricCardContent>
+  <MetricCardContent color={color}>
+    <MetricHeader>
+      <MetricTitle>{title}</MetricTitle>
+      <IconContainer bgColor={bgColor}>
+        {icon}
+      </IconContainer>
+    </MetricHeader>
+    <MetricValue>
+      {value}
+      {unit && <MetricUnit>{unit}</MetricUnit>}
+    </MetricValue>
+    {trend && <MetricTrend>{trend}</MetricTrend>}
+    {change && ( // ✅ Adicione esta linha para exibir o change
+      <div style={{ fontSize: '0.875rem', color: '#64748b', marginTop: '0.25rem' }}>
+        {change}
+      </div>
+    )}
+  </MetricCardContent>
 );
 
 export default MetricCard;

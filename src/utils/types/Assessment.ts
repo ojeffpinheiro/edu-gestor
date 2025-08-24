@@ -275,3 +275,9 @@ export interface InstitutionalGoalsTypes {
   passingRate: number; 
   attendanceRate: number
 }
+
+export interface FilterState {
+  selectedClasses: string[];
+  selectedSubjects: string[];
+  selectedTimeRange: 'all' | 'week' | 'month' | 'quarter';
+}

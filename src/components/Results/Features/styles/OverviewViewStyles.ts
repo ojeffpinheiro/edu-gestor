@@ -33,8 +33,8 @@ export const TabButton = styled.button<{ $active: boolean }>`
   flex: 1;
   padding: var(--space-md) var(--space-lg);
   border: none;
-  background: ${({ $active }) => 
-    $active 
+  background: ${({ $active }) =>
+    $active
       ? 'linear-gradient(135deg, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.15) 100%)'
       : 'transparent'
   };
@@ -171,11 +171,11 @@ export const Bullet = styled.button<{ $active: boolean }>`
   transition: all var(--transition-fast);
   padding: 0;
   
-  ${({ $active }) => $active 
+  ${({ $active }) => $active
     ? css`
       background: var(--color-primary);
       transform: scale(1.3);
-    ` 
+    `
     : css`
       background: var(--color-border);
       opacity: 0.6;
@@ -318,4 +318,30 @@ export const FilterSelect = styled.select`
       }
     }
   }
+`;
+
+export const Header = styled.div`
+  display: 'flex', 
+  justifyContent: 'space-between', 
+  alignItems: 'center', 
+  marginBottom: 'var(--space-xl)',
+  padding: 'var(--space-lg)',
+  background: 'var(--color-card)',
+  borderRadius: 'var(--border-radius-lg)',
+  border: '1px solid var(--color-border-light)'
+`;
+
+export const HeaderTitle = styled.h1`
+  fontSize: 'var(--font-size-3xl)', 
+  fontWeight: 'var(--font-weight-bold)',
+  background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))',
+  backgroundClip: 'text',
+  WebkitBackgroundClip: 'text',
+  color: 'transparent',
+  margin: 0;
+`;
+
+export const HeaderDescription = styled.p`
+  color: 'var(--color-text-secondary)', 
+  margin: 'var(--space-xs) 0 0'
 `;

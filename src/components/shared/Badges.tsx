@@ -4,11 +4,12 @@ import { badgeVariants, sizeVariants } from '../../styles/variants';
 
 const BaseBadge = styled.span`
   display: inline-flex;
+  line-height: 1;
   align-items: center;
   justify-content: center;
-  padding: 0.25rem 0.75rem;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--border-radius-xl);
-  font-size: 0.75rem;
+  font-size: var(--font-size-xs);
   font-weight: 500;
   text-transform: capitalize;
   white-space: nowrap;
@@ -30,7 +31,7 @@ const BaseBadge = styled.span`
   --color-gray-800: #1f2937;
 `;
 
-export const QuestionTypeBadge = styled(BaseBadge)<{ type: QuestionType }>`
+export const QuestionTypeBadge = styled(BaseBadge) <{ type: QuestionType }>`
   background-color: ${({ type }) => {
     switch (type) {
       case 'multiple_choice': return 'var(--color-blue-100)';
@@ -49,7 +50,7 @@ export const QuestionTypeBadge = styled(BaseBadge)<{ type: QuestionType }>`
   }};
 `;
 
-export const DifficultyBadge = styled(BaseBadge)<{ level: DifficultyLevelType }>`
+export const DifficultyBadge = styled(BaseBadge) <{ level: DifficultyLevelType }>`
   background-color: ${({ level }) => {
     switch (level) {
       case 'easy': return 'var(--color-green-100)';
@@ -68,7 +69,7 @@ export const DifficultyBadge = styled(BaseBadge)<{ level: DifficultyLevelType }>
   }};
 `;
 
-export const StatusBadge = styled(BaseBadge)<{ status: QuestionStatus }>`
+export const StatusBadge = styled(BaseBadge) <{ status: QuestionStatus }>`
   background-color: ${({ status }) => {
     switch (status) {
       case 'active': return 'var(--color-green-100)';
@@ -107,7 +108,7 @@ export const Badge = styled.span<BadgeProps>`
   display: inline-flex;
   align-items: center;
   font-weight: var(--font-weight-medium);
-  border-radius: ${({ $rounded }) => 
+  border-radius: ${({ $rounded }) =>
     $rounded ? 'var(--border-radius-full)' : 'var(--border-radius-md)'};
   
   ${({ $variant = 'default' }) => badgeVariants[$variant]}

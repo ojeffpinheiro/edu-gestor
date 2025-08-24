@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { EventTypeConfig } from "../utils/consts";
 import { EventType } from "../utils/types/CalendarEvent";
+import { ClassPerformance, FilterState } from "../utils/types/Assessment";
 
 // hooks/useFilters.ts
 interface FilterOptions {
@@ -67,4 +68,43 @@ export const useFilters = (eventTypes: EventTypeConfig[]) => {
         handleDateChange,
         toggleAllTypeFilters
     };
+};// Novo hook useFilters.ts
+
+export const useAssessmentFilters = (classPerformances: ClassPerformance[]) => {
+  const [filters, setFilters] = useState<FilterState>({
+    selectedClasses: [],
+    selectedSubjects: [],
+    selectedTimeRange: 'all'
+  });
+
+  const availableSubjects = useMemo(() => {
+    return Array.from(new Set(
+      classPerformances.flatMap(c => 
+        c.subjects?.map(s => s.name) || []
+      )
+    ));
+  }, [classPerformances]);
+
+  const filteredClassPerformances = useMemo(() => {
+    let result = [...classPerformances];
+    
+    if (filters.selectedClasses.length > 0) {
+      result = result.filter(c => filters.selectedClasses.includes(c.classId));
+    }
+    
+    if (filters.selectedSubjects.length > 0) {
+      result = result.filter(c => 
+        c.subjects?.some(s => filters.selectedSubjects.includes(s.name))
+      );
+    }
+    
+    return result;
+  }, [classPerformances, filters.selectedClasses, filters.selectedSubjects]);
+
+  return {
+    filters,
+    setFilters,
+    availableSubjects,
+    filteredClassPerformances
+  };
 };
