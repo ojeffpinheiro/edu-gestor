@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StudentFormData } from "../../utils/types/BasicUser";
+import { StudentFormData } from "../../types/user/BasicUser";
 
 /**
  * 

@@ -1,4 +1,4 @@
-import { StudentFormData } from "../../utils/types/BasicUser";
+import { StudentFormData } from "../../types/user/BasicUser";
 
 /**
  * Realiza o sorteio de grupos com base no tamanho especificado.
